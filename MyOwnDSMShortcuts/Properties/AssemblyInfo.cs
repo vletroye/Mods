@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MyWebApps")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Mods")]
+[assembly: AssemblyDescription("My Own DMS Shortcuts Package Creator")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MyWebApps")]
+[assembly: AssemblyCompany("BeatificaBytes")]
+[assembly: AssemblyProduct("Mods")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

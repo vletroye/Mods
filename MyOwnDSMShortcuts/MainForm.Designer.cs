@@ -1,6 +1,6 @@
-﻿namespace MyWebApps
+﻿namespace BeatificaBytes.Synology.Mods
 {
-    partial class FormMyWebApps
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.buttonPackage = new System.Windows.Forms.Button();
             this.listViewUrls = new System.Windows.Forms.ListView();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
@@ -43,10 +44,7 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
-            this.toolTipMyWebApps = new System.Windows.Forms.ToolTip(this.components);
-            this.openFileDialogMyWebApps = new System.Windows.Forms.OpenFileDialog();
-            this.folderBrowserDialogMyWebApps = new System.Windows.Forms.FolderBrowserDialog();
-            this.pictureBoxSettings = new System.Windows.Forms.PictureBox();
+            this.toolTip4Mods = new System.Windows.Forms.ToolTip(this.components);
             this.pictureBox_256 = new System.Windows.Forms.PictureBox();
             this.pictureBox_128 = new System.Windows.Forms.PictureBox();
             this.pictureBox_96 = new System.Windows.Forms.PictureBox();
@@ -56,7 +54,10 @@
             this.pictureBox_32 = new System.Windows.Forms.PictureBox();
             this.pictureBox_24 = new System.Windows.Forms.PictureBox();
             this.pictureBox_16 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
+            this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
+            this.pictureBoxSettings = new System.Windows.Forms.PictureBox();
+            this.buttonReset = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -66,6 +67,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonPackage
@@ -99,7 +101,7 @@
             this.textBoxTitle.Name = "textBoxTitle";
             this.textBoxTitle.Size = new System.Drawing.Size(128, 20);
             this.textBoxTitle.TabIndex = 2;
-            this.toolTipMyWebApps.SetToolTip(this.textBoxTitle, "Enter the titleof the RUL. It will to be displayed on DSM.");
+            this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the titleof the RUL. It will to be displayed on DSM.");
             // 
             // labelTitle
             // 
@@ -130,7 +132,7 @@
             this.textBoxDesc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.textBoxDesc.Size = new System.Drawing.Size(720, 60);
             this.textBoxDesc.TabIndex = 4;
-            this.toolTipMyWebApps.SetToolTip(this.textBoxDesc, "Enter an optional description. This will however not be displayed on DSM.");
+            this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will however not be displayed on DSM.");
             // 
             // labelUrl
             // 
@@ -149,7 +151,7 @@
             this.textBoxUrl.Name = "textBoxUrl";
             this.textBoxUrl.Size = new System.Drawing.Size(720, 20);
             this.textBoxUrl.TabIndex = 6;
-            this.toolTipMyWebApps.SetToolTip(this.textBoxUrl, "Type here the url to be opened when clicking the icon on DSM.");
+            this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the url to be opened when clicking the icon on DSM.");
             // 
             // checkBoxAllUsers
             // 
@@ -218,24 +220,6 @@
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
-            // openFileDialogMyWebApps
-            // 
-            this.openFileDialogMyWebApps.Filter = "Png|*.png";
-            this.openFileDialogMyWebApps.RestoreDirectory = true;
-            // 
-            // pictureBoxSettings
-            // 
-            this.pictureBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxSettings.Image = global::MyWebApps.Properties.Resources.settings;
-            this.pictureBoxSettings.InitialImage = global::MyWebApps.Properties.Resources.settings;
-            this.pictureBoxSettings.Location = new System.Drawing.Point(749, 12);
-            this.pictureBoxSettings.Name = "pictureBoxSettings";
-            this.pictureBoxSettings.Size = new System.Drawing.Size(48, 48);
-            this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxSettings.TabIndex = 23;
-            this.pictureBoxSettings.TabStop = false;
-            this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
-            // 
             // pictureBox_256
             // 
             this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -246,7 +230,7 @@
             this.pictureBox_256.TabIndex = 22;
             this.pictureBox_256.TabStop = false;
             this.pictureBox_256.Tag = "256";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
             // 
             // pictureBox_128
             // 
@@ -258,7 +242,7 @@
             this.pictureBox_128.TabIndex = 21;
             this.pictureBox_128.TabStop = false;
             this.pictureBox_128.Tag = "128";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128");
             // 
             // pictureBox_96
             // 
@@ -270,7 +254,7 @@
             this.pictureBox_96.TabIndex = 20;
             this.pictureBox_96.TabStop = false;
             this.pictureBox_96.Tag = "96";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96");
             // 
             // pictureBox_72
             // 
@@ -282,7 +266,7 @@
             this.pictureBox_72.TabIndex = 19;
             this.pictureBox_72.TabStop = false;
             this.pictureBox_72.Tag = "72";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_72, "Drop here a logo 72x72");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x72");
             // 
             // pictureBox_64
             // 
@@ -294,7 +278,7 @@
             this.pictureBox_64.TabIndex = 18;
             this.pictureBox_64.TabStop = false;
             this.pictureBox_64.Tag = "64";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64");
             // 
             // pictureBox_48
             // 
@@ -306,7 +290,7 @@
             this.pictureBox_48.TabIndex = 17;
             this.pictureBox_48.TabStop = false;
             this.pictureBox_48.Tag = "48";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48");
             // 
             // pictureBox_32
             // 
@@ -318,7 +302,7 @@
             this.pictureBox_32.TabIndex = 16;
             this.pictureBox_32.TabStop = false;
             this.pictureBox_32.Tag = "32";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32");
             // 
             // pictureBox_24
             // 
@@ -330,7 +314,7 @@
             this.pictureBox_24.TabIndex = 15;
             this.pictureBox_24.TabStop = false;
             this.pictureBox_24.Tag = "24";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24");
             // 
             // pictureBox_16
             // 
@@ -342,14 +326,44 @@
             this.pictureBox_16.TabIndex = 14;
             this.pictureBox_16.TabStop = false;
             this.pictureBox_16.Tag = "16";
-            this.toolTipMyWebApps.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16");
+            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16");
             // 
-            // FormMyWebApps
+            // openFileDialog4Mods
+            // 
+            this.openFileDialog4Mods.Filter = "Png|*.png";
+            this.openFileDialog4Mods.RestoreDirectory = true;
+            // 
+            // pictureBoxSettings
+            // 
+            this.pictureBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxSettings.Image = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
+            this.pictureBoxSettings.InitialImage = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
+            this.pictureBoxSettings.Location = new System.Drawing.Point(749, 12);
+            this.pictureBoxSettings.Name = "pictureBoxSettings";
+            this.pictureBoxSettings.Size = new System.Drawing.Size(48, 48);
+            this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSettings.TabIndex = 23;
+            this.pictureBoxSettings.TabStop = false;
+            this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
+            // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(641, 607);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(75, 23);
+            this.buttonReset.TabIndex = 24;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
+            // MainForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(810, 642);
+            this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.pictureBoxSettings);
             this.Controls.Add(this.pictureBox_256);
             this.Controls.Add(this.pictureBox_128);
@@ -374,10 +388,11 @@
             this.Controls.Add(this.textBoxTitle);
             this.Controls.Add(this.listViewUrls);
             this.Controls.Add(this.buttonPackage);
-            this.MinimumSize = new System.Drawing.Size(632, 600);
-            this.Name = "FormMyWebApps";
-            this.Text = "MyWebApps Package Creator";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(826, 681);
+            this.Name = "MainForm";
+            this.Text = "Mods Package Creator";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
@@ -387,6 +402,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -417,10 +433,11 @@
         private System.Windows.Forms.PictureBox pictureBox_96;
         private System.Windows.Forms.PictureBox pictureBox_128;
         private System.Windows.Forms.PictureBox pictureBox_256;
-        private System.Windows.Forms.ToolTip toolTipMyWebApps;
-        private System.Windows.Forms.OpenFileDialog openFileDialogMyWebApps;
+        private System.Windows.Forms.ToolTip toolTip4Mods;
+        private System.Windows.Forms.OpenFileDialog openFileDialog4Mods;
         private System.Windows.Forms.PictureBox pictureBoxSettings;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogMyWebApps;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog4Mods;
+        private System.Windows.Forms.Button buttonReset;
     }
 }
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MyWebApps.Properties {
+namespace BeatificaBytes.Synology.Mods.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -89,6 +89,18 @@ namespace MyWebApps.Properties {
             }
             set {
                 this["SourceImages"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Computer {
+            get {
+                return ((string)(this["Computer"]));
+            }
+            set {
+                this["Computer"] = value;
             }
         }
     }

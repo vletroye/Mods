@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MyWebApps
+namespace BeatificaBytes.Synology.Mods
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace MyWebApps
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormMyWebApps());
+            Application.Run(new MainForm());
             //Application.Run(new Form2());
         }
     }
