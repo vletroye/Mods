@@ -1,5 +1,5 @@
 @echo off
-if exist myWebApps.spk (del myWebApps.spk)
+if exist mods.spk (del mods.spk)
 cd package
 "../7z.exe" a -ttar ../package.tar *
 if errorlevel 1 (
@@ -15,7 +15,7 @@ if errorlevel 1 (
    exit /b 2
 )
 del package.tar
-7z.exe a -ttar myWebApps.spk package.tgz scripts Info PACKAGE_ICON*.PNG
+7z.exe a -ttar mods.spk package.tgz scripts Info PACKAGE_ICON*.PNG
 if errorlevel 1 (
    cd ..
    echo Error while creating package.

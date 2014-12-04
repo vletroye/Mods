@@ -17,9 +17,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MyWebApps
+namespace BeatificaBytes.Synology.Mods
 {
-    public partial class FormMyWebApps : Form
+    public partial class MainForm : Form
     {
         public enum State
         {
@@ -45,7 +45,7 @@ namespace MyWebApps
         string imageDragDropPath;
         protected bool validData;
 
-        public FormMyWebApps()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -55,7 +55,12 @@ namespace MyWebApps
             list = LoadData();
             BindData(list);
 
-            if (!Directory.Exists(PackageRootPath))
+            if (string.IsNullOrEmpty(PackageRootPath) || Properties.Settings.Default.Computer != System.Environment.MachineName)
+            {
+                MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                PackageRootPath = "";
+            }
+            else if (!Directory.Exists(PackageRootPath))
             {
                 MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
@@ -147,12 +152,7 @@ namespace MyWebApps
             {
                 using (new CWaitCursor())
                 {
-                    var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
-                    Properties.Settings.Default.Packages = json;
-                    Properties.Settings.Default.Save();
-
-                    var config = Path.Combine(PackageRootPath, CONFIGFILE);
-                    File.WriteAllText(config, json);
+                    PersistUrlsConfig();
 
                     Process pack = new Process();
                     pack.StartInfo.FileName = packCmd;
@@ -165,11 +165,26 @@ namespace MyWebApps
                     Console.WriteLine(pack.StandardOutput.ReadToEnd());
                     pack.WaitForExit();
                 }
-                MessageBox.Show(this, string.Format("Your Package 'MyWebApps.spk' is ready in {0}", PackageRootPath));
+                var answer = MessageBox.Show(this, string.Format("Your Package 'Mods.spk' is ready in {0}.\nDo you want to open that folder now?", PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (answer == DialogResult.Yes)
+                {
+                    Process.Start(PackageRootPath);
+                }
             }
             else
             {
+                MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+        }
+
+        private void PersistUrlsConfig()
+        {
+            var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
+            Properties.Settings.Default.Packages = json;
+            Properties.Settings.Default.Save();
+
+            var config = Path.Combine(PackageRootPath, CONFIGFILE);
+            File.WriteAllText(config, json);
         }
 
         private void listViewUrls_SelectedIndexChanged(object sender, EventArgs e)
@@ -331,6 +346,11 @@ namespace MyWebApps
                         buttonSave.Enabled = false;
                         buttonCancel.Enabled = false;
                         buttonDelete.Enabled = true;
+                        foreach (var picturebox in pictureBoxes)
+                        {
+                            picturebox.Value.BackColor = this.BackColor;
+                        }
+
                         break;
                     case State.None:
                         buttonAdd.Enabled = true;
@@ -338,6 +358,11 @@ namespace MyWebApps
                         buttonSave.Enabled = false;
                         buttonCancel.Enabled = false;
                         buttonDelete.Enabled = false;
+                        foreach (var picturebox in pictureBoxes)
+                        {
+                            picturebox.Value.BackColor = this.BackColor;
+                        }
+
                         break;
                     case State.Add:
                     case State.Edit:
@@ -346,6 +371,11 @@ namespace MyWebApps
                         buttonSave.Enabled = true;
                         buttonCancel.Enabled = true;
                         buttonDelete.Enabled = false;
+                        foreach (var picturebox in pictureBoxes)
+                        {
+                            picturebox.Value.BackColor = Color.White;
+                        }
+
                         break;
                 }
             }
@@ -441,15 +471,44 @@ namespace MyWebApps
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (current.Key != null)
+            var candidate = GetDetail();
+            if (Validate(candidate.Value))
             {
-                list.url.Remove(current.Key);
-            }
-            current = GetDetail();
-            list.url.Add(current.Key, current.Value);
-            BindData(list);
+                if (current.Key != null)
+                {
+                    list.url.Remove(current.Key);
+                }
+                current = candidate;
+                list.url.Add(current.Key, current.Value);
+                BindData(list);
 
-            DisplayCurrent();
+                DisplayCurrent();
+
+                PersistUrlsConfig();
+            }
+        }
+
+        private bool Validate(AppsData candidate)
+        {
+            var message = new StringBuilder();
+
+            if (string.IsNullOrEmpty(candidate.title))
+            {
+                message.AppendLine("The title may not be empty.");
+            }
+            if (string.IsNullOrEmpty(candidate.url))
+            {
+                message.AppendLine("The Url may not be empty.");
+            }
+
+            var error = message.ToString();
+            var valid = error.Length > 0;
+            if (valid)
+            {
+                MessageBox.Show(this, error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            return !valid;
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -489,11 +548,17 @@ namespace MyWebApps
         {
             if (current.Key != null)
             {
-                list.url.Remove(current.Key);
-                BindData(list);
-            }
+                var answer = MessageBox.Show(this, string.Format("Do you really want to delete the Url '{0}'?", current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (answer == DialogResult.Yes)
+                {
+                    list.url.Remove(current.Key);
+                    BindData(list);
 
-            DisplayNone();
+                    DisplayNone();
+
+                    PersistUrlsConfig();
+                }
+            }
         }
 
         private void pictureBox_DoubleClick(object sender, EventArgs e)
@@ -503,12 +568,12 @@ namespace MyWebApps
                 var picture = sender as PictureBox;
                 var size = picture.Tag.ToString();
 
-                openFileDialogMyWebApps.Title = string.Format("Pick a png of {0}x{0}", size);
-                DialogResult result = openFileDialogMyWebApps.ShowDialog(this);
+                openFileDialog4Mods.Title = string.Format("Pick a png of {0}x{0}", size);
+                DialogResult result = openFileDialog4Mods.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
-                    string file = openFileDialogMyWebApps.FileName;
-                    LoadPicture(openFileDialogMyWebApps.FileName, size);
+                    string file = openFileDialog4Mods.FileName;
+                    LoadPicture(openFileDialog4Mods.FileName, size);
 
                     Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
                     Properties.Settings.Default.Save();
@@ -518,11 +583,14 @@ namespace MyWebApps
 
         private void pictureBoxSettings_Click(object sender, EventArgs e)
         {
-            folderBrowserDialogMyWebApps.Description = "Pick the folder where the package must be stored.";
-            DialogResult result = folderBrowserDialogMyWebApps.ShowDialog(this);
+            folderBrowserDialog4Mods.Description = "Pick the folder where the package must be stored.";
+            if (!string.IsNullOrEmpty(PackageRootPath))
+                folderBrowserDialog4Mods.SelectedPath = PackageRootPath;
+
+            DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                PackageRootPath = folderBrowserDialogMyWebApps.SelectedPath;
+                PackageRootPath = folderBrowserDialog4Mods.SelectedPath;
 
                 if (Directory.GetFiles(PackageRootPath).Length > 0)
                 {
@@ -530,52 +598,60 @@ namespace MyWebApps
                 }
                 else
                 {
-                    using (new CWaitCursor())
+                    InitialConfiguration();
+
+                    Display(new KeyValuePair<string, AppsData>(null, null));
+                }
+            }
+        }
+
+        private void InitialConfiguration()
+        {
+            using (new CWaitCursor())
+            {
+                Properties.Settings.Default.PackageRoot = PackageRootPath;
+                Properties.Settings.Default.Computer = System.Environment.MachineName;
+                Properties.Settings.Default.Save();
+
+                Process unzip = new Process();
+                unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
+                unzip.StartInfo.Arguments = string.Format("x {0} -o{1}", Path.Combine(ResourcesRootPath, "Package.zip"), PackageRootPath);
+                unzip.StartInfo.UseShellExecute = false;
+                unzip.StartInfo.RedirectStandardOutput = true;
+                unzip.StartInfo.CreateNoWindow = true;
+                unzip.Start();
+                Console.WriteLine(unzip.StandardOutput.ReadToEnd());
+                unzip.WaitForExit();
+
+                File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
+                File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
+                File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
+            }
+
+            var recovery = Path.Combine(ResourcesRootPath, "recovery");
+            if (Directory.Exists(recovery))
+            {
+                var images = Directory.GetFiles(recovery);
+                if (images.Length > 0)
+                {
+                    var answer = MessageBox.Show(this, "Icons from a previous package are still available do you want to recover them?\nIf you answer 'No', they will be deleted.\nIf you 'Cancel', they will be kept in the recovery folder.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    switch (answer)
                     {
-                        Properties.Settings.Default.PackageRoot = PackageRootPath;
-                        Properties.Settings.Default.Save();
-
-                        Process unzip = new Process();
-                        unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
-                        unzip.StartInfo.Arguments = string.Format("x {0} -o{1}", Path.Combine(ResourcesRootPath, "Package.zip"), PackageRootPath);
-                        unzip.StartInfo.UseShellExecute = false;
-                        unzip.StartInfo.RedirectStandardOutput = true;
-                        unzip.StartInfo.CreateNoWindow = true;
-                        unzip.Start();
-                        Console.WriteLine(unzip.StandardOutput.ReadToEnd());
-                        unzip.WaitForExit();
-
-                        File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
-                        File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
-                        File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
-                    }
-
-                    var recovery = Path.Combine(ResourcesRootPath, "recovery");
-                    if (Directory.Exists(recovery))
-                    {
-                        var images = Directory.GetFiles(recovery);
-                        if (images.Length > 0)
-                        {
-                            var answer = MessageBox.Show(this, "Icons from a previous package are still available do you want to recover them?\nIf you answer 'No', they will be deleted.\nIf you Cancel, they will be kept in the recovery folder.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                            switch (answer)
+                        case DialogResult.Yes:
+                            var target = Path.Combine(PackageRootPath, @"package\ui\images");
+                            foreach (var image in images)
                             {
-                                case DialogResult.Yes:
-                                    var target = Path.Combine(PackageRootPath, @"package\ui\images");
-                                    foreach (var image in images)
-                                    {
-                                        var dest = Path.Combine(target, Path.GetFileName(image));
-                                        if (File.Exists(dest))
-                                            File.Delete(dest);
-                                        File.Move(image, dest);
-                                    }
-                                    break;
-                                case DialogResult.No:
-                                    Directory.Delete(recovery);
-                                    break;
-                                default:
-                                    break;
+                                var dest = Path.Combine(target, Path.GetFileName(image));
+                                if (File.Exists(dest))
+                                    File.Delete(dest);
+                                File.Move(image, dest);
                             }
-                        }
+                            break;
+                        case DialogResult.No:
+                            Directory.Delete(recovery);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -640,6 +716,49 @@ namespace MyWebApps
             {
                 buttonEdit_Click(sender, e);
             }
+        }
+
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            var answer = MessageBox.Show(this, "Do you really want to clean the destination folder?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+            if (answer == DialogResult.Yes)
+            {
+                try
+                {
+                    DeleteDirectory(PackageRootPath);
+
+                    InitialConfiguration();
+                }
+                catch
+                {
+                    MessageBox.Show(this, "The destination folder cannot be cleaned. The package file is possibly in use?!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        public static void DeleteDirectory(string path)
+        {
+            foreach (string directory in Directory.GetDirectories(path))
+            {
+                DeleteDirectory(directory);
+            }
+
+            try
+            {
+                Directory.Delete(path, true);
+            }
+            catch (IOException)
+            {
+                Directory.Delete(path, true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Directory.Delete(path, true);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            PersistUrlsConfig();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace MyWebApps
+namespace BeatificaBytes.Synology.Mods
 {
     internal class CCursor : IDisposable
     {
