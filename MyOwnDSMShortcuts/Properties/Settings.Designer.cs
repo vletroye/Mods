@@ -91,17 +91,5 @@ namespace BeatificaBytes.Synology.Mods.Properties {
                 this["SourceImages"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Computer {
-            get {
-                return ((string)(this["Computer"]));
-            }
-            set {
-                this["Computer"] = value;
-            }
-        }
     }
 }
