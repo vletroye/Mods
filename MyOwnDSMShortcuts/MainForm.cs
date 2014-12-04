@@ -55,7 +55,7 @@ namespace BeatificaBytes.Synology.Mods
             list = LoadData();
             BindData(list);
 
-            if (string.IsNullOrEmpty(PackageRootPath) || Properties.Settings.Default.Computer != System.Environment.MachineName)
+            if (string.IsNullOrEmpty(PackageRootPath))
             {
                 MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
@@ -179,12 +179,15 @@ namespace BeatificaBytes.Synology.Mods
 
         private void PersistUrlsConfig()
         {
-            var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
-            Properties.Settings.Default.Packages = json;
-            Properties.Settings.Default.Save();
+            if (!string.IsNullOrEmpty(PackageRootPath))
+            {
+                var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
+                Properties.Settings.Default.Packages = json;
+                Properties.Settings.Default.Save();
 
-            var config = Path.Combine(PackageRootPath, CONFIGFILE);
-            File.WriteAllText(config, json);
+                var config = Path.Combine(PackageRootPath, CONFIGFILE);
+                File.WriteAllText(config, json);
+            }
         }
 
         private void listViewUrls_SelectedIndexChanged(object sender, EventArgs e)
@@ -610,7 +613,6 @@ namespace BeatificaBytes.Synology.Mods
             using (new CWaitCursor())
             {
                 Properties.Settings.Default.PackageRoot = PackageRootPath;
-                Properties.Settings.Default.Computer = System.Environment.MachineName;
                 Properties.Settings.Default.Save();
 
                 Process unzip = new Process();
