@@ -988,7 +988,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                var answer = MessageBox.Show(this, "Do you really want to clean the destination folder?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                var answer = MessageBox.Show(this, "Do you really want to reset the complete Package to its defaults?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                 if (answer == DialogResult.Yes)
                 {
                     try
