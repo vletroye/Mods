@@ -12,7 +12,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             url = new Dictionary<string, AppsData>();
         }
-        
+
         [JsonProperty(PropertyName = ".url")]
         public Dictionary<string, AppsData> url { get; set; }
     }
@@ -23,8 +23,10 @@ namespace BeatificaBytes.Synology.Mods
         {
             type = "url";
             icon = "images/default_{0}.png";
+            guid = Guid.NewGuid();
         }
 
+        internal Guid guid { get; set; }
         public string type { get; set; }
         public bool allUsers { get; set; }
         public string title { get; set; }
