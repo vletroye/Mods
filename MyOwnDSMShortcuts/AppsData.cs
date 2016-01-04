@@ -6,15 +6,15 @@ using System.Text;
 
 namespace BeatificaBytes.Synology.Mods
 {
-    public class urls
+    public class Package
     {
-        public urls()
+        public Package()
         {
-            url = new Dictionary<string, AppsData>();
+            urls = new Dictionary<string, AppsData>();
         }
 
         [JsonProperty(PropertyName = ".url")]
-        public Dictionary<string, AppsData> url { get; set; }
+        public Dictionary<string, AppsData> urls { get; set; }
     }
 
     public class AppsData

@@ -31,6 +31,9 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         const string CONFIGFILE = @"package\ui\config";
+        static Regex getPort = new Regex(@"^:(\d*).*$", RegexOptions.Compiled);
+        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled);
+        static Regex getVersion = new Regex(@"^\d*.\d*.\d*$", RegexOptions.Compiled);
 
         string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
         string PackageRootPath = Properties.Settings.Default.PackageRoot;
@@ -43,7 +46,7 @@ namespace BeatificaBytes.Synology.Mods
 
         KeyValuePair<string, AppsData> current;
         State state;
-        urls list;
+        Package list;
 
         string imageDragDropPath;
         protected bool validData;
@@ -70,6 +73,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 InitData();
                 BindData(list);
+                DisplayCurrent();
                 LoadPackageInfo();
             }
 
@@ -116,11 +120,11 @@ namespace BeatificaBytes.Synology.Mods
             pictureBoxPkg_256.AllowDrop = true;
         }
 
-        private void BindData(urls list)
+        private void BindData(Package list)
         {
             listViewUrls.Items.Clear();
 
-            foreach (var url in list.url)
+            foreach (var url in list.urls)
             {
                 var uri = url.Value.url;
                 if (uri.StartsWith("/"))
@@ -136,35 +140,29 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             listViewUrls.Sort();
-
-            if (listViewUrls.Items.Count > 0)
-            {
-                listViewUrls.Items[0].Selected = true;
-                listViewUrls.Select();
-            }
         }
 
-        private urls LoadData()
+        private Package LoadData()
         {
-            urls list = null;
+            Package list = null;
 
             var config = Path.Combine(PackageRootPath, CONFIGFILE);
             if (File.Exists(config))
             {
                 var json = File.ReadAllText(config);
-                list = JsonConvert.DeserializeObject<urls>(json, new KeyValuePairConverter());
+                list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
             }
 
-            if (list == null || list.url.Count == 0)
+            if (list == null || list.urls.Count == 0)
             {
                 var json = Properties.Settings.Default.Packages;
                 if (!string.IsNullOrEmpty(json))
                 {
-                    list = JsonConvert.DeserializeObject<urls>(json, new KeyValuePairConverter());
+                    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
                 }
                 else
                 {
-                    list = new urls();
+                    list = new Package();
                 }
             }
             return list;
@@ -302,6 +300,10 @@ namespace BeatificaBytes.Synology.Mods
             var descText = show ? url.Value.desc : "";
             var titleText = show ? url.Value.title : "";
             var urlText = show ? url.Value.url : "";
+            if (urlText != null && urlText.StartsWith("/") && url.Value.port != WebPort)
+            {
+                urlText = string.Format(":{0}{1}", url.Value.port, url.Value.url);
+            }
             var users = show ? url.Value.allUsers : false;
 
             if (show)
@@ -494,9 +496,21 @@ namespace BeatificaBytes.Synology.Mods
             var desc = textBoxDesc.Text.Trim();
 
             string protocol;
-            int port;
+            int port = WebPort;
 
             var url = textBoxUrl.Text.Trim();
+
+            if (url.StartsWith(":"))
+            {
+                var portMatch = getPort.Match(url);
+                if (portMatch.Success)
+                {
+                    var value = portMatch.Groups[1].Value;
+                    url = url.Substring(value.Length + 1);
+                    port = int.Parse(value);
+                }
+            }
+
             Uri uri;
             if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
             {
@@ -508,7 +522,6 @@ namespace BeatificaBytes.Synology.Mods
                 else
                 {
                     protocol = WebProtocol;
-                    port = WebPort;
                     url = uri.OriginalString;
                     if (!url.StartsWith("/"))
                         url = string.Format("/{0}", url);
@@ -541,8 +554,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private static string CleanUpText(string text)
         {
-            Regex regex = new Regex(@"[^a-zA-Z0-9]", (RegexOptions)0);
-            var icon = regex.Replace(text, "_");
+            var icon = cleanChar.Replace(text, "_");
             while (text != icon)
             {
                 text = icon.Trim(new[] { '_' });
@@ -578,16 +590,14 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     if (current.Key != null)
                     {
-                        list.url.Remove(current.Key);
+                        list.urls.Remove(current.Key);
                         DeletePictures(current.Value.icon);
                     }
                     current = candidate;
-                    list.url.Add(current.Key, current.Value);
+                    list.urls.Add(current.Key, current.Value);
                     BindData(list);
-
-                    SavePictures(candidate.Value.icon);
-
                     DisplayCurrent();
+                    SavePictures(candidate.Value.icon);
 
                     PersistUrlsConfig();
                 }
@@ -653,11 +663,10 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            if (state == State.Edit)
-                DisplayCurrent();
-            else
-                DisplayNone();
-            buttonCancel.Focus();
+            if (state == State.Add)
+                current = new KeyValuePair<string, AppsData>(null, null);
+
+            DisplayCurrent();
         }
 
         private void DisplayNone()
@@ -670,16 +679,25 @@ namespace BeatificaBytes.Synology.Mods
 
         private void DisplayCurrent()
         {
+            if (current.Key == null && listViewUrls.Items.Count > 0)
+            {
+                current = (KeyValuePair<string, AppsData>)listViewUrls.Items[0].Tag;
+            }
+
             if (current.Key == null)
+            {
                 DisplayNone();
+            }
             else
             {
+                var currentGuid = current.Value.guid;
                 state = State.View;
                 Display(current);
+
                 foreach (ListViewItem item in listViewUrls.Items)
                 {
-                    if (item.Tag.Equals(current))
-                        item.Selected = true;
+                    KeyValuePair<string, AppsData> tag = (KeyValuePair<string, AppsData>)item.Tag;
+                    item.Selected = (tag.Value.guid == currentGuid);
                 }
                 listViewUrls.Focus();
             }
@@ -692,11 +710,12 @@ namespace BeatificaBytes.Synology.Mods
                 var answer = MessageBox.Show(this, string.Format("Do you really want to delete the Url '{0}' and related icons?", current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (answer == DialogResult.Yes)
                 {
-                    DeletePictures(list.url[current.Key].icon);
-                    list.url.Remove(current.Key);
-                    BindData(list);
+                    DeletePictures(list.urls[current.Key].icon);
+                    list.urls.Remove(current.Key);
 
-                    DisplayNone();
+                    current = new KeyValuePair<string, AppsData>(null, null);
+                    BindData(list);
+                    DisplayCurrent();
 
                     PersistUrlsConfig();
                 }
@@ -999,8 +1018,10 @@ namespace BeatificaBytes.Synology.Mods
                         InitialConfiguration();
                         InitData();
                         BindData(list);
+                        DisplayCurrent();
+
                         LoadPackageInfo();
-                        
+
                         //Display(new KeyValuePair<string, AppsData>(null, null));
                     }
                     catch
@@ -1108,12 +1129,11 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxVersion, ref e))
             {
-                Regex regex = new Regex(@"^\d*.\d*.\d*$");
-                if (!regex.IsMatch(textBoxVersion.Text))
-                {                    
+                if (!getVersion.IsMatch(textBoxVersion.Text))
+                {
                     e.Cancel = true;
                     textBoxVersion.Select(0, textBoxVersion.Text.Length);
-                    errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0.0");                
+                    errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0.0");
                 }
             }
         }
@@ -1147,7 +1167,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxTitle, ref e))
             {
-                foreach (var url in list.url.Values)
+                foreach (var url in list.urls.Values)
                 {
                     if (url.title.Equals(textBoxTitle.Text, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
                     {
