@@ -594,10 +594,11 @@ namespace BeatificaBytes.Synology.Mods
                         DeletePictures(current.Value.icon);
                     }
                     current = candidate;
+                    SavePictures(candidate.Value.icon);
+
                     list.urls.Add(current.Key, current.Value);
                     BindData(list);
                     DisplayCurrent();
-                    SavePictures(candidate.Value.icon);
 
                     PersistUrlsConfig();
                 }
