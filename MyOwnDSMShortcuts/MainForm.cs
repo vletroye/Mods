@@ -3,7 +3,6 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -11,11 +10,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BeatificaBytes.Synology.Mods
@@ -41,6 +37,11 @@ namespace BeatificaBytes.Synology.Mods
         string WebProtocol = Properties.Settings.Default.Protocol;
         int WebPort = Properties.Settings.Default.Port;
 
+        //3 next vars are a Dirty Hack - move these 3 vars into a class. Replace AppsData with that class, ...
+        string webAppFolder = null;
+        string webAppIndex = null;
+        string script = null;
+
         Dictionary<string, PictureBox> pictureBoxes;
         Dictionary<string, string> info;
 
@@ -63,11 +64,13 @@ namespace BeatificaBytes.Synology.Mods
             {
                 MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
+                DisplayCurrent();
             }
             else if (!File.Exists(Path.Combine(PackageRootPath, "INFO")))
             {
                 MessageBox.Show(this, "The INFO file for your package does not exist anymore. Reset your package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
+                DisplayCurrent();
             }
             else
             {
@@ -127,8 +130,9 @@ namespace BeatificaBytes.Synology.Mods
             foreach (var url in list.urls)
             {
                 var uri = url.Value.url;
-                if (uri.StartsWith("/"))
+                if (url.Value.urlType == 0 && uri.StartsWith("/"))
                     uri = string.Format("{0}://{1}:{2}{3}", url.Value.protocol, WebSynology, url.Value.port, uri);
+
 
                 // Define the list items
                 var lvi = new ListViewItem(url.Value.title);
@@ -170,6 +174,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonPackage_Click(object sender, EventArgs e)
         {
+            IncrementVersion();
+
             //Collect Package Info
             foreach (var control in this.Controls)
             {
@@ -328,12 +334,15 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     LoadPictureBox(pictureBox, null);
                 }
+                comboBoxUrlType.SelectedIndex = 0;
             }
 
             textBoxDesc.Text = descText;
             textBoxTitle.Text = titleText;
             textBoxUrl.Text = urlText;
             checkBoxAllUsers.Checked = users;
+            checkBoxMultiInstance.Checked = show ? url.Value.allowMultiInstance : false;
+            comboBoxUrlType.SelectedIndex = show ? url.Value.urlType : 0;
 
             EnableDetail();
         }
@@ -426,6 +435,7 @@ namespace BeatificaBytes.Synology.Mods
                 textBoxTitle.Enabled = false;
                 textBoxUrl.Enabled = false;
                 checkBoxAllUsers.Enabled = false;
+                checkBoxMultiInstance.Enabled = false;
                 listViewUrls.Enabled = !false;
                 buttonAdd.Enabled = false;
                 buttonEdit.Enabled = false;
@@ -433,6 +443,7 @@ namespace BeatificaBytes.Synology.Mods
                 buttonCancel.Enabled = false;
                 buttonDelete.Enabled = false;
                 buttonPackage.Enabled = false;
+                comboBoxUrlType.Enabled = false;
             }
             else
             {
@@ -442,9 +453,11 @@ namespace BeatificaBytes.Synology.Mods
 
                 textBoxDesc.Enabled = enable;
                 textBoxTitle.Enabled = enable;
-                textBoxUrl.Enabled = enable;
                 checkBoxAllUsers.Enabled = enable;
+                checkBoxMultiInstance.Enabled = enable;
                 listViewUrls.Enabled = !enable;
+                comboBoxUrlType.Enabled = enable;
+                textBoxUrl.Enabled = enable && comboBoxUrlType.SelectedIndex == 0;
 
                 switch (state)
                 {
@@ -491,52 +504,74 @@ namespace BeatificaBytes.Synology.Mods
 
         private KeyValuePair<string, AppsData> GetDetail()
         {
+            bool multiInstance = checkBoxMultiInstance.Checked;
             var allUsers = checkBoxAllUsers.Checked;
             var title = textBoxTitle.Text.Trim();
             var desc = textBoxDesc.Text.Trim();
 
-            string protocol;
+            string protocol = WebProtocol;
             int port = WebPort;
 
             var url = textBoxUrl.Text.Trim();
-
-            if (url.StartsWith(":"))
-            {
-                var portMatch = getPort.Match(url);
-                if (portMatch.Success)
-                {
-                    var value = portMatch.Groups[1].Value;
-                    url = url.Substring(value.Length + 1);
-                    port = int.Parse(value);
-                }
-            }
-
-            Uri uri;
-            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
-            {
-                if (uri.IsAbsoluteUri)
-                {
-                    protocol = uri.Scheme;
-                    port = uri.Port;
-                }
-                else
-                {
-                    protocol = WebProtocol;
-                    url = uri.OriginalString;
-                    if (!url.StartsWith("/"))
-                        url = string.Format("/{0}", url);
-                }
-            }
-            else
-            {
-                protocol = WebProtocol;
-                port = WebPort;
-                if (!url.StartsWith("/"))
-                    url = string.Format("/{0}", url);
-            }
-
             var key = string.Format("be.beatificabytes.{0}", title.Replace(" ", ""));
+            string actualUrl = null;
 
+
+            var urlType = comboBoxUrlType.SelectedIndex;
+            switch (urlType)
+            {
+                case 0://URL
+                    if (url.StartsWith(":"))
+                    {
+                        var portMatch = getPort.Match(url);
+                        if (portMatch.Success)
+                        {
+                            var value = portMatch.Groups[1].Value;
+                            url = url.Substring(value.Length + 1);
+                            port = int.Parse(value);
+                        }
+                    }
+
+                    Uri uri;
+                    if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+                    {
+                        if (uri.IsAbsoluteUri)
+                        {
+                            protocol = uri.Scheme;
+                            port = uri.Port;
+                        }
+                        else
+                        {
+                            protocol = WebProtocol;
+                            url = uri.OriginalString;
+                            if (!url.StartsWith("/"))
+                                url = string.Format("/{0}", url);
+                        }
+                    }
+                    else
+                    {
+                        protocol = WebProtocol;
+                        port = WebPort;
+                        if (!url.StartsWith("/"))
+                            url = string.Format("/{0}", url);
+                    }
+                    break;
+                case 1: // Script
+                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], title);
+                    if (url != actualUrl)
+                    {
+                        script = url;
+                        url = actualUrl;
+                    }
+                    break;
+                case 2: // WebApp
+                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], title, url);
+                    if (webAppIndex != null && webAppFolder != null)
+                    {
+                        url = actualUrl;
+                    }
+                    break;
+            }
             var appsData = new AppsData()
             {
                 allUsers = allUsers,
@@ -544,7 +579,11 @@ namespace BeatificaBytes.Synology.Mods
                 desc = desc,
                 protocol = protocol,
                 url = url,
-                port = port
+                port = port,
+                type = urlType == 0 ? "url" : "legacy",
+                urlType = urlType,
+                appWindow = key,
+                allowMultiInstance = multiInstance
             };
 
             title = CleanUpText(title);
@@ -588,20 +627,172 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (Validate(candidate.Value))
                 {
+                    var answer = DialogResult.Yes;
+
                     if (current.Key != null)
                     {
                         list.urls.Remove(current.Key);
                         DeletePictures(current.Value.icon);
                     }
+
+                    //Clean Up a WebApp previously defined if replaced by a Script or an Url
+                    if (current.Value.urlType == 2 && candidate.Value.urlType != 2)
+                    {
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+                            DeleteDirectory(targetWebAppFolder);
+                    }
+
+                    //Clean Up a Script previously defined if replaced by a WebApp or an Url
+                    if (current.Value.urlType == 1 && candidate.Value.urlType != 1)
+                    {
+                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        if (File.Exists(targetScript))
+                            File.Delete(targetScript);
+                    }
+
+                    //Rename a Script
+                    if (current.Value.urlType == 1 && candidate.Value.urlType == 1 && current.Value.title != candidate.Value.title)
+                    {
+                        var existingScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        if (File.Exists(existingScript))
+                        {
+                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", candidate.Value.title + ".php");
+                            if (File.Exists(targetScript))
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a Script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                if (answer == DialogResult.Yes)
+                                {
+                                    File.Delete(targetScript);
+                                }
+                            }
+                            if (answer == DialogResult.Yes)
+                            {
+                                File.Move(existingScript, targetScript);
+                            }
+                        }
+                    }
+
+                    //Rename a WebApp 
+                    if (current.Value.urlType == 2 && candidate.Value.urlType == 2 && current.Value.title != candidate.Value.title)
+                    {
+                        var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        if (Directory.Exists(existingWebAppFolder))
+                        {
+                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", candidate.Value.title);
+                            if (Directory.Exists(targetWebAppFolder))
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                if (answer == DialogResult.Yes)
+                                {
+                                    DeleteDirectory(targetWebAppFolder);
+                                }
+                            }
+                            if (answer == DialogResult.Yes)
+                            {
+                                Directory.Move(existingWebAppFolder, targetWebAppFolder);
+                            }
+                        }
+                    }
+
                     current = candidate;
                     SavePictures(candidate.Value.icon);
+
+                    switch (current.Value.urlType)
+                    {
+                        case 0: //Single URL
+                            break;
+                        case 1: //Script
+                            CreateScript(current);
+                            break;
+                        case 2: // WebApp
+                            CreateWebApp(current);
+                            break;
+                    }
 
                     list.urls.Add(current.Key, current.Value);
                     BindData(list);
                     DisplayCurrent();
 
                     PersistUrlsConfig();
+
+                    webAppIndex = null;
+                    webAppFolder = null;
                 }
+            }
+        }
+
+        private void CreateWebApp(KeyValuePair<string, AppsData> current)
+        {
+            if (webAppIndex != null && webAppFolder != null)
+            {
+                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+
+                if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+                {
+                    DeleteDirectory(targetWebAppFolder);
+                }
+
+                copyDirectory(webAppFolder, targetWebAppFolder);
+            }
+        }
+
+        private void copyDirectory(string strSource, string strDestination)
+        {
+            if (!Directory.Exists(strDestination))
+            {
+                Directory.CreateDirectory(strDestination);
+            }
+
+            DirectoryInfo dirInfo = new DirectoryInfo(strSource);
+            FileInfo[] files = dirInfo.GetFiles();
+            foreach (FileInfo tempfile in files)
+            {
+                tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
+            }
+
+            DirectoryInfo[] directories = dirInfo.GetDirectories();
+            foreach (DirectoryInfo tempdir in directories)
+            {
+                copyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+            }
+        }
+
+        private void CreateScript(KeyValuePair<string, AppsData> current)
+        {
+            if (script != null)
+            {
+                var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+
+                if (File.Exists(targetScript))
+                {
+                    File.Delete(targetScript);
+                }
+
+                using (var text = File.CreateText(targetScript))
+                {
+                    text.Write("<?php\n");
+                    text.Write(string.Format( "$output = shell_exec('{0}');\n", script));
+                    text.Write("echo \"<pre>$output</pre>\";\n");
+                    text.Write("?>");
+                    text.Close();
+                }
+
+                //var text = new StringBuilder();
+                //text.Append("<?php\n");
+                //text.AppendFormat("$output = shell_exec('{0}');\n", script);
+                //text.Append("echo \"<pre>$output</pre>\";\n");
+                //text.Append("?>");
+                
+                //Encoding ANSI = Encoding.GetEncoding(1252);
+                //byte[] utf8Bytes = Encoding.UTF8.GetBytes(text.ToString());
+                //byte[] ansiBytes = Encoding.Convert(Encoding.UTF8, ANSI, utf8Bytes);
+
+                //using (StreamWriter sw = new StreamWriter(targetScript, false, ANSI))
+                //{
+                //    sw.Write(ANSI.GetString(ansiBytes).ToString());
+                //}
+                script = null;
             }
         }
 
@@ -708,10 +899,38 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (current.Key != null)
             {
-                var answer = MessageBox.Show(this, string.Format("Do you really want to delete the Url '{0}' and related icons?", current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                var urlType = GetUrlType(current.Value.urlType);
+
+                var answer = MessageBox.Show(this, string.Format("Do you really want to delete the {0} '{1}' and related icons?", urlType, current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (answer == DialogResult.Yes)
                 {
                     DeletePictures(list.urls[current.Key].icon);
+
+                    if (current.Value.urlType == 3)
+                    {
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        if (Directory.Exists(targetWebAppFolder))
+                        {
+                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a WebApp named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (answer == DialogResult.Yes)
+                            {
+                                DeleteDirectory(targetWebAppFolder);
+                            }
+                        }
+                    }
+                    if (current.Value.urlType == 2)
+                    {
+                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        if (File.Exists(targetScript))
+                        {
+                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a script named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (answer == DialogResult.Yes)
+                            {
+                                File.Delete(targetScript);
+                            }
+                        }
+                    }
+
                     list.urls.Remove(current.Key);
 
                     current = new KeyValuePair<string, AppsData>(null, null);
@@ -732,9 +951,6 @@ namespace BeatificaBytes.Synology.Mods
                 string file = openFileDialog4Mods.FileName;
                 LoadPictureBox(pictureBoxPkg_72, file, true);
                 LoadPictureBox(pictureBoxPkg_256, file, true);
-
-                IncrementVersion();
-
                 Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
                 Properties.Settings.Default.Save();
             }
@@ -832,7 +1048,9 @@ namespace BeatificaBytes.Synology.Mods
                     InitialConfiguration();
                     InitData();
                     LoadPackageInfo();
-                    Display(new KeyValuePair<string, AppsData>(null, null));
+                    BindData(list);
+                    DisplayCurrent();
+                    //Display(new KeyValuePair<string, AppsData>(null, null));
                 }
             }
         }
@@ -966,7 +1184,6 @@ namespace BeatificaBytes.Synology.Mods
             if (validData)
             {
                 ChangePicturePackage(imageDragDropPath);
-                IncrementVersion();
             }
         }
         private bool GetFilename(out string filename, DragEventArgs e)
@@ -1042,6 +1259,7 @@ namespace BeatificaBytes.Synology.Mods
             try
             {
                 Directory.Delete(path, true);
+                while (Directory.Exists(path)) { }
             }
             catch (IOException)
             {
@@ -1168,14 +1386,23 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxTitle, ref e))
             {
-                foreach (var url in list.urls.Values)
+                if (textBoxTitle.Text.Equals("images", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (url.title.Equals(textBoxTitle.Text, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                    e.Cancel = true;
+                    textBoxTitle.Select(0, textBoxTitle.Text.Length);
+                    errorProvider.SetError(textBoxTitle, "'images' may not be used as a title");
+                }
+                else
+                {
+                    foreach (var url in list.urls.Values)
                     {
-                        e.Cancel = true;
-                        textBoxTitle.Select(0, textBoxTitle.Text.Length);
-                        errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
-                        break;
+                        if (url.title.Equals(textBoxTitle.Text, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                        {
+                            e.Cancel = true;
+                            textBoxTitle.Select(0, textBoxTitle.Text.Length);
+                            errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
+                            break;
+                        }
                     }
                 }
             }
@@ -1218,6 +1445,173 @@ namespace BeatificaBytes.Synology.Mods
                 e.Cancel = true;
                 textBox.Select(0, textBox.Text.Length);
                 errorProvider.SetError(textBox, "You may not use double quotes in this textbox.");
+            }
+        }
+
+        private void comboBoxUrlType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxUrlType.Focused)
+            {
+                var answer = DialogResult.Yes;
+
+                if (current.Value.urlType != 0 && (current.Value.urlType != comboBoxUrlType.SelectedIndex))
+                {
+                    var from = GetUrlType(current.Value.urlType);
+                    var to = GetUrlType(comboBoxUrlType.SelectedIndex);
+                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' currently contains a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", info["package"], from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                }
+
+                if (answer == DialogResult.No)
+                {
+                    textBoxTitle.Focus();
+                    comboBoxUrlType.SelectedIndex = current.Value.urlType;
+                }
+                else
+                {
+                    textBoxUrl.Enabled = (comboBoxUrlType.SelectedIndex == 0 || comboBoxUrlType.SelectedIndex == 1);
+                    switch (comboBoxUrlType.SelectedIndex)
+                    {
+                        case 0: // Url
+                            textBoxUrl.Text = "";
+                            textBoxUrl.Focus();
+                            break;
+                        case 1: // Script
+                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+
+                            if (File.Exists(targetScript))
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            }
+                            if (answer == DialogResult.Yes)
+                            {
+                                textBoxUrl.Enabled = true;
+                                textBoxUrl.Text = "";
+                                textBoxUrl.Focus();
+                            }
+                            else
+                            {
+                                textBoxTitle.Focus();
+                                comboBoxUrlType.SelectedIndex = current.Value.urlType;
+                            }
+                            break;
+                        case 2: // WebApp
+                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", textBoxTitle.Text);
+                            if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            }
+                            if (answer == DialogResult.Yes)
+                            {
+
+                                webpageBrowserDialog4Mods.Description = "Pick the folder containing the sources of your WebApp.";
+
+                                DialogResult result = webpageBrowserDialog4Mods.ShowDialog(this);
+                                if (result == DialogResult.OK)
+                                {
+                                    openFileDialog4Mods.Title = "Pick the index page.";
+                                    openFileDialog4Mods.InitialDirectory = webpageBrowserDialog4Mods.SelectedPath;
+                                    openFileDialog4Mods.Filter = "html (*.html)|*.html|php (*.php)|*.php";
+                                    openFileDialog4Mods.FilterIndex = 2;
+                                    openFileDialog4Mods.FileName = null;
+                                    var files = Directory.GetFiles(webpageBrowserDialog4Mods.SelectedPath).Select(path => Path.GetFileName(path)).ToArray();
+                                    openFileDialog4Mods.FileName = FindFileIndex(files, "index.php") ?? FindFileIndex(files, "index.html") ?? FindFileIndex(files, "default.php") ?? FindFileIndex(files, "default.html") ?? null;
+
+                                    result = openFileDialog4Mods.ShowDialog(this);
+                                    if (result == DialogResult.OK)
+                                    {
+                                        webAppIndex = openFileDialog4Mods.FileName;
+                                        webAppFolder = webpageBrowserDialog4Mods.SelectedPath;
+
+                                        if (!webAppIndex.StartsWith(webAppFolder))
+                                        {
+                                            MessageBox.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            webAppFolder = null;
+                                            webAppIndex = null;
+                                            comboBoxUrlType.SelectedIndex = 0;
+                                        }
+                                        else
+                                        {
+                                            textBoxUrl.Text = webAppIndex.Remove(0, webAppFolder.Length + 1);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        textBoxTitle.Focus();
+                                        comboBoxUrlType.SelectedIndex = current.Value.urlType;
+                                    }
+                                }
+                                else
+                                {
+                                    textBoxTitle.Focus();
+                                    comboBoxUrlType.SelectedIndex = current.Value.urlType;
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private string GetUrlType(int type)
+        {
+            string typeName = null;
+            switch (type)
+            {
+                case 0: // Url
+                    typeName = "Url";
+                    break;
+                case 1: // Script
+                    typeName = "Script";
+                    break;
+                case 2: // WebApp
+                    typeName = "WebApp";
+                    break;
+            }
+            return typeName;
+        }
+
+        private string FindFileIndex(string[] files, string filename)
+        {
+            string file = null;
+            var index = Array.FindIndex(files, p => p.Equals(filename, StringComparison.CurrentCultureIgnoreCase));
+            if (index >= 0)
+            {
+                file = files[index];
+            }
+            return file;
+        }
+
+        private void textBoxPackage_Leave(object sender, EventArgs e)
+        {
+            var oldName = info["package"];
+            var newName = textBoxPackage.Text;
+            if (newName != oldName)
+            {
+                oldName = string.Format("/webman/3rdparty/{0}", oldName);
+                newName = string.Format("/webman/3rdparty/{0}", newName);
+
+                foreach (var url in list.urls)
+                {
+                    if (url.Value.url.StartsWith(oldName))
+                    {
+                        url.Value.url = url.Value.url.Replace(oldName, newName);
+                    }
+                }
+                BindData(list);
+                info["package"] = newName;
+            }
+        }
+
+        private void textBoxTitle_Leave(object sender, EventArgs e)
+        {
+            var oldName = current.Value.title;
+            var newName = textBoxTitle.Text;
+            if (newName != oldName)
+            {
+                oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName );
+                newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
+
+               textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
             }
         }
     }

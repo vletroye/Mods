@@ -88,6 +88,9 @@
     </Compile>
     <Content Include="Preferences.png" />
     <Content Include="Resources\Mods.ico" />
+    <Content Include="Resources\Newtonsoft.Json.dll" />
+    <Content Include="Resources\Newtonsoft.Json.pdb" />
+    <Content Include="Resources\Newtonsoft.Json.xml" />
     <Content Include="Resources\Pack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
