@@ -36,7 +36,6 @@
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
             this.textBoxDesc = new System.Windows.Forms.TextBox();
-            this.labelUrl = new System.Windows.Forms.Label();
             this.textBoxUrl = new System.Windows.Forms.TextBox();
             this.checkBoxAllUsers = new System.Windows.Forms.CheckBox();
             this.buttonAdd = new System.Windows.Forms.Button();
@@ -65,6 +64,7 @@
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
+            this.webpageBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
             this.pictureBoxSettings = new System.Windows.Forms.PictureBox();
             this.buttonReset = new System.Windows.Forms.Button();
             this.labelMaintainerUrl = new System.Windows.Forms.Label();
@@ -73,12 +73,14 @@
             this.labelDisplay = new System.Windows.Forms.Label();
             this.labelMaintainer = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBoxURL = new System.Windows.Forms.GroupBox();
+            this.comboBoxUrlType = new System.Windows.Forms.ComboBox();
             this.checkBoxSize = new System.Windows.Forms.CheckBox();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -128,6 +130,7 @@
             this.textBoxTitle.Size = new System.Drawing.Size(128, 20);
             this.textBoxTitle.TabIndex = 12;
             this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the URL. It will to be displayed on DSM.");
+            this.textBoxTitle.Leave += new System.EventHandler(this.textBoxTitle_Leave);
             this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
             this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
             // 
@@ -162,22 +165,12 @@
             this.textBoxDesc.TabIndex = 13;
             this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
             // 
-            // labelUrl
-            // 
-            this.labelUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelUrl.AutoSize = true;
-            this.labelUrl.Location = new System.Drawing.Point(49, 449);
-            this.labelUrl.Name = "labelUrl";
-            this.labelUrl.Size = new System.Drawing.Size(23, 13);
-            this.labelUrl.TabIndex = 7;
-            this.labelUrl.Text = "Url:";
-            // 
             // textBoxUrl
             // 
             this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBoxUrl.Location = new System.Drawing.Point(77, 446);
             this.textBoxUrl.Name = "textBoxUrl";
-            this.textBoxUrl.Size = new System.Drawing.Size(705, 20);
+            this.textBoxUrl.Size = new System.Drawing.Size(704, 20);
             this.textBoxUrl.TabIndex = 14;
             this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM.");
             this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxUrl_Validating);
@@ -187,7 +180,7 @@
             // 
             this.checkBoxAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxAllUsers.AutoSize = true;
-            this.checkBoxAllUsers.Location = new System.Drawing.Point(694, 353);
+            this.checkBoxAllUsers.Location = new System.Drawing.Point(313, 155);
             this.checkBoxAllUsers.Name = "checkBoxAllUsers";
             this.checkBoxAllUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxAllUsers.Size = new System.Drawing.Size(88, 17);
@@ -422,6 +415,7 @@
             this.textBoxPackage.TabIndex = 1;
             this.textBoxPackage.Tag = "PKGpackage";
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package.");
+            this.textBoxPackage.Leave += new System.EventHandler(this.textBoxPackage_Leave);
             this.textBoxPackage.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPackage_Validating);
             this.textBoxPackage.Validated += new System.EventHandler(this.textBoxPackage_Validated);
             // 
@@ -561,16 +555,28 @@
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(451, 23);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.TabIndex = 52;
+            this.label1.Text = "Package Icons:";
+            // 
             // groupBoxURL
             // 
             this.groupBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxURL.Controls.Add(this.checkBoxMultiInstance);
+            this.groupBoxURL.Controls.Add(this.comboBoxUrlType);
             this.groupBoxURL.Controls.Add(this.checkBoxSize);
             this.groupBoxURL.Controls.Add(this.buttonSave);
             this.groupBoxURL.Controls.Add(this.buttonCancel);
             this.groupBoxURL.Controls.Add(this.buttonDelete);
             this.groupBoxURL.Controls.Add(this.buttonEdit);
+            this.groupBoxURL.Controls.Add(this.checkBoxAllUsers);
             this.groupBoxURL.Location = new System.Drawing.Point(2, 200);
             this.groupBoxURL.Name = "groupBoxURL";
             this.groupBoxURL.Size = new System.Drawing.Size(801, 440);
@@ -578,13 +584,26 @@
             this.groupBoxURL.TabStop = false;
             this.groupBoxURL.Text = "URL INFORMATION";
             // 
+            // comboBoxUrlType
+            // 
+            this.comboBoxUrlType.FormattingEnabled = true;
+            this.comboBoxUrlType.Items.AddRange(new object[] {
+            "Url",
+            "Script",
+            "WebApp"});
+            this.comboBoxUrlType.Location = new System.Drawing.Point(5, 246);
+            this.comboBoxUrlType.Name = "comboBoxUrlType";
+            this.comboBoxUrlType.Size = new System.Drawing.Size(65, 21);
+            this.comboBoxUrlType.TabIndex = 17;
+            this.comboBoxUrlType.SelectedIndexChanged += new System.EventHandler(this.comboBoxUrlType_SelectedIndexChanged);
+            // 
             // checkBoxSize
             // 
             this.checkBoxSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxSize.AutoSize = true;
             this.checkBoxSize.Checked = true;
             this.checkBoxSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSize.Location = new System.Drawing.Point(517, 153);
+            this.checkBoxSize.Location = new System.Drawing.Point(615, 155);
             this.checkBoxSize.Name = "checkBoxSize";
             this.checkBoxSize.Size = new System.Drawing.Size(169, 17);
             this.checkBoxSize.TabIndex = 0;
@@ -600,15 +619,6 @@
             this.labelVersion.TabIndex = 49;
             this.labelVersion.Text = "Version:";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(451, 23);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
-            this.label1.TabIndex = 52;
-            this.label1.Text = "Package Icons:";
-            // 
             // labelDSMAppName
             // 
             this.labelDSMAppName.AutoSize = true;
@@ -621,6 +631,20 @@
             // errorProvider
             // 
             this.errorProvider.ContainerControl = this;
+            // 
+            // checkBoxMultiInstance
+            // 
+            this.checkBoxMultiInstance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxMultiInstance.AutoSize = true;
+            this.checkBoxMultiInstance.Checked = true;
+            this.checkBoxMultiInstance.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMultiInstance.Location = new System.Drawing.Point(205, 155);
+            this.checkBoxMultiInstance.Name = "checkBoxMultiInstance";
+            this.checkBoxMultiInstance.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxMultiInstance.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxMultiInstance.TabIndex = 18;
+            this.checkBoxMultiInstance.Text = ":Multi Instance";
+            this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -652,8 +676,6 @@
             this.Controls.Add(this.pictureBox_24);
             this.Controls.Add(this.pictureBox_16);
             this.Controls.Add(this.buttonAdd);
-            this.Controls.Add(this.checkBoxAllUsers);
-            this.Controls.Add(this.labelUrl);
             this.Controls.Add(this.textBoxUrl);
             this.Controls.Add(this.labelDesc);
             this.Controls.Add(this.textBoxDesc);
@@ -697,7 +719,6 @@
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.Label labelDesc;
         private System.Windows.Forms.TextBox textBoxDesc;
-        private System.Windows.Forms.Label labelUrl;
         private System.Windows.Forms.TextBox textBoxUrl;
         private System.Windows.Forms.CheckBox checkBoxAllUsers;
         private System.Windows.Forms.Button buttonAdd;
@@ -718,6 +739,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog4Mods;
         private System.Windows.Forms.PictureBox pictureBoxSettings;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog4Mods;
+        private System.Windows.Forms.FolderBrowserDialog webpageBrowserDialog4Mods;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.PictureBox pictureBoxPkg_256;
         private System.Windows.Forms.PictureBox pictureBoxPkg_72;
@@ -740,6 +762,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelDSMAppName;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.ComboBox comboBoxUrlType;
+        private System.Windows.Forms.CheckBox checkBoxMultiInstance;
     }
 }
 
