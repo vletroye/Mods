@@ -104,7 +104,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             pictureBoxes = new Dictionary<string, PictureBox>();
 
-            foreach (var control in this.Controls)
+            foreach (var control in groupBoxURL.Controls)
             {
                 var pictureBox = control as PictureBox;
                 if (pictureBox != null && pictureBox.Tag != null && pictureBox.Tag.ToString().StartsWith("URL"))
@@ -557,7 +557,8 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     break;
                 case 1: // Script
-                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], title);
+                    var cleanedScript = CleanUpText(title);
+                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedScript);
                     if (url != actualUrl)
                     {
                         script = url;
@@ -565,7 +566,8 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     break;
                 case 2: // WebApp
-                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], title, url);
+                    var cleanedWebApp = CleanUpText(title);
+                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url);
                     if (webAppIndex != null && webAppFolder != null)
                     {
                         url = actualUrl;
@@ -593,12 +595,16 @@ namespace BeatificaBytes.Synology.Mods
 
         private static string CleanUpText(string text)
         {
-            var icon = cleanChar.Replace(text, "_");
-            while (text != icon)
+            if (!string.IsNullOrEmpty(text))
             {
-                text = icon.Trim(new[] { '_' });
-                icon = text.Replace("__", "_");
+                var icon = cleanChar.Replace(text, "_");
+                while (text != icon)
+                {
+                    text = icon.Trim(new[] { '_' });
+                    icon = text.Replace("__", "_");
+                }
             }
+
             return text;
         }
 
@@ -635,10 +641,13 @@ namespace BeatificaBytes.Synology.Mods
                         DeletePictures(current.Value.icon);
                     }
 
+                    var cleanedCurrent = CleanUpText(current.Value.title);
+                    var cleanedCandidate = CleanUpText(candidate.Value.title);
+
                     //Clean Up a WebApp previously defined if replaced by a Script or an Url
                     if (current.Value.urlType == 2 && candidate.Value.urlType != 2)
                     {
-                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
                         if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                             DeleteDirectory(targetWebAppFolder);
                     }
@@ -646,18 +655,18 @@ namespace BeatificaBytes.Synology.Mods
                     //Clean Up a Script previously defined if replaced by a WebApp or an Url
                     if (current.Value.urlType == 1 && candidate.Value.urlType != 1)
                     {
-                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
                         if (File.Exists(targetScript))
                             File.Delete(targetScript);
                     }
 
                     //Rename a Script
-                    if (current.Value.urlType == 1 && candidate.Value.urlType == 1 && current.Value.title != candidate.Value.title)
+                    if (current.Value.urlType == 1 && candidate.Value.urlType == 1 && cleanedCurrent != cleanedCandidate)
                     {
-                        var existingScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        var existingScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
                         if (File.Exists(existingScript))
                         {
-                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", candidate.Value.title + ".php");
+                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate + ".php");
                             if (File.Exists(targetScript))
                             {
                                 answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a Script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -674,12 +683,12 @@ namespace BeatificaBytes.Synology.Mods
                     }
 
                     //Rename a WebApp 
-                    if (current.Value.urlType == 2 && candidate.Value.urlType == 2 && current.Value.title != candidate.Value.title)
+                    if (current.Value.urlType == 2 && candidate.Value.urlType == 2 && cleanedCurrent != cleanedCandidate)
                     {
-                        var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
                         if (Directory.Exists(existingWebAppFolder))
                         {
-                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", candidate.Value.title);
+                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
                             if (Directory.Exists(targetWebAppFolder))
                             {
                                 answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -726,7 +735,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (webAppIndex != null && webAppFolder != null)
             {
-                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                var cleanedCurrent = CleanUpText(current.Value.title);
+                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
 
                 if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                 {
@@ -762,7 +772,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (script != null)
             {
-                var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                var cleanedCurrent = CleanUpText(current.Value.title);
+                var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
 
                 if (File.Exists(targetScript))
                 {
@@ -772,26 +783,11 @@ namespace BeatificaBytes.Synology.Mods
                 using (var text = File.CreateText(targetScript))
                 {
                     text.Write("<?php\n");
-                    text.Write(string.Format( "$output = shell_exec('{0}');\n", script));
+                    text.Write(string.Format("$output = shell_exec('{0}');\n", script));
                     text.Write("echo \"<pre>$output</pre>\";\n");
                     text.Write("?>");
                     text.Close();
                 }
-
-                //var text = new StringBuilder();
-                //text.Append("<?php\n");
-                //text.AppendFormat("$output = shell_exec('{0}');\n", script);
-                //text.Append("echo \"<pre>$output</pre>\";\n");
-                //text.Append("?>");
-                
-                //Encoding ANSI = Encoding.GetEncoding(1252);
-                //byte[] utf8Bytes = Encoding.UTF8.GetBytes(text.ToString());
-                //byte[] ansiBytes = Encoding.Convert(Encoding.UTF8, ANSI, utf8Bytes);
-
-                //using (StreamWriter sw = new StreamWriter(targetScript, false, ANSI))
-                //{
-                //    sw.Write(ANSI.GetString(ansiBytes).ToString());
-                //}
                 script = null;
             }
         }
@@ -824,25 +820,6 @@ namespace BeatificaBytes.Synology.Mods
         private bool Validate(AppsData candidate)
         {
             var message = new StringBuilder();
-
-            //if (string.IsNullOrEmpty(candidate.title))
-            //{
-            //    message.AppendLine("The title may not be empty.");
-            //}
-            //foreach (var url in list.url.Values)
-            //{
-            //    if (url.title.Equals(candidate.title, StringComparison.InvariantCultureIgnoreCase) && candidate.guid != url.guid)
-            //    {
-            //        message.AppendLine("The title must be unique in your package.");
-            //        break;
-            //    }
-            //}
-
-            //if (string.IsNullOrEmpty(candidate.url))
-            //{
-            //    message.AppendLine("The Url may not be empty.");
-            //}
-
             var error = message.ToString();
             var valid = error.Length > 0;
             if (valid)
@@ -905,10 +882,11 @@ namespace BeatificaBytes.Synology.Mods
                 if (answer == DialogResult.Yes)
                 {
                     DeletePictures(list.urls[current.Key].icon);
+                    var cleanedCurrent = CleanUpText(current.Value.title);
 
                     if (current.Value.urlType == 3)
                     {
-                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", current.Value.title);
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
                         if (Directory.Exists(targetWebAppFolder))
                         {
                             answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a WebApp named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -920,7 +898,7 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     if (current.Value.urlType == 2)
                     {
-                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
                         if (File.Exists(targetScript))
                         {
                             answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a script named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1081,8 +1059,6 @@ namespace BeatificaBytes.Synology.Mods
 
             LoadPictureBox(pictureBoxPkg_72, Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"), true);
             LoadPictureBox(pictureBoxPkg_256, Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"), true);
-
-
         }
 
         private void InitialConfiguration()
@@ -1232,6 +1208,8 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     try
                     {
+                        DisplayNone();
+
                         if (Directory.Exists(PackageRootPath))
                             DeleteDirectory(PackageRootPath);
 
@@ -1281,7 +1259,7 @@ namespace BeatificaBytes.Synology.Mods
             if (!CheckEmpty(textBoxPackage, ref e))
             {
                 var name = textBoxPackage.Text;
-                var cleaned = CleanUpText(textBoxPackage.Text).Replace(" ", "");
+                var cleaned = CleanUpText(textBoxPackage.Text);
                 if (name != cleaned)
                 {
                     e.Cancel = true;
@@ -1294,6 +1272,23 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxPackage_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxPackage, "");
+            var newName = textBoxPackage.Text;
+            var oldName = info.Count > 0 ? info["package"] : newName;
+            if (newName != oldName)
+            {
+                oldName = string.Format("/webman/3rdparty/{0}", oldName);
+                newName = string.Format("/webman/3rdparty/{0}", newName);
+
+                foreach (var url in list.urls)
+                {
+                    if (url.Value.url.StartsWith(oldName))
+                    {
+                        url.Value.url = url.Value.url.Replace(oldName, newName);
+                    }
+                }
+                BindData(list);
+                info["package"] = newName;
+            }
         }
         private void textBoxDisplay_Validating(object sender, CancelEventArgs e)
         {
@@ -1369,7 +1364,7 @@ namespace BeatificaBytes.Synology.Mods
             if (!CheckEmpty(textBoxDsmAppName, ref e))
             {
                 var name = textBoxPackage.Text.Replace(".", "");
-                var cleaned = CleanUpText(textBoxPackage.Text).Replace(" ", "");
+                var cleaned = CleanUpText(textBoxPackage.Text);
                 if (name != cleaned)
                 {
                     e.Cancel = true;
@@ -1413,6 +1408,15 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxTitle_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxTitle, "");
+            var oldName = CleanUpText(current.Value.title);
+            var newName = CleanUpText(textBoxTitle.Text);
+            if (newName != oldName)
+            {
+                oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName);
+                newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
+
+                textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
+            }
         }
 
         private void textBoxUrl_Validating(object sender, CancelEventArgs e)
@@ -1478,7 +1482,8 @@ namespace BeatificaBytes.Synology.Mods
                             textBoxUrl.Focus();
                             break;
                         case 1: // Script
-                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", current.Value.title + ".php");
+                            var cleanedScriptName = CleanUpText(textBoxTitle.Text);
+                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".php");
 
                             if (File.Exists(targetScript))
                             {
@@ -1497,7 +1502,8 @@ namespace BeatificaBytes.Synology.Mods
                             }
                             break;
                         case 2: // WebApp
-                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", textBoxTitle.Text);
+                            var cleanedWebApp = CleanUpText(textBoxTitle.Text);
+                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedWebApp);
                             if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                             {
                                 answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1581,40 +1587,6 @@ namespace BeatificaBytes.Synology.Mods
                 file = files[index];
             }
             return file;
-        }
-
-        private void textBoxPackage_Leave(object sender, EventArgs e)
-        {
-            var oldName = info["package"];
-            var newName = textBoxPackage.Text;
-            if (newName != oldName)
-            {
-                oldName = string.Format("/webman/3rdparty/{0}", oldName);
-                newName = string.Format("/webman/3rdparty/{0}", newName);
-
-                foreach (var url in list.urls)
-                {
-                    if (url.Value.url.StartsWith(oldName))
-                    {
-                        url.Value.url = url.Value.url.Replace(oldName, newName);
-                    }
-                }
-                BindData(list);
-                info["package"] = newName;
-            }
-        }
-
-        private void textBoxTitle_Leave(object sender, EventArgs e)
-        {
-            var oldName = current.Value.title;
-            var newName = textBoxTitle.Text;
-            if (newName != oldName)
-            {
-                oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName );
-                newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
-
-               textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
-            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
