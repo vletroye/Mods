@@ -131,7 +131,6 @@
             this.textBoxPackage.TabIndex = 1;
             this.textBoxPackage.Tag = "PKGpackage";
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package.");
-            this.textBoxPackage.Leave += new System.EventHandler(this.textBoxPackage_Leave);
             this.textBoxPackage.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPackage_Validating);
             this.textBoxPackage.Validated += new System.EventHandler(this.textBoxPackage_Validated);
             // 
@@ -390,7 +389,6 @@
             this.textBoxTitle.Size = new System.Drawing.Size(128, 20);
             this.textBoxTitle.TabIndex = 4;
             this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the URL. It will to be displayed on DSM.");
-            this.textBoxTitle.Leave += new System.EventHandler(this.textBoxTitle_Leave);
             this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
             this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
             // 
