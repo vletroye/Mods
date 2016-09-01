@@ -177,7 +177,7 @@ namespace BeatificaBytes.Synology.Mods
             IncrementVersion();
 
             //Collect Package Info
-            foreach (var control in this.Controls)
+            foreach (var control in groupBoxPackage.Controls)
             {
                 var textBox = control as TextBox;
                 if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
@@ -1068,7 +1068,7 @@ namespace BeatificaBytes.Synology.Mods
                 info.Add(key, value);
             }
 
-            foreach (var control in this.Controls)
+            foreach (var control in groupBoxPackage.Controls)
             {
                 var textBox = control as TextBox;
                 if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
@@ -1081,6 +1081,8 @@ namespace BeatificaBytes.Synology.Mods
 
             LoadPictureBox(pictureBoxPkg_72, Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"), true);
             LoadPictureBox(pictureBoxPkg_256, Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"), true);
+
+
         }
 
         private void InitialConfiguration()
@@ -1613,6 +1615,11 @@ namespace BeatificaBytes.Synology.Mods
 
                textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            textBoxPackage.Focus();
         }
     }
 }
