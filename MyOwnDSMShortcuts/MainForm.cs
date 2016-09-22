@@ -835,6 +835,14 @@ namespace BeatificaBytes.Synology.Mods
             if (state == State.Add)
                 current = new KeyValuePair<string, AppsData>(null, null);
 
+            foreach(Control ctrl in this.Controls)
+            {
+                if (ctrl != null)
+                {
+                    errorProvider.SetError(ctrl, "");
+                }
+            }
+
             DisplayCurrent();
         }
 
@@ -1272,22 +1280,25 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxPackage_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxPackage, "");
-            var newName = textBoxPackage.Text;
-            var oldName = info.Count > 0 ? info["package"] : newName;
-            if (newName != oldName)
+            if (textBoxPackage.Enabled)
             {
-                oldName = string.Format("/webman/3rdparty/{0}", oldName);
-                newName = string.Format("/webman/3rdparty/{0}", newName);
-
-                foreach (var url in list.urls)
+                var newName = textBoxPackage.Text;
+                var oldName = info.Count > 0 ? info["package"] : newName;
+                if (newName != oldName)
                 {
-                    if (url.Value.url.StartsWith(oldName))
+                    oldName = string.Format("/webman/3rdparty/{0}", oldName);
+                    newName = string.Format("/webman/3rdparty/{0}", newName);
+
+                    foreach (var url in list.urls)
                     {
-                        url.Value.url = url.Value.url.Replace(oldName, newName);
+                        if (url.Value.url.StartsWith(oldName))
+                        {
+                            url.Value.url = url.Value.url.Replace(oldName, newName);
+                        }
                     }
+                    BindData(list);
+                    info["package"] = newName;
                 }
-                BindData(list);
-                info["package"] = newName;
             }
         }
         private void textBoxDisplay_Validating(object sender, CancelEventArgs e)
@@ -1408,14 +1419,17 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxTitle_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxTitle, "");
-            var oldName = CleanUpText(current.Value.title);
-            var newName = CleanUpText(textBoxTitle.Text);
-            if (newName != oldName)
+            if (textBoxTitle.Enabled)
             {
-                oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName);
-                newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
+                var oldName = CleanUpText(current.Value.title);
+                var newName = CleanUpText(textBoxTitle.Text);
+                if (newName != oldName)
+                {
+                    oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName);
+                    newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
 
-                textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
+                    textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
+                }
             }
         }
 
@@ -1433,7 +1447,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private bool CheckEmpty(TextBox textBox, ref CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBox.Text))
+            if (textBox.Enabled && string.IsNullOrEmpty(textBox.Text))
             {
                 textBox.Text = "Enter_A_Value";
                 e.Cancel = true;
