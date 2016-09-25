@@ -52,6 +52,9 @@
             this.pictureBox_96 = new System.Windows.Forms.PictureBox();
             this.pictureBox_128 = new System.Windows.Forms.PictureBox();
             this.pictureBox_256 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxSettings = new System.Windows.Forms.PictureBox();
+            this.buttonPackage = new System.Windows.Forms.Button();
+            this.buttonReset = new System.Windows.Forms.Button();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
             this.webpageBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
@@ -60,11 +63,8 @@
             this.labelMaintainerUrl = new System.Windows.Forms.Label();
             this.labelPackage = new System.Windows.Forms.Label();
             this.labelDisplay = new System.Windows.Forms.Label();
-            this.pictureBoxSettings = new System.Windows.Forms.PictureBox();
             this.labelMaintainer = new System.Windows.Forms.Label();
-            this.buttonPackage = new System.Windows.Forms.Button();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.buttonReset = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
@@ -93,8 +93,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.groupBoxPackage.SuspendLayout();
             this.groupBoxURL.SuspendLayout();
             this.SuspendLayout();
@@ -352,6 +352,45 @@
             this.pictureBox_256.Tag = "URL256";
             this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
             // 
+            // pictureBoxSettings
+            // 
+            this.pictureBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxSettings.Image = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
+            this.pictureBoxSettings.InitialImage = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
+            this.pictureBoxSettings.Location = new System.Drawing.Point(748, 13);
+            this.pictureBoxSettings.Name = "pictureBoxSettings";
+            this.pictureBoxSettings.Size = new System.Drawing.Size(37, 40);
+            this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxSettings.TabIndex = 23;
+            this.pictureBoxSettings.TabStop = false;
+            this.toolTip4Mods.SetToolTip(this.pictureBoxSettings, "Configure MODS\' settings");
+            this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
+            // 
+            // buttonPackage
+            // 
+            this.buttonPackage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPackage.Location = new System.Drawing.Point(713, 161);
+            this.buttonPackage.Name = "buttonPackage";
+            this.buttonPackage.Size = new System.Drawing.Size(72, 23);
+            this.buttonPackage.TabIndex = 9;
+            this.buttonPackage.Text = "Package";
+            this.toolTip4Mods.SetToolTip(this.buttonPackage, "Generate the Package");
+            this.buttonPackage.UseVisualStyleBackColor = true;
+            this.buttonPackage.Click += new System.EventHandler(this.buttonPackage_Click);
+            // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.CausesValidation = false;
+            this.buttonReset.Location = new System.Drawing.Point(713, 137);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(72, 23);
+            this.buttonReset.TabIndex = 8;
+            this.buttonReset.Text = "Reset";
+            this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values");
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -397,20 +436,6 @@
             this.labelDisplay.TabIndex = 35;
             this.labelDisplay.Text = "Display Name:";
             // 
-            // pictureBoxSettings
-            // 
-            this.pictureBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxSettings.Image = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
-            this.pictureBoxSettings.InitialImage = global::BeatificaBytes.Synology.Mods.Properties.Resources.settings;
-            this.pictureBoxSettings.Location = new System.Drawing.Point(748, 13);
-            this.pictureBoxSettings.Name = "pictureBoxSettings";
-            this.pictureBoxSettings.Size = new System.Drawing.Size(37, 40);
-            this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxSettings.TabIndex = 23;
-            this.pictureBoxSettings.TabStop = false;
-            this.toolTip4Mods.SetToolTip(this.pictureBoxSettings, "Configure MODS\' settings");
-            this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
-            // 
             // labelMaintainer
             // 
             this.labelMaintainer.AutoSize = true;
@@ -420,18 +445,6 @@
             this.labelMaintainer.TabIndex = 37;
             this.labelMaintainer.Text = "Maintainer:";
             // 
-            // buttonPackage
-            // 
-            this.buttonPackage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonPackage.Location = new System.Drawing.Point(713, 161);
-            this.buttonPackage.Name = "buttonPackage";
-            this.buttonPackage.Size = new System.Drawing.Size(72, 23);
-            this.buttonPackage.TabIndex = 9;
-            this.buttonPackage.Text = "Package";
-            this.toolTip4Mods.SetToolTip(this.buttonPackage, "Generate the Package");
-            this.buttonPackage.UseVisualStyleBackColor = true;
-            this.buttonPackage.Click += new System.EventHandler(this.buttonPackage_Click);
-            // 
             // labelVersion
             // 
             this.labelVersion.AutoSize = true;
@@ -440,19 +453,6 @@
             this.labelVersion.Size = new System.Drawing.Size(45, 13);
             this.labelVersion.TabIndex = 49;
             this.labelVersion.Text = "Version:";
-            // 
-            // buttonReset
-            // 
-            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.CausesValidation = false;
-            this.buttonReset.Location = new System.Drawing.Point(713, 137);
-            this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(72, 23);
-            this.buttonReset.TabIndex = 8;
-            this.buttonReset.Text = "Reset";
-            this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values");
-            this.buttonReset.UseVisualStyleBackColor = true;
-            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
             // label1
             // 
@@ -689,6 +689,7 @@
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(357, 57);
             this.labelToolTip.TabIndex = 23;
+            this.labelToolTip.UseMnemonic = false;
             // 
             // MainForm
             // 
@@ -714,8 +715,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.groupBoxPackage.ResumeLayout(false);
             this.groupBoxPackage.PerformLayout();
             this.groupBoxURL.ResumeLayout(false);
