@@ -40,6 +40,18 @@
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.textBoxDsmAppName = new System.Windows.Forms.TextBox();
+            this.textBoxUrl = new System.Windows.Forms.TextBox();
+            this.textBoxTitle = new System.Windows.Forms.TextBox();
+            this.textBoxDesc = new System.Windows.Forms.TextBox();
+            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
             this.webpageBrowserDialog4Mods = new System.Windows.Forms.FolderBrowserDialog();
@@ -56,36 +68,22 @@
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
-            this.textBoxUrl = new System.Windows.Forms.TextBox();
             this.listViewUrls = new System.Windows.Forms.ListView();
-            this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.labelTitle = new System.Windows.Forms.Label();
-            this.textBoxDesc = new System.Windows.Forms.TextBox();
             this.labelDesc = new System.Windows.Forms.Label();
             this.buttonAdd = new System.Windows.Forms.Button();
-            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
             this.checkBoxAllUsers = new System.Windows.Forms.CheckBox();
-            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
             this.buttonEdit = new System.Windows.Forms.Button();
-            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
             this.buttonDelete = new System.Windows.Forms.Button();
-            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
             this.buttonSave = new System.Windows.Forms.Button();
-            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
             this.checkBoxSize = new System.Windows.Forms.CheckBox();
-            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
             this.comboBoxUrlType = new System.Windows.Forms.ComboBox();
-            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
             this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
-            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
             this.groupBoxURL = new System.Windows.Forms.GroupBox();
+            this.labelToolTip = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
-            this.groupBoxPackage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).BeginInit();
@@ -95,6 +93,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).BeginInit();
+            this.groupBoxPackage.SuspendLayout();
             this.groupBoxURL.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -208,6 +209,149 @@
             this.textBoxDsmAppName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDsmAppName_Validating);
             this.textBoxDsmAppName.Validated += new System.EventHandler(this.textBoxDsmAppName_Validated);
             // 
+            // textBoxUrl
+            // 
+            this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxUrl.Location = new System.Drawing.Point(73, 246);
+            this.textBoxUrl.Name = "textBoxUrl";
+            this.textBoxUrl.Size = new System.Drawing.Size(704, 20);
+            this.textBoxUrl.TabIndex = 10;
+            this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Select a Type first");
+            this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxUrl_Validating);
+            this.textBoxUrl.Validated += new System.EventHandler(this.textBoxUrl_Validated);
+            // 
+            // textBoxTitle
+            // 
+            this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxTitle.Location = new System.Drawing.Point(74, 153);
+            this.textBoxTitle.Name = "textBoxTitle";
+            this.textBoxTitle.Size = new System.Drawing.Size(128, 20);
+            this.textBoxTitle.TabIndex = 4;
+            this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the URL. It will to be displayed on DSM.");
+            this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
+            this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
+            // 
+            // textBoxDesc
+            // 
+            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxDesc.Location = new System.Drawing.Point(74, 178);
+            this.textBoxDesc.Multiline = true;
+            this.textBoxDesc.Name = "textBoxDesc";
+            this.textBoxDesc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.textBoxDesc.Size = new System.Drawing.Size(705, 60);
+            this.textBoxDesc.TabIndex = 8;
+            this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
+            // 
+            // pictureBox_16
+            // 
+            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_16.Location = new System.Drawing.Point(85, 272);
+            this.pictureBox_16.Name = "pictureBox_16";
+            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
+            this.pictureBox_16.TabIndex = 14;
+            this.pictureBox_16.TabStop = false;
+            this.pictureBox_16.Tag = "URL16";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16");
+            // 
+            // pictureBox_24
+            // 
+            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_24.Location = new System.Drawing.Point(107, 272);
+            this.pictureBox_24.Name = "pictureBox_24";
+            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox_24.TabIndex = 15;
+            this.pictureBox_24.TabStop = false;
+            this.pictureBox_24.Tag = "URL24";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24");
+            // 
+            // pictureBox_32
+            // 
+            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_32.Location = new System.Drawing.Point(137, 272);
+            this.pictureBox_32.Name = "pictureBox_32";
+            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_32.TabIndex = 16;
+            this.pictureBox_32.TabStop = false;
+            this.pictureBox_32.Tag = "URL32";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32");
+            // 
+            // pictureBox_48
+            // 
+            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_48.Location = new System.Drawing.Point(175, 272);
+            this.pictureBox_48.Name = "pictureBox_48";
+            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
+            this.pictureBox_48.TabIndex = 17;
+            this.pictureBox_48.TabStop = false;
+            this.pictureBox_48.Tag = "URL48";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48");
+            // 
+            // pictureBox_64
+            // 
+            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_64.Location = new System.Drawing.Point(229, 272);
+            this.pictureBox_64.Name = "pictureBox_64";
+            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox_64.TabIndex = 18;
+            this.pictureBox_64.TabStop = false;
+            this.pictureBox_64.Tag = "URL64";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64");
+            // 
+            // pictureBox_72
+            // 
+            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_72.Location = new System.Drawing.Point(299, 272);
+            this.pictureBox_72.Name = "pictureBox_72";
+            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
+            this.pictureBox_72.TabIndex = 19;
+            this.pictureBox_72.TabStop = false;
+            this.pictureBox_72.Tag = "URL72";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x72");
+            // 
+            // pictureBox_96
+            // 
+            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_96.Location = new System.Drawing.Point(377, 272);
+            this.pictureBox_96.Name = "pictureBox_96";
+            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
+            this.pictureBox_96.TabIndex = 20;
+            this.pictureBox_96.TabStop = false;
+            this.pictureBox_96.Tag = "URL96";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96");
+            // 
+            // pictureBox_128
+            // 
+            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_128.Location = new System.Drawing.Point(479, 272);
+            this.pictureBox_128.Name = "pictureBox_128";
+            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
+            this.pictureBox_128.TabIndex = 21;
+            this.pictureBox_128.TabStop = false;
+            this.pictureBox_128.Tag = "URL128";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128");
+            // 
+            // pictureBox_256
+            // 
+            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_256.Location = new System.Drawing.Point(613, 272);
+            this.pictureBox_256.Name = "pictureBox_256";
+            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
+            this.pictureBox_256.TabIndex = 22;
+            this.pictureBox_256.TabStop = false;
+            this.pictureBox_256.Tag = "URL256";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -264,6 +408,7 @@
             this.pictureBoxSettings.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxSettings.TabIndex = 23;
             this.pictureBoxSettings.TabStop = false;
+            this.toolTip4Mods.SetToolTip(this.pictureBoxSettings, "Configure MODS\' settings");
             this.pictureBoxSettings.Click += new System.EventHandler(this.pictureBoxSettings_Click);
             // 
             // labelMaintainer
@@ -283,6 +428,7 @@
             this.buttonPackage.Size = new System.Drawing.Size(72, 23);
             this.buttonPackage.TabIndex = 9;
             this.buttonPackage.Text = "Package";
+            this.toolTip4Mods.SetToolTip(this.buttonPackage, "Generate the Package");
             this.buttonPackage.UseVisualStyleBackColor = true;
             this.buttonPackage.Click += new System.EventHandler(this.buttonPackage_Click);
             // 
@@ -304,6 +450,7 @@
             this.buttonReset.Size = new System.Drawing.Size(72, 23);
             this.buttonReset.TabIndex = 8;
             this.buttonReset.Text = "Reset";
+            this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values");
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
@@ -356,18 +503,6 @@
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
-            // textBoxUrl
-            // 
-            this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxUrl.Location = new System.Drawing.Point(73, 246);
-            this.textBoxUrl.Name = "textBoxUrl";
-            this.textBoxUrl.Size = new System.Drawing.Size(704, 20);
-            this.textBoxUrl.TabIndex = 10;
-            this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM.");
-            this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxUrl_Validating);
-            this.textBoxUrl.Validated += new System.EventHandler(this.textBoxUrl_Validated);
-            // 
             // listViewUrls
             // 
             this.listViewUrls.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -381,17 +516,6 @@
             this.listViewUrls.SelectedIndexChanged += new System.EventHandler(this.listViewUrls_SelectedIndexChanged);
             this.listViewUrls.DoubleClick += new System.EventHandler(this.listViewUrls_DoubleClick);
             // 
-            // textBoxTitle
-            // 
-            this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxTitle.Location = new System.Drawing.Point(74, 153);
-            this.textBoxTitle.Name = "textBoxTitle";
-            this.textBoxTitle.Size = new System.Drawing.Size(128, 20);
-            this.textBoxTitle.TabIndex = 4;
-            this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the URL. It will to be displayed on DSM.");
-            this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
-            this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
-            // 
             // labelTitle
             // 
             this.labelTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -401,18 +525,6 @@
             this.labelTitle.Size = new System.Drawing.Size(30, 13);
             this.labelTitle.TabIndex = 3;
             this.labelTitle.Text = "Title:";
-            // 
-            // textBoxDesc
-            // 
-            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDesc.Location = new System.Drawing.Point(74, 178);
-            this.textBoxDesc.Multiline = true;
-            this.textBoxDesc.Name = "textBoxDesc";
-            this.textBoxDesc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxDesc.Size = new System.Drawing.Size(705, 60);
-            this.textBoxDesc.TabIndex = 8;
-            this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
             // 
             // labelDesc
             // 
@@ -435,18 +547,6 @@
             this.buttonAdd.UseVisualStyleBackColor = true;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
-            // pictureBox_16
-            // 
-            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_16.Location = new System.Drawing.Point(85, 272);
-            this.pictureBox_16.Name = "pictureBox_16";
-            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox_16.TabIndex = 14;
-            this.pictureBox_16.TabStop = false;
-            this.pictureBox_16.Tag = "URL16";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16");
-            // 
             // checkBoxAllUsers
             // 
             this.checkBoxAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -459,18 +559,6 @@
             this.checkBoxAllUsers.Text = ":For All Users";
             this.checkBoxAllUsers.UseVisualStyleBackColor = true;
             // 
-            // pictureBox_24
-            // 
-            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_24.Location = new System.Drawing.Point(107, 272);
-            this.pictureBox_24.Name = "pictureBox_24";
-            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox_24.TabIndex = 15;
-            this.pictureBox_24.TabStop = false;
-            this.pictureBox_24.Tag = "URL24";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24");
-            // 
             // buttonEdit
             // 
             this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -482,18 +570,6 @@
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
-            // pictureBox_32
-            // 
-            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_32.Location = new System.Drawing.Point(137, 272);
-            this.pictureBox_32.Name = "pictureBox_32";
-            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_32.TabIndex = 16;
-            this.pictureBox_32.TabStop = false;
-            this.pictureBox_32.Tag = "URL32";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32");
-            // 
             // buttonDelete
             // 
             this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -504,18 +580,6 @@
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
-            // 
-            // pictureBox_48
-            // 
-            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_48.Location = new System.Drawing.Point(175, 272);
-            this.pictureBox_48.Name = "pictureBox_48";
-            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
-            this.pictureBox_48.TabIndex = 17;
-            this.pictureBox_48.TabStop = false;
-            this.pictureBox_48.Tag = "URL48";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48");
             // 
             // buttonCancel
             // 
@@ -529,18 +593,6 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // pictureBox_64
-            // 
-            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_64.Location = new System.Drawing.Point(229, 272);
-            this.pictureBox_64.Name = "pictureBox_64";
-            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox_64.TabIndex = 18;
-            this.pictureBox_64.TabStop = false;
-            this.pictureBox_64.Tag = "URL64";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64");
-            // 
             // buttonSave
             // 
             this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -551,18 +603,6 @@
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
-            // pictureBox_72
-            // 
-            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_72.Location = new System.Drawing.Point(299, 272);
-            this.pictureBox_72.Name = "pictureBox_72";
-            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
-            this.pictureBox_72.TabIndex = 19;
-            this.pictureBox_72.TabStop = false;
-            this.pictureBox_72.Tag = "URL72";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x72");
             // 
             // checkBoxSize
             // 
@@ -576,18 +616,6 @@
             this.checkBoxSize.TabIndex = 7;
             this.checkBoxSize.Text = "Use the same Icon for all sizes";
             this.checkBoxSize.UseVisualStyleBackColor = true;
-            // 
-            // pictureBox_96
-            // 
-            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_96.Location = new System.Drawing.Point(377, 272);
-            this.pictureBox_96.Name = "pictureBox_96";
-            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
-            this.pictureBox_96.TabIndex = 20;
-            this.pictureBox_96.TabStop = false;
-            this.pictureBox_96.Tag = "URL96";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96");
             // 
             // comboBoxUrlType
             // 
@@ -603,18 +631,6 @@
             this.comboBoxUrlType.TabIndex = 9;
             this.comboBoxUrlType.SelectedIndexChanged += new System.EventHandler(this.comboBoxUrlType_SelectedIndexChanged);
             // 
-            // pictureBox_128
-            // 
-            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_128.Location = new System.Drawing.Point(479, 272);
-            this.pictureBox_128.Name = "pictureBox_128";
-            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
-            this.pictureBox_128.TabIndex = 21;
-            this.pictureBox_128.TabStop = false;
-            this.pictureBox_128.Tag = "URL128";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128");
-            // 
             // checkBoxMultiInstance
             // 
             this.checkBoxMultiInstance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -629,23 +645,12 @@
             this.checkBoxMultiInstance.Text = ":Multi Instance";
             this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
             // 
-            // pictureBox_256
-            // 
-            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_256.Location = new System.Drawing.Point(613, 272);
-            this.pictureBox_256.Name = "pictureBox_256";
-            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
-            this.pictureBox_256.TabIndex = 22;
-            this.pictureBox_256.TabStop = false;
-            this.pictureBox_256.Tag = "URL256";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
-            // 
             // groupBoxURL
             // 
             this.groupBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxURL.Controls.Add(this.labelToolTip);
             this.groupBoxURL.Controls.Add(this.pictureBox_256);
             this.groupBoxURL.Controls.Add(this.checkBoxMultiInstance);
             this.groupBoxURL.Controls.Add(this.pictureBox_128);
@@ -677,6 +682,14 @@
             this.groupBoxURL.TabStop = false;
             this.groupBoxURL.Text = "URL INFORMATION";
             // 
+            // labelToolTip
+            // 
+            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelToolTip.Location = new System.Drawing.Point(14, 347);
+            this.labelToolTip.Name = "labelToolTip";
+            this.labelToolTip.Size = new System.Drawing.Size(357, 57);
+            this.labelToolTip.TabIndex = 23;
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -692,10 +705,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
-            this.groupBoxPackage.ResumeLayout(false);
-            this.groupBoxPackage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).EndInit();
@@ -705,6 +714,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSettings)).EndInit();
+            this.groupBoxPackage.ResumeLayout(false);
+            this.groupBoxPackage.PerformLayout();
             this.groupBoxURL.ResumeLayout(false);
             this.groupBoxURL.PerformLayout();
             this.ResumeLayout(false);
@@ -763,6 +776,7 @@
         private System.Windows.Forms.TextBox textBoxTitle;
         private System.Windows.Forms.ListView listViewUrls;
         private System.Windows.Forms.TextBox textBoxUrl;
+        private System.Windows.Forms.Label labelToolTip;
     }
 }
 

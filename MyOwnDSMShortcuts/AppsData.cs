@@ -37,6 +37,7 @@ namespace BeatificaBytes.Synology.Mods
         public int port { get; set; }
         public int urlType { get; set; }
         public string appWindow { get; set; }
-        public bool allowMultiInstance { get; set; }        
+        public bool allowMultiInstance { get; set; }
+        public string urlDetail { get; set; }
     }
 }
