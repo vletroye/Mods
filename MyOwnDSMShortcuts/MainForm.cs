@@ -79,7 +79,24 @@ namespace BeatificaBytes.Synology.Mods
                 DisplayCurrent();
                 LoadPackageInfo();
             }
-
+            foreach (var control in groupBoxURL.Controls)
+            {
+                var item = control as Control;
+                if (item != null)
+                {
+                    item.MouseEnter += new System.EventHandler(this.MainForm_MouseEnter);
+                    item.MouseLeave += new System.EventHandler(this.MainForm_MouseLeave);
+                }
+            }
+            foreach (var control in groupBoxPackage.Controls)
+            {
+                var item = control as Control;
+                if (item != null)
+                {
+                    item.MouseEnter += new System.EventHandler(this.MainForm_MouseEnter);
+                    item.MouseLeave += new System.EventHandler(this.MainForm_MouseLeave);
+                }
+            }
             //Display(new KeyValuePair<string, AppsData>(null, null));
         }
 
@@ -308,7 +325,14 @@ namespace BeatificaBytes.Synology.Mods
             var urlText = show ? url.Value.url : "";
             if (urlText != null && urlText.StartsWith("/") && url.Value.port != WebPort)
             {
-                urlText = string.Format(":{0}{1}", url.Value.port, url.Value.url);
+                if (url.Value.protocol == "https")
+                {
+                    urlText = string.Format("https://:{0}{1}", url.Value.port, url.Value.url);
+                }
+                else
+                {
+                    urlText = string.Format(":{0}{1}", url.Value.port, url.Value.url);
+                }
             }
             var users = show ? url.Value.allUsers : false;
 
@@ -368,7 +392,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                MessageBox.Show(this, string.Format("Missing picture '{0}' ?!", picture));
+                MessageBox.Show(this, string.Format("Picture '{0}' is missing and can therefore not be loaded ?!", picture), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -532,6 +556,11 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
 
+                    if (url.ToLower().StartsWith("https://:") || url.ToLower().StartsWith("http://:"))
+                    {
+                        url = url.Replace("://:", "://0.0.0.0:");
+                    }
+
                     Uri uri;
                     if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
                     {
@@ -539,6 +568,8 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             protocol = uri.Scheme;
                             port = uri.Port;
+                            if (uri.Host == "0.0.0.0")
+                                url = uri.AbsolutePath;
                         }
                         else
                         {
@@ -550,7 +581,6 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     else
                     {
-                        protocol = WebProtocol;
                         port = WebPort;
                         if (!url.StartsWith("/"))
                             url = string.Format("/{0}", url);
@@ -710,6 +740,7 @@ namespace BeatificaBytes.Synology.Mods
                     switch (current.Value.urlType)
                     {
                         case 0: //Single URL
+                            current.Value.urlDetail = "";
                             break;
                         case 1: //Script
                             CreateScript(current);
@@ -743,6 +774,7 @@ namespace BeatificaBytes.Synology.Mods
                     DeleteDirectory(targetWebAppFolder);
                 }
 
+                current.Value.urlDetail = "webAppFolder";
                 copyDirectory(webAppFolder, targetWebAppFolder);
             }
         }
@@ -780,6 +812,7 @@ namespace BeatificaBytes.Synology.Mods
                     File.Delete(targetScript);
                 }
 
+                current.Value.urlDetail = script;
                 using (var text = File.CreateText(targetScript))
                 {
                     text.Write("<?php\n");
@@ -835,7 +868,7 @@ namespace BeatificaBytes.Synology.Mods
             if (state == State.Add)
                 current = new KeyValuePair<string, AppsData>(null, null);
 
-            foreach(Control ctrl in this.Controls)
+            foreach (Control ctrl in this.Controls)
             {
                 if (ctrl != null)
                 {
@@ -980,7 +1013,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var response = DialogResult.No;
             if (checkBoxSize.Checked)
-                response = MessageBox.Show("Do you really want to use this image for all sizes?", "Please Confirm", MessageBoxButtons.YesNoCancel);
+                response = MessageBox.Show("Do you really want to use this image for all sizes?", "Please Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
             if (response == DialogResult.Yes)
             {
@@ -999,7 +1032,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var response = DialogResult.No;
             if (checkBoxSize.Checked)
-                response = MessageBox.Show("Do you really want to use this image for all sizes?", "Please Confirm", MessageBoxButtons.YesNoCancel);
+                response = MessageBox.Show("Do you really want to use this image for all sizes?", "Please Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
             if (response == DialogResult.Yes)
             {
@@ -1016,7 +1049,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void pictureBoxSettings_Click(object sender, EventArgs e)
         {
-            folderBrowserDialog4Mods.Description = "Pick the folder where the package must be stored.";
+            folderBrowserDialog4Mods.Description = "Pick a folder to store the new Package or a folder containing an existing Package.";
             if (!string.IsNullOrEmpty(PackageRootPath))
                 folderBrowserDialog4Mods.SelectedPath = PackageRootPath;
 
@@ -1025,13 +1058,41 @@ namespace BeatificaBytes.Synology.Mods
             {
                 PackageRootPath = folderBrowserDialog4Mods.SelectedPath;
 
-                if (Directory.GetFiles(PackageRootPath).Length > 0)
+                var content = Directory.GetDirectories(PackageRootPath).ToList();
+                content.AddRange(Directory.GetFiles(PackageRootPath));
+                if (content.Count > 0)
                 {
-                    MessageBox.Show(this, "The Folder where the package will be created must be empty.");
+                    content.Remove(Path.Combine(PackageRootPath, "7z.dll"));
+                    content.Remove(Path.Combine(PackageRootPath, "7z.exe"));
+                    content.Remove(Path.Combine(PackageRootPath, "INFO"));
+                    content.Remove(Path.Combine(PackageRootPath, "Pack.cmd"));
+                    content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"));
+                    content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"));
+                    content.Remove(Path.Combine(PackageRootPath, "package"));
+                    content.Remove(Path.Combine(PackageRootPath, "scripts"));
+                    var remaining = content.ToList();
+                    foreach (var spk in remaining)
+                    {
+                        if (spk.EndsWith(".spk"))
+                        {
+                            content.Remove(spk);
+                        }
+                    }
+                    if (content.Count > 0)
+                    {
+                        MessageBox.Show(this, "The Folder where the package will be created must be empty or contain an existing Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(this, "The Folder contains a package that will be reused.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                 }
                 else
                 {
                     InitialConfiguration();
+                }
+                if (content.Count == 0)
+                {
                     InitData();
                     LoadPackageInfo();
                     BindData(list);
@@ -1045,28 +1106,35 @@ namespace BeatificaBytes.Synology.Mods
         {
             var file = Path.Combine(PackageRootPath, "INFO");
 
-            var lines = File.ReadAllLines(file);
-            foreach (var line in lines)
+            if (File.Exists(file))
             {
-                var key = line.Substring(0, line.IndexOf('='));
-                var value = line.Substring(line.IndexOf('=') + 1);
-                value = value.Trim(new char[] { '"' });
-                info.Add(key, value);
-            }
-
-            foreach (var control in groupBoxPackage.Controls)
-            {
-                var textBox = control as TextBox;
-                if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                var lines = File.ReadAllLines(file);
+                foreach (var line in lines)
                 {
-                    var keys = textBox.Tag.ToString().Split(';');
-                    var key = keys[0].Substring(3);
-                    textBox.Text = info[key];
+                    var key = line.Substring(0, line.IndexOf('='));
+                    var value = line.Substring(line.IndexOf('=') + 1);
+                    value = value.Trim(new char[] { '"' });
+                    info.Add(key, value);
                 }
-            }
 
-            LoadPictureBox(pictureBoxPkg_72, Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"), true);
-            LoadPictureBox(pictureBoxPkg_256, Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"), true);
+                foreach (var control in groupBoxPackage.Controls)
+                {
+                    var textBox = control as TextBox;
+                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = textBox.Tag.ToString().Split(';');
+                        var key = keys[0].Substring(3);
+                        textBox.Text = info[key];
+                    }
+                }
+
+                LoadPictureBox(pictureBoxPkg_72, Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"), true);
+                LoadPictureBox(pictureBoxPkg_256, Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"), true);
+            }
+            else
+            {
+                MessageBox.Show(this, "The working folder doesn't contain a Package. Please reconfigure MODS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void InitialConfiguration()
@@ -1207,7 +1275,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (string.IsNullOrEmpty(PackageRootPath))
             {
-                MessageBox.Show(this, "Please reconfigure the destination path of your package first", "Warning");
+                MessageBox.Show(this, "Please reconfigure the destination path of your package first", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else
             {
@@ -1470,15 +1538,31 @@ namespace BeatificaBytes.Synology.Mods
 
         private void comboBoxUrlType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            switch (comboBoxUrlType.SelectedIndex)
+            {
+                case 0: // Url                    
+                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM.");
+                    textBoxUrl.Focus();
+                    break;
+                case 1: // Script
+                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the script to be executed when clicking the icon on DSM. End this script with 2>&1");
+                    break;
+                case 2: // WebApp
+                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Here is the url of your own page to be opened when clicking the icon on DMS");
+                    break;
+            }
+
             if (comboBoxUrlType.Focused)
             {
                 var answer = DialogResult.Yes;
+                var previous = current.Value.urlDetail;
 
                 if (current.Value.urlType != 0 && (current.Value.urlType != comboBoxUrlType.SelectedIndex))
                 {
                     var from = GetUrlType(current.Value.urlType);
                     var to = GetUrlType(comboBoxUrlType.SelectedIndex);
                     answer = MessageBox.Show(this, string.Format("Your Package '{0}' currently contains a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", info["package"], from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    previous = "";
                 }
 
                 if (answer == DialogResult.No)
@@ -1488,10 +1572,10 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    textBoxUrl.Enabled = (comboBoxUrlType.SelectedIndex == 0 || comboBoxUrlType.SelectedIndex == 1);
                     switch (comboBoxUrlType.SelectedIndex)
                     {
                         case 0: // Url
+                            textBoxUrl.Enabled = true;
                             textBoxUrl.Text = "";
                             textBoxUrl.Focus();
                             break;
@@ -1506,7 +1590,7 @@ namespace BeatificaBytes.Synology.Mods
                             if (answer == DialogResult.Yes)
                             {
                                 textBoxUrl.Enabled = true;
-                                textBoxUrl.Text = "";
+                                textBoxUrl.Text = previous;
                                 textBoxUrl.Focus();
                             }
                             else
@@ -1516,6 +1600,8 @@ namespace BeatificaBytes.Synology.Mods
                             }
                             break;
                         case 2: // WebApp
+                            textBoxUrl.Enabled = false;
+                            textBoxUrl.Text = "";
                             var cleanedWebApp = CleanUpText(textBoxTitle.Text);
                             var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedWebApp);
                             if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
@@ -1606,6 +1692,20 @@ namespace BeatificaBytes.Synology.Mods
         private void MainForm_Load(object sender, EventArgs e)
         {
             textBoxPackage.Focus();
+        }
+
+        private void MainForm_MouseEnter(object sender, EventArgs e)
+        {
+            var zone = sender as Control;
+            if (zone != null)
+            {
+                var text = toolTip4Mods.GetToolTip(zone);
+                labelToolTip.Text = text;
+            }
+        }
+        private void MainForm_MouseLeave(object sender, EventArgs e)
+        {
+            labelToolTip.Text = "";
         }
     }
 }
