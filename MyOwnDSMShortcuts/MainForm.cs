@@ -1545,7 +1545,7 @@ namespace BeatificaBytes.Synology.Mods
                     textBoxUrl.Focus();
                     break;
                 case 1: // Script
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the script to be executed when clicking the icon on DSM. End this script with 2>&1");
+                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the script to be executed when clicking the icon on DSM. To display the error stream, end this script with 2>&1");
                     break;
                 case 2: // WebApp
                     this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Here is the url of your own page to be opened when clicking the icon on DMS");
