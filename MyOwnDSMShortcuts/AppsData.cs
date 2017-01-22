@@ -10,11 +10,11 @@ namespace BeatificaBytes.Synology.Mods
     {
         public Package()
         {
-            urls = new Dictionary<string, AppsData>();
+            items = new Dictionary<string, AppsData>();
         }
 
         [JsonProperty(PropertyName = ".url")]
-        public Dictionary<string, AppsData> urls { get; set; }
+        public Dictionary<string, AppsData> items { get; set; }
     }
 
     public class AppsData
@@ -35,9 +35,9 @@ namespace BeatificaBytes.Synology.Mods
         public string protocol { get; set; }
         public string url { get; set; }
         public int port { get; set; }
-        public int urlType { get; set; }
+        public int itemType { get; set; }
         public string appWindow { get; set; }
         public bool allowMultiInstance { get; set; }
-        public string urlDetail { get; set; }
+        //public string urlDetail { get; set; }
     }
 }
