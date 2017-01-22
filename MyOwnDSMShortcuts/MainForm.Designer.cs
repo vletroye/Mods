@@ -1,4 +1,6 @@
-﻿namespace BeatificaBytes.Synology.Mods
+﻿using System.Drawing;
+
+namespace BeatificaBytes.Synology.Mods
 {
     partial class MainForm
     {
@@ -81,6 +83,8 @@
             this.comboBoxUrlType = new System.Windows.Forms.ComboBox();
             this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
             this.groupBoxURL = new System.Windows.Forms.GroupBox();
+            this.labelTransparency = new System.Windows.Forms.Label();
+            this.comboBoxTransparency = new System.Windows.Forms.ComboBox();
             this.labelToolTip = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).BeginInit();
@@ -148,14 +152,14 @@
             // 
             // pictureBoxPkg_256
             // 
-            this.pictureBoxPkg_256.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBoxPkg_256.BackColor = Color.Transparent;
             this.pictureBoxPkg_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxPkg_256.Location = new System.Drawing.Point(545, 20);
             this.pictureBoxPkg_256.Name = "pictureBoxPkg_256";
             this.pictureBoxPkg_256.Size = new System.Drawing.Size(164, 164);
             this.pictureBoxPkg_256.TabIndex = 27;
             this.pictureBoxPkg_256.TabStop = false;
-            this.pictureBoxPkg_256.Tag = "Pkg256";
+            this.pictureBoxPkg_256.Tag = "Pkg;256";
             this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_256, "Drop here a logo 256x256");
             this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
             this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
@@ -174,14 +178,14 @@
             // 
             // pictureBoxPkg_72
             // 
-            this.pictureBoxPkg_72.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBoxPkg_72.BackColor = Color.Transparent;
             this.pictureBoxPkg_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBoxPkg_72.Location = new System.Drawing.Point(713, 59);
             this.pictureBoxPkg_72.Name = "pictureBoxPkg_72";
             this.pictureBoxPkg_72.Size = new System.Drawing.Size(72, 72);
             this.pictureBoxPkg_72.TabIndex = 26;
             this.pictureBoxPkg_72.TabStop = false;
-            this.pictureBoxPkg_72.Tag = "Pkg72";
+            this.pictureBoxPkg_72.Tag = "Pkg;72";
             this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_72, "Drop here a logo 72x72");
             this.pictureBoxPkg_72.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
             this.pictureBoxPkg_72.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
@@ -218,6 +222,7 @@
             this.textBoxUrl.Size = new System.Drawing.Size(704, 20);
             this.textBoxUrl.TabIndex = 10;
             this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Select a Type first");
+            this.textBoxUrl.DoubleClick += new System.EventHandler(this.textBoxUrl_DoubleClick);
             this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxUrl_Validating);
             this.textBoxUrl.Validated += new System.EventHandler(this.textBoxUrl_Validated);
             // 
@@ -253,7 +258,7 @@
             this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
             this.pictureBox_16.TabIndex = 14;
             this.pictureBox_16.TabStop = false;
-            this.pictureBox_16.Tag = "URL16";
+            this.pictureBox_16.Tag = "URL;16";
             this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16");
             // 
             // pictureBox_24
@@ -265,7 +270,7 @@
             this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
             this.pictureBox_24.TabIndex = 15;
             this.pictureBox_24.TabStop = false;
-            this.pictureBox_24.Tag = "URL24";
+            this.pictureBox_24.Tag = "URL;24";
             this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24");
             // 
             // pictureBox_32
@@ -277,7 +282,7 @@
             this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
             this.pictureBox_32.TabIndex = 16;
             this.pictureBox_32.TabStop = false;
-            this.pictureBox_32.Tag = "URL32";
+            this.pictureBox_32.Tag = "URL;32";
             this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32");
             // 
             // pictureBox_48
@@ -289,7 +294,7 @@
             this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
             this.pictureBox_48.TabIndex = 17;
             this.pictureBox_48.TabStop = false;
-            this.pictureBox_48.Tag = "URL48";
+            this.pictureBox_48.Tag = "URL;48";
             this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48");
             // 
             // pictureBox_64
@@ -301,7 +306,7 @@
             this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
             this.pictureBox_64.TabIndex = 18;
             this.pictureBox_64.TabStop = false;
-            this.pictureBox_64.Tag = "URL64";
+            this.pictureBox_64.Tag = "URL;64";
             this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64");
             // 
             // pictureBox_72
@@ -313,7 +318,7 @@
             this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
             this.pictureBox_72.TabIndex = 19;
             this.pictureBox_72.TabStop = false;
-            this.pictureBox_72.Tag = "URL72";
+            this.pictureBox_72.Tag = "URL;72";
             this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x72");
             // 
             // pictureBox_96
@@ -325,7 +330,7 @@
             this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
             this.pictureBox_96.TabIndex = 20;
             this.pictureBox_96.TabStop = false;
-            this.pictureBox_96.Tag = "URL96";
+            this.pictureBox_96.Tag = "URL;96";
             this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96");
             // 
             // pictureBox_128
@@ -337,7 +342,7 @@
             this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
             this.pictureBox_128.TabIndex = 21;
             this.pictureBox_128.TabStop = false;
-            this.pictureBox_128.Tag = "URL128";
+            this.pictureBox_128.Tag = "URL;128";
             this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128");
             // 
             // pictureBox_256
@@ -349,7 +354,7 @@
             this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
             this.pictureBox_256.TabIndex = 22;
             this.pictureBox_256.TabStop = false;
-            this.pictureBox_256.Tag = "URL256";
+            this.pictureBox_256.Tag = "URL;256;MAX";
             this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256");
             // 
             // pictureBoxSettings
@@ -616,15 +621,18 @@
             this.checkBoxSize.TabIndex = 7;
             this.checkBoxSize.Text = "Use the same Icon for all sizes";
             this.checkBoxSize.UseVisualStyleBackColor = true;
+            this.checkBoxSize.CheckedChanged += new System.EventHandler(this.checkBoxSize_CheckedChanged);
             // 
             // comboBoxUrlType
             // 
             this.comboBoxUrlType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxUrlType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxUrlType.FormattingEnabled = true;
             this.comboBoxUrlType.Items.AddRange(new object[] {
             "Url",
             "Script",
-            "WebApp"});
+            "WebApp",
+            "Command"});
             this.comboBoxUrlType.Location = new System.Drawing.Point(3, 246);
             this.comboBoxUrlType.Name = "comboBoxUrlType";
             this.comboBoxUrlType.Size = new System.Drawing.Size(65, 21);
@@ -650,6 +658,8 @@
             this.groupBoxURL.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxURL.Controls.Add(this.labelTransparency);
+            this.groupBoxURL.Controls.Add(this.comboBoxTransparency);
             this.groupBoxURL.Controls.Add(this.labelToolTip);
             this.groupBoxURL.Controls.Add(this.pictureBox_256);
             this.groupBoxURL.Controls.Add(this.checkBoxMultiInstance);
@@ -682,6 +692,30 @@
             this.groupBoxURL.TabStop = false;
             this.groupBoxURL.Text = "URL INFORMATION";
             // 
+            // labelTransparency
+            // 
+            this.labelTransparency.AutoSize = true;
+            this.labelTransparency.Location = new System.Drawing.Point(70, 323);
+            this.labelTransparency.Name = "labelTransparency";
+            this.labelTransparency.Size = new System.Drawing.Size(146, 13);
+            this.labelTransparency.TabIndex = 25;
+            this.labelTransparency.Text = "Transparency for new images";
+            // 
+            // comboBoxTransparency
+            // 
+            this.comboBoxTransparency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTransparency.FormattingEnabled = true;
+            this.comboBoxTransparency.Items.AddRange(new object[] {
+            "0",
+            "10",
+            "20",
+            "25",
+            "30"});
+            this.comboBoxTransparency.Location = new System.Drawing.Point(3, 320);
+            this.comboBoxTransparency.Name = "comboBoxTransparency";
+            this.comboBoxTransparency.Size = new System.Drawing.Size(64, 21);
+            this.comboBoxTransparency.TabIndex = 24;
+            // 
             // labelToolTip
             // 
             this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -704,6 +738,7 @@
             this.Name = "MainForm";
             this.Text = "Mods Package Creator";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
@@ -778,6 +813,8 @@
         private System.Windows.Forms.ListView listViewUrls;
         private System.Windows.Forms.TextBox textBoxUrl;
         private System.Windows.Forms.Label labelToolTip;
+        private System.Windows.Forms.Label labelTransparency;
+        private System.Windows.Forms.ComboBox comboBoxTransparency;
     }
 }
 
