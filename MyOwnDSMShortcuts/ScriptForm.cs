@@ -35,13 +35,14 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            scintilla.Text = null;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void ScriptForm_Load(object sender, EventArgs e)

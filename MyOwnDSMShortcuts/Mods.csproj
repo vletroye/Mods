@@ -58,6 +58,10 @@
   <ItemGroup>
     <Compile Include="AppsData.cs" />
     <Compile Include="CCursor.cs" />
+    <Compile Include="FolderBrowserDialogEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

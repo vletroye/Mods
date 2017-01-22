@@ -18,6 +18,7 @@ namespace BeatificaBytes.Synology.Mods
 {
     public partial class MainForm : Form
     {
+        #region Enum --------------------------------------------------------------------------------------------------------------------------------
         public enum State
         {
             None,
@@ -33,10 +34,11 @@ namespace BeatificaBytes.Synology.Mods
             WebApp = 2,
             Command = 3
         }
+        #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
+        #region Declarations -----------------------------------------------------------------------------------------------------------------------
         const string CONFIGFILE = @"package\ui\config";
         static Regex getPort = new Regex(@"^:(\d*).*$", RegexOptions.Compiled);
-        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled);
         static Regex getVersion = new Regex(@"^\d*.\d*.\d*$", RegexOptions.Compiled);
 
         string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
@@ -48,7 +50,8 @@ namespace BeatificaBytes.Synology.Mods
         //3 next vars are a Dirty Hack - move these 3 vars into a class. Replace AppsData with that class, ...
         string webAppFolder = null;
         string webAppIndex = null;
-        string command = null;
+        string commandValue = null;
+        string scriptValue = null;
 
         Dictionary<string, PictureBox> pictureBoxes;
         Dictionary<string, string> info;
@@ -59,7 +62,9 @@ namespace BeatificaBytes.Synology.Mods
 
         string imageDragDropPath;
         protected bool validData;
+        #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
+        #region Initialize -------------------------------------------------------------------------------------------------------------------------
         public MainForm()
         {
             InitializeComponent();
@@ -67,44 +72,37 @@ namespace BeatificaBytes.Synology.Mods
 
             InitListView();
 
-            GetPictureBoxes();
-
-            foreach (var picturebox in pictureBoxes)
-            {
-                picturebox.Value.BackColor = Color.Transparent;
-            }
-            foreach (var box in pictureBoxes.Values)
-            {
-                if (!box.Tag.ToString().EndsWith("MAX"))
-                    box.Enabled = !checkBoxSize.Checked;
-            }
+            GetItemPictureBoxes();
 
             if (string.IsNullOrEmpty(PackageRootPath) || !Directory.Exists(PackageRootPath))
             {
                 MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
-                DisplayCurrent();
+                DisplayItem();
             }
             else if (!File.Exists(Path.Combine(PackageRootPath, "INFO")))
             {
                 MessageBox.Show(this, "The INFO file for your package does not exist anymore. Reset your package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
-                DisplayCurrent();
+                DisplayItem();
             }
             else
             {
                 InitData();
                 BindData(list);
-                DisplayCurrent();
+                DisplayItem();
                 LoadPackageInfo();
             }
-            foreach (var control in groupBoxURL.Controls)
+            foreach (var control in groupBoxItem.Controls)
             {
                 var item = control as Control;
                 if (item != null)
                 {
-                    item.MouseEnter += new System.EventHandler(this.MainForm_MouseEnter);
-                    item.MouseLeave += new System.EventHandler(this.MainForm_MouseLeave);
+                    item.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                    item.MouseLeave += new System.EventHandler(this.OnMouseLeave);
+
+                    if (item.Name.StartsWith("textBox") && Helper.IsSubscribed(item, "EventValidating"))
+                        item.TextChanged += new System.EventHandler(this.OnTextChanged);
                 }
             }
             foreach (var control in groupBoxPackage.Controls)
@@ -112,46 +110,75 @@ namespace BeatificaBytes.Synology.Mods
                 var item = control as Control;
                 if (item != null)
                 {
-                    item.MouseEnter += new System.EventHandler(this.MainForm_MouseEnter);
-                    item.MouseLeave += new System.EventHandler(this.MainForm_MouseLeave);
+                    item.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                    item.MouseLeave += new System.EventHandler(this.OnMouseLeave);
+
+                    if (item.Name.StartsWith("textBox") && Helper.IsSubscribed(item, "EventValidating"))
+                        item.TextChanged += new System.EventHandler(this.OnTextChanged);
                 }
             }
-            //Display(new KeyValuePair<string, AppsData>(null, null));
+
+            var linkTimeLocal = Helper.GetLinkerTime(Assembly.GetExecutingAssembly());
+            this.Text += string.Format(" [{0} Build {1}]", Properties.Settings.Default.Version, linkTimeLocal);
+            textBoxPackage.Focus();
+        }
+
+        private void OnTextChanged(object sender, EventArgs e)
+        {
+            errorProvider.SetError(sender as Control, "");
+        }
+
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            var zone = sender as Control;
+            if (zone != null)
+            {
+                var text = toolTip4Mods.GetToolTip(zone);
+                labelToolTip.Text = text;
+            }
+        }
+
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            labelToolTip.Text = "";
         }
 
         private void InitData()
         {
             info = new Dictionary<string, string>();
             state = State.None;
-            list = LoadData();
+            LoadPackageConfig();
         }
 
         private void InitListView()
         {
-            listViewUrls.View = View.Details;
-            listViewUrls.GridLines = true;
-            listViewUrls.FullRowSelect = true;
-            listViewUrls.Columns.Add("Name", 200);
-            listViewUrls.Columns.Add("Uri", 580);
-            listViewUrls.Sorting = SortOrder.Ascending;
+            listViewItems.View = View.Details;
+            listViewItems.GridLines = true;
+            listViewItems.FullRowSelect = true;
+            listViewItems.Columns.Add("Name", 200);
+            listViewItems.Columns.Add("Uri", 580);
+            listViewItems.Sorting = SortOrder.Ascending;
         }
 
-        private void GetPictureBoxes()
+        private void GetItemPictureBoxes()
         {
             pictureBoxes = new Dictionary<string, PictureBox>();
 
-            foreach (var control in groupBoxURL.Controls)
+            foreach (var control in groupBoxItem.Controls)
             {
-                var pictureBox = control as PictureBox;
-                if (pictureBox != null && pictureBox.Tag != null && pictureBox.Tag.ToString().StartsWith("URL"))
+                var pictureBoxItem = control as PictureBox;
+                if (pictureBoxItem != null && pictureBoxItem.Tag != null && pictureBoxItem.Tag.ToString().StartsWith("ITEM"))
                 {
-                    pictureBox.AllowDrop = true;
+                    pictureBoxItem.AllowDrop = true;
 
-                    pictureBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragDrop);
-                    pictureBox.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
-                    pictureBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox_DragEnter);
+                    pictureBoxItem.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragDrop);
+                    pictureBoxItem.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
+                    pictureBoxItem.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragEnter);
 
-                    pictureBoxes.Add(pictureBox.Tag.ToString().Split(';')[1], pictureBox);
+                    if (!pictureBoxItem.Tag.ToString().EndsWith("MAX"))
+                        pictureBoxItem.Enabled = !checkBoxSize.Checked;
+
+                    pictureBoxes.Add(pictureBoxItem.Tag.ToString().Split(';')[1], pictureBoxItem);
                 }
             }
 
@@ -161,31 +188,29 @@ namespace BeatificaBytes.Synology.Mods
 
         private void BindData(Package list)
         {
-            listViewUrls.Items.Clear();
+            listViewItems.Items.Clear();
 
-            foreach (var url in list.urls)
+            foreach (var item in list.items)
             {
-                var uri = url.Value.url;
-                if (url.Value.urlType == (int)UrlType.Url && uri.StartsWith("/"))
-                    uri = string.Format("{0}://{1}:{2}{3}", url.Value.protocol, WebSynology, url.Value.port, uri);
+                var uri = item.Value.url;
+                if (item.Value.itemType == (int)UrlType.Url && uri.StartsWith("/"))
+                    uri = string.Format("{0}://{1}:{2}{3}", item.Value.protocol, WebSynology, item.Value.port, uri);
 
 
                 // Define the list items
-                var lvi = new ListViewItem(url.Value.title);
+                var lvi = new ListViewItem(item.Value.title);
                 lvi.SubItems.Add(uri);
-                lvi.Tag = url;
+                lvi.Tag = item;
 
                 // Add the list items to the ListView
-                listViewUrls.Items.Add(lvi);
+                listViewItems.Items.Add(lvi);
             }
 
-            listViewUrls.Sort();
+            listViewItems.Sort();
         }
 
-        private Package LoadData()
+        private void LoadPackageConfig()
         {
-            Package list = null;
-
             var config = Path.Combine(PackageRootPath, CONFIGFILE);
             if (File.Exists(config))
             {
@@ -193,7 +218,7 @@ namespace BeatificaBytes.Synology.Mods
                 list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
             }
 
-            if (list == null || list.urls.Count == 0)
+            if (list == null || list.items.Count == 0)
             {
                 var json = Properties.Settings.Default.Packages;
                 if (!string.IsNullOrEmpty(json))
@@ -205,14 +230,229 @@ namespace BeatificaBytes.Synology.Mods
                     list = new Package();
                 }
             }
-            return list;
         }
 
+        private void LoadPackageInfo()
+        {
+            var file = Path.Combine(PackageRootPath, "INFO");
+
+            if (File.Exists(file))
+            {
+                var lines = File.ReadAllLines(file);
+                foreach (var line in lines)
+                {
+                    var key = line.Substring(0, line.IndexOf('='));
+                    var value = line.Substring(line.IndexOf('=') + 1);
+                    value = value.Trim(new char[] { '"' });
+                    info.Add(key, value);
+                }
+
+                if (info["maintainer"] == "...")
+                    info["maintainer"] = Environment.UserName;
+
+                foreach (var control in groupBoxPackage.Controls)
+                {
+                    var textBox = control as TextBox;
+                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = textBox.Tag.ToString().Split(';');
+                        var key = keys[0].Substring(3);
+                        textBox.Text = info[key];
+                    }
+                }
+
+                LoadPictureBox(pictureBoxPkg_256, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG")));
+                LoadPictureBox(pictureBoxPkg_72, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG")));
+            }
+            else
+            {
+                MessageBox.Show(this, "The working folder doesn't contain a Package. Please reconfigure MODS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void InitialConfiguration()
+        {
+            using (new CWaitCursor())
+            {
+                Properties.Settings.Default.PackageRoot = PackageRootPath;
+                Properties.Settings.Default.Save();
+
+                Process unzip = new Process();
+                unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
+                unzip.StartInfo.Arguments = string.Format("x \"{0}\" -o\"{1}\"", Path.Combine(ResourcesRootPath, "Package.zip"), PackageRootPath);
+                unzip.StartInfo.UseShellExecute = false;
+                unzip.StartInfo.RedirectStandardOutput = true;
+                unzip.StartInfo.CreateNoWindow = true;
+                unzip.Start();
+                Console.WriteLine(unzip.StandardOutput.ReadToEnd());
+                unzip.WaitForExit();
+
+                File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
+                File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
+                File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
+            }
+
+            // Pictures are all saved in the Mods.exe's folder / recovery, just in case one does Reset the package by mistake.
+
+            //var recovery = Path.Combine(ResourcesRootPath, "recovery");
+            //if (Directory.Exists(recovery))
+            //{
+            //    var images = Directory.GetFiles(recovery);
+            //    if (images.Length > 0)
+            //    {
+            //        var answer = MessageBox.Show(this, "Icons from a previous package are available. Do you want to recover them?\nIf you answer 'No', they will be deleted.\nIf you 'Cancel', they will be kept in the recovery folder.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            //        switch (answer)
+            //        {
+            //            case DialogResult.Yes:
+            //                var target = Path.Combine(PackageRootPath, @"package\ui\images");
+            //                foreach (var image in images)
+            //                {
+            //                    var dest = Path.Combine(target, Path.GetFileName(image));
+            //                    if (File.Exists(dest))
+            //                        File.Delete(dest);
+            //                    File.Move(image, dest);
+            //                }
+            //                break;
+            //            case DialogResult.No:
+            //                Helper.DeleteDirectory(recovery);
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //    }
+            //}
+        }
+        #endregion --------------------------------------------------------------------------------------------------------------------------------
+
+        #region Manage Package --------------------------------------------------------------------------------------------------------------------
+        private void pictureBoxSettings_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog4Mods.Description = "Pick a folder to store the new Package or a folder containing an existing Package.";
+            if (!string.IsNullOrEmpty(PackageRootPath))
+                folderBrowserDialog4Mods.SelectedPath = PackageRootPath;
+
+            DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                PackageRootPath = folderBrowserDialog4Mods.SelectedPath;
+                if (Directory.Exists(PackageRootPath))
+                {
+                    var content = Directory.GetDirectories(PackageRootPath).ToList();
+                    content.AddRange(Directory.GetFiles(PackageRootPath));
+                    if (content.Count > 0)
+                    {
+                        content.Remove(Path.Combine(PackageRootPath, "7z.dll"));
+                        content.Remove(Path.Combine(PackageRootPath, "7z.exe"));
+                        content.Remove(Path.Combine(PackageRootPath, "INFO"));
+                        content.Remove(Path.Combine(PackageRootPath, "Pack.cmd"));
+                        content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"));
+                        content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"));
+                        content.Remove(Path.Combine(PackageRootPath, "package"));
+                        content.Remove(Path.Combine(PackageRootPath, "scripts"));
+                        var remaining = content.ToList();
+                        foreach (var spk in remaining)
+                        {
+                            if (spk.EndsWith(".spk"))
+                            {
+                                content.Remove(spk);
+                            }
+                        }
+                        if (content.Count > 0)
+                        {
+                            MessageBox.Show(this, "The Folder where the package will be created must be empty or contain an existing Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show(this, "The Folder contains a package that will be reused.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                    }
+                    else
+                    {
+                        InitialConfiguration();
+                    }
+                    if (content.Count == 0)
+                    {
+                        InitData();
+                        LoadPackageInfo();
+                        BindData(list);
+                        DisplayItem();
+                    }
+                }
+                else
+                {
+                    if (PackageRootPath.EndsWith("New folder"))
+                        MessageBox.Show(this, "The renaming of the 'New folder' was not yet completed when you clicked 'Ok'. Please, reselect your folder", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                        MessageBox.Show(this, string.Format("Something went wrong when picking the folder {0}", PackageRootPath), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        // Click on Button Reset Package
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(PackageRootPath))
+            {
+                MessageBox.Show(this, "Please reconfigure the destination path of your package first", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                var answer = MessageBox.Show(this, "Do you really want to reset the complete Package to its defaults?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                if (answer == DialogResult.Yes)
+                {
+                    try
+                    {
+                        if (Directory.Exists(PackageRootPath))
+                            Helper.DeleteDirectory(PackageRootPath);
+
+                        InitialConfiguration();
+                        InitData();
+                        LoadPackageInfo();
+                        BindData(list);
+                        DisplayItem();
+
+                        ResetValidateChildren(); // Reset Error Validation on all controls
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "The destination folder cannot be cleaned. The package file is possibly in use?!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        // Click on Button Create Package
         private void buttonPackage_Click(object sender, EventArgs e)
         {
-            IncrementVersion();
+            // This is required to insure that changes (mainly icons) are correctly applied when installing the package in DSM
+            textBoxVersion.Text = Helper.IncrementVersion(textBoxVersion.Text);
 
-            //Collect Package Info
+            var packCmd = Path.Combine(PackageRootPath, "Pack.cmd");
+            if (File.Exists(packCmd))
+            {
+                SavePackageInfo();
+
+                using (new CWaitCursor())
+                {
+                    // Create the SPK
+                    CreatePackage(packCmd);
+                }
+
+                var answer = MessageBox.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (answer == DialogResult.Yes)
+                {
+                    Process.Start(PackageRootPath);
+                }
+            }
+            else
+            {
+                MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void SavePackageInfo()
+        {
+            // Collect Package Info from controls tagged like PKG...
             foreach (var control in groupBoxPackage.Controls)
             {
                 var textBox = control as TextBox;
@@ -227,552 +467,300 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
-            var packCmd = Path.Combine(PackageRootPath, "Pack.cmd");
-            if (File.Exists(packCmd))
+            // Delete existing INFO file
+            var infoName = Path.Combine(PackageRootPath, "INFO");
+            if (File.Exists(infoName))
+                File.Delete(infoName);
+
+            // Write the new INFO file
+            using (StreamWriter outputFile = new StreamWriter(infoName))
             {
-                //Delete existing package if any
-                var dir = new DirectoryInfo(PackageRootPath);
-                foreach (var file in dir.EnumerateFiles("*.spk"))
+                foreach (var element in info)
                 {
-                    file.Delete();
-                }
-
-                //Delete existing INFO file
-                var infoName = Path.Combine(PackageRootPath, "INFO");
-                if (File.Exists(infoName))
-                    File.Delete(infoName);
-
-                //Write the new INFO file
-                using (StreamWriter outputFile = new StreamWriter(infoName))
-                {
-                    foreach (var element in info)
-                    {
-                        outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
-                    }
-                }
-
-                //Save Package's icons
-                var imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG");
-                SaveImage(pictureBoxPkg_72, imageName);
-                imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG");
-                SaveImage(pictureBoxPkg_256, imageName);
-
-                using (new CWaitCursor())
-                {
-                    PersistUrlsConfig();
-
-                    Process pack = new Process();
-                    pack.StartInfo.FileName = packCmd;
-                    pack.StartInfo.Arguments = "";
-                    pack.StartInfo.WorkingDirectory = PackageRootPath;
-                    pack.StartInfo.UseShellExecute = false;
-                    pack.StartInfo.RedirectStandardOutput = true;
-                    pack.StartInfo.CreateNoWindow = true;
-                    pack.Start();
-                    Console.WriteLine(pack.StandardOutput.ReadToEnd());
-                    pack.WaitForExit();
-                }
-
-                //Rename the new Package
-                var packName = Path.Combine(PackageRootPath, info["package"] + ".spk");
-                File.Move(Path.Combine(PackageRootPath, "mods.spk"), packName);
-
-                var answer = MessageBox.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (answer == DialogResult.Yes)
-                {
-                    Process.Start(PackageRootPath);
+                    outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
                 }
             }
-            else
-            {
-                MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
+
+            // Save Package's icons
+            var imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG");
+            SavePkgImage(pictureBoxPkg_72, imageName);
+            imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG");
+            SavePkgImage(pictureBoxPkg_256, imageName);
         }
 
-        private void SaveImage(PictureBox pictureBox, string path)
+        // Create the SPK
+        private void CreatePackage(string packCmd)
+        {
+            // Delete existing package if any
+            var dir = new DirectoryInfo(PackageRootPath);
+            foreach (var file in dir.EnumerateFiles("*.spk"))
+            {
+                file.Delete();
+            }
+
+            // Execute the script to generate the SPK
+            Process pack = new Process();
+            pack.StartInfo.FileName = packCmd;
+            pack.StartInfo.Arguments = "";
+            pack.StartInfo.WorkingDirectory = PackageRootPath;
+            pack.StartInfo.UseShellExecute = false;
+            pack.StartInfo.RedirectStandardOutput = true;
+            pack.StartInfo.CreateNoWindow = true;
+            pack.Start();
+            Console.WriteLine(pack.StandardOutput.ReadToEnd());
+            pack.WaitForExit();
+
+            // Rename the new Package with its target name
+            var packName = Path.Combine(PackageRootPath, info["package"] + ".spk");
+            File.Move(Path.Combine(PackageRootPath, "mods.spk"), packName);
+
+        }
+
+        // Save icons of the SPK
+        private void SavePkgImage(PictureBox pictureBox, string path)
         {
             var image = pictureBox.Image;
             if (File.Exists(path))
                 File.Delete(path);
             image.Save(path, ImageFormat.Png);
+
+            // TODO: check that PKG images are saved when closing Mods
         }
+        #endregion --------------------------------------------------------------------------------------------------------------------------------
 
-        private void PersistUrlsConfig()
+        #region Manage List of items --------------------------------------------------------------------------------------------------------------
+        private void listViewItems_DoubleClick(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(PackageRootPath))
+            if (listViewItems.SelectedItems.Count == 1)
             {
-                var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
-                Properties.Settings.Default.Packages = json;
-                Properties.Settings.Default.Save();
-
-                var config = Path.Combine(PackageRootPath, CONFIGFILE);
-                if (Directory.Exists(Path.GetDirectoryName(config)))
-                {
-                    File.WriteAllText(config, json);
-                }
-                else
-                {
-                    MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
+                buttonEditItem_Click(sender, e);
             }
         }
 
-        private void listViewUrls_SelectedIndexChanged(object sender, EventArgs e)
+        private void listViewItems_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (state != State.Edit)
             {
-                if (listViewUrls.SelectedItems.Count > 0)
+                if (listViewItems.SelectedItems.Count > 0)
                 {
-                    var url = (KeyValuePair<string, AppsData>)listViewUrls.SelectedItems[0].Tag;
                     state = State.View;
-                    Display(url);
+                    DisplayDetails((KeyValuePair<string, AppsData>)listViewItems.SelectedItems[0].Tag);
                 }
                 else
                 {
                     state = State.None;
-                    Display(new KeyValuePair<string, AppsData>(null, null));
+                    DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
                 }
             }
         }
 
-        private void Display(KeyValuePair<string, AppsData> url)
+        // Add an new item
+        private void buttonAddItem_Click(object sender, EventArgs e)
         {
-            current = url;
-            var show = url.Key != null;
-            var descText = show ? url.Value.desc : "";
-            var titleText = show ? url.Value.title : "";
-            var urlText = show ? url.Value.url : "";
-            if (urlText != null && urlText.StartsWith("/") && url.Value.port != WebPort)
-            {
-                if (url.Value.protocol == "https")
-                {
-                    urlText = string.Format("https://:{0}{1}", url.Value.port, url.Value.url);
-                }
-                else
-                {
-                    urlText = string.Format(":{0}{1}", url.Value.port, url.Value.url);
-                }
-            }
-            var users = show ? url.Value.allUsers : false;
-
-            if (show)
-            {
-                foreach (var size in pictureBoxes.Keys)
-                {
-                    var picture = GetIconFullPath(url.Value.icon, size);
-
-                    if (File.Exists(picture))
-                    {
-                        LoadPicture(LoadImage(picture), size);
-                    }
-                    else
-                    {
-                        LoadPicture(null, size);
-                    }
-                }
-            }
-            else
-            {
-                foreach (var pictureBox in pictureBoxes.Values)
-                {
-                    LoadPictureBox(pictureBox, null);
-                }
-                comboBoxUrlType.SelectedIndex = (int)UrlType.Url;
-            }
-
-            textBoxDesc.Text = descText;
-            textBoxTitle.Text = titleText;
-            textBoxUrl.Text = urlText;
-            checkBoxAllUsers.Checked = users;
-            checkBoxMultiInstance.Checked = show ? url.Value.allowMultiInstance : false;
-            comboBoxUrlType.SelectedIndex = show ? url.Value.urlType : (int)UrlType.Url;
-
-            EnableDetail();
-        }
-
-        private string GetIconFullPath(string icon, string size)
-        {
-            var icons = string.Format(icon, size).Split('/');
-            var picture = Path.Combine(PackageRootPath, @"package\ui", icons[0], icons[1]);
-            return picture;
-        }
-
-        private void LoadPicture(Image image, string size)
-        {
-            if (image == null)
-            {
-                var pictureBox = pictureBoxes[size];
-                pictureBox.Image = null;
-            }
-            else
-            {
-                var pictureBox = pictureBoxes[size];
-                LoadPictureBox(pictureBox, image);
-            }
-        }
-
-        private void DeletePictures(string icon)
-        {
-            foreach (var size in pictureBoxes.Keys)
-            {
-                var path = GetIconFullPath(icon, size);
-                if (File.Exists(path))
-                    File.Delete(path);
-            }
-        }
-
-        private void LoadPictureBox(PictureBox pictureBox, Image image)
-        {
-            if (image == null)
-            {
-                pictureBox.Image = null;
-            }
-            else
-            {
-                var size = int.Parse(pictureBox.Tag.ToString().Split(';')[1]);
-
-                var copy = new Bitmap(size, size);
-                using (Graphics g = Graphics.FromImage(copy))
-                {
-                    g.SmoothingMode = SmoothingMode.AntiAlias;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(image, 0, 0, size, size);
-                }
-
-                pictureBox.Image = copy;
-                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
-            }
-        }
-
-
-        private void EnableDetail()
-        {
-            if (string.IsNullOrEmpty(PackageRootPath))
-            {
-                textBoxDesc.Enabled = false;
-                textBoxTitle.Enabled = false;
-                textBoxUrl.Enabled = false;
-                checkBoxAllUsers.Enabled = false;
-                checkBoxMultiInstance.Enabled = false;
-                listViewUrls.Enabled = !false;
-                buttonAdd.Enabled = false;
-                buttonEdit.Enabled = false;
-                buttonSave.Enabled = false;
-                buttonCancel.Enabled = false;
-                buttonDelete.Enabled = false;
-                buttonPackage.Enabled = false;
-                comboBoxUrlType.Enabled = false;
-            }
-            else
-            {
-                bool enable = (state != State.View && state != State.None);
-
-                buttonPackage.Enabled = listViewUrls.Items.Count > 0 && !enable;
-
-                textBoxDesc.Enabled = enable;
-                textBoxTitle.Enabled = enable;
-                checkBoxAllUsers.Enabled = enable;
-                checkBoxMultiInstance.Enabled = enable;
-                listViewUrls.Enabled = !enable;
-                comboBoxUrlType.Enabled = enable;
-                textBoxUrl.Enabled = enable;
-                textBoxUrl.ReadOnly = !(comboBoxUrlType.SelectedIndex == (int)UrlType.Url);
-
-                switch (state)
-                {
-                    case State.View:
-                        buttonAdd.Enabled = true;
-                        buttonEdit.Enabled = true;
-                        buttonSave.Enabled = false;
-                        buttonCancel.Enabled = false;
-                        buttonDelete.Enabled = true;
-                        //foreach (var picturebox in pictureBoxes)
-                        //{
-                        //    picturebox.Value.BackColor = this.BackColor;
-                        //}
-
-                        break;
-                    case State.None:
-                        buttonAdd.Enabled = true;
-                        buttonEdit.Enabled = false;
-                        buttonSave.Enabled = false;
-                        buttonCancel.Enabled = false;
-                        buttonDelete.Enabled = false;
-                        //foreach (var picturebox in pictureBoxes)
-                        //{
-                        //    picturebox.Value.BackColor = this.BackColor;
-                        //}
-
-                        break;
-                    case State.Add:
-                    case State.Edit:
-                        buttonAdd.Enabled = false;
-                        buttonEdit.Enabled = false;
-                        buttonSave.Enabled = true;
-                        buttonCancel.Enabled = true;
-                        buttonDelete.Enabled = false;
-                        //foreach (var picturebox in pictureBoxes)
-                        //{
-                        //    picturebox.Value.BackColor = Color.Transparent;
-                        //}
-
-                        break;
-                }
-            }
-        }
-
-        private KeyValuePair<string, AppsData> GetDetail()
-        {
-            bool multiInstance = checkBoxMultiInstance.Checked;
-            var allUsers = checkBoxAllUsers.Checked;
-            var title = textBoxTitle.Text.Trim();
-            var desc = textBoxDesc.Text.Trim();
-
-            string protocol = WebProtocol;
-            int port = WebPort;
-
-            var url = textBoxUrl.Text.Trim();
-            var key = string.Format("SYNO.SDS._ThirdParty.App.{0}", title.Replace(" ", ""));
-            string actualUrl = null;
-
-
-            var urlType = comboBoxUrlType.SelectedIndex;
-            switch (urlType)
-            {
-                case (int)UrlType.Url://URL
-                    if (url.StartsWith(":"))
-                    {
-                        var portMatch = getPort.Match(url);
-                        if (portMatch.Success)
-                        {
-                            var value = portMatch.Groups[1].Value;
-                            url = url.Substring(value.Length + 1);
-                            port = int.Parse(value);
-                        }
-                    }
-
-                    if (url.ToLower().StartsWith("https://:") || url.ToLower().StartsWith("http://:"))
-                    {
-                        url = url.Replace("://:", "://0.0.0.0:");
-                    }
-
-                    Uri uri;
-                    if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
-                    {
-                        if (uri.IsAbsoluteUri)
-                        {
-                            protocol = uri.Scheme;
-                            port = uri.Port;
-                            if (uri.Host == "0.0.0.0")
-                                url = uri.AbsolutePath;
-                        }
-                        else
-                        {
-                            protocol = WebProtocol;
-                            url = uri.OriginalString;
-                            if (!url.StartsWith("/"))
-                                url = string.Format("/{0}", url);
-                        }
-                    }
-                    else
-                    {
-                        port = WebPort;
-                        if (!url.StartsWith("/"))
-                            url = string.Format("/{0}", url);
-                    }
-                    break;
-                case (int)UrlType.Command: // Command
-                    var cleanedCommand = CleanUpText(title);
-                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedCommand);
-                    if (url != actualUrl)
-                    {
-                        command = url;
-                        url = actualUrl;
-                    }
-                    break;
-                case (int)UrlType.WebApp: // WebApp
-                    var cleanedWebApp = CleanUpText(title);
-                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url);
-                    if (webAppIndex != null && webAppFolder != null)
-                    {
-                        url = actualUrl;
-                    }
-                    break;
-                case (int)UrlType.Script: // Command
-                    var cleanedScript = CleanUpText(title);
-                    actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedScript);
-                    if (url != actualUrl)
-                    {
-                        url = actualUrl;
-                    }
-                    break;
-            }
-            var appsData = new AppsData()
-            {
-                allUsers = allUsers,
-                title = title,
-                desc = desc,
-                protocol = protocol,
-                url = url,
-                port = port,
-                type = urlType == (int)UrlType.Url ? "url" : "legacy",
-                urlType = urlType,
-                appWindow = key,
-                allowMultiInstance = multiInstance
-            };
-
-            title = CleanUpText(title);
-            appsData.icon = string.Format("images/{0}_{1}.png", title, "{0}");
-            return new KeyValuePair<string, AppsData>(key, appsData);
-        }
-
-        private static string CleanUpText(string text)
-        {
-            if (!string.IsNullOrEmpty(text))
-            {
-                var icon = cleanChar.Replace(text, "_").ToLower();
-                while (text != icon)
-                {
-                    text = icon.Trim(new[] { '_' });
-                    icon = text.Replace("__", "_");
-                }
-            }
-
-            return text;
-        }
-
-        private void buttonAdd_Click(object sender, EventArgs e)
-        {
-            current = new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData());
-
             state = State.Add;
-            Display(current);
+            DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
         }
 
-        private void buttonEdit_Click(object sender, EventArgs e)
+        // Edit the item currently selected
+        private void buttonEditItem_Click(object sender, EventArgs e)
         {
             state = State.Edit;
-            EnableDetail();
+            EnableItemDetails();
             textBoxTitle.Focus();
         }
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void buttonCancelItem_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren())
+            if (state == State.Add)
+                current = new KeyValuePair<string, AppsData>(null, null);
+
+            ResetValidateChildren(); // Reset Error Validation on all controls
+
+            DisplayItem(current);
+        }
+
+        private void buttonSaveItem_Click(object sender, EventArgs e)
+        {
+            if (ValidateChildren()) // Trigger Error Validation on all controls
             {
-                var candidate = GetDetail();
+                var candidate = GetItemDetails();
                 if (state == State.Edit)
                     candidate.Value.guid = current.Value.guid;
 
-                if (Validate(candidate.Value))
+                CleanupPreviousItem(current, candidate);
+                RenamePreviousItem(current, candidate);
+                SaveItemDetails(candidate);
+
+                SaveItemsConfig();
+
+                commandValue = null;
+                scriptValue = null;
+                webAppIndex = null;
+                webAppFolder = null;
+            }
+        }
+
+        private void buttonDeleteItem_Click(object sender, EventArgs e)
+        {
+            if (current.Key != null)
+            {
+                var answer = MessageBox.Show(this, string.Format("Do you really want to delete the {0} '{1}' and related icons?", GetItemType(current.Value.itemType), current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (answer == DialogResult.Yes)
                 {
-                    var answer = DialogResult.Yes;
-
-                    if (current.Key != null)
-                    {
-                        list.urls.Remove(current.Key);
-                        DeletePictures(current.Value.icon);
-                    }
-
-                    var cleanedCurrent = CleanUpText(current.Value.title);
-                    var cleanedCandidate = CleanUpText(candidate.Value.title);
-
-                    //Clean Up a WebApp previously defined if replaced by a Command or an Url
-                    if (current.Value.urlType == (int)UrlType.WebApp && candidate.Value.urlType != (int)UrlType.WebApp)
-                    {
-                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-                        if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
-                            DeleteDirectory(targetWebAppFolder);
-                    }
-
-                    //Clean Up a Command previously defined if replaced by a WebApp or an Url
-                    if (current.Value.urlType == (int)UrlType.Command && candidate.Value.urlType != (int)UrlType.Command)
-                    {
-                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-                        if (File.Exists(targetCommand))
-                            File.Delete(targetCommand);
-                        targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-                        if (File.Exists(targetCommand))
-                            File.Delete(targetCommand);
-                    }
-
-                    //Clean Up a Script previously defined if replaced by a WebApp or an Url
-                    if (current.Value.urlType == (int)UrlType.Script && candidate.Value.urlType != (int)UrlType.Script)
-                    {
-                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-                        if (File.Exists(targetCommand))
-                            File.Delete(targetCommand);
-                        targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-                        if (File.Exists(targetCommand))
-                            File.Delete(targetCommand);
-                    }
-
-                    //Rename a Command
-                    if (current.Value.urlType == (int)UrlType.Command && candidate.Value.urlType == (int)UrlType.Command && cleanedCurrent != cleanedCandidate)
-                    {
-                        RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
-                    }
-
-                    //Rename a Script
-                    if (current.Value.urlType == (int)UrlType.Script && candidate.Value.urlType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
-                    {
-                        RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
-                    }
-
-                    //Rename a WebApp 
-                    if (current.Value.urlType == (int)UrlType.WebApp && candidate.Value.urlType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
-                    {
-                        var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-                        if (Directory.Exists(existingWebAppFolder))
-                        {
-                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
-                            if (Directory.Exists(targetWebAppFolder))
-                            {
-                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                                if (answer == DialogResult.Yes)
-                                {
-                                    DeleteDirectory(targetWebAppFolder);
-                                }
-                            }
-                            if (answer == DialogResult.Yes)
-                            {
-                                Directory.Move(existingWebAppFolder, targetWebAppFolder);
-                            }
-                        }
-                    }
-
-                    current = candidate;
-                    SavePictures(candidate.Value.icon);
-
-                    switch (current.Value.urlType)
-                    {
-                        case (int)UrlType.Url: //Single URL
-                            current.Value.urlDetail = "";
-                            break;
-                        case (int)UrlType.Command: //Command
-                            CreateScript(current);
-                            break;
-                        case (int)UrlType.WebApp: // WebApp
-                            CreateWebApp(current);
-                            break;
-                        case (int)UrlType.Script: // WebApp
-                            CreateScript(current);
-                            break;
-                    }
-
-                    list.urls.Add(current.Key, current.Value);
+                    list.items.Remove(current.Key);
                     BindData(list);
-                    DisplayCurrent();
+                    DeleteItemPictures(current.Value.icon);
 
-                    PersistUrlsConfig();
+                    var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+                    switch (current.Value.itemType)
+                    {
+                        case (int)UrlType.WebApp:
+                            DeleteWebApp(cleanedCurrent);
+                            break;
+                        case (int)UrlType.Command:
+                            DeleteCommandScript(cleanedCurrent);
+                            break;
+                        case (int)UrlType.Script:
+                            DeleteCommandScript(cleanedCurrent);
+                            break;
+                    }
 
-                    webAppIndex = null;
-                    webAppFolder = null;
+                    DisplayItem();
+
+                    SaveItemsConfig();
                 }
             }
         }
 
-        private void RenameScript(string packageName, string cleanedCurrent, string cleanedCandidate)
+        private void comboBoxItemType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBoxItemType.SelectedIndex)
+            {
+                case (int)UrlType.Url: // Url                    
+                    this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type here the URL to be opened when clicking the icon on DSM.");
+                    //textBoxItem.Focus();
+                    break;
+                case (int)UrlType.Command: // Command
+                    this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type here the Command to be executed when clicking the icon on DSM. It must be a single command. DoubleClick to edit.");
+                    break;
+                case (int)UrlType.Script: // Script
+                    this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type the Script to be executed when clicking the icon on DSM. DoubleClick to edit.");
+                    break;
+                case (int)UrlType.WebApp: // WebApp
+                    this.toolTip4Mods.SetToolTip(this.textBoxItem, "Here is the url of your own page to be opened when clicking the icon on DMS. DoubleClick to edit.");
+                    break;
+            }
+
+            if (comboBoxItemType.Focused)
+            {
+                ChangeItemType(comboBoxItemType.SelectedIndex);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveItemsConfig();
+            SavePackageInfo();
+        }
+
+        private void RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        {
+            var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+            var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
+            var answer = DialogResult.Yes;
+
+            //Rename a Command
+            if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType == (int)UrlType.Command && cleanedCurrent != cleanedCandidate)
+            {
+                RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+            }
+
+            //Rename a Script
+            if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
+            {
+                RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+            }
+
+            //Rename a WebApp 
+            if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
+            {
+                var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+                if (Directory.Exists(existingWebAppFolder))
+                {
+                    var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
+                    if (Directory.Exists(targetWebAppFolder))
+                    {
+                        answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (answer == DialogResult.Yes)
+                        {
+                            Helper.DeleteDirectory(targetWebAppFolder);
+                        }
+                    }
+                    if (answer == DialogResult.Yes)
+                    {
+                        Directory.Move(existingWebAppFolder, targetWebAppFolder);
+                    }
+                }
+            }
+        }
+
+        private void CleanupPreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        {
+            if (current.Key != null)
+            {
+                list.items.Remove(current.Key);
+                BindData(list);
+                DeleteItemPictures(current.Value.icon);
+            }
+
+            var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+            var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
+
+            //Clean Up a WebApp previously defined if replaced by a Command or an Url
+            if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType != (int)UrlType.WebApp)
+            {
+                DeleteWebApp(cleanedCurrent);
+            }
+
+            //Clean Up a Command previously defined if replaced by a WebApp or an Url
+            if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType != (int)UrlType.Command)
+            {
+                DeleteCommandScript(cleanedCurrent);
+            }
+
+            //Clean Up a Script previously defined if replaced by a WebApp or an Url
+            if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType != (int)UrlType.Script)
+            {
+                DeleteCommandScript(cleanedCurrent);
+            }
+        }
+
+        private void SaveItemDetails(KeyValuePair<string, AppsData> candidate)
+        {
+            SaveItemPictures(candidate);
+
+            switch (candidate.Value.itemType)
+            {
+                case (int)UrlType.Url:
+                    break;
+                case (int)UrlType.Command:
+                    CreateCommandScript(candidate, commandValue);
+                    break;
+                case (int)UrlType.WebApp:
+                    CreateWebApp(candidate);
+                    break;
+                case (int)UrlType.Script:
+                    CreateCommandScript(candidate, scriptValue);
+                    break;
+            }
+
+            list.items.Add(candidate.Key, candidate.Value);
+            BindData(list);
+
+            DisplayItem(candidate);
+        }
+
+        private void RenameCommandScript(string packageName, string cleanedCurrent, string cleanedCandidate)
         {
             var answer = DialogResult.Yes;
 
@@ -800,49 +788,195 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        private void DeleteCommandScript(string cleanedCurrent)
+        {
+            var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
+            if (File.Exists(targetCommand))
+                File.Delete(targetCommand);
+            targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
+            if (File.Exists(targetCommand))
+                File.Delete(targetCommand);
+        }
+
+        private void DeleteWebApp(string cleanedCurrent)
+        {
+            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+            if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+                Helper.DeleteDirectory(targetWebAppFolder);
+        }
+
+        private void ChangeItemType(int selectedIndex)
+        {
+            var answer = DialogResult.Yes;
+
+            if (current.Value.itemType != (int)UrlType.Url && (current.Value.itemType != selectedIndex))
+            {
+                var from = GetItemType(current.Value.itemType);
+                var to = GetItemType(selectedIndex);
+                answer = MessageBox.Show(this, string.Format("Your Package '{0}' currently contains a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", info["package"], from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            }
+
+            if (answer == DialogResult.No)
+            {
+                textBoxTitle.Focus();
+                comboBoxItemType.SelectedIndex = current.Value.itemType;
+            }
+            else
+            {
+                current.Value.itemType = selectedIndex;
+                switch (selectedIndex)
+                {
+                    case (int)UrlType.Url: // Url
+                        textBoxItem.Enabled = true;
+                        textBoxItem.ReadOnly = false;
+                        textBoxItem.Text = "";
+                        textBoxItem.Focus();
+                        break;
+                    case (int)UrlType.Command:
+                        var cleanedCommandName = Helper.CleanUpText(textBoxTitle.Text);
+                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCommandName + ".sh");
+
+                        textBoxItem.Enabled = true;
+                        textBoxItem.ReadOnly = false;
+
+                        EditCommand(targetCommand);
+                        if (!string.IsNullOrEmpty(commandValue))
+                            textBoxItem.Text = commandValue;
+                        else
+                            textBoxItem.Text = "";
+                        textBoxItem.Focus();
+                        break;
+                    case (int)UrlType.Script: // Script
+                        var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
+                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
+
+                        textBoxItem.Enabled = true;
+                        textBoxItem.ReadOnly = true;
+
+                        EditScript(targetScript);
+                        if (!string.IsNullOrEmpty(scriptValue))
+                        {
+                            var url = "";
+                            GetDetailsScript(cleanedScriptName, ref url);
+                            textBoxItem.Text = url;
+                        }
+                        else
+                        {
+                            selectedIndex = (int)UrlType.Url;
+                        }
+                        break;
+                    case (int)UrlType.WebApp: // WebApp
+                        textBoxItem.Enabled = true;
+                        textBoxItem.ReadOnly = true;
+                        textBoxItem.Text = "";
+                        var cleanedWebApp = Helper.CleanUpText(textBoxTitle.Text);
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedWebApp);
+                        if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+                        {
+                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        }
+                        if (answer == DialogResult.Yes)
+                        {
+                            if (EditWebApp() != DialogResult.OK)
+                            {
+                                selectedIndex = (int)UrlType.Url;
+                            }
+                        }
+                        break;
+                }
+                if (current.Value.itemType != selectedIndex)
+                {
+                    current.Value.itemType = selectedIndex;
+                    ChangeItemType(selectedIndex);
+                    comboBoxItemType.SelectedIndex = selectedIndex;
+                }
+            }
+        }
+
+        private DialogResult EditCommand(string targetCommand)
+        {
+            var result = DialogResult.Cancel;
+            if (File.Exists(targetCommand))
+            {
+                commandValue = File.ReadAllText(targetCommand);
+                result = DialogResult.OK;
+            }
+            return result;
+        }
+
+        private DialogResult EditScript(string targetScript)
+        {
+            var editScript = new ScriptForm();
+            var script = string.Empty;
+            if (File.Exists(targetScript))
+                script = File.ReadAllText(targetScript);
+            editScript.Script = script;
+            var result = editScript.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                scriptValue = editScript.Script;
+            }
+            return result;
+        }
+
+        private DialogResult EditWebApp()
+        {
+            webpageBrowserDialog4Mods.Description = "Pick the folder containing the sources of your WebApp.";
+            DialogResult result = webpageBrowserDialog4Mods.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                openFileDialog4Mods.Title = "Pick the index page.";
+                openFileDialog4Mods.InitialDirectory = webpageBrowserDialog4Mods.SelectedPath;
+                openFileDialog4Mods.Filter = "html (*.html)|*.html|php (*.php)|*.php";
+                openFileDialog4Mods.FilterIndex = 2;
+                openFileDialog4Mods.FileName = null;
+                var files = Directory.GetFiles(webpageBrowserDialog4Mods.SelectedPath).Select(path => Path.GetFileName(path)).ToArray();
+                openFileDialog4Mods.FileName = Helper.FindFileIndex(files, "index.php") ?? Helper.FindFileIndex(files, "index.html") ?? Helper.FindFileIndex(files, "default.php") ?? Helper.FindFileIndex(files, "default.html") ?? null;
+
+                result = openFileDialog4Mods.ShowDialog(this);
+                if (result == DialogResult.OK)
+                {
+                    webAppIndex = openFileDialog4Mods.FileName;
+                    webAppFolder = webpageBrowserDialog4Mods.SelectedPath;
+
+                    if (!webAppIndex.StartsWith(webAppFolder))
+                    {
+                        MessageBox.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        webAppFolder = null;
+                        webAppIndex = null;
+                        comboBoxItemType.SelectedIndex = (int)UrlType.Url;
+                    }
+                    else
+                    {
+                        textBoxItem.Text = webAppIndex.Remove(0, webAppFolder.Length + 1);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private void CreateWebApp(KeyValuePair<string, AppsData> current)
         {
             if (webAppIndex != null && webAppFolder != null)
             {
-                var cleanedCurrent = CleanUpText(current.Value.title);
+                var cleanedCurrent = Helper.CleanUpText(current.Value.title);
                 var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
 
                 if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                 {
-                    DeleteDirectory(targetWebAppFolder);
+                    Helper.DeleteDirectory(targetWebAppFolder);
                 }
 
-                current.Value.urlDetail = "webAppFolder";
-                copyDirectory(webAppFolder, targetWebAppFolder);
+                Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
             }
         }
 
-        private void copyDirectory(string strSource, string strDestination)
+        private void CreateCommandScript(KeyValuePair<string, AppsData> current, string value)
         {
-            if (!Directory.Exists(strDestination))
+            if (value != null)
             {
-                Directory.CreateDirectory(strDestination);
-            }
-
-            DirectoryInfo dirInfo = new DirectoryInfo(strSource);
-            FileInfo[] files = dirInfo.GetFiles();
-            foreach (FileInfo tempfile in files)
-            {
-                tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
-            }
-
-            DirectoryInfo[] directories = dirInfo.GetDirectories();
-            foreach (DirectoryInfo tempdir in directories)
-            {
-                copyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
-            }
-        }
-
-        private void CreateScript(KeyValuePair<string, AppsData> current)
-        {
-            if (command != null)
-            {
-                var cleanedCurrent = CleanUpText(current.Value.title);
+                var cleanedCurrent = Helper.CleanUpText(current.Value.title);
                 var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
                 var targetScriptSh = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
 
@@ -850,13 +984,18 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     File.Delete(targetScript);
                 }
+                if (File.Exists(targetScriptSh))
+                {
+                    File.Delete(targetScriptSh);
+                }
 
-                current.Value.urlDetail = command;
+                // Remove \r not supported in shell scripts
+                value = value.Replace("\r\n", "\n");
 
                 // Create sh script (ANSI) to be executed
                 using (TextWriter text = new StreamWriter(targetScriptSh, true, Encoding.GetEncoding(1252)))
                 {
-                    text.Write(command);
+                    text.Write(value);
                 }
 
                 // Create php script to call sh
@@ -868,423 +1007,343 @@ namespace BeatificaBytes.Synology.Mods
                     text.Write("?>");
                     text.Close();
                 }
-                command = null;
             }
         }
 
-        private void SavePictures(string icon)
+        private void SaveItemsConfig()
         {
-            foreach (var pictureBox in pictureBoxes)
+            if (!string.IsNullOrEmpty(PackageRootPath))
             {
-                var picture = pictureBox.Value;
-                var size = pictureBox.Key;
-                var image = picture.Image;
+                var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
+                Properties.Settings.Default.Packages = json;
+                Properties.Settings.Default.Save();
 
-                if (image != null)
+                var config = Path.Combine(PackageRootPath, CONFIGFILE);
+                if (Directory.Exists(Path.GetDirectoryName(config)))
                 {
-                    var path = GetIconFullPath(icon, size);
-                    if (File.Exists(path))
-                        File.Delete(path);
-                    image.Save(path, ImageFormat.Png);
-
-                    path = Path.Combine(ResourcesRootPath, @"recovery", Path.GetFileName(path));
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    if (File.Exists(path))
-                        File.Delete(path);
-                    image.Save(path, ImageFormat.Png);
+                    File.WriteAllText(config, json);
+                }
+                else
+                {
+                    MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
-        }
-
-        private bool Validate(AppsData candidate)
-        {
-            var message = new StringBuilder();
-            var error = message.ToString();
-            var valid = error.Length > 0;
-            if (valid)
-            {
-                MessageBox.Show(this, error, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-
-            return !valid;
-        }
-
-        private void buttonCancel_Click(object sender, EventArgs e)
-        {
-            if (state == State.Add)
-                current = new KeyValuePair<string, AppsData>(null, null);
-
-            foreach (Control ctrl in this.Controls)
-            {
-                if (ctrl != null)
-                {
-                    errorProvider.SetError(ctrl, "");
-                }
-            }
-
-            DisplayCurrent();
         }
 
         private void DisplayNone()
         {
-            current = new KeyValuePair<string, AppsData>(null, null);
-
             state = State.None;
-            Display(current);
+            DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
         }
 
-        private void DisplayCurrent()
+        private void DisplayItem()
         {
-            if (current.Key == null && listViewUrls.Items.Count > 0)
+            DisplayItem(new KeyValuePair<string, AppsData>());
+        }
+
+        // Display an item which becomes the current one. If no item is specified, the first one in the list is used, if any.
+        private void DisplayItem(KeyValuePair<string, AppsData> item)
+        {
+            // If no current Url, select the first one in the list
+            if (item.Key == null && listViewItems.Items.Count > 0)
             {
-                current = (KeyValuePair<string, AppsData>)listViewUrls.Items[0].Tag;
+                item = (KeyValuePair<string, AppsData>)listViewItems.Items[0].Tag;
             }
 
-            if (current.Key == null)
+            // If no Url in the list, display none
+            if (item.Key == null)
             {
                 DisplayNone();
             }
             else
+            // Otherwise, display the selected one
             {
-                var currentGuid = current.Value.guid;
                 state = State.View;
-                Display(current);
+                var currentGuid = item.Value.guid;
+                DisplayDetails(item);
 
-                foreach (ListViewItem item in listViewUrls.Items)
+                foreach (ListViewItem other in listViewItems.Items)
                 {
-                    KeyValuePair<string, AppsData> tag = (KeyValuePair<string, AppsData>)item.Tag;
-                    item.Selected = (tag.Value.guid == currentGuid);
-                }
-                listViewUrls.Focus();
-            }
-        }
-
-        private void buttonDelete_Click(object sender, EventArgs e)
-        {
-            if (current.Key != null)
-            {
-                var urlType = GetUrlType(current.Value.urlType);
-
-                var answer = MessageBox.Show(this, string.Format("Do you really want to delete the {0} '{1}' and related icons?", urlType, current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (answer == DialogResult.Yes)
-                {
-                    DeletePictures(list.urls[current.Key].icon);
-                    var cleanedCurrent = CleanUpText(current.Value.title);
-
-                    if (current.Value.urlType == (int)UrlType.WebApp)
-                    {
-                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-                        if (Directory.Exists(targetWebAppFolder))
-                        {
-                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a WebApp named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            if (answer == DialogResult.Yes)
-                            {
-                                DeleteDirectory(targetWebAppFolder);
-                            }
-                        }
-                    }
-                    if (current.Value.urlType == (int)UrlType.Command)
-                    {
-                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-                        if (File.Exists(targetCommand))
-                        {
-                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a Command named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            if (answer == DialogResult.Yes)
-                            {
-                                File.Delete(targetCommand);
-                                targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-                                if (File.Exists(targetCommand))
-                                    File.Delete(targetCommand);
-                            }
-                        }
-                    }
-                    if (current.Value.urlType == (int)UrlType.Script)
-                    {
-                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-                        if (File.Exists(targetCommand))
-                        {
-                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' contains a Script named {1}.\nDo you want to delete it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            if (answer == DialogResult.Yes)
-                            {
-                                File.Delete(targetCommand);
-                                targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-                                if (File.Exists(targetCommand))
-                                    File.Delete(targetCommand);
-                            }
-                        }
-                    }
-
-                    list.urls.Remove(current.Key);
-
-                    current = new KeyValuePair<string, AppsData>(null, null);
-                    BindData(list);
-                    DisplayCurrent();
-
-                    PersistUrlsConfig();
+                    KeyValuePair<string, AppsData> tag = (KeyValuePair<string, AppsData>)other.Tag;
+                    other.Selected = (tag.Value.guid == currentGuid);
+                    if (other.Selected)
+                        listViewItems.EnsureVisible(other.Index);
                 }
             }
         }
 
-        private void pictureBoxPkg_DoubleClick(object sender, EventArgs e)
+        private void DisplayDetails(KeyValuePair<string, AppsData> item)
         {
-            openFileDialog4Mods.Title = "Pick a png";
-            DialogResult result = openFileDialog4Mods.ShowDialog(this);
-            if (result == DialogResult.OK)
+            commandValue = null;
+            scriptValue = null;
+            current = item;
+            var show = item.Key != null;
+            var descText = show ? item.Value.desc : "";
+            var titleText = show ? item.Value.title : "";
+            var urlText = show ? item.Value.url : "";
+            if (urlText != null && urlText.StartsWith("/") && item.Value.port != WebPort)
             {
-                var file = openFileDialog4Mods.FileName;
-                Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
-                Properties.Settings.Default.Save();
-
-                ChangePicturePkg(file);
-            }
-        }
-
-        private void ChangePicturePkg(string picture)
-        {
-            var transparency = int.Parse(comboBoxTransparency.SelectedItem.ToString());
-            if (MessageBox.Show("Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-            {
-                transparency = 0;
-            }
-            else if (transparency == 0)
-            {
-                MessageBox.Show("You need to pick a transparency value");
-                comboBoxTransparency.Focus();
-                picture = null;
-            }
-            if (!string.IsNullOrEmpty(picture))
-            {
-                var image = LoadImage(picture, transparency, 256);
-                LoadPictureBox(pictureBoxPkg_256, image);
-                LoadPictureBox(pictureBoxPkg_72, image);
-            }
-        }
-
-
-        private void IncrementVersion()
-        {
-            var version = textBoxVersion.Text;
-            var versions = version.Split('.');
-            var minor = int.Parse(versions[2]) + 1;
-            textBoxVersion.Text = string.Format("{0}.{1}.{2}", versions[0], versions[1], minor);
-        }
-
-        private void pictureBox_DoubleClick(object sender, EventArgs e)
-        {
-            if (state == State.Add || state == State.Edit)
-            {
-                var picture = sender as PictureBox;
-                var size = picture.Tag.ToString().Split(';')[1];
-
-                openFileDialog4Mods.Title = string.Format("Pick a png of {0}x{0}", size);
-                DialogResult result = openFileDialog4Mods.ShowDialog(this);
-                if (result == DialogResult.OK)
+                if (item.Value.protocol == "https")
                 {
-                    string file = openFileDialog4Mods.FileName;
-                    ChangePicture(file, size);
-
-                    Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
-                    Properties.Settings.Default.Save();
-                }
-            }
-        }
-
-        private void ChangePictureBox(PictureBox pictureBox, Image image)
-        {
-            if (checkBoxSize.Checked)
-            {
-                foreach (var boxSize in pictureBoxes.Keys)
-                {
-                    LoadPicture(image, boxSize);
-                }
-            }
-            else
-            {
-                LoadPictureBox(pictureBox, image);
-            }
-        }
-
-        private void ChangePicture(string picture, string size)
-        {
-            Image image = null;
-            var transparency = int.Parse(comboBoxTransparency.SelectedValue.ToString());
-            if (MessageBox.Show("Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-            {
-                transparency = 0;
-            }
-            else if (transparency == 0)
-            {
-                MessageBox.Show("You need to pick a transparency value");
-                comboBoxTransparency.Focus();
-                picture = null;
-            }
-            if (!string.IsNullOrEmpty(picture))
-            {
-                image = LoadImage(picture, transparency, 256);
-            }
-
-            if (image != null)
-                if (checkBoxSize.Checked)
-                {
-                    foreach (var boxSize in pictureBoxes.Keys)
-                    {
-                        LoadPicture(image, boxSize);
-                    }
+                    urlText = string.Format("https://:{0}{1}", item.Value.port, item.Value.url);
                 }
                 else
                 {
-                    LoadPicture(image, size);
+                    urlText = string.Format(":{0}{1}", item.Value.port, item.Value.url);
                 }
-        }
+            }
+            var users = show ? item.Value.allUsers : false;
 
-        private void pictureBoxSettings_Click(object sender, EventArgs e)
-        {
-            folderBrowserDialog4Mods.Description = "Pick a folder to store the new Package or a folder containing an existing Package.";
-            if (!string.IsNullOrEmpty(PackageRootPath))
-                folderBrowserDialog4Mods.SelectedPath = PackageRootPath;
-
-            DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
-            if (result == DialogResult.OK)
+            if (show)
             {
-                PackageRootPath = folderBrowserDialog4Mods.SelectedPath;
-
-                var content = Directory.GetDirectories(PackageRootPath).ToList();
-                content.AddRange(Directory.GetFiles(PackageRootPath));
-                if (content.Count > 0)
+                foreach (var size in pictureBoxes.Keys)
                 {
-                    content.Remove(Path.Combine(PackageRootPath, "7z.dll"));
-                    content.Remove(Path.Combine(PackageRootPath, "7z.exe"));
-                    content.Remove(Path.Combine(PackageRootPath, "INFO"));
-                    content.Remove(Path.Combine(PackageRootPath, "Pack.cmd"));
-                    content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG"));
-                    content.Remove(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG"));
-                    content.Remove(Path.Combine(PackageRootPath, "package"));
-                    content.Remove(Path.Combine(PackageRootPath, "scripts"));
-                    var remaining = content.ToList();
-                    foreach (var spk in remaining)
+                    var picture = GetIconFullPath(item.Value.icon, size);
+
+                    if (File.Exists(picture))
                     {
-                        if (spk.EndsWith(".spk"))
-                        {
-                            content.Remove(spk);
-                        }
-                    }
-                    if (content.Count > 0)
-                    {
-                        MessageBox.Show(this, "The Folder where the package will be created must be empty or contain an existing Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        LoadPictureBox(LoadImageFromFile(picture), size);
                     }
                     else
                     {
-                        MessageBox.Show(this, "The Folder contains a package that will be reused.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        LoadPictureBox(null, size);
                     }
                 }
-                else
-                {
-                    InitialConfiguration();
-                }
-                if (content.Count == 0)
-                {
-                    InitData();
-                    LoadPackageInfo();
-                    BindData(list);
-                    DisplayCurrent();
-                    //Display(new KeyValuePair<string, AppsData>(null, null));
-                }
-            }
-        }
-
-        private void LoadPackageInfo()
-        {
-            var file = Path.Combine(PackageRootPath, "INFO");
-
-            if (File.Exists(file))
-            {
-                var lines = File.ReadAllLines(file);
-                foreach (var line in lines)
-                {
-                    var key = line.Substring(0, line.IndexOf('='));
-                    var value = line.Substring(line.IndexOf('=') + 1);
-                    value = value.Trim(new char[] { '"' });
-                    info.Add(key, value);
-                }
-
-                foreach (var control in groupBoxPackage.Controls)
-                {
-                    var textBox = control as TextBox;
-                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
-                    {
-                        var keys = textBox.Tag.ToString().Split(';');
-                        var key = keys[0].Substring(3);
-                        textBox.Text = info[key];
-                    }
-                }
-
-                LoadPictureBox(pictureBoxPkg_256, LoadImage(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG")));
-                LoadPictureBox(pictureBoxPkg_72, LoadImage(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG")));
             }
             else
             {
-                MessageBox.Show(this, "The working folder doesn't contain a Package. Please reconfigure MODS.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                foreach (var pictureBox in pictureBoxes.Values)
+                {
+                    LoadPictureBox(pictureBox, null);
+                }
+                comboBoxItemType.SelectedIndex = (int)UrlType.Url;
+            }
+
+            textBoxDesc.Text = descText;
+            textBoxTitle.Text = titleText;
+            textBoxItem.Text = urlText;
+            checkBoxAllUsers.Checked = users;
+            checkBoxMultiInstance.Checked = show ? item.Value.allowMultiInstance : false;
+            comboBoxItemType.SelectedIndex = show ? item.Value.itemType : (int)UrlType.Url;
+
+            EnableItemDetails();
+
+            listViewItems.Focus();
+        }
+
+        private void EnableItemDetails()
+        {
+            bool enabling;
+            bool packaging;
+
+            if (string.IsNullOrEmpty(PackageRootPath))
+            {
+                // Disable the detail zone if not package defined
+                enabling = false;
+                packaging = false;
+
+                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling, enabling);
+                EnableItemButtonDetails(enabling, enabling, enabling, enabling, enabling, packaging);
+            }
+            else
+            {
+                // Enable the detail and package zone depending on the current state (view, new, edit or none)
+                enabling = (state != State.View && state != State.None);
+                packaging = listViewItems.Items.Count > 0 && !enabling;
+
+                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling, enabling);
+                switch (state)
+                {
+                    case State.View:
+                        EnableItemButtonDetails(true, true, false, false, true, packaging);
+                        break;
+                    case State.None:
+                        EnableItemButtonDetails(true, false, false, false, false, packaging);
+                        break;
+                    case State.Add:
+                    case State.Edit:
+                        EnableItemButtonDetails(false, false, true, true, false, packaging);
+                        break;
+                }
+                textBoxItem.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)UrlType.Url);
+                groupBoxPackage.Enabled = !enabling;
             }
         }
 
-        private void InitialConfiguration()
+        private void EnableItemFieldDetails(bool bTextBoxDesc, bool bTextBoxTitle, bool btestBoxItem, bool bCheckBoxAllUsers, bool bCheckBoxMultiInstance, bool blistViewItems, bool bcomboBoxItemType)
         {
-            using (new CWaitCursor())
+            textBoxDesc.Enabled = bTextBoxDesc;
+            textBoxTitle.Enabled = bTextBoxTitle;
+            textBoxItem.Enabled = btestBoxItem;
+            checkBoxAllUsers.Enabled = bCheckBoxAllUsers;
+            checkBoxMultiInstance.Enabled = bCheckBoxMultiInstance;
+            listViewItems.Enabled = blistViewItems;
+            comboBoxItemType.Enabled = bcomboBoxItemType;
+        }
+
+        private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bButtonPackage)
+        {
+            buttonAdd.Enabled = bButtonAdd;
+            buttonEdit.Enabled = bButtonEdit;
+            buttonSave.Enabled = bButtonSave;
+            buttonCancel.Enabled = bButtonCancel;
+            buttonDelete.Enabled = bButtonDelete;
+            buttonPackage.Enabled = bButtonPackage;
+        }
+
+        // Parse the data of the details zone
+        private KeyValuePair<string, AppsData> GetItemDetails()
+        {
+            bool multiInstance = checkBoxMultiInstance.Checked;
+            var allUsers = checkBoxAllUsers.Checked;
+            var title = textBoxTitle.Text.Trim();
+            var desc = textBoxDesc.Text.Trim();
+
+            string protocol = WebProtocol;
+            int port = WebPort;
+
+            var url = textBoxItem.Text.Trim();
+            var key = string.Format("SYNO.SDS._ThirdParty.App.{0}", title.Replace(" ", ""));
+
+            var urlType = comboBoxItemType.SelectedIndex;
+            switch (urlType)
             {
-                Properties.Settings.Default.PackageRoot = PackageRootPath;
-                Properties.Settings.Default.Save();
-
-                Process unzip = new Process();
-                unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
-                unzip.StartInfo.Arguments = string.Format("x {0} -o{1}", Path.Combine(ResourcesRootPath, "Package.zip"), PackageRootPath);
-                unzip.StartInfo.UseShellExecute = false;
-                unzip.StartInfo.RedirectStandardOutput = true;
-                unzip.StartInfo.CreateNoWindow = true;
-                unzip.Start();
-                Console.WriteLine(unzip.StandardOutput.ReadToEnd());
-                unzip.WaitForExit();
-
-                File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
-                File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
-                File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
+                case (int)UrlType.Url:
+                    GetDetailsUrl(ref protocol, ref port, ref url);
+                    break;
+                case (int)UrlType.Command:
+                    GetDetailsCommand(title, ref url);
+                    break;
+                case (int)UrlType.WebApp:
+                    GetDetailsWebApp(title, ref url);
+                    break;
+                case (int)UrlType.Script:
+                    GetDetailsScript(title, ref url);
+                    break;
             }
-
-            var recovery = Path.Combine(ResourcesRootPath, "recovery");
-            if (Directory.Exists(recovery))
+            var appsData = new AppsData()
             {
-                var images = Directory.GetFiles(recovery);
-                if (images.Length > 0)
+                allUsers = allUsers,
+                title = title,
+                desc = desc,
+                protocol = protocol,
+                url = url,
+                port = port,
+                type = urlType == (int)UrlType.Url ? "url" : "legacy",
+                itemType = urlType,
+                appWindow = key,
+                allowMultiInstance = multiInstance
+            };
+
+            title = Helper.CleanUpText(title);
+            appsData.icon = string.Format("images/{0}_{1}.png", title, "{0}");
+            return new KeyValuePair<string, AppsData>(key, appsData);
+        }
+
+        private void GetDetailsScript(string title, ref string url)
+        {
+            var cleanedScript = Helper.CleanUpText(title);
+            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedScript);
+            if (url != actualUrl)
+            {
+                url = actualUrl;
+            }
+        }
+
+        private void GetDetailsWebApp(string title, ref string url)
+        {
+            var cleanedWebApp = Helper.CleanUpText(title);
+            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url);
+            if (webAppIndex != null && webAppFolder != null)
+            {
+                url = actualUrl;
+            }
+        }
+
+        private void GetDetailsCommand(string title, ref string url)
+        {
+            var cleanedCommand = Helper.CleanUpText(title);
+            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedCommand);
+            if (url != actualUrl)
+            {
+                url = actualUrl;
+            }
+        }
+
+        private void GetDetailsUrl(ref string protocol, ref int port, ref string url)
+        {
+            if (url.StartsWith(":"))
+            {
+                var portMatch = getPort.Match(url);
+                if (portMatch.Success)
                 {
-                    var answer = MessageBox.Show(this, "Icons from a previous package are still available do you want to recover them?\nIf you answer 'No', they will be deleted.\nIf you 'Cancel', they will be kept in the recovery folder.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                    switch (answer)
-                    {
-                        case DialogResult.Yes:
-                            var target = Path.Combine(PackageRootPath, @"package\ui\images");
-                            foreach (var image in images)
-                            {
-                                var dest = Path.Combine(target, Path.GetFileName(image));
-                                if (File.Exists(dest))
-                                    File.Delete(dest);
-                                File.Move(image, dest);
-                            }
-                            break;
-                        case DialogResult.No:
-                            DeleteDirectory(recovery);
-                            break;
-                        default:
-                            break;
-                    }
+                    var value = portMatch.Groups[1].Value;
+                    url = url.Substring(value.Length + 1);
+                    port = int.Parse(value);
                 }
             }
+
+            if (url.ToLower().StartsWith("https://:") || url.ToLower().StartsWith("http://:"))
+            {
+                url = url.Replace("://:", "://0.0.0.0:");
+            }
+
+            Uri uri;
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+            {
+                if (uri.IsAbsoluteUri)
+                {
+                    protocol = uri.Scheme;
+                    port = uri.Port;
+                    if (uri.Host == "0.0.0.0")
+                        url = uri.AbsolutePath;
+                }
+                else
+                {
+                    protocol = WebProtocol;
+                    url = uri.OriginalString;
+                    if (!url.StartsWith("/"))
+                        url = string.Format("/{0}", url);
+                }
+            }
+            else
+            {
+                port = WebPort;
+                if (!url.StartsWith("/"))
+                    url = string.Format("/{0}", url);
+            }
+        }
+        #endregion --------------------------------------------------------------------------------------------------------------------------------
+
+        #region Manage Icons ----------------------------------------------------------------------------------------------------------------------
+        private void pictureBoxPkg_DragEnter(object sender, DragEventArgs e)
+        {
+            string filename;
+            validData = Helper.GetDragDropFilename(out filename, e);
+            if (validData)
+            {
+                imageDragDropPath = filename;
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+                e.Effect = DragDropEffects.None;
         }
 
-        private void pictureBox_DragEnter(object sender, DragEventArgs e)
+        private void pictureBoxPkg_DragDrop(object sender, DragEventArgs e)
+        {
+            if (validData)
+            {
+                var pictureBox = sender as PictureBox;
+                ChangePicturePkg(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
+            }
+        }
+
+        private void pictureBoxItem_DragEnter(object sender, DragEventArgs e)
         {
             if (state == State.Add || state == State.Edit)
             {
                 string filename;
-                validData = GetFilename(out filename, e);
+                validData = Helper.GetDragDropFilename(out filename, e);
                 if (validData)
                 {
                     imageDragDropPath = filename;
@@ -1300,15 +1359,98 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void pictureBox_DragDrop(object sender, DragEventArgs e)
+        private void pictureBoxItem_DragDrop(object sender, DragEventArgs e)
         {
-            var pictureBox = sender as PictureBox;
-
             if (validData)
             {
-                var image = LoadImage(imageDragDropPath, int.Parse((string)comboBoxTransparency.SelectedItem), int.Parse(pictureBox.Tag.ToString().Split(';')[1]));
-                ChangePictureBox(pictureBox, image);
+                var pictureBox = sender as PictureBox;
+                ChangePictureItem(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
             }
+        }
+
+        private void pictureBoxPkg_DoubleClick(object sender, EventArgs e)
+        {
+            var picture = sender as PictureBox;
+            var size = picture.Tag.ToString().Split(';')[1];
+
+            openFileDialog4Mods.Title = string.Format("Pick a png, jpg or bmp of {0}x{0}", size);
+            DialogResult result = openFileDialog4Mods.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                var file = openFileDialog4Mods.FileName;
+                ChangePicturePkg(file, size);
+
+                Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void pictureBox_DoubleClick(object sender, EventArgs e)
+        {
+            if (state == State.Add || state == State.Edit)
+            {
+                var picture = sender as PictureBox;
+                var size = picture.Tag.ToString().Split(';')[1];
+
+                openFileDialog4Mods.Title = string.Format("Pick a png, jpg or bmp of {0}x{0}", size);
+                DialogResult result = openFileDialog4Mods.ShowDialog(this);
+                if (result == DialogResult.OK)
+                {
+                    string file = openFileDialog4Mods.FileName;
+                    ChangePictureItem(file, size);
+
+                    Properties.Settings.Default.SourceImages = Path.GetDirectoryName(file);
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        private void ChangePicturePkg(string picture, string size)
+        {
+            Image image = LoadImage(picture);
+            if (image != null)
+            {
+                if (size == "256")
+                    LoadPictureBox(pictureBoxPkg_256, image);
+                if (size == "72")
+                    LoadPictureBox(pictureBoxPkg_72, image);
+            }
+        }
+
+        private void ChangePictureItem(string picture, string size)
+        {
+            Image image = LoadImage(picture);
+            if (image != null)
+            {
+                if (checkBoxSize.Checked)
+                    foreach (var boxSize in pictureBoxes.Keys)
+                        LoadPictureBox(image, boxSize);
+                else
+                    LoadPictureBox(image, size);
+            }
+        }
+
+        private Image LoadImage(string picture)
+        {
+            var transparency = int.Parse(comboBoxTransparency.SelectedItem.ToString());
+            if (MessageBox.Show("Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            {
+                transparency = 0;
+            }
+            else if (transparency == 0)
+            {
+                MessageBox.Show("You need to pick a transparency value");
+                comboBoxTransparency.Focus();
+                picture = null;
+            }
+            Image image = null;
+
+            if (!string.IsNullOrEmpty(picture))
+            {
+                image = LoadImage(picture, transparency, 256);
+            }
+
+            return image;
         }
 
         private Image LoadImage(string picture, int transparency, int size)
@@ -1321,7 +1463,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                Image image = LoadImage(picture);
+                Image image = LoadImageFromFile(picture);
 
                 using (Graphics g = Graphics.FromImage(copy))
                 {
@@ -1332,19 +1474,19 @@ namespace BeatificaBytes.Synology.Mods
                     var backColor = copy.GetPixel(1, 1);
                     if (transparency > 0)
                     {
-                        var Rl = roundByte(backColor.R, -transparency);
-                        var Ru = roundByte(backColor.R, transparency);
-                        var Gl = roundByte(backColor.G, -transparency);
-                        var Gu = roundByte(backColor.G, transparency);
-                        var Bl = roundByte(backColor.B, -transparency);
-                        var Bu = roundByte(backColor.B, transparency);
+                        var Rl = Helper.roundByte(backColor.R, -transparency);
+                        var Ru = Helper.roundByte(backColor.R, transparency);
+                        var Gl = Helper.roundByte(backColor.G, -transparency);
+                        var Gu = Helper.roundByte(backColor.G, transparency);
+                        var Bl = Helper.roundByte(backColor.B, -transparency);
+                        var Bu = Helper.roundByte(backColor.B, transparency);
 
                         var steps = (Ru - Rl + 1) * (Gu - Gl + 1) * (Bu - Bl + 1);
                         var total = steps;
 
                         for (int R = Rl; R <= Ru; R++)
                             for (int G = Gl; G <= Gu; G++)
-                                for (int B = Bl; B <= Bu; B++ )
+                                for (int B = Bl; B <= Bu; B++)
                                 {
                                     copy.MakeTransparent(Color.FromArgb(R, G, B));
                                     steps--;
@@ -1367,7 +1509,7 @@ namespace BeatificaBytes.Synology.Mods
             return copy;
         }
 
-        private Image LoadImage(string picture)
+        private Image LoadImageFromFile(string picture)
         {
             Image image;
             using (FileStream stream = new FileStream(picture, FileMode.Open, FileAccess.Read))
@@ -1377,131 +1519,92 @@ namespace BeatificaBytes.Synology.Mods
             return image;
         }
 
-        private byte roundByte(byte code, int range)
+        // Get the path of Item's icon (to be) saved inside the package
+        private string GetIconFullPath(string item, string size)
         {
-            var value = (int)code + range;
-            if (value < 0) value = 0;
-            if (value > 255) value = 255;
-            return (byte)value;
+            var icons = string.Format(item, size).Split('/');
+            var picture = Path.Combine(PackageRootPath, @"package\ui", icons[0], icons[1]);
+            return picture;
         }
 
-        private void pictureBoxPkg_DragEnter(object sender, DragEventArgs e)
+        // Physically delete all images of an item
+        private void DeleteItemPictures(string item)
         {
-            string filename;
-            validData = GetFilename(out filename, e);
-            if (validData)
+            foreach (var size in pictureBoxes.Keys)
             {
-                imageDragDropPath = filename;
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-                e.Effect = DragDropEffects.None;
-
-        }
-
-        private void pictureBoxPkg_DragDrop(object sender, DragEventArgs e)
-        {
-            if (validData)
-            {
-                ChangePicturePkg(imageDragDropPath);
-            }
-        }
-        private bool GetFilename(out string filename, DragEventArgs e)
-        {
-            bool ret = false;
-            filename = String.Empty;
-            if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
-            {
-                Array data = ((IDataObject)e.Data).GetData("FileDrop") as Array;
-                if (data != null)
-                {
-                    if ((data.Length == 1) && (data.GetValue(0) is String))
-                    {
-                        filename = ((string[])data)[0];
-                        string ext = Path.GetExtension(filename).ToLower();
-                        if (ext == ".png" || ext == ".jpg" || ext == ".bmp")
-                        {
-                            ret = true;
-                        }
-                    }
-                }
-            }
-            return ret;
-        }
-
-        private void listViewUrls_DoubleClick(object sender, EventArgs e)
-        {
-            if (listViewUrls.SelectedItems.Count == 1)
-            {
-                buttonEdit_Click(sender, e);
+                var path = GetIconFullPath(item, size);
+                if (File.Exists(path))
+                    File.Delete(path);
             }
         }
 
-        private void buttonReset_Click(object sender, EventArgs e)
+        // Load an image in the PictureBox of the specified size, resizing the image to match it
+        private void LoadPictureBox(Image image, string size)
         {
-            if (string.IsNullOrEmpty(PackageRootPath))
+            var pictureBox = pictureBoxes[size];
+            LoadPictureBox(pictureBox, image);
+        }
+
+        // Load an image in a pictureBox, resizing the image to match it
+        private void LoadPictureBox(PictureBox pictureBox, Image image)
+        {
+            if (image == null)
             {
-                MessageBox.Show(this, "Please reconfigure the destination path of your package first", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                pictureBox.Image = null;
             }
             else
             {
-                var answer = MessageBox.Show(this, "Do you really want to reset the complete Package to its defaults?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                if (answer == DialogResult.Yes)
+                var size = int.Parse(pictureBox.Tag.ToString().Split(';')[1]);
+
+                var copy = new Bitmap(size, size);
+                using (Graphics g = Graphics.FromImage(copy))
                 {
-                    try
-                    {
-                        DisplayNone();
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(image, 0, 0, size, size);
+                }
 
-                        if (Directory.Exists(PackageRootPath))
-                            DeleteDirectory(PackageRootPath);
+                pictureBox.Image = copy;
+                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+            }
+        }
 
-                        InitialConfiguration();
-                        InitData();
-                        BindData(list);
-                        DisplayCurrent();
+        // Save all the pictures of the current Item
+        private void SaveItemPictures(KeyValuePair<string, AppsData> current)
+        {
+            string iconName = current.Value.icon;
 
-                        LoadPackageInfo();
+            foreach (var pictureBox in pictureBoxes)
+            {
+                var picture = pictureBox.Value;
+                var size = pictureBox.Key;
+                var image = picture.Image;
 
-                        //Display(new KeyValuePair<string, AppsData>(null, null));
-                    }
-                    catch
-                    {
-                        MessageBox.Show(this, "The destination folder cannot be cleaned. The package file is possibly in use?!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                if (image != null)
+                {
+                    var path = GetIconFullPath(iconName, size);
+                    if (File.Exists(path))
+                        File.Delete(path);
+                    image.Save(path, ImageFormat.Png);
+
+                    path = Path.Combine(ResourcesRootPath, @"recovery", Path.GetFileName(path));
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+                    if (File.Exists(path))
+                        File.Delete(path);
+                    image.Save(path, ImageFormat.Png);
                 }
             }
         }
-        public static void DeleteDirectory(string path)
-        {
-            foreach (string directory in Directory.GetDirectories(path))
-            {
-                DeleteDirectory(directory);
-            }
+        #endregion --------------------------------------------------------------------------------------------------------------------------------
 
-            try
-            {
-                Directory.Delete(path, true);
-                while (Directory.Exists(path)) { }
-            }
-            catch (IOException)
-            {
-                Directory.Delete(path, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Directory.Delete(path, true);
-            }
-        }
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            PersistUrlsConfig();
-        }
+        #region Validations -----------------------------------------------------------------------------------------------------------------------
         private void textBoxPackage_Validating(object sender, CancelEventArgs e)
         {
             if (!CheckEmpty(textBoxPackage, ref e))
             {
                 var name = textBoxPackage.Text;
-                var cleaned = CleanUpText(textBoxPackage.Text);
+                var cleaned = Helper.CleanUpText(textBoxPackage.Text);
                 if (name != cleaned)
                 {
                     e.Cancel = true;
@@ -1523,18 +1626,20 @@ namespace BeatificaBytes.Synology.Mods
                     oldName = string.Format("/webman/3rdparty/{0}", oldName);
                     newName = string.Format("/webman/3rdparty/{0}", newName);
 
-                    foreach (var url in list.urls)
+                    foreach (var item in list.items)
                     {
-                        if (url.Value.url.StartsWith(oldName))
+                        if (item.Value.url.StartsWith(oldName))
                         {
-                            url.Value.url = url.Value.url.Replace(oldName, newName);
+                            item.Value.url = item.Value.url.Replace(oldName, newName);
                         }
                     }
                     BindData(list);
-                    info["package"] = newName;
+                    //DisplayItem();
+                    info["package"] = textBoxPackage.Text;
                 }
             }
         }
+
         private void textBoxDisplay_Validating(object sender, CancelEventArgs e)
         {
             if (!CheckEmpty(textBoxDisplay, ref e))
@@ -1542,6 +1647,7 @@ namespace BeatificaBytes.Synology.Mods
                 CheckDoubleQuotes(textBoxDisplay, ref e);
             }
         }
+
         private void textBoxDisplay_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxDisplay, "");
@@ -1609,7 +1715,7 @@ namespace BeatificaBytes.Synology.Mods
             if (!CheckEmpty(textBoxDsmAppName, ref e))
             {
                 var name = textBoxPackage.Text.Replace(".", "");
-                var cleaned = CleanUpText(textBoxPackage.Text);
+                var cleaned = Helper.CleanUpText(textBoxPackage.Text);
                 if (name != cleaned)
                 {
                     e.Cancel = true;
@@ -1636,7 +1742,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    foreach (var url in list.urls.Values)
+                    foreach (var url in list.items.Values)
                     {
                         if (url.title.Equals(textBoxTitle.Text, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
                         {
@@ -1655,28 +1761,28 @@ namespace BeatificaBytes.Synology.Mods
             errorProvider.SetError(textBoxTitle, "");
             if (textBoxTitle.Enabled)
             {
-                var oldName = CleanUpText(current.Value.title);
-                var newName = CleanUpText(textBoxTitle.Text);
+                var oldName = Helper.CleanUpText(current.Value.title);
+                var newName = Helper.CleanUpText(textBoxTitle.Text);
                 if (newName != oldName)
                 {
                     oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName);
                     newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
 
-                    textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
+                    textBoxItem.Text = textBoxItem.Text.Replace(oldName, newName);
                 }
             }
         }
 
-        private void textBoxUrl_Validating(object sender, CancelEventArgs e)
+        private void testBoxItem_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxUrl, ref e))
+            if (!CheckEmpty(textBoxItem, ref e))
             {
             }
         }
 
-        private void textBoxUrl_Validated(object sender, EventArgs e)
+        private void testBoxItem_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(textBoxUrl, "");
+            errorProvider.SetError(textBoxItem, "");
         }
 
         private bool CheckEmpty(TextBox textBox, ref CancelEventArgs e)
@@ -1702,168 +1808,45 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void comboBoxUrlType_SelectedIndexChanged(object sender, EventArgs e)
+        // Reset errors possibly displayed on any Control
+        private void ResetValidateChildren()
         {
-            switch (comboBoxUrlType.SelectedIndex)
+            foreach (Control ctrl in this.Controls)
             {
-                case (int)UrlType.Url: // Url                    
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM.");
-                    textBoxUrl.Focus();
-                    break;
-                case (int)UrlType.Command: // Command
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the Command to be executed when clicking the icon on DSM. It must be a single command. DoubleClick to edit.");
-                    break;
-                case (int)UrlType.Script: // Script
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type the Script to be executed when clicking the icon on DSM. DoubleClick to edit.");
-                    break;
-                case (int)UrlType.WebApp: // WebApp
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Here is the url of your own page to be opened when clicking the icon on DMS. DoubleClick to edit.");
-                    break;
-            }
-
-            if (comboBoxUrlType.Focused)
-            {
-                var answer = DialogResult.Yes;
-                var previous = current.Value.urlDetail;
-
-                if (current.Value.urlType != (int)UrlType.Url && (current.Value.urlType != comboBoxUrlType.SelectedIndex))
+                if (ctrl != null)
                 {
-                    var from = GetUrlType(current.Value.urlType);
-                    var to = GetUrlType(comboBoxUrlType.SelectedIndex);
-                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' currently contains a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", info["package"], from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                    previous = "";
-                }
-
-                if (answer == DialogResult.No)
-                {
-                    textBoxTitle.Focus();
-                    comboBoxUrlType.SelectedIndex = current.Value.urlType;
-                }
-                else
-                {
-                    switch (comboBoxUrlType.SelectedIndex)
-                    {
-                        case (int)UrlType.Url: // Url
-                            textBoxUrl.Enabled = true;
-                            textBoxUrl.ReadOnly = false;
-                            textBoxUrl.Text = "";
-                            textBoxUrl.Focus();
-                            break;
-                        case (int)UrlType.Command: // Command
-                                                   //var cleanedCommandName = CleanUpText(textBoxTitle.Text);
-                                                   //var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCommandName + ".php");
-
-                            //if (File.Exists(targetCommand))
-                            //{
-                            //    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a Command named {1}.\nDo you confirm that you want to replace it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            //}
-                            if (answer == DialogResult.Yes)
-                            {
-                                textBoxUrl.Enabled = true;
-                                textBoxUrl.ReadOnly = false;
-                                textBoxUrl.Text = previous;
-                                textBoxUrl.Focus();
-                            }
-                            else
-                            {
-                                textBoxTitle.Focus();
-                                comboBoxUrlType.SelectedIndex = current.Value.urlType;
-                            }
-                            break;
-                        case (int)UrlType.Script: // Command
-                            var cleanedScriptName = CleanUpText(textBoxTitle.Text);
-                            var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
-
-                            //if (File.Exists(targetCommand))
-                            //{
-                            //    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a Command named {1}.\nDo you confirm that you want to replace it?", info["package"], current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            //}
-                            if (answer == DialogResult.Yes)
-                            {
-                                textBoxUrl.Enabled = true;
-                                textBoxUrl.ReadOnly = true;
-                                var editScript = new ScriptForm();
-                                var script = string.Empty;
-                                if (File.Exists(targetScript))
-                                    script = File.ReadAllText(targetScript);
-                                editScript.Script = script;
-                                editScript.ShowDialog();
-                                script = editScript.Script;
-                                if (!string.IsNullOrWhiteSpace(script))
-                                {
-                                    command = script;
-                                }
-                                textBoxUrl.Text = "<...>";
-                            }
-                            else
-                            {
-                                textBoxTitle.Focus();
-                                comboBoxUrlType.SelectedIndex = current.Value.urlType;
-                            }
-                            break;
-                        case (int)UrlType.WebApp: // WebApp
-                            textBoxUrl.Enabled = true;
-                            textBoxUrl.ReadOnly = true;
-                            textBoxUrl.Text = "";
-                            var cleanedWebApp = CleanUpText(textBoxTitle.Text);
-                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedWebApp);
-                            if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
-                            {
-                                answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            }
-                            if (answer == DialogResult.Yes)
-                            {
-
-                                webpageBrowserDialog4Mods.Description = "Pick the folder containing the sources of your WebApp.";
-
-                                DialogResult result = webpageBrowserDialog4Mods.ShowDialog(this);
-                                if (result == DialogResult.OK)
-                                {
-                                    openFileDialog4Mods.Title = "Pick the index page.";
-                                    openFileDialog4Mods.InitialDirectory = webpageBrowserDialog4Mods.SelectedPath;
-                                    openFileDialog4Mods.Filter = "html (*.html)|*.html|php (*.php)|*.php";
-                                    openFileDialog4Mods.FilterIndex = 2;
-                                    openFileDialog4Mods.FileName = null;
-                                    var files = Directory.GetFiles(webpageBrowserDialog4Mods.SelectedPath).Select(path => Path.GetFileName(path)).ToArray();
-                                    openFileDialog4Mods.FileName = FindFileIndex(files, "index.php") ?? FindFileIndex(files, "index.html") ?? FindFileIndex(files, "default.php") ?? FindFileIndex(files, "default.html") ?? null;
-
-                                    result = openFileDialog4Mods.ShowDialog(this);
-                                    if (result == DialogResult.OK)
-                                    {
-                                        webAppIndex = openFileDialog4Mods.FileName;
-                                        webAppFolder = webpageBrowserDialog4Mods.SelectedPath;
-
-                                        if (!webAppIndex.StartsWith(webAppFolder))
-                                        {
-                                            MessageBox.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                            webAppFolder = null;
-                                            webAppIndex = null;
-                                            comboBoxUrlType.SelectedIndex = (int)UrlType.Url;
-                                        }
-                                        else
-                                        {
-                                            textBoxUrl.Text = webAppIndex.Remove(0, webAppFolder.Length + 1);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        textBoxTitle.Focus();
-                                        comboBoxUrlType.SelectedIndex = current.Value.urlType;
-                                    }
-                                }
-                                else
-                                {
-                                    textBoxTitle.Focus();
-                                    comboBoxUrlType.SelectedIndex = current.Value.urlType;
-                                }
-                            }
-                            break;
-                    }
+                    errorProvider.SetError(ctrl, "");
                 }
             }
         }
+        #endregion --------------------------------------------------------------------------------------------------------------------------------
 
-        private string GetUrlType(int type)
+        private void textBoxItem_DoubleClick(object sender, EventArgs e)
+        {
+            switch (current.Value.itemType)
+            {
+                case (int)UrlType.Url:
+                    break;
+                case (int)UrlType.Command:
+                    textBoxItem.ReadOnly = false;
+                    var cleanedCommandName = Helper.CleanUpText(textBoxTitle.Text);
+                    var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCommandName + ".sh");
+                    EditCommand(targetCommand);
+                    if (!string.IsNullOrEmpty(commandValue))
+                        textBoxItem.Text = commandValue;
+                    break;
+                case (int)UrlType.WebApp:
+                    EditWebApp();
+                    break;
+                case (int)UrlType.Script:
+                    var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
+                    var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
+                    EditScript(targetScript);
+                    break;
+            }
+        }
+
+        private string GetItemType(int type)
         {
             string typeName = null;
             switch (type)
@@ -1882,43 +1865,6 @@ namespace BeatificaBytes.Synology.Mods
                     break;
             }
             return typeName;
-        }
-
-        private string FindFileIndex(string[] files, string filename)
-        {
-            string file = null;
-            var index = Array.FindIndex(files, p => p.Equals(filename, StringComparison.CurrentCultureIgnoreCase));
-            if (index >= 0)
-            {
-                file = files[index];
-            }
-            return file;
-        }
-
-        private void MainForm_MouseEnter(object sender, EventArgs e)
-        {
-            var zone = sender as Control;
-            if (zone != null)
-            {
-                var text = toolTip4Mods.GetToolTip(zone);
-                labelToolTip.Text = text;
-            }
-        }
-        private void MainForm_MouseLeave(object sender, EventArgs e)
-        {
-            labelToolTip.Text = "";
-        }
-
-        private void textBoxUrl_DoubleClick(object sender, EventArgs e)
-        {
-            var scriptEdit = new ScriptForm();
-            scriptEdit.ShowDialog();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            this.Text += string.Format(" [{0}]", Properties.Settings.Default.Version);
-            textBoxPackage.Focus();
         }
 
         private void checkBoxSize_CheckedChanged(object sender, EventArgs e)
