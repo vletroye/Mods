@@ -274,9 +274,6 @@ namespace BeatificaBytes.Synology.Mods
         {
             using (new CWaitCursor())
             {
-                Properties.Settings.Default.PackageRoot = PackageRootPath;
-                Properties.Settings.Default.Save();
-
                 Process unzip = new Process();
                 unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
                 unzip.StartInfo.Arguments = string.Format("x \"{0}\" -o\"{1}\"", Path.Combine(ResourcesRootPath, "Package.zip"), PackageRootPath);
@@ -337,6 +334,9 @@ namespace BeatificaBytes.Synology.Mods
                 PackageRootPath = folderBrowserDialog4Mods.SelectedPath;
                 if (Directory.Exists(PackageRootPath))
                 {
+                    Properties.Settings.Default.PackageRoot = PackageRootPath;
+                    Properties.Settings.Default.Save();
+
                     var content = Directory.GetDirectories(PackageRootPath).ToList();
                     content.AddRange(Directory.GetFiles(PackageRootPath));
                     if (content.Count > 0)
@@ -452,40 +452,43 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SavePackageInfo()
         {
-            // Collect Package Info from controls tagged like PKG...
-            foreach (var control in groupBoxPackage.Controls)
+            if (info != null)
             {
-                var textBox = control as TextBox;
-                if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                // Collect Package Info from controls tagged like PKG...
+                foreach (var control in groupBoxPackage.Controls)
                 {
-                    var keys = textBox.Tag.ToString().Split(';');
-                    foreach (var key in keys)
+                    var textBox = control as TextBox;
+                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
                     {
-                        var keyId = key.Substring(3);
-                        info[keyId] = textBox.Text.Trim();
+                        var keys = textBox.Tag.ToString().Split(';');
+                        foreach (var key in keys)
+                        {
+                            var keyId = key.Substring(3);
+                            info[keyId] = textBox.Text.Trim(); ;
+                        }
                     }
                 }
-            }
 
-            // Delete existing INFO file
-            var infoName = Path.Combine(PackageRootPath, "INFO");
-            if (File.Exists(infoName))
-                File.Delete(infoName);
+                // Delete existing INFO file
+                var infoName = Path.Combine(PackageRootPath, "INFO");
+                if (File.Exists(infoName))
+                    File.Delete(infoName);
 
-            // Write the new INFO file
-            using (StreamWriter outputFile = new StreamWriter(infoName))
-            {
-                foreach (var element in info)
+                // Write the new INFO file
+                using (StreamWriter outputFile = new StreamWriter(infoName))
                 {
-                    outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
+                    foreach (var element in info)
+                    {
+                        outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
+                    }
                 }
-            }
 
-            // Save Package's icons
-            var imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG");
-            SavePkgImage(pictureBoxPkg_72, imageName);
-            imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG");
-            SavePkgImage(pictureBoxPkg_256, imageName);
+                // Save Package's icons
+                var imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG");
+                SavePkgImage(pictureBoxPkg_72, imageName);
+                imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG");
+                SavePkgImage(pictureBoxPkg_256, imageName);
+            }
         }
 
         // Create the SPK
