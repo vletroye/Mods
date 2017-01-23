@@ -672,36 +672,39 @@ namespace BeatificaBytes.Synology.Mods
             var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
             var answer = DialogResult.Yes;
 
-            //Rename a Command
-            if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType == (int)UrlType.Command && cleanedCurrent != cleanedCandidate)
+            if (cleanedCurrent != null)
             {
-                RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
-            }
-
-            //Rename a Script
-            if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
-            {
-                RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
-            }
-
-            //Rename a WebApp 
-            if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
-            {
-                var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-                if (Directory.Exists(existingWebAppFolder))
+                //Rename a Command
+                if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType == (int)UrlType.Command && cleanedCurrent != cleanedCandidate)
                 {
-                    var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
-                    if (Directory.Exists(targetWebAppFolder))
+                    RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+                }
+
+                //Rename a Script
+                if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
+                {
+                    RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+                }
+
+                //Rename a WebApp 
+                if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
+                {
+                    var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+                    if (Directory.Exists(existingWebAppFolder))
                     {
-                        answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
+                        if (Directory.Exists(targetWebAppFolder))
+                        {
+                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (answer == DialogResult.Yes)
+                            {
+                                Helper.DeleteDirectory(targetWebAppFolder);
+                            }
+                        }
                         if (answer == DialogResult.Yes)
                         {
-                            Helper.DeleteDirectory(targetWebAppFolder);
+                            Directory.Move(existingWebAppFolder, targetWebAppFolder);
                         }
-                    }
-                    if (answer == DialogResult.Yes)
-                    {
-                        Directory.Move(existingWebAppFolder, targetWebAppFolder);
                     }
                 }
             }
