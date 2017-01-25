@@ -12,9 +12,18 @@ namespace BeatificaBytes.Synology.Mods
 {
     public partial class ScriptForm : Form
     {
-        public ScriptForm()
+        public enum Lang
+        {
+            Php,
+            Bash
+        }
+
+        private Lang lang;
+
+        public ScriptForm(Lang lang)
         {
             InitializeComponent();
+            this.lang = lang;
         }
 
         public string Script
@@ -47,7 +56,20 @@ namespace BeatificaBytes.Synology.Mods
 
         private void ScriptForm_Load(object sender, EventArgs e)
         {
-            scintilla.ConfigurationManager.Language = "bash";
+            switch (lang)
+            {
+                case Lang.Bash:
+                    scintilla.ConfigurationManager.Language = "bash";
+                    this.scintilla.Lexing.Lexer = ScintillaNET.Lexer.Bash;
+                    this.scintilla.Lexing.LexerName = "bash";
+                    break;
+                case Lang.Php:
+                    scintilla.ConfigurationManager.Language = "php";
+                    this.scintilla.Lexing.Lexer = ScintillaNET.Lexer.Php;
+                    this.scintilla.Lexing.LexerName = "php";
+                    break;
+            }
+
         }
     }
 }
