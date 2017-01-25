@@ -175,5 +175,16 @@ namespace BeatificaBytes.Synology.Mods
             EventHandlerList event_list = (EventHandlerList)events_property_info.GetValue(controlObject, null);
             return (event_list[object_value] != null);
         }
+
+        internal static DialogResult ScriptEditor(string inputScript, out string outputScript, ScriptForm.Lang lang)
+        {
+            var editScript = new ScriptForm(lang);
+            editScript.Script = inputScript;
+            var result = editScript.ShowDialog();
+            outputScript = editScript.Script;
+            return result;
+
+        }
+
     }
 }
