@@ -8,213 +8,146 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BeatificaBytes.Synology.Mods.Properties
-{
-
-
+namespace BeatificaBytes.Synology.Mods.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<Synology>")]
-        public string Synology
-        {
-            get
-            {
+        public string Synology {
+            get {
                 return ((string)(this["Synology"]));
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("http")]
-        public string Protocol
-        {
-            get
-            {
+        public string Protocol {
+            get {
                 return ((string)(this["Protocol"]));
             }
-            set
-            {
+            set {
                 this["Protocol"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("80")]
-        public int Port
-        {
-            get
-            {
+        public int Port {
+            get {
                 return ((int)(this["Port"]));
             }
-            set
-            {
+            set {
                 this["Port"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Packages
-        {
-            get
-            {
+        public string Packages {
+            get {
                 return ((string)(this["Packages"]));
             }
-            set
-            {
+            set {
                 this["Packages"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PackageRoot
-        {
-            get
-            {
+        public string PackageRoot {
+            get {
                 return ((string)(this["PackageRoot"]));
             }
-            set
-            {
+            set {
                 this["PackageRoot"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SourceImages
-        {
-            get
-            {
+        public string SourceImages {
+            get {
                 return ((string)(this["SourceImages"]));
             }
-            set
-            {
+            set {
                 this["SourceImages"] = value;
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("CTP 6.1")]
-        public string Version
-        {
-            get
-            {
+        public string Version {
+            get {
                 return ((string)(this["Version"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?php
-echo ""<pre>"";
-$cmd=""Ps_Exec.sh"";
-
-$result = liveExecuteCommand($cmd);
-
-if($result['exit_status'] === 0){
-   // do something if command execution succeeds
-} else {
-    // do something on failure
-}
-echo ""</pre>"";
-
-/**
- * Execute the given command by displaying console output live to the user.
- *  @param  string  cmd          :  command to be executed
- *  @return array   exit_status  :  exit status of the executed command
- *                  output       :  console output of the executed command
- */
-function liveExecuteCommand($cmd)
-{
-
-    while (@ ob_end_flush()); // end all output buffers if any
-
-    $proc = popen(""$cmd 2>&1 ; echo Exit status : $?"", 'r');
-
-    $live_output     = """";
-    $complete_output = """";
-
-    while (!feof($proc))
-    {
-        $live_output     = fread($proc, 4096);
-        $complete_output = $complete_output . $live_output;
-        echo ""$live_output"";
-        @ flush();
-    }
-
-    pclose($proc);
-
-    // get exit status
-    preg_match('/[0-9]+$/', $complete_output, $matches);
-
-    // return exit status and intended output
-    return array (
-                    'exit_status'  => intval($matches[0]),
-                    'output'       => str_replace(""Exit status : "" . $matches[0], '', $complete_output)
-                 );
-}
-?>")]
-        public string Ps_Exec
-        {
-            get
-            {
+        [global::System.Configuration.DefaultSettingValueAttribute("<script type=\"text/javascript\">\r\n function autoScrolling() { window.scrollTo(0,do" +
+            "cument.body.scrollHeight); }\r\n</script>\r\n<?php\r\n/**\r\n * Execute the given comman" +
+            "d by displaying console output live to the user.\r\n *  @param  string  cmd       " +
+            "   :  command to be executed\r\n *  @return array   exit_status  :  exit status of" +
+            " the executed command\r\n *                  output       :  console output of the" +
+            " executed command\r\n */\r\nfunction liveExecuteCommand($cmd)\r\n{\r\n\r\n    while (@ ob_" +
+            "end_flush()); // end all output buffers if any\r\n\r\n    $proc = popen(\"$cmd 2>&1 ;" +
+            " echo Exit status : $?\", \'r\');\r\n\r\n    $live_output     = \"\";\r\n    $complete_outp" +
+            "ut = \"\";\r\n\r\n    while (!feof($proc))\r\n    {\r\n        $live_output     = fread($p" +
+            "roc, 4096);\r\n        $complete_output = $complete_output . $live_output;\r\n      " +
+            "  echo \"$live_output\";\r\n\t\t\r\n\t\techo \"<script type=\\\"text/javascript\\\">\";\r\n\t\techo " +
+            "\"autoScrolling();\";\r\n\t\techo \"</script>\";\r\n\r\n        @ flush();\r\n    }\r\n\r\n    pcl" +
+            "ose($proc);\r\n\r\n    // get exit status\r\n    preg_match(\'/[0-9]+$/\', $complete_out" +
+            "put, $matches);\r\n\r\n    // return exit status and intended output\r\n    return arr" +
+            "ay (\r\n                    \'exit_status\'  => intval($matches[0]),\r\n              " +
+            "      \'output\'       => str_replace(\"Exit status : \" . $matches[0], \'\', $complet" +
+            "e_output)\r\n                 );\r\n}\r\necho \"<pre>\";\r\n\r\n$result = liveExecuteCommand" +
+            "(\"mods.sh\");\r\n\r\nif($result[\'exit_status\'] === 0){\r\n   // do something if command" +
+            " execution succeeds\r\n} else {\r\n    // do something on failure\r\n}\r\necho \"</pre>\";" +
+            "\r\necho \"<script type=\\\"text/javascript\\\">\";\r\necho \"autoScrolling();\";\r\necho \"</s" +
+            "cript>\";\r\n?>")]
+        public string Ps_Exec {
+            get {
                 return ((string)(this["Ps_Exec"]));
             }
-            set
-            {
-                this["Ps_Exec"] = value;
-
-
-            }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection Recents
-        {
-            get
-            {
-                //This line is always throwing an exception !
+        public global::System.Collections.Specialized.StringCollection Recents {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Recents"]));
-
             }
-            set
-            {
+            set {
                 this["Recents"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.Specialized.StringCollection RecentsName
-        {
-            get
-            {
+        public global::System.Collections.Specialized.StringCollection RecentsName {
+            get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["RecentsName"]));
             }
-            set
-            {
+            set {
                 this["RecentsName"] = value;
             }
         }

@@ -31,8 +31,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             Url = 0,
             Script = 1,
-            WebApp = 2,
-            Command = 3
+            WebApp = 2
         }
         #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
@@ -41,6 +40,7 @@ namespace BeatificaBytes.Synology.Mods
         static Regex getPort = new Regex(@"^:(\d*).*$", RegexOptions.Compiled);
         static Regex getVersion = new Regex(@"^\d*.\d*.\d*$", RegexOptions.Compiled);
 
+        string defaultRunnerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "default.runner");
         string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
         string PackageRootPath = Properties.Settings.Default.PackageRoot;
         string WebSynology = Properties.Settings.Default.Synology;
@@ -50,8 +50,8 @@ namespace BeatificaBytes.Synology.Mods
         //3 next vars are a Dirty Hack - move these 3 vars into a class. Replace AppsData with that class, ...
         string webAppFolder = null;
         string webAppIndex = null;
-        string commandValue = null;
         string scriptValue = null;
+        string runnerValue = null;
 
         Dictionary<string, PictureBox> pictureBoxes;
         Dictionary<string, string> info;
@@ -69,6 +69,10 @@ namespace BeatificaBytes.Synology.Mods
         public MainForm()
         {
             InitializeComponent();
+
+            if (!File.Exists(defaultRunnerPath))
+                File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
+
             comboBoxTransparency.SelectedIndex = 0;
 
             InitListView();
@@ -515,8 +519,8 @@ namespace BeatificaBytes.Synology.Mods
 
                 SaveItemsConfig();
 
-                commandValue = null;
                 scriptValue = null;
+                runnerValue = null;
                 webAppIndex = null;
                 webAppFolder = null;
             }
@@ -539,11 +543,8 @@ namespace BeatificaBytes.Synology.Mods
                         case (int)UrlType.WebApp:
                             DeleteWebApp(cleanedCurrent);
                             break;
-                        case (int)UrlType.Command:
-                            DeleteCommandScript(cleanedCurrent);
-                            break;
                         case (int)UrlType.Script:
-                            DeleteCommandScript(cleanedCurrent);
+                            DeleteScript(cleanedCurrent);
                             break;
                     }
 
@@ -562,9 +563,6 @@ namespace BeatificaBytes.Synology.Mods
                     this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type here the URL to be opened when clicking the icon on DSM.");
                     //textBoxItem.Focus();
                     break;
-                case (int)UrlType.Command: // Command
-                    this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type here the Command to be executed when clicking the icon on DSM. It must be a single command. DoubleClick to edit.");
-                    break;
                 case (int)UrlType.Script: // Script
                     this.toolTip4Mods.SetToolTip(this.textBoxItem, "Type the Script to be executed when clicking the icon on DSM. DoubleClick to edit.");
                     break;
@@ -581,7 +579,11 @@ namespace BeatificaBytes.Synology.Mods
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SavePackage();
+            if (state == State.Add || state == State.Edit)
+                e.Cancel = true;
+
+            if (SavePackage() == DialogResult.Cancel)
+                e.Cancel = true;
         }
 
         private void RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
@@ -592,16 +594,10 @@ namespace BeatificaBytes.Synology.Mods
 
             if (cleanedCurrent != null)
             {
-                //Rename a Command
-                if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType == (int)UrlType.Command && cleanedCurrent != cleanedCandidate)
-                {
-                    RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
-                }
-
                 //Rename a Script
                 if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
                 {
-                    RenameCommandScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+                    RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
                 }
 
                 //Rename a WebApp 
@@ -640,22 +636,16 @@ namespace BeatificaBytes.Synology.Mods
             var cleanedCurrent = Helper.CleanUpText(current.Value.title);
             var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
 
-            //Clean Up a WebApp previously defined if replaced by a Command or an Url
+            //Clean Up a WebApp previously defined if replaced by another type
             if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType != (int)UrlType.WebApp)
             {
                 DeleteWebApp(cleanedCurrent);
             }
 
-            //Clean Up a Command previously defined if replaced by a WebApp or an Url
-            if (current.Value.itemType == (int)UrlType.Command && candidate.Value.itemType != (int)UrlType.Command)
-            {
-                DeleteCommandScript(cleanedCurrent);
-            }
-
-            //Clean Up a Script previously defined if replaced by a WebApp or an Url
+            //Clean Up a Script previously defined if replaced by another type
             if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType != (int)UrlType.Script)
             {
-                DeleteCommandScript(cleanedCurrent);
+                DeleteScript(cleanedCurrent);
             }
         }
 
@@ -667,14 +657,11 @@ namespace BeatificaBytes.Synology.Mods
             {
                 case (int)UrlType.Url:
                     break;
-                case (int)UrlType.Command:
-                    CreateCommandScript(candidate, commandValue);
-                    break;
                 case (int)UrlType.WebApp:
                     CreateWebApp(candidate);
                     break;
                 case (int)UrlType.Script:
-                    CreateCommandScript(candidate, scriptValue);
+                    CreateScript(candidate, scriptValue, runnerValue);
                     break;
             }
 
@@ -684,48 +671,40 @@ namespace BeatificaBytes.Synology.Mods
             DisplayItem(candidate);
         }
 
-        private void RenameCommandScript(string packageName, string cleanedCurrent, string cleanedCandidate)
+        private void RenameScript(string packageName, string cleanedCurrent, string cleanedCandidate)
         {
             var answer = DialogResult.Yes;
 
-            var existingCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-            var existingCommandsh = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-            if (File.Exists(existingCommand))
+            var current = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+            if (Directory.Exists(current))
             {
-                var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate + ".php");
-                var targetCommandsh = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate + ".sh");
-                if (File.Exists(targetCommand))
+                var target = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
+                if (Directory.Exists(target))
                 {
-                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a Command named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], packageName), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], packageName), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (answer == DialogResult.Yes)
                     {
-                        File.Delete(targetCommand);
-                        if (File.Exists(targetCommandsh))
-                            File.Delete(targetCommandsh);
+                        Helper.DeleteDirectory(target);
                     }
                 }
                 if (answer == DialogResult.Yes)
                 {
-                    File.Move(existingCommand, targetCommand);
-                    File.Move(existingCommandsh, targetCommandsh);
+                    Directory.Move(current, target);
                 }
             }
         }
 
-        private void DeleteCommandScript(string cleanedCurrent)
+        private void DeleteScript(string cleanedCurrent)
         {
-            var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-            if (File.Exists(targetCommand))
-                File.Delete(targetCommand);
-            targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
-            if (File.Exists(targetCommand))
-                File.Delete(targetCommand);
+            var target = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+            if (File.Exists(target))
+                Helper.DeleteDirectory(target);
         }
 
         private void DeleteWebApp(string cleanedCurrent)
         {
             var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-            if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
+            if (Directory.Exists(targetWebAppFolder))
                 Helper.DeleteDirectory(targetWebAppFolder);
         }
 
@@ -750,34 +729,22 @@ namespace BeatificaBytes.Synology.Mods
                 current.Value.itemType = selectedIndex;
                 switch (selectedIndex)
                 {
-                    case (int)UrlType.Url: // Url
+                    case (int)UrlType.Url:
                         textBoxItem.Enabled = true;
                         textBoxItem.ReadOnly = false;
                         textBoxItem.Text = "";
                         textBoxItem.Focus();
                         break;
-                    case (int)UrlType.Command:
-                        var cleanedCommandName = Helper.CleanUpText(textBoxTitle.Text);
-                        var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCommandName + ".sh");
 
-                        textBoxItem.Enabled = true;
-                        textBoxItem.ReadOnly = false;
-
-                        EditCommand(targetCommand);
-                        if (!string.IsNullOrEmpty(commandValue))
-                            textBoxItem.Text = commandValue;
-                        else
-                            textBoxItem.Text = "";
-                        textBoxItem.Focus();
-                        break;
-                    case (int)UrlType.Script: // Script
+                    case (int)UrlType.Script:
                         var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
-                        var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
+                        var targetScriptPath = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.sh");
+                        var targetRunnerPath = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.php");
 
                         textBoxItem.Enabled = true;
                         textBoxItem.ReadOnly = true;
 
-                        EditScript(targetScript);
+                        EditScript(targetScriptPath, targetRunnerPath);
                         if (!string.IsNullOrEmpty(scriptValue))
                         {
                             var url = "";
@@ -789,7 +756,7 @@ namespace BeatificaBytes.Synology.Mods
                             selectedIndex = (int)UrlType.Url;
                         }
                         break;
-                    case (int)UrlType.WebApp: // WebApp
+                    case (int)UrlType.WebApp:
                         textBoxItem.Enabled = true;
                         textBoxItem.ReadOnly = true;
                         textBoxItem.Text = "";
@@ -817,27 +784,24 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private DialogResult EditCommand(string targetCommand)
+        private DialogResult EditScript(string scriptPath, string runnerPath)
         {
-            var result = DialogResult.Cancel;
-            if (File.Exists(targetCommand))
-            {
-                commandValue = File.ReadAllText(targetCommand);
-                result = DialogResult.OK;
-            }
-            return result;
-        }
-
-        private DialogResult EditScript(string scriptPath)
-        {
-            string outputScript = "";
+            string outputScript = string.Empty;
+            string outputRunner = string.Empty;
             var inputScript = string.Empty;
+            var inputRunner = string.Empty;
             if (File.Exists(scriptPath))
                 inputScript = File.ReadAllText(scriptPath);
-            DialogResult result = Helper.ScriptEditor(inputScript, out outputScript, ScriptForm.Lang.Bash);
+            if (File.Exists(runnerPath))
+                inputRunner = File.ReadAllText(runnerPath);
+            else
+                inputRunner = File.ReadAllText(defaultRunnerPath);
+
+            DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, out outputScript, out outputRunner);
             if (result == DialogResult.OK)
             {
                 scriptValue = outputScript;
+                runnerValue = outputRunner;
             }
             return result;
         }
@@ -895,40 +859,34 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void CreateCommandScript(KeyValuePair<string, AppsData> current, string value)
+        private void CreateScript(KeyValuePair<string, AppsData> current, string script, string runner)
         {
-            if (value != null)
+            if (script != null)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
-                var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".php");
-                var targetScriptSh = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent + ".sh");
+                var target = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+                var targetRunner = Path.Combine(target, "mods.php");
+                var targetScript = Path.Combine(target, "mods.sh");
 
-                if (File.Exists(targetScript))
+                if (Directory.Exists(target))
                 {
-                    File.Delete(targetScript);
-                }
-                if (File.Exists(targetScriptSh))
-                {
-                    File.Delete(targetScriptSh);
+                    Helper.DeleteDirectory(target);
                 }
 
                 // Remove \r not supported in shell scripts
-                value = value.Replace("\r\n", "\n");
+                script = script.Replace("\r\n", "\n");
+                //runner = script.Replace("\r\n", "\n");
 
-                // Create sh script (ANSI) to be executed
-                using (TextWriter text = new StreamWriter(targetScriptSh, true, Encoding.GetEncoding(1252)))
+                Directory.CreateDirectory(target);
+
+                // Create sh script (ANSI) to be executed by the php runner script
+                using (TextWriter text = new StreamWriter(targetScript, true, Encoding.GetEncoding(1252)))
                 {
-                    text.Write(value);
-                }
-
-                // Create php script to call sh
-                using (var text = File.CreateText(targetScript))
-                {
-                    var script = Properties.Settings.Default.Ps_Exec;
-
-                    script = script.Replace("<--DO NOT REMOVE THIS -->", string.Format("$cmd = \"{0}.sh\";", cleanedCurrent));
                     text.Write(script);
-                    text.Close();
+                }
+                using (TextWriter text = new StreamWriter(targetRunner, true, Encoding.GetEncoding(1252)))
+                {
+                    text.Write(runner);
                 }
             }
         }
@@ -999,8 +957,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void DisplayDetails(KeyValuePair<string, AppsData> item)
         {
-            commandValue = null;
             scriptValue = null;
+            runnerValue = null;
             current = item;
             var show = item.Key != null;
             var descText = show ? item.Value.desc : "";
@@ -1153,9 +1111,6 @@ namespace BeatificaBytes.Synology.Mods
                 case (int)UrlType.Url:
                     GetDetailsUrl(ref protocol, ref port, ref url);
                     break;
-                case (int)UrlType.Command:
-                    GetDetailsCommand(title, ref url);
-                    break;
                 case (int)UrlType.WebApp:
                     GetDetailsWebApp(title, ref url);
                     break;
@@ -1185,7 +1140,7 @@ namespace BeatificaBytes.Synology.Mods
         private void GetDetailsScript(string title, ref string url)
         {
             var cleanedScript = Helper.CleanUpText(title);
-            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedScript);
+            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}/mods.php", info["package"], cleanedScript);
             if (url != actualUrl)
             {
                 url = actualUrl;
@@ -1197,16 +1152,6 @@ namespace BeatificaBytes.Synology.Mods
             var cleanedWebApp = Helper.CleanUpText(title);
             var actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url);
             if (webAppIndex != null && webAppFolder != null)
-            {
-                url = actualUrl;
-            }
-        }
-
-        private void GetDetailsCommand(string title, ref string url)
-        {
-            var cleanedCommand = Helper.CleanUpText(title);
-            var actualUrl = string.Format("/webman/3rdparty/{0}/{1}.php", info["package"], cleanedCommand);
-            if (url != actualUrl)
             {
                 url = actualUrl;
             }
@@ -1782,21 +1727,14 @@ namespace BeatificaBytes.Synology.Mods
             {
                 case (int)UrlType.Url:
                     break;
-                case (int)UrlType.Command:
-                    textBoxItem.ReadOnly = false;
-                    var cleanedCommandName = Helper.CleanUpText(textBoxTitle.Text);
-                    var targetCommand = Path.Combine(PackageRootPath, @"package\ui", cleanedCommandName + ".sh");
-                    EditCommand(targetCommand);
-                    if (!string.IsNullOrEmpty(commandValue))
-                        textBoxItem.Text = commandValue;
-                    break;
                 case (int)UrlType.WebApp:
                     EditWebApp();
                     break;
                 case (int)UrlType.Script:
                     var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
-                    var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
-                    EditScript(targetScript);
+                    var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.sh");
+                    var targetRunner = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.php");
+                    EditScript(targetScript, targetRunner);
                     break;
             }
         }
@@ -1808,9 +1746,6 @@ namespace BeatificaBytes.Synology.Mods
             {
                 case (int)UrlType.Url: // Url
                     typeName = "Url";
-                    break;
-                case (int)UrlType.Command: // Command
-                    typeName = "Command";
                     break;
                 case (int)UrlType.WebApp: // WebApp
                     typeName = "WebApp";
@@ -2166,30 +2101,13 @@ namespace BeatificaBytes.Synology.Mods
 
         private void scriptRunnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var script = Properties.Settings.Default.Ps_Exec;
-            string outputScript = "";
-            DialogResult result = Helper.ScriptEditor(script, out outputScript, ScriptForm.Lang.Php);
+            var runner = File.ReadAllText(defaultRunnerPath);
+            string outputScript = string.Empty;
+            string outputRunner = string.Empty;
+            DialogResult result = Helper.ScriptEditor(null, runner, out outputScript, out outputRunner);
             if (result == DialogResult.OK)
             {
-                Properties.Settings.Default.Ps_Exec = outputScript;
-                Properties.Settings.Default.Save();
-            }
-        }
-
-        private void buttonRunner_Click(object sender, EventArgs e)
-        {
-            var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
-            var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".php");
-
-            string outputScript = "";
-            var inputScript = string.Empty;
-
-            if (File.Exists(targetScript))
-                inputScript = File.ReadAllText(targetScript);
-            DialogResult result = Helper.ScriptEditor(inputScript, out outputScript, ScriptForm.Lang.Php);
-            if (result == DialogResult.OK)
-            {
-                File.WriteAllText(targetScript, outputScript);
+                File.WriteAllText(defaultRunnerPath, outputRunner);
             }
         }
     }
