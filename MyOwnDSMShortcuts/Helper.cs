@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -176,14 +177,21 @@ namespace BeatificaBytes.Synology.Mods
             return (event_list[object_value] != null);
         }
 
-        internal static DialogResult ScriptEditor(string inputScript, out string outputScript, ScriptForm.Lang lang)
+        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, out string outputScript, out string outputRunner)
         {
-            var editScript = new ScriptForm(lang);
+            var editScript = new ScriptForm();
             editScript.Script = inputScript;
+            editScript.Runner = inputRunner;
             var result = editScript.ShowDialog();
             outputScript = editScript.Script;
+            outputRunner = editScript.Runner;
             return result;
 
+        }
+
+        public static Color IntToColor(int rgb)
+        {
+            return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
 
     }

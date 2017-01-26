@@ -24,19 +24,10 @@
       <Value Profile="(Default)">CTP 6.1</Value>
     </Setting>
     <Setting Name="Ps_Exec" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">&lt;?php
-echo "&lt;pre&gt;";
-$cmd="Ps_Exec.sh";
-
-$result = liveExecuteCommand($cmd);
-
-if($result['exit_status'] === 0){
-   // do something if command execution succeeds
-} else {
-    // do something on failure
-}
-echo "&lt;/pre&gt;";
-
+      <Value Profile="(Default)">&lt;script type="text/javascript"&gt;
+ function autoScrolling() { window.scrollTo(0,document.body.scrollHeight); }
+&lt;/script&gt;
+&lt;?php
 /**
  * Execute the given command by displaying console output live to the user.
  *  @param  string  cmd          :  command to be executed
@@ -58,6 +49,11 @@ function liveExecuteCommand($cmd)
         $live_output     = fread($proc, 4096);
         $complete_output = $complete_output . $live_output;
         echo "$live_output";
+		
+		echo "&lt;script type=\"text/javascript\"&gt;";
+		echo "autoScrolling();";
+		echo "&lt;/script&gt;";
+
         @ flush();
     }
 
@@ -72,6 +68,19 @@ function liveExecuteCommand($cmd)
                     'output'       =&gt; str_replace("Exit status : " . $matches[0], '', $complete_output)
                  );
 }
+echo "&lt;pre&gt;";
+
+$result = liveExecuteCommand("mods.sh");
+
+if($result['exit_status'] === 0){
+   // do something if command execution succeeds
+} else {
+    // do something on failure
+}
+echo "&lt;/pre&gt;";
+echo "&lt;script type=\"text/javascript\"&gt;";
+echo "autoScrolling();";
+echo "&lt;/script&gt;";
 ?&gt;</Value>
     </Setting>
     <Setting Name="Recents" Type="System.Collections.Specialized.StringCollection" Scope="User">

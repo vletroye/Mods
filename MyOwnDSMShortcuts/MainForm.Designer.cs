@@ -83,7 +83,6 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
             this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
-            this.buttonRunner = new System.Windows.Forms.Button();
             this.comboBoxTransparency = new System.Windows.Forms.ComboBox();
             this.labelToolTip = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -674,8 +673,7 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxItemType.Items.AddRange(new object[] {
             "Url",
             "Script",
-            "WebApp",
-            "Command"});
+            "WebApp"});
             this.comboBoxItemType.Location = new System.Drawing.Point(3, 252);
             this.comboBoxItemType.Name = "comboBoxItemType";
             this.comboBoxItemType.Size = new System.Drawing.Size(65, 21);
@@ -701,7 +699,6 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxItem.Controls.Add(this.buttonRunner);
             this.groupBoxItem.Controls.Add(this.labelTransparency);
             this.groupBoxItem.Controls.Add(this.comboBoxTransparency);
             this.groupBoxItem.Controls.Add(this.labelToolTip);
@@ -735,16 +732,6 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.TabIndex = 39;
             this.groupBoxItem.TabStop = false;
             this.groupBoxItem.Text = "URL INFORMATION";
-            // 
-            // buttonRunner
-            // 
-            this.buttonRunner.Location = new System.Drawing.Point(3, 280);
-            this.buttonRunner.Name = "buttonRunner";
-            this.buttonRunner.Size = new System.Drawing.Size(64, 21);
-            this.buttonRunner.TabIndex = 26;
-            this.buttonRunner.Text = "Runner";
-            this.buttonRunner.UseVisualStyleBackColor = true;
-            this.buttonRunner.Click += new System.EventHandler(this.buttonRunner_Click);
             // 
             // comboBoxTransparency
             // 
@@ -1016,7 +1003,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem scriptRunnerToolStripMenuItem;
-        private System.Windows.Forms.Button buttonRunner;
     }
 }
 

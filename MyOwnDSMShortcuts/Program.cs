@@ -32,13 +32,6 @@ namespace BeatificaBytes.Synology.Mods
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-            var sciLexer = Path.Combine(path, "Resources", "sciLexer.dll");
-            if (!File.Exists(sciLexer))
-                MessageBox.Show("sciLexer.dll is missing. Mods cannot run without that dll.");
-            Win32.LoadLibrary(sciLexer);
-
             Application.Run(new MainForm());
         }
     }
