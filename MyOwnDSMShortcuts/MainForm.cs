@@ -84,23 +84,20 @@ namespace BeatificaBytes.Synology.Mods
 
             if (string.IsNullOrEmpty(PackageRootPath) || !Directory.Exists(PackageRootPath))
             {
-                MessageBox.Show(this, "The destination path for your package does not exist anymore. Reconfigure it and possibly 'recover' your icons.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
-                DisplayItem();
             }
             else if (!File.Exists(Path.Combine(PackageRootPath, "INFO")))
             {
                 MessageBox.Show(this, "The INFO file for your package does not exist anymore. Reset your package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
-                DisplayItem();
             }
             else
             {
                 InitData();
                 BindData(list);
-                DisplayItem();
                 LoadPackageInfo();
             }
+            DisplayItem();
             foreach (var control in groupBoxItem.Controls)
             {
                 var item = control as Control;
@@ -1799,7 +1796,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                response = DialogResult.Cancel;
+                response = DialogResult.No;
             }
 
             return response;
@@ -2010,17 +2007,20 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult createNewPackage = DialogResult.Cancel;
 
             DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
-            path = folderBrowserDialog4Mods.SelectedPath;
-            if (Directory.Exists(path))
+            if (result == DialogResult.OK)
             {
-                createNewPackage = IsPackageFolderEmpty(path);
-            }
-            else
-            {
-                if (path.EndsWith("New folder"))
-                    MessageBox.Show(this, "The renaming of the 'New folder' was not yet completed when you clicked 'Ok'. Please, reselect your folder", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                path = folderBrowserDialog4Mods.SelectedPath;
+                if (Directory.Exists(path))
+                {
+                    createNewPackage = IsPackageFolderEmpty(path);
+                }
                 else
-                    MessageBox.Show(this, string.Format("Something went wrong when picking the folder {0}", path), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    if (path.EndsWith("New folder"))
+                        MessageBox.Show(this, "The renaming of the 'New folder' was not yet completed when you clicked 'Ok'. Please, reselect your folder", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    else
+                        MessageBox.Show(this, string.Format("Something went wrong when picking the folder {0}", path), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             return createNewPackage;
         }
