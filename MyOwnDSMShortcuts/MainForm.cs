@@ -578,8 +578,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (state == State.Add || state == State.Edit)
                 e.Cancel = true;
-
-            if (SavePackage() == DialogResult.Cancel)
+            else if (SavePackage() == DialogResult.Cancel)
                 e.Cancel = true;
         }
 
@@ -2109,6 +2108,25 @@ namespace BeatificaBytes.Synology.Mods
             {
                 File.WriteAllText(defaultRunnerPath, outputRunner);
             }
+        }
+
+        private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://mods.codeplex.com/documentation");
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void supportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://mods.codeplex.com/discussions");
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void packageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
