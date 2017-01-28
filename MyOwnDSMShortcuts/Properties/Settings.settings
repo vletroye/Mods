@@ -23,7 +23,7 @@
     <Setting Name="Version" Type="System.String" Scope="Application">
       <Value Profile="(Default)">CTP 6.1</Value>
     </Setting>
-    <Setting Name="Ps_Exec" Type="System.String" Scope="Application">
+    <Setting Name="Ps_Exec" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;script type="text/javascript"&gt;
  function autoScrolling() { window.scrollTo(0,document.body.scrollHeight); }
 &lt;/script&gt;
@@ -88,6 +88,9 @@ echo "&lt;/script&gt;";
     </Setting>
     <Setting Name="RecentsName" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

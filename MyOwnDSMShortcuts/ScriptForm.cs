@@ -36,14 +36,9 @@ namespace BeatificaBytes.Synology.Mods
             }
             set
             {
-                if (value == null)
-                    tabControl.TabPages.RemoveAt(0);
-                else
-                {
-                    if (value == string.Empty)
-                        value = "#!/bin/sh\n";
-                    script = value;
-                }
+                if (value == string.Empty)
+                    value = "#!/bin/sh\n";
+                script = value;
             }
         }
 
@@ -79,21 +74,29 @@ namespace BeatificaBytes.Synology.Mods
         private void ScriptForm_Load(object sender, EventArgs e)
         {
             var tab = 0;
-            if (tabControl.TabPages.Count == 2)
+            if (script != null)
             {
                 scintillaScript = new ScintillaNET.Scintilla();
-                tabControl.TabPages[0].Controls.Add(scintillaScript);
+                tabControl.TabPages[tab].Controls.Add(scintillaScript);
                 scintillaScript.Text = script;
 
                 InitScriptEditor(scintillaScript, Lexer.Batch);
                 tab++;
             }
+            else
+                tabControl.TabPages.RemoveAt(tab);
 
-            scintillaRunner = new ScintillaNET.Scintilla();
-            tabControl.TabPages[tab].Controls.Add(scintillaRunner);
-            scintillaRunner.Text = runner;
+            if (runner != null)
+            {
+                scintillaRunner = new ScintillaNET.Scintilla();
+                tabControl.TabPages[tab].Controls.Add(scintillaRunner);
+                scintillaRunner.Text = runner;
 
-            InitScriptEditor(scintillaRunner, Lexer.PhpScript);
+                InitScriptEditor(scintillaRunner, Lexer.PhpScript);
+            }
+            else
+                tabControl.TabPages.RemoveAt(tab);
+
         }
 
         private void InitScriptEditor(Scintilla textArea, Lexer type)

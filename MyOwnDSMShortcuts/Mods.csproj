@@ -55,6 +55,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>PackagingSyno.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -73,6 +76,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="AppsData.cs" />
     <Compile Include="CCursor.cs" />
     <Compile Include="FolderBrowserDialogEx.cs">
@@ -93,6 +102,9 @@
     <Compile Include="ScriptForm.Designer.cs">
       <DependentUpon>ScriptForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -119,7 +131,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="PackagingSyno.ico" />
     <Content Include="Preferences.png" />
+    <None Include="Resources\EditedScript.png" />
     <Content Include="Resources\Mods.ico" />
     <Content Include="Resources\Newtonsoft.Json.dll" />
     <Content Include="Resources\Newtonsoft.Json.pdb" />
@@ -130,6 +144,8 @@
     <Content Include="Resources\Package.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\PackagingSyno.png" />
+    <Content Include="Resources\PackagingSyno.ico" />
     <Content Include="Resources\Ps_Exec.php">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -149,6 +165,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Json Editor\Json Editor.csproj">
+      <Project>{c0be5e35-87cc-40e0-92d8-1d42c60f016d}</Project>
+      <Name>Json Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ScintillaNET\ScintillaNET.csproj">
       <Project>{22ae2386-60f1-476e-9303-61cdb0aac4cf}</Project>
       <Name>ScintillaNET</Name>

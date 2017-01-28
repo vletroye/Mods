@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ZTn.Json.Editor.Forms;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -60,6 +61,7 @@ namespace BeatificaBytes.Synology.Mods
         State state;
         Package list;
         bool dirty = false;
+        bool wizardExist = false;
 
         string imageDragDropPath;
         protected bool validData;
@@ -96,6 +98,8 @@ namespace BeatificaBytes.Synology.Mods
                 InitData();
                 BindData(list);
                 LoadPackageInfo();
+
+                CopyPackagingBinaries();
             }
             DisplayItem();
             foreach (var control in groupBoxItem.Controls)
@@ -123,8 +127,6 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
-            var linkTimeLocal = Helper.GetLinkerTime(Assembly.GetExecutingAssembly());
-            this.Text += string.Format(" [{0} Build {1}]", Properties.Settings.Default.Version, linkTimeLocal);
             textBoxPackage.Focus();
 
             CreateRecentsMenu();
@@ -142,6 +144,7 @@ namespace BeatificaBytes.Synology.Mods
                     items[item].Name = "recentItem" + item.ToString();
                     items[item].Tag = Properties.Settings.Default.Recents[item];
                     items[item].Text = Properties.Settings.Default.RecentsName[item];
+                    items[item].ToolTipText = Properties.Settings.Default.Recents[item];
                     items[item].Click += new EventHandler(MenuItemOpenRecent_ClickHandler);
                 }
                 openRecentToolStripMenuItem.DropDownItems.AddRange(items);
@@ -294,6 +297,16 @@ namespace BeatificaBytes.Synology.Mods
 
                 SavePackageSettings();
                 CreateRecentsMenu();
+
+                var wizard = Path.Combine(PackageRootPath, "WIZARD_UIFILES");
+                if (Directory.Exists(wizard))
+                {
+                    wizardExist = true;
+                }
+                else
+                {
+                    wizardExist = false;
+                }
             }
             else
             {
@@ -315,9 +328,7 @@ namespace BeatificaBytes.Synology.Mods
                 Console.WriteLine(unzip.StandardOutput.ReadToEnd());
                 unzip.WaitForExit();
 
-                File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
-                File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
-                File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
+                CopyPackagingBinaries();
             }
 
             // Pictures are all saved in the Mods.exe's folder / recovery, just in case one does Reset the package by mistake.
@@ -577,8 +588,12 @@ namespace BeatificaBytes.Synology.Mods
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (state == State.Add || state == State.Edit)
+            {
+                MessageBox.Show(this, "Please, Cancel or Save first the current edition.");
                 e.Cancel = true;
-            else if (SavePackage() == DialogResult.Cancel)
+            }
+
+            if (SavePackage() == DialogResult.Cancel)
                 e.Cancel = true;
         }
 
@@ -869,10 +884,6 @@ namespace BeatificaBytes.Synology.Mods
                     Helper.DeleteDirectory(target);
                 }
 
-                // Remove \r not supported in shell scripts
-                script = script.Replace("\r\n", "\n");
-                //runner = script.Replace("\r\n", "\n");
-
                 Directory.CreateDirectory(target);
 
                 // Create sh script (ANSI) to be executed by the php runner script
@@ -1024,7 +1035,7 @@ namespace BeatificaBytes.Synology.Mods
                 EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling, enabling);
                 EnableItemButtonDetails(enabling, enabling, enabling, enabling, enabling, packaging);
 
-                EnableItemMenuDetails(false, false, false, false, false, true, true, true);
+                EnableItemMenuDetails(false, false, false, false, true, true, true, false);
             }
             else
             {
@@ -1037,40 +1048,55 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     case State.View:
                         EnableItemButtonDetails(true, true, false, false, true, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, !enabling, true, true, true);
+                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true);
                         break;
                     case State.None:
                         EnableItemButtonDetails(true, false, false, false, false, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, !enabling, true, true, true);
+                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true);
                         break;
                     case State.Add:
                     case State.Edit:
                         EnableItemButtonDetails(false, false, true, true, false, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, !enabling, false, false, false);
+                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, false, false, false, false);
                         break;
                 }
                 textBoxItem.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)UrlType.Url);
-
             }
+
+            if (wizardExist)
+                addWizardToolStripMenuItem.Text = "Remove Wizard";
+            else
+                addWizardToolStripMenuItem.Text = "Create Wizard";
+
+
+            wizardInstallUIToolStripMenuItem.Enabled = wizardExist;
+            wizardUninstallUIToolStripMenuItem.Enabled = wizardExist;
+            wizardUpgradeUIToolStripMenuItem.Enabled = wizardExist;
         }
 
-        private void EnableItemMenuDetails(bool packageArea, bool itemsArea, bool menuPackage, bool menuReset, bool menuSave, bool menuNew, bool menuOpen, bool menuRecent)
+        private void EnableItemMenuDetails(bool packageArea, bool itemsArea, bool menuPackage, bool menuSave, bool menuNew, bool menuOpen, bool menuRecent, bool menuEdit)
         {
             groupBoxPackage.Enabled = packageArea;
             groupBoxItem.Enabled = itemsArea;
-            generateToolStripMenuItem.Enabled = menuPackage;
-            resetToolStripMenuItem.Enabled = menuReset;
+            foreach (ToolStripItem menu in packageToolStripMenuItem.DropDownItems)
+            {
+                menu.Enabled = menuPackage;
+            }
             saveToolStripMenuItem.Enabled = menuSave;
             newToolStripMenuItem.Enabled = menuNew;
             openToolStripMenuItem.Enabled = menuOpen;
             openRecentToolStripMenuItem.Enabled = menuRecent;
+            foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
+            {
+                menu.Enabled = menuEdit;
+            }
         }
 
-        private void EnableItemFieldDetails(bool bTextBoxDesc, bool bTextBoxTitle, bool btestBoxItem, bool bCheckBoxAllUsers, bool bCheckBoxMultiInstance, bool blistViewItems, bool bcomboBoxItemType)
+        private void EnableItemFieldDetails(bool bTextBoxDesc, bool bTextBoxTitle, bool btextBoxItem, bool bCheckBoxAllUsers, bool bCheckBoxMultiInstance, bool blistViewItems, bool bcomboBoxItemType)
         {
             textBoxDesc.Enabled = bTextBoxDesc;
             textBoxTitle.Enabled = bTextBoxTitle;
-            textBoxItem.Enabled = btestBoxItem;
+            textBoxItem.Enabled = btextBoxItem;
             checkBoxAllUsers.Enabled = bCheckBoxAllUsers;
             checkBoxMultiInstance.Enabled = bCheckBoxMultiInstance;
             listViewItems.Enabled = blistViewItems;
@@ -1669,14 +1695,14 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void testBoxItem_Validating(object sender, CancelEventArgs e)
+        private void textBoxItem_Validating(object sender, CancelEventArgs e)
         {
             if (!CheckEmpty(textBoxItem, ref e))
             {
             }
         }
 
-        private void testBoxItem_Validated(object sender, EventArgs e)
+        private void textBoxItem_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxItem, "");
         }
@@ -1904,7 +1930,11 @@ namespace BeatificaBytes.Synology.Mods
                 if (answer == DialogResult.Yes)
                     OpenPackage(path);
             }
-            else if (result != DialogResult.Cancel)
+            else if (result == DialogResult.Cancel)
+            {
+                MessageBox.Show(this, "This folder already contains some Files. Please, select an empty Folder.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
             {
                 PackageRootPath = path;
 
@@ -1939,6 +1969,11 @@ namespace BeatificaBytes.Synology.Mods
                 if (answer == DialogResult.Yes)
                 {
                     Process.Start(PackageRootPath);
+                }
+
+                foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
+                {
+                    menu.Image = null;
                 }
             }
             else
@@ -1986,6 +2021,11 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     InitialConfiguration();
                 }
+                else
+                {
+                    // Update with possibly new versions
+                    CopyPackagingBinaries();
+                }
 
                 InitData();
                 LoadPackageInfo();
@@ -1996,6 +2036,19 @@ namespace BeatificaBytes.Synology.Mods
             {
                 MessageBox.Show(this, "The selected Folder does not contain a valid Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void CopyPackagingBinaries()
+        {
+            if (File.Exists(Path.Combine(PackageRootPath, "7z.exe")))
+                File.Delete(Path.Combine(PackageRootPath, "7z.exe"));
+            File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(PackageRootPath, "7z.exe"));
+            if (File.Exists(Path.Combine(PackageRootPath, "7z.dll")))
+                File.Delete(Path.Combine(PackageRootPath, "7z.dll"));
+            File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(PackageRootPath, "7z.dll"));
+            if (File.Exists(Path.Combine(PackageRootPath, "Pack.cmd")))
+                File.Delete(Path.Combine(PackageRootPath, "Pack.cmd"));
+            File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
         }
 
         // Return Yes to create a new package
@@ -2043,6 +2096,7 @@ namespace BeatificaBytes.Synology.Mods
                         content.Remove(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
                         content.Remove(Path.Combine(path, "package"));
                         content.Remove(Path.Combine(path, "scripts"));
+                        content.Remove(Path.Combine(path, "WIZARD_UIFILES"));
                     }
                     var remaining = content.ToList();
                     foreach (var spk in remaining)
@@ -2101,12 +2155,122 @@ namespace BeatificaBytes.Synology.Mods
         private void scriptRunnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var runner = File.ReadAllText(defaultRunnerPath);
-            string outputScript = string.Empty;
             string outputRunner = string.Empty;
-            DialogResult result = Helper.ScriptEditor(null, runner, out outputScript, out outputRunner);
+            DialogResult result = Helper.ScriptEditor(null, runner, out outputRunner);
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(defaultRunnerPath, outputRunner);
+                scriptRunnerToolStripMenuItem.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+
+        private void scriptEditMenuItem_Click(object sender, EventArgs e)
+        {
+            var menu = (ToolStripMenuItem)sender;
+            var script = menu.Tag.ToString();
+            var scriptPath = Path.Combine(PackageRootPath, "scripts", script);
+
+            if (!File.Exists(scriptPath))
+                MessageBox.Show(this, "This Script cannot be found. Please Reset your Package.");
+            else
+            {
+                var inputScript = File.ReadAllText(scriptPath);
+                var outputScript = "";
+                DialogResult result = Helper.ScriptEditor(inputScript, null, out outputScript);
+                if (result == DialogResult.OK)
+                {
+                    File.WriteAllText(scriptPath, outputScript);
+                    menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                }
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var about = new AboutBox();
+            about.StartPosition = FormStartPosition.CenterParent;
+            about.ShowDialog(this);
+        }
+
+        private void packeDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void addWizardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var wizard = Path.Combine(PackageRootPath, "WIZARD_UIFILES");
+            if (Directory.Exists(wizard))
+            {
+                var result = MessageBox.Show(this, "Are you sure you want to delete your wizard?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    Helper.DeleteDirectory(wizard);
+                wizardExist = false;
+            }
+            else
+            {
+                Directory.CreateDirectory(wizard);
+                wizardExist = true;
+            }
+            EnableItemDetails();
+        }
+
+        private void wizardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult result = DialogResult.Cancel;
+            var menu = (ToolStripMenuItem)sender;
+            var json = menu.Tag.ToString();
+            var jsonPath = Path.Combine(PackageRootPath, "WIZARD_UIFILES", json);
+
+            if (!File.Exists(jsonPath))
+            {
+                jsonPath = jsonPath + ".sh";
+                if (!File.Exists(jsonPath))
+                    jsonPath = null;
+            }
+
+            if (jsonPath == null)
+            {
+                result = MessageBox.Show(this, "Do you want to create a standard json wizard? (Answering 'No' will create a dynamic wizard using a shell script)", "Type of Wizard", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.No)
+                    jsonPath = Path.Combine(PackageRootPath, "WIZARD_UIFILES", json + ".sh");
+                else if (result == DialogResult.Yes)
+                    jsonPath = Path.Combine(PackageRootPath, "WIZARD_UIFILES", json);
+
+                if (jsonPath != null)
+                    using (File.CreateText(jsonPath))
+                    { }
+            }
+
+
+            if (jsonPath != null)
+            {
+                if (Path.GetExtension(jsonPath) == ".sh")
+                {
+                    var inputWizard = File.ReadAllText(jsonPath);
+                    var outputWizard = "";
+
+                    string outputRunner = string.Empty;
+                    result = Helper.ScriptEditor(inputWizard, null, out outputWizard);
+                    if (result == DialogResult.OK)
+                    {
+                        File.WriteAllText(jsonPath, outputWizard);
+                        menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                    }
+                }
+                else
+                {
+                    var jsonEditor = new JsonEditorMainForm();
+                    jsonEditor.OpenFile(jsonPath);
+                    jsonEditor.StartPosition = FormStartPosition.CenterParent;
+                    jsonEditor.ShowDialog();
+                }
             }
         }
 
