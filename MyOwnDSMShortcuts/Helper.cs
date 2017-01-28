@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -124,28 +124,28 @@ namespace BeatificaBytes.Synology.Mods
             return file;
         }
 
-        internal static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
-        {
-            var filePath = assembly.Location;
-            const int c_PeHeaderOffset = 60;
-            const int c_LinkerTimestampOffset = 8;
+        //internal static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
+        //{
+        //    var filePath = assembly.Location;
+        //    const int c_PeHeaderOffset = 60;
+        //    const int c_LinkerTimestampOffset = 8;
 
-            var buffer = new byte[2048];
+        //    var buffer = new byte[2048];
 
-            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                stream.Read(buffer, 0, 2048);
+        //    using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        //        stream.Read(buffer, 0, 2048);
 
-            var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
-            var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
-            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        //    var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
+        //    var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
+        //    var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-            var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+        //    var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
 
-            var tz = target ?? TimeZoneInfo.Local;
-            var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
+        //    var tz = target ?? TimeZoneInfo.Local;
+        //    var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
 
-            return localTime;
-        }
+        //    return localTime;
+        //}
 
         internal static string PickFolder(string path)
         {
@@ -182,9 +182,20 @@ namespace BeatificaBytes.Synology.Mods
             var editScript = new ScriptForm();
             editScript.Script = inputScript;
             editScript.Runner = inputRunner;
-            var result = editScript.ShowDialog();
+            editScript.StartPosition = FormStartPosition.CenterParent;
+            var result = editScript.ShowDialog(Application.OpenForms[0]);
             outputScript = editScript.Script;
+            if (outputScript != null)
+            {
+                // Remove \r not supported in shell scripts
+                outputScript = outputScript.Replace("\r\n", "\n");
+            }
+
             outputRunner = editScript.Runner;
+
+            if (inputScript == outputScript && inputRunner == outputRunner)
+                result = DialogResult.Cancel;
+
             return result;
 
         }
@@ -194,5 +205,20 @@ namespace BeatificaBytes.Synology.Mods
             return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
 
+        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, out string output)
+        {
+            var outputFake = "";
+            DialogResult result;
+            if (inputScript == null)
+            {
+                result = ScriptEditor(null, inputRunner, out outputFake, out output);
+            }
+            else
+            {
+                result = ScriptEditor(inputScript, null, out output, out outputFake);
+            }
+
+            return result;
+        }
     }
 }

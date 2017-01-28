@@ -50,6 +50,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Location = new System.Drawing.Point(511, 597);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -86,7 +87,7 @@
             this.tabPageRunner.Location = new System.Drawing.Point(4, 22);
             this.tabPageRunner.Name = "tabPageRunner";
             this.tabPageRunner.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRunner.Size = new System.Drawing.Size(566, 530);
+            this.tabPageRunner.Size = new System.Drawing.Size(566, 553);
             this.tabPageRunner.TabIndex = 1;
             this.tabPageRunner.Text = "Runner Editor";
             this.tabPageRunner.UseVisualStyleBackColor = true;
@@ -95,6 +96,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(598, 632);
             this.ControlBox = false;
             this.Controls.Add(this.buttonCancel);
@@ -104,7 +106,10 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(614, 648);
             this.Name = "ScriptForm";
-            this.Text = "Edit Your Script";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Edit Your Script - Powered by ScintillaNet";
             this.Load += new System.EventHandler(this.ScriptForm_Load);
             this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);

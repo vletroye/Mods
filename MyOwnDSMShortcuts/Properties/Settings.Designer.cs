@@ -101,7 +101,7 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<script type=\"text/javascript\">\r\n function autoScrolling() { window.scrollTo(0,do" +
             "cument.body.scrollHeight); }\r\n</script>\r\n<?php\r\n/**\r\n * Execute the given comman" +
@@ -128,6 +128,9 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             get {
                 return ((string)(this["Ps_Exec"]));
             }
+            set {
+                this["Ps_Exec"] = value;
+            }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
@@ -149,6 +152,18 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["RecentsName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpgradeRequired {
+            get {
+                return ((bool)(this["UpgradeRequired"]));
+            }
+            set {
+                this["UpgradeRequired"] = value;
             }
         }
     }
