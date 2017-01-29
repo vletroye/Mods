@@ -223,7 +223,7 @@ namespace ZTn.Json.Editor.Forms
             var items = InsertProperty("items", new JArray());
             if (!string.IsNullOrEmpty(stepActivation))
             {
-                InsertProperty("activeate", stepActivation); //Typo 'activeate' is from official Synology documentation!!
+                InsertProperty("activate", stepActivation); ////Should I do the same Typo 'activeate' as in official Synology documentation??
             }
             if (!string.IsNullOrEmpty(stepDeactivation))
             {
@@ -314,7 +314,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 if (!string.IsNullOrEmpty(subitemDefaultValue))
                 {
-                    InsertProperty("defaultVaule", subitemDefaultValue); //Typo 'defaultVaule' is from official Synology documentation!!
+                    InsertProperty("defaultValue", subitemDefaultValue); //Should I do the same Typo 'defaultVaule' as in official Synology documentation??
                 }
                 if (!string.IsNullOrEmpty(subitemDescription))
                 {
