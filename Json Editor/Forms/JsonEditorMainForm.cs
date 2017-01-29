@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
+using System.Web.UI;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Linq;
 using System.Diagnostics;
@@ -125,10 +126,7 @@ namespace ZTn.Json.Editor.Forms
                 OpenedFileName = commandLineArgs[1];
                 try
                 {
-                    using (var stream = new FileStream(commandLineArgs[1], FileMode.Open))
-                    {
-                        SetJsonSourceStream(stream, commandLineArgs[1]);
-                    }
+                    OpenJson(OpenedFileName);
                 }
                 catch
                 {
@@ -170,100 +168,10 @@ namespace ZTn.Json.Editor.Forms
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var path = OpenedFileName;
-                using (var stream = openFileDialog.OpenFile())
-                {
-                    SetJsonSourceStream(stream, openFileDialog.FileName);
-                }
+                OpenJson(openFileDialog.FileName);
                 OpenedFileName = path;
             }
         }
-
-        //private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    if (OpenedFileName == null)
-        //    {
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        using (var stream = new FileStream(OpenedFileName, FileMode.Open))
-        //        {
-        //            JsonEditorItem.Save(stream);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        MessageBox.Show(this, $"An error occured when saving file as \"{OpenedFileName}\".", @"Save As...");
-
-        //        OpenedFileName = null;
-        //        SetActionStatus(@"Document NOT saved.", true);
-
-        //        return;
-        //    }
-
-        //    SetActionStatus(@"Document successfully saved.", false);
-        //}
-
-        //private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    var saveFileDialog = new SaveFileDialog
-        //    {
-        //        Filter = DefaultFileFilters,
-        //        FilterIndex = 1,
-        //        RestoreDirectory = true
-        //    };
-
-        //    if (saveFileDialog.ShowDialog() != DialogResult.OK)
-        //    {
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        OpenedFileName = saveFileDialog.FileName;
-        //        using (var stream = saveFileDialog.OpenFile())
-        //        {
-        //            if (stream.CanWrite)
-        //            {
-        //                JsonEditorItem.Save(stream);
-        //            }
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        MessageBox.Show(this, $"An error occured when saving file as \"{OpenedFileName}\".", @"Save As...");
-
-        //        OpenedFileName = null;
-        //        SetActionStatus(@"Document NOT saved.", true);
-
-        //        return;
-        //    }
-
-        //    SetActionStatus(@"Document successfully saved.", false);
-        //}
-
-        //private void newJsonObjectToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    var jsonEditorItem = new JTokenRoot("{}");
-
-        //    jsonTreeView.Nodes.Clear();
-        //    jsonTreeView.Nodes.Add(JsonTreeNodeFactory.Create(jsonEditorItem.JTokenValue));
-        //    jsonTreeView.Nodes
-        //        .Cast<TreeNode>()
-        //        .ForEach(n => n.Expand());
-        //}
-
-        //private void newJsonArrayToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    var jsonEditorItem = new JTokenRoot("[]");
-
-        //    jsonTreeView.Nodes.Clear();
-        //    jsonTreeView.Nodes.Add(JsonTreeNodeFactory.Create(jsonEditorItem.JTokenValue));
-        //    jsonTreeView.Nodes
-        //        .Cast<TreeNode>()
-        //        .ForEach(n => n.Expand());
-        //}
 
         private void aboutJsonEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -496,12 +404,13 @@ namespace ZTn.Json.Editor.Forms
             }
 
             SetActionStatus(@"Wizard successfully saved.", false);
-
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
@@ -510,6 +419,323 @@ namespace ZTn.Json.Editor.Forms
             var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html");
             info.UseShellExecute = true;
             Process.Start(info);
+        }
+
+        private string GenerateHtmlPreview()
+        {
+            var preview = "";
+            using (var stringWriter = new StringWriter())
+            {
+                using (var writer = new HtmlTextWriter(stringWriter))
+                {
+                    foreach (JToken step in JsonEditorItem.JTokenValue.Children())
+                    {
+                        writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                        writer.RenderBeginTag(HtmlTextWriterTag.H3);
+                        //if (step != null & step.FirstNode.FirstNode != null)
+                        var property = GetNodeByKey(step.Children(), "step_title") as JProperty;
+                        if (property != null)
+                        {
+                            writer.Write(property.Value.ToString());
+                        }
+                        else
+                        {
+                            writer.Write("Step title not found ?!");
+                        }
+                        writer.RenderEndTag();
+                        var items = GetNodeByKey(step.Children(), "items");
+                        GenerateHtmlStep(writer, items);
+                        writer.RenderEndTag();
+                        writer.RenderBeginTag(HtmlTextWriterTag.Hr);
+                        writer.RenderEndTag();
+                    }
+
+                    preview = stringWriter.ToString();
+                }
+            }
+
+            return preview;
+        }
+
+        private void GenerateHtmlStep(HtmlTextWriter writer, JToken items)
+        {
+            items = items.First;
+            if (items != null)
+            {
+                foreach (JToken item in items.Children())
+                {
+                    var node = GetNodeByKey(item.Children(), "type") as JProperty;
+                    if (node != null)
+                    {
+                        var desc = GetNodeByKey(item.Children(), "desc") as JProperty;
+                        string description = "";
+                        if (desc != null)
+                            description = desc.Value.ToString();
+                        var type = node.Value.ToString();
+                        switch (type)
+                        {
+                            case "singleselect":
+                                GenerateHtmlRadioButtons(writer, item, description);
+                                break;
+                            case "multiselect":
+                                GenerateHtmlCheckBoxes(writer, item, description);
+                                break;
+                            case "textfield":
+                                GenerateHtmlTextField(writer, item, description);
+                                break;
+                            case "password":
+                                GenerateHtmlPassword(writer, item, description);
+                                break;
+                            case "combobox":
+                                GenerateHtmlCombo(writer, item, description);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        writer.Write("Missing a 'type' under 'items/[Array]/{Object}'");
+                    }
+                }
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'items'");
+            }
+        }
+
+        private void GenerateHtmlCombo(HtmlTextWriter writer, JToken item, string description)
+        {
+            var uid = Guid.NewGuid().ToString();
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            if (!string.IsNullOrEmpty(description))
+                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+            writer.Write(description);
+            writer.RenderEndTag();
+        }
+
+        private void GenerateHtmlPassword(HtmlTextWriter writer, JToken item, string description)
+        {
+            var uid = Guid.NewGuid().ToString();
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            if (!string.IsNullOrEmpty(description))
+                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+            writer.Write(description);
+            writer.RenderEndTag();
+
+
+            var subitems = GetNodeByKey(item.Children(), "subitems");
+            var array = subitems.First;
+            if (array != null)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                foreach (JToken radio in array.Children())
+                {
+                    var desc = GetNodeByKey(radio.Children(), "desc") as JProperty;
+                    if (desc != null)
+                        if (desc.Value.ToString() == "")
+                            desc = GetNodeByKey(radio.Children(), "key") as JProperty;
+                    if (desc != null)
+                        writer.Write(desc.Value.ToString());
+                    var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
+                    if (value != null)
+                        if (value.Value.ToString() != "")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Value, value.Value.ToString());
+                    if (value == null || value.Value.ToString() != "")
+                    {
+                        var empty = GetNodeByKey(radio.Children(), "emptyText") as JProperty;
+                        if (empty != null)
+                            if (empty.Value.ToString() != "")
+                                writer.AddAttribute(HtmlTextWriterAttribute.Value, empty.Value.ToString());
+                    }
+                    var disabled = GetNodeByKey(radio.Children(), "disabled") as JProperty;
+                    if (disabled != null)
+                        if (disabled.Value.ToString() == "true")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "password");
+                    writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                    writer.RenderEndTag();
+                    writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                    writer.RenderEndTag();
+                }
+                writer.RenderEndTag();
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'subitems'");
+            }
+            writer.RenderEndTag();
+        }
+
+        private void GenerateHtmlTextField(HtmlTextWriter writer, JToken item, string description)
+        {
+            var uid = Guid.NewGuid().ToString();
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            if (!string.IsNullOrEmpty(description))
+                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+            writer.Write(description);
+            writer.RenderEndTag();
+
+            var subitems = GetNodeByKey(item.Children(), "subitems");
+            var array = subitems.First;
+            if (array != null)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                foreach (JToken radio in array.Children())
+                {
+                    var desc = GetNodeByKey(radio.Children(), "desc") as JProperty;
+                    if (desc != null)
+                        if (desc.Value.ToString() == "")
+                            desc = GetNodeByKey(radio.Children(), "key") as JProperty;
+                    if (desc != null)
+                        writer.Write(desc.Value.ToString());
+                    var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
+                    if (value != null)
+                        if (value.Value.ToString() != "")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Value, value.Value.ToString());
+                    if (value == null || value.Value.ToString() != "")
+                    {
+                        var empty = GetNodeByKey(radio.Children(), "emptyText") as JProperty;
+                        if (empty != null)
+                            if (empty.Value.ToString() != "")
+                                writer.AddAttribute(HtmlTextWriterAttribute.Value, empty.Value.ToString());
+                    }
+                    var disabled = GetNodeByKey(radio.Children(), "disabled") as JProperty;
+                    if (disabled != null)
+                        if (disabled.Value.ToString() == "true")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "text");
+                    writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                    writer.RenderEndTag();
+                    writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                    writer.RenderEndTag();
+                }
+                writer.RenderEndTag();
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'subitems'");
+            }
+            writer.RenderEndTag();
+        }
+
+        private void GenerateHtmlCheckBoxes(HtmlTextWriter writer, JToken item, string description)
+        {
+            var uid = Guid.NewGuid().ToString();
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            if (!string.IsNullOrEmpty(description))
+                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+            writer.Write(description);
+            writer.RenderEndTag();
+
+            var subitems = GetNodeByKey(item.Children(), "subitems");
+            var array = subitems.First;
+            if (array != null)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                foreach (JToken radio in array.Children())
+                {
+                    var desc = GetNodeByKey(radio.Children(), "desc") as JProperty;
+                    if (desc != null)
+                        if (desc.Value.ToString() == "")
+                            desc = GetNodeByKey(radio.Children(), "key") as JProperty;
+                    if (desc != null)
+                        writer.Write(desc.Value.ToString());
+                    var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
+                    if (value != null)
+                        if (value.Value.ToString() == "true")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "checkbox");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+                    writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                    writer.RenderEndTag();
+                    writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                    writer.RenderEndTag();
+                }
+                writer.RenderEndTag();
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'subitems'");
+            }
+            writer.RenderEndTag();
+        }
+
+        private void GenerateHtmlRadioButtons(HtmlTextWriter writer, JToken item, string description)
+        {
+            var uid = Guid.NewGuid().ToString();
+            writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            if (!string.IsNullOrEmpty(description))
+                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+            writer.Write(description);
+            writer.RenderEndTag();
+
+            var subitems = GetNodeByKey(item.Children(), "subitems");
+            var array = subitems.First;
+            if (array != null)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                foreach (JToken radio in array.Children())
+                {
+                    var desc = GetNodeByKey(radio.Children(), "desc") as JProperty;
+                    if (desc != null)
+                        if (desc.Value.ToString() == "")
+                            desc = GetNodeByKey(radio.Children(), "key") as JProperty;
+                    if (desc != null)
+                        writer.Write(desc.Value.ToString());
+                    var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
+                    if (value != null)
+                        if (value.Value.ToString() == "true")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
+                    writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+                    writer.RenderBeginTag(HtmlTextWriterTag.Input);
+                    writer.RenderEndTag();
+                    writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                    writer.RenderEndTag();
+                }
+                writer.RenderEndTag();
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'subitems'");
+            }
+            writer.RenderEndTag();
+        }
+
+        private void buttonPreview_Click(object sender, EventArgs e)
+        {
+            if (this.Width <= 786)
+                this.Width = 1024;
+            var preview = GenerateHtmlPreview();
+
+            webBrowserPreview.DocumentText = preview;
+        }
+
+        private JToken GetNodeByKey(JEnumerable<JToken> nodes, string key)
+        {
+            JToken found = null;
+            foreach (JToken node in nodes)
+            {
+                var property = node as JProperty;
+                if (property != null)
+                {
+                    if (property.Name == key)
+                    {
+                        found = node;
+                        break;
+                    }
+                }
+            }
+            return found;
         }
     }
 }
