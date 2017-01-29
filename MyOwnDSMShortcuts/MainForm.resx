@@ -120,12 +120,20 @@
   <metadata name="toolTip4Mods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>435, 17</value>
   </metadata>
+  <data name="textBoxVersion.ToolTip" xml:space="preserve">
+    <value>Enter the version of your Package. It must be like '0.0-0000'. The last digit will be automatically increased each time you generate the package.
+This is to force DSM to update correctly the package when you install a new version. Some changes are otherwise not made visible.</value>
+  </data>
   <metadata name="openFileDialog4Mods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>562, 17</value>
   </metadata>
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>733, 17</value>
   </metadata>
+  <data name="checkBoxSize.ToolTip" xml:space="preserve">
+    <value>If you select this option, you will only have to provide a 256x256 icon for this item. All other icons will be created by resizing the 256x256 icon.
+If you don't select this option, you will have to provide an disctinct icon for each size.</value>
+  </data>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>856, 17</value>
   </metadata>

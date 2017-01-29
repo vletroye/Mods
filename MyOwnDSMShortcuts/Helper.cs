@@ -65,9 +65,9 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static string IncrementVersion(string version)
         {
-            var versions = version.Split('.');
+            var versions = version.Split(new char[] { '.', '-' });
             var minor = int.Parse(versions[2]) + 1;
-            return string.Format("{0}.{1}.{2}", versions[0], versions[1], minor);
+            return string.Format("{0}.{1}.{2:0000}", versions[0], versions[1], minor);
         }
 
         internal static void DeleteDirectory(string path)

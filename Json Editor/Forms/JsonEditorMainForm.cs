@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Linq;
+using System.Diagnostics;
 
 namespace ZTn.Json.Editor.Forms
 {
@@ -51,7 +52,7 @@ namespace ZTn.Json.Editor.Forms
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
-            }
+            }            
         }
 
         private void OpenJson(string path)
@@ -483,6 +484,13 @@ namespace ZTn.Json.Editor.Forms
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void wizardDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html");
+            info.UseShellExecute = true;
+            Process.Start(info);
         }
     }
 }
