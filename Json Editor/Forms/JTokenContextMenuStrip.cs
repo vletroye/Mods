@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Extensions;
@@ -63,10 +64,13 @@ namespace ZTn.Json.Editor.Forms
             AddWizardItemToolStripItem = new ToolStripMenuItem("Add an Item", null, AddWizardItem_Click);
             AddWizardSubitemToolStripItem = new ToolStripMenuItem("Add a Subitem", null, AddWizardSubitem_Click);
 
+            var entry = Items.Add("Wizard");
+            entry.Font = new Font(entry.Font, FontStyle.Bold | FontStyle.Underline);
             Items.Add(AddWizardStepToolStripItem);
             Items.Add(AddWizardItemToolStripItem);
             Items.Add(AddWizardSubitemToolStripItem);
             Items.Add("-");
+            Items.Add("Manual").Font = entry.Font;
             Items.Add(CollapseAllToolStripItem);
             Items.Add(ExpandAllToolStripItem);
             Items.Add(EditToolStripItem);
@@ -168,6 +172,7 @@ namespace ZTn.Json.Editor.Forms
             var stepDeactivation = newStep.Deactivation;
 
             JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"));
+
             var items = InsertProperty("items", new JArray());
             if (!string.IsNullOrEmpty(stepActivation))
             {
@@ -183,6 +188,7 @@ namespace ZTn.Json.Editor.Forms
             items.Expand();
             JTokenNode.TreeView.SelectedNode = items.FirstNode;
             JTokenNode = (JTokenTreeNode)items.FirstNode;
+            JTokenNode.NodeFont = new Font(SystemFonts.DefaultFont, FontStyle.Bold | FontStyle.Underline);
         }
 
         private void AddWizardItem_Click(Object sender, EventArgs e)
@@ -208,6 +214,7 @@ namespace ZTn.Json.Editor.Forms
             subitems.Expand();
             JTokenNode.TreeView.SelectedNode = subitems.FirstNode;
             JTokenNode = (JTokenTreeNode)subitems.FirstNode;
+            JTokenNode.NodeFont = new Font(SystemFonts.DefaultFont, FontStyle.Bold | FontStyle.Underline);
         }
 
         private void AddWizardSubitem_Click(Object sender, EventArgs e)
@@ -242,7 +249,6 @@ namespace ZTn.Json.Editor.Forms
                 var subitemPreventMark = newSubitem.PreventMark;
 
                 JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"));
-
 
                 if (subitemDisabled) InsertProperty("disabled", subitemDisabled);
                 if (subitemHidden) InsertProperty("hidden", subitemHidden);

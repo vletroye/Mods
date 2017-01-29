@@ -39,7 +39,8 @@ namespace BeatificaBytes.Synology.Mods
         #region Declarations -----------------------------------------------------------------------------------------------------------------------
         const string CONFIGFILE = @"package\ui\config";
         static Regex getPort = new Regex(@"^:(\d*).*$", RegexOptions.Compiled);
-        static Regex getVersion = new Regex(@"^\d*.\d*.\d*$", RegexOptions.Compiled);
+        static Regex getOldVersion = new Regex(@"^\d+\.\d+\.\d+$", RegexOptions.Compiled);
+        static Regex getVersion = new Regex(@"^\d+\.\d+-\d+$", RegexOptions.Compiled);
 
         string defaultRunnerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "default.runner");
         string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
@@ -63,6 +64,7 @@ namespace BeatificaBytes.Synology.Mods
         bool dirty = false;
         bool wizardExist = false;
 
+        string previousReportUrl;
         string imageDragDropPath;
         protected bool validData;
         #endregion  --------------------------------------------------------------------------------------------------------------------------------
@@ -184,7 +186,7 @@ namespace BeatificaBytes.Synology.Mods
             listViewItems.GridLines = true;
             listViewItems.FullRowSelect = true;
             listViewItems.Columns.Add("Name", 200);
-            listViewItems.Columns.Add("Uri", 580);
+            listViewItems.Columns.Add("Uri", 568);
             listViewItems.Sorting = SortOrder.Ascending;
         }
 
@@ -286,7 +288,20 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         var keys = textBox.Tag.ToString().Split(';');
                         var key = keys[0].Substring(3);
-                        textBox.Text = info[key];
+                        if (info.Keys.Contains(key))
+                            textBox.Text = info[key];
+                        else
+                            textBox.Text = "";
+                    }
+                    var checkBox = control as CheckBox;
+                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = checkBox.Tag.ToString().Split(';');
+                        var key = keys[0].Substring(3);
+                        if (info.Keys.Contains(key))
+                            checkBox.Checked = info[key] == "yes";
+                        else
+                            checkBox.Checked = false;
                     }
                 }
 
@@ -395,7 +410,24 @@ namespace BeatificaBytes.Synology.Mods
                         foreach (var key in keys)
                         {
                             var keyId = key.Substring(3);
-                            info[keyId] = textBox.Text.Trim(); ;
+                            if (info.Keys.Contains(keyId))
+                                info[keyId] = textBox.Text.Trim();
+                            else
+                                info.Add(keyId, textBox.Text.Trim());
+                        }
+                    }
+                    var checkBox = control as CheckBox;
+                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = checkBox.Tag.ToString().Split(';');
+                        foreach (var key in keys)
+                        {
+                            var keyId = key.Substring(3);
+                            var value = checkBox.Checked ? "yes" : "no";
+                            if (info.Keys.Contains(keyId))
+                                info[keyId] = value;
+                            else
+                                info.Add(keyId, value);
                         }
                     }
                 }
@@ -493,6 +525,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             state = State.Add;
             DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
+            textBoxTitle.Focus();
         }
 
         // Edit the item currently selected
@@ -592,9 +625,11 @@ namespace BeatificaBytes.Synology.Mods
                 MessageBox.Show(this, "Please, Cancel or Save first the current edition.");
                 e.Cancel = true;
             }
-
+            else
             if (SavePackage() == DialogResult.Cancel)
                 e.Cancel = true;
+            else
+                e.Cancel = false;
         }
 
         private void RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
@@ -1603,9 +1638,9 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxMaintainerUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxMaintainerUrl, ref e))
+            if (!string.IsNullOrEmpty(textBoxMaintainerUrl.Text))
             {
-                CheckDoubleQuotes(textBoxMaintainerUrl, ref e);
+                CheckUrl(textBoxMaintainerUrl, ref e);
             }
         }
 
@@ -1618,11 +1653,21 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxVersion, ref e))
             {
+                if (getOldVersion.IsMatch(textBoxVersion.Text))
+                {
+                    var parts = textBoxVersion.Text.Split('.');
+                    textBoxVersion.Text = string.Format("{0}.{1}-{2:0000}", parts[0], parts[1], int.Parse(parts[2]));
+                }
                 if (!getVersion.IsMatch(textBoxVersion.Text))
                 {
                     e.Cancel = true;
                     textBoxVersion.Select(0, textBoxVersion.Text.Length);
-                    errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0.0");
+                    errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0-0000");
+                }
+                else
+                {
+                    var parts = textBoxVersion.Text.Split(new char[] { '.', '-' });
+                    textBoxVersion.Text = string.Format("{0}.{1}-{2:0000}", parts[0], parts[1], int.Parse(parts[2]));
                 }
             }
         }
@@ -1729,6 +1774,19 @@ namespace BeatificaBytes.Synology.Mods
                 errorProvider.SetError(textBox, "You may not use double quotes in this textbox.");
             }
         }
+        private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
+        {
+            Uri outUri;
+            //if (!Uri.IsWellFormedUriString(textBox.Text, UriKind.Absolute))
+            if (!(Uri.TryCreate(textBox.Text, UriKind.Absolute, out outUri)
+            && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            {
+                e.Cancel = true;
+                textBox.Select(0, textBox.Text.Length);
+                errorProvider.SetError(textBox, "You didn't type a well formed http(s) absolute Url.");
+            }
+        }
+
 
         // Reset errors possibly displayed on any Control
         private void ResetValidateChildren()
@@ -2210,6 +2268,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 Directory.CreateDirectory(wizard);
+                MessageBox.Show(this, "You can know Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 wizardExist = true;
             }
             EnableItemDetails();
@@ -2243,7 +2302,6 @@ namespace BeatificaBytes.Synology.Mods
                     { }
             }
 
-
             if (jsonPath != null)
             {
                 if (Path.GetExtension(jsonPath) == ".sh")
@@ -2264,7 +2322,11 @@ namespace BeatificaBytes.Synology.Mods
                     var jsonEditor = new JsonEditorMainForm();
                     jsonEditor.OpenFile(jsonPath);
                     jsonEditor.StartPosition = FormStartPosition.CenterParent;
-                    jsonEditor.ShowDialog();
+                    result = jsonEditor.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                    }
                 }
             }
         }
@@ -2288,8 +2350,92 @@ namespace BeatificaBytes.Synology.Mods
         {
             var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/");
             info.UseShellExecute = true;
-            Process.Start(info); 
+            Process.Start(info);
         }
 
+        private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
+        {
+            if (!CheckEmpty(textBoxFirmware, ref e))
+            {
+                if (getOldVersion.IsMatch(textBoxFirmware.Text))
+                {
+                    var parts = textBoxFirmware.Text.Split('.');
+                    textBoxFirmware.Text = string.Format("{0}.{1}-{2:0000}", parts[0], parts[1], int.Parse(parts[2]));
+                }
+                if (!getVersion.IsMatch(textBoxFirmware.Text))
+                {
+                    e.Cancel = true;
+                    textBoxFirmware.Select(0, textBoxFirmware.Text.Length);
+                    errorProvider.SetError(textBoxFirmware, "The format of a firmware must be like 0.0-0000");
+                }
+                else
+                {
+                    var parts = textBoxFirmware.Text.Split(new char[] { '.', '-' });
+                    textBoxFirmware.Text = string.Format("{0}.{1}-{2:0000}", parts[0], parts[1], int.Parse(parts[2]));
+                }
+            }
+        }
+
+        private void textBoxFirmware_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxFirmware, "");
+        }
+
+        private void checkBoxBeta_CheckedChanged(object sender, EventArgs e)
+        {
+            TextBoxReportUrl.Visible = checkBoxBeta.Checked;
+            labelReportUrl.Visible = checkBoxBeta.Checked;
+            if (!checkBoxBeta.Checked)
+            {
+                previousReportUrl = TextBoxReportUrl.Text;
+                TextBoxReportUrl.Text = "";
+            }
+            else if (previousReportUrl != null)
+                TextBoxReportUrl.Text = previousReportUrl;
+        }
+
+        private void TextBoxReportUrl_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(TextBoxReportUrl.Text))
+            {
+                CheckUrl(TextBoxReportUrl, ref e);
+            }
+        }
+
+        private void textBoxHelpUrl_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBoxHelpUrl.Text))
+            {
+                CheckUrl(textBoxHelpUrl, ref e);
+            }
+        }
+
+        private void TextBoxReportUrl_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(TextBoxReportUrl, "");
+        }
+
+        private void textBoxHelpUrl_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxHelpUrl, "");
+        }
+
+        private void textBoxPublisherUrl_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxPublisherUrl, "");
+        }
+
+        private void textBoxPublisherUrl_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBoxPublisherUrl.Text))
+            {
+                CheckUrl(textBoxPublisherUrl, ref e);
+            }
+        }
+
+        private void buttonAdvanced_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(this, "Coming soon: Support for more optional Fields", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
