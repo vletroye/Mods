@@ -52,7 +52,7 @@ namespace ZTn.Json.Editor.Forms
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
-            }            
+            }
         }
 
         private void OpenJson(string path)
@@ -60,6 +60,25 @@ namespace ZTn.Json.Editor.Forms
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 SetJsonSourceStream(stream, path);
+            }
+            ExpandWizardNodes(jsonTreeView.Nodes[0]);
+        }
+
+        private void ExpandWizardNodes(TreeNode node)
+        {
+            if (node != null)
+            {
+                if ((node.Level == 0 || node.Level == 3 || node.Level == 6) && node.Text.StartsWith("[Array]"))
+                {
+                    node.NodeFont = new Font(SystemFonts.DefaultFont, FontStyle.Bold | FontStyle.Underline);
+                    node.Expand();
+                    node.EnsureVisible();
+                }
+
+                foreach (TreeNode subnode in node.Nodes)
+                {
+                    ExpandWizardNodes(subnode);
+                }
             }
         }
 

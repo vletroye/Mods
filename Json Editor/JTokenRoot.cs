@@ -74,7 +74,11 @@ namespace ZTn.Json.Editor
         /// <param name="jsonString">Source string.</param>
         public void Load(string jsonString)
         {
-            Load(JToken.Parse(jsonString));
+            try
+            {
+                Load(JToken.Parse(jsonString));
+            }
+            catch { }
         }
 
         /// <summary>

@@ -51,7 +51,7 @@
             this.buttonOk.Location = new System.Drawing.Point(12, 60);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 3;
+            this.buttonOk.TabIndex = 2;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -82,7 +82,7 @@
             this.textBoxDescription.Location = new System.Drawing.Point(111, 33);
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.Size = new System.Drawing.Size(319, 20);
-            this.textBoxDescription.TabIndex = 6;
+            this.textBoxDescription.TabIndex = 1;
             // 
             // comboBoxItemType
             // 
@@ -97,7 +97,7 @@
             this.comboBoxItemType.Location = new System.Drawing.Point(111, 6);
             this.comboBoxItemType.Name = "comboBoxItemType";
             this.comboBoxItemType.Size = new System.Drawing.Size(121, 21);
-            this.comboBoxItemType.TabIndex = 8;
+            this.comboBoxItemType.TabIndex = 0;
             // 
             // ItemDefinition
             // 
@@ -105,7 +105,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(438, 91);
+            this.ClientSize = new System.Drawing.Size(434, 87);
             this.ControlBox = false;
             this.Controls.Add(this.comboBoxItemType);
             this.Controls.Add(this.textBoxDescription);

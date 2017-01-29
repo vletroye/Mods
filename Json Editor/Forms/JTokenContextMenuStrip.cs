@@ -19,6 +19,9 @@ namespace ZTn.Json.Editor.Forms
         protected ToolStripItem AddWizardStepToolStripItem;
         protected ToolStripItem AddWizardItemToolStripItem;
         protected ToolStripItem AddWizardSubitemToolStripItem;
+        protected ToolStripItem RemoveWizardStepToolStripItem;
+        protected ToolStripItem RemoveWizardItemToolStripItem;
+        protected ToolStripItem RemoveWizardSubitemToolStripItem;
 
         protected ToolStripItem CollapseAllToolStripItem;
         protected ToolStripItem ExpandAllToolStripItem;
@@ -63,12 +66,18 @@ namespace ZTn.Json.Editor.Forms
             AddWizardStepToolStripItem = new ToolStripMenuItem("Add a Step", null, AddWizardStep_Click);
             AddWizardItemToolStripItem = new ToolStripMenuItem("Add an Item", null, AddWizardItem_Click);
             AddWizardSubitemToolStripItem = new ToolStripMenuItem("Add a Subitem", null, AddWizardSubitem_Click);
+            RemoveWizardStepToolStripItem = new ToolStripMenuItem("Remove Step", null, RemoveWizardStep_Click);
+            RemoveWizardItemToolStripItem = new ToolStripMenuItem("Remove Item", null, RemoveWizardItem_Click);
+            RemoveWizardSubitemToolStripItem = new ToolStripMenuItem("Remove Subitem", null, RemoveWizardSubitem_Click);
 
             var entry = Items.Add("Wizard");
             entry.Font = new Font(entry.Font, FontStyle.Bold | FontStyle.Underline);
             Items.Add(AddWizardStepToolStripItem);
             Items.Add(AddWizardItemToolStripItem);
             Items.Add(AddWizardSubitemToolStripItem);
+            Items.Add(RemoveWizardStepToolStripItem);
+            Items.Add(RemoveWizardItemToolStripItem);
+            Items.Add(RemoveWizardSubitemToolStripItem);
             Items.Add("-");
             Items.Add("Manual").Font = entry.Font;
             Items.Add(CollapseAllToolStripItem);
@@ -83,6 +92,8 @@ namespace ZTn.Json.Editor.Forms
         /// <inheritdoc />
         protected override void OnVisibleChanged(EventArgs e)
         {
+            var type = "";
+
             if (Visible)
             {
                 JTokenNode = FindSourceTreeNode<JTokenTreeNode>();
@@ -114,12 +125,11 @@ namespace ZTn.Json.Editor.Forms
                 PasteNodeReplaceToolStripItem.Enabled = !EditorClipboard<JTokenTreeNode>.IsEmpty()
                     && (JTokenNode.Parent != null);
 
-                AddWizardStepToolStripItem.Visible = (JTokenNode.Level == 0);
-                AddWizardItemToolStripItem.Visible = (JTokenNode.Level == 3);
-                AddWizardSubitemToolStripItem.Visible = (JTokenNode.Level == 6);
-                if (JTokenNode.Level == 6)
+                AddWizardStepToolStripItem.Visible = (JTokenNode.Level == 0 && JTokenNode.Text.StartsWith("[Array]"));
+                AddWizardItemToolStripItem.Visible = (JTokenNode.Level == 3 && JTokenNode.Text.StartsWith("[Array]"));
+                AddWizardSubitemToolStripItem.Visible = (JTokenNode.Level == 6 && JTokenNode.Text.StartsWith("[Array]"));
+                if (AddWizardSubitemToolStripItem.Visible)
                 {
-                    var type = "";
                     try
                     {
                         type = JTokenNode.Parent.Parent.FirstNode.FirstNode.Text;
@@ -132,6 +142,43 @@ namespace ZTn.Json.Editor.Forms
                     if (type != "")
                     {
                         AddWizardSubitemToolStripItem.Text = "Add a " + type;
+                    }
+                }
+                RemoveWizardStepToolStripItem.Visible = (JTokenNode.Level == 1 && JTokenNode.Text.StartsWith("{Object}"));
+                if (RemoveWizardStepToolStripItem.Visible)
+                {
+                    try
+                    {
+                        RemoveWizardStepToolStripItem.Text = string.Format("Remove '{0}'", JTokenNode.FirstNode.FirstNode.Text);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "Type of Item cannot be found. Did you modify the json? Possibly recreate this item!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                RemoveWizardItemToolStripItem.Visible = (JTokenNode.Level == 4 && JTokenNode.Text.StartsWith("{Object}"));
+                if (RemoveWizardItemToolStripItem.Visible)
+                {
+                    try
+                    {
+
+                        RemoveWizardItemToolStripItem.Text = string.Format("Remove '{0}'", JTokenNode.Nodes[1].FirstNode.Text);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "Type of Item cannot be found. Did you modify the json? Possibly recreate this item!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                RemoveWizardSubitemToolStripItem.Visible = (JTokenNode.Level == 7 && JTokenNode.Text.StartsWith("{Object}"));
+                if (RemoveWizardSubitemToolStripItem.Visible)
+                {
+                    try
+                    {
+                        RemoveWizardSubitemToolStripItem.Text = string.Format("Remove '{0}'", JTokenNode.Nodes[1].FirstNode.Text);
+                    }
+                    catch
+                    {
+                        MessageBox.Show(this, "Type of Item cannot be found. Did you modify the json? Possibly recreate this item!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -171,7 +218,7 @@ namespace ZTn.Json.Editor.Forms
             var stepActivation = newStep.Activation;
             var stepDeactivation = newStep.Deactivation;
 
-            JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"));
+            JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"), true);
 
             var items = InsertProperty("items", new JArray());
             if (!string.IsNullOrEmpty(stepActivation))
@@ -202,7 +249,7 @@ namespace ZTn.Json.Editor.Forms
 
             var itemDescription = newItem.Description;
 
-            JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"));
+            JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"), true);
 
             var subitems = InsertProperty("subitems", new JArray());
             if (!string.IsNullOrEmpty(itemDescription))
@@ -248,7 +295,7 @@ namespace ZTn.Json.Editor.Forms
                 var subitemHidden = newSubitem.Hidden;
                 var subitemPreventMark = newSubitem.PreventMark;
 
-                JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"));
+                JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"), true);
 
                 if (subitemDisabled) InsertProperty("disabled", subitemDisabled);
                 if (subitemHidden) InsertProperty("hidden", subitemHidden);
@@ -280,11 +327,47 @@ namespace ZTn.Json.Editor.Forms
             }
         }
 
+        private void RemoveWizardStep_Click(Object sender, EventArgs e)
+        {
+            try
+            {
+                JTokenNode.EditDelete();
+            }
+            catch (JTokenTreeNodeDeleteException exception)
+            {
+                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+            }
+        }
+
+        private void RemoveWizardItem_Click(Object sender, EventArgs e)
+        {
+            try
+            {
+                JTokenNode.EditDelete();
+            }
+            catch (JTokenTreeNodeDeleteException exception)
+            {
+                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+            }
+        }
+
+        private void RemoveWizardSubitem_Click(Object sender, EventArgs e)
+        {
+            try
+            {
+                JTokenNode.EditDelete();
+            }
+            catch (JTokenTreeNodeDeleteException exception)
+            {
+                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+            }
+        }
+
         /// <summary>
         /// Add a new <see cref="JToken"/> instance in current <see cref="JArrayTreeNode"/>
         /// </summary>
         /// <param name="newJToken"></param>
-        private TreeNode InsertJToken(JToken newJToken)
+        private TreeNode InsertJToken(JToken newJToken, bool last = false)
         {
             var jArrayTreeNode = JTokenNode as JArrayTreeNode;
 
@@ -293,17 +376,23 @@ namespace ZTn.Json.Editor.Forms
                 return null;
             }
 
-            jArrayTreeNode.JArrayTag.AddFirst(newJToken);
+            if (!last)
+                jArrayTreeNode.JArrayTag.AddFirst(newJToken);
+            else
+                jArrayTreeNode.JArrayTag.Add(newJToken);
 
             TreeNode newTreeNode = JsonTreeNodeFactory.Create(newJToken);
-            jArrayTreeNode.Nodes.Insert(0, newTreeNode);
+            if (!last)
+                jArrayTreeNode.Nodes.Insert(0, newTreeNode);
+            else
+                jArrayTreeNode.Nodes.Insert(jArrayTreeNode.Nodes.Count, newTreeNode);
 
             jArrayTreeNode.TreeView.SelectedNode = newTreeNode;
 
             return newTreeNode;
         }
 
-        private JPropertyTreeNode InsertProperty(string name, object propertyValue)
+        private JPropertyTreeNode InsertProperty(string name, object propertyValue, bool last = false)
         {
             var jObjectTreeNode = JTokenNode as JObjectTreeNode;
 
@@ -313,7 +402,10 @@ namespace ZTn.Json.Editor.Forms
             }
 
             var newJProperty = new JProperty(name, propertyValue);
-            jObjectTreeNode.JObjectTag.AddFirst(newJProperty);
+            if (!last)
+                jObjectTreeNode.JObjectTag.AddFirst(newJProperty);
+            else
+                jObjectTreeNode.JObjectTag.Add(newJProperty);
 
             var jPropertyTreeNode = (JPropertyTreeNode)JsonTreeNodeFactory.Create(newJProperty);
             jObjectTreeNode.Nodes.Insert(0, jPropertyTreeNode);

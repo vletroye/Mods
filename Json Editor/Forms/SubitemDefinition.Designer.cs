@@ -69,7 +69,7 @@
             this.buttonOk.Location = new System.Drawing.Point(12, 232);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 3;
+            this.buttonOk.TabIndex = 11;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -81,7 +81,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(321, 228);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.TabIndex = 12;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -100,14 +100,14 @@
             this.textBoxDescription.Location = new System.Drawing.Point(78, 33);
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.Size = new System.Drawing.Size(319, 20);
-            this.textBoxDescription.TabIndex = 6;
+            this.textBoxDescription.TabIndex = 1;
             // 
             // textBoxKey
             // 
             this.textBoxKey.Location = new System.Drawing.Point(78, 6);
             this.textBoxKey.Name = "textBoxKey";
             this.textBoxKey.Size = new System.Drawing.Size(168, 20);
-            this.textBoxKey.TabIndex = 7;
+            this.textBoxKey.TabIndex = 0;
             this.textBoxKey.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Validating);
             this.textBoxKey.Validated += new System.EventHandler(this.textBox_Validated);
             // 
@@ -120,7 +120,7 @@
             this.textBoxDefaultValue.Location = new System.Drawing.Point(78, 59);
             this.textBoxDefaultValue.Name = "textBoxDefaultValue";
             this.textBoxDefaultValue.Size = new System.Drawing.Size(319, 20);
-            this.textBoxDefaultValue.TabIndex = 9;
+            this.textBoxDefaultValue.TabIndex = 3;
             // 
             // label1
             // 
@@ -136,19 +136,19 @@
             this.comboBoxSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxSelect.FormattingEnabled = true;
             this.comboBoxSelect.Items.AddRange(new object[] {
-            "True",
-            "False"});
+            "true",
+            "false"});
             this.comboBoxSelect.Location = new System.Drawing.Point(78, 58);
             this.comboBoxSelect.Name = "comboBoxSelect";
             this.comboBoxSelect.Size = new System.Drawing.Size(57, 21);
-            this.comboBoxSelect.TabIndex = 10;
+            this.comboBoxSelect.TabIndex = 2;
             // 
             // textBoxEmptyValue
             // 
             this.textBoxEmptyValue.Location = new System.Drawing.Point(78, 85);
             this.textBoxEmptyValue.Name = "textBoxEmptyValue";
             this.textBoxEmptyValue.Size = new System.Drawing.Size(319, 20);
-            this.textBoxEmptyValue.TabIndex = 12;
+            this.textBoxEmptyValue.TabIndex = 4;
             // 
             // label2
             // 
@@ -165,7 +165,7 @@
             this.checkBoxDisabled.Location = new System.Drawing.Point(78, 120);
             this.checkBoxDisabled.Name = "checkBoxDisabled";
             this.checkBoxDisabled.Size = new System.Drawing.Size(67, 17);
-            this.checkBoxDisabled.TabIndex = 13;
+            this.checkBoxDisabled.TabIndex = 5;
             this.checkBoxDisabled.Text = "Disabled";
             this.checkBoxDisabled.UseVisualStyleBackColor = true;
             // 
@@ -175,7 +175,7 @@
             this.checkBoxPreventMark.Location = new System.Drawing.Point(78, 143);
             this.checkBoxPreventMark.Name = "checkBoxPreventMark";
             this.checkBoxPreventMark.Size = new System.Drawing.Size(90, 17);
-            this.checkBoxPreventMark.TabIndex = 14;
+            this.checkBoxPreventMark.TabIndex = 6;
             this.checkBoxPreventMark.Text = "Prevent Mark";
             this.checkBoxPreventMark.UseVisualStyleBackColor = true;
             // 
@@ -185,7 +185,7 @@
             this.checkBoxHidden.Location = new System.Drawing.Point(78, 166);
             this.checkBoxHidden.Name = "checkBoxHidden";
             this.checkBoxHidden.Size = new System.Drawing.Size(60, 17);
-            this.checkBoxHidden.TabIndex = 15;
+            this.checkBoxHidden.TabIndex = 7;
             this.checkBoxHidden.Text = "Hidden";
             this.checkBoxHidden.UseVisualStyleBackColor = true;
             // 
@@ -195,7 +195,7 @@
             this.textBoxInvalid.Name = "textBoxInvalid";
             this.textBoxInvalid.ReadOnly = true;
             this.textBoxInvalid.Size = new System.Drawing.Size(319, 20);
-            this.textBoxInvalid.TabIndex = 17;
+            this.textBoxInvalid.TabIndex = 10;
             // 
             // labelInvalidText
             // 
@@ -212,7 +212,7 @@
             this.textBoxWidth.Name = "textBoxWidth";
             this.textBoxWidth.ReadOnly = true;
             this.textBoxWidth.Size = new System.Drawing.Size(50, 20);
-            this.textBoxWidth.TabIndex = 19;
+            this.textBoxWidth.TabIndex = 8;
             // 
             // label3
             // 
@@ -229,7 +229,7 @@
             this.textBoxHeight.Name = "textBoxHeight";
             this.textBoxHeight.ReadOnly = true;
             this.textBoxHeight.Size = new System.Drawing.Size(50, 20);
-            this.textBoxHeight.TabIndex = 21;
+            this.textBoxHeight.TabIndex = 9;
             // 
             // label4
             // 
@@ -255,7 +255,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(404, 259);
+            this.ClientSize = new System.Drawing.Size(400, 255);
             this.ControlBox = false;
             this.Controls.Add(this.labelTypeDesc);
             this.Controls.Add(this.textBoxHeight);
