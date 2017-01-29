@@ -946,9 +946,9 @@ namespace BeatificaBytes.Synology.Mods
             this.postUpgradeScriptToolStripMenuItem.Text = "Post-Upgrade Script";
             this.postUpgradeScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // wizardInstallToolStripMenuItem
+            // wizardInstallUIToolStripMenuItem
             // 
-            this.wizardInstallUIToolStripMenuItem.Name = "wizardInstallToolStripMenuItem";
+            this.wizardInstallUIToolStripMenuItem.Name = "wizardInstallUIToolStripMenuItem";
             this.wizardInstallUIToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.wizardInstallUIToolStripMenuItem.Tag = "install_uifile";
             this.wizardInstallUIToolStripMenuItem.Text = "Wizard-Install UI";
@@ -984,27 +984,27 @@ namespace BeatificaBytes.Synology.Mods
             // documentationToolStripMenuItem
             // 
             this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.documentationToolStripMenuItem.Text = "Documentation";
             // 
             // supportToolStripMenuItem
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-            this.supportToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.supportToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.supportToolStripMenuItem.Text = "Support";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // packeDevGuideToolStripMenuItem
             // 
             this.packeDevGuideToolStripMenuItem.Name = "packeDevGuideToolStripMenuItem";
-            this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
-            this.packeDevGuideToolStripMenuItem.Text = "Packe DevGuide";
+            this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.packeDevGuideToolStripMenuItem.Text = "Package DevGuide";
             this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
             // 
             // folderBrowserDialog4Mods

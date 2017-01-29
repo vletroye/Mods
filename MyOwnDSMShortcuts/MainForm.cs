@@ -2197,11 +2197,6 @@ namespace BeatificaBytes.Synology.Mods
             about.ShowDialog(this);
         }
 
-        private void packeDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void addWizardToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var wizard = Path.Combine(PackageRootPath, "WIZARD_UIFILES");
@@ -2288,9 +2283,13 @@ namespace BeatificaBytes.Synology.Mods
             Process.Start(info);
         }
 
-        private void packageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
 
+        private void packeDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/");
+            info.UseShellExecute = true;
+            Process.Start(info); 
         }
+
     }
 }
