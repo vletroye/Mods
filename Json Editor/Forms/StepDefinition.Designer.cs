@@ -54,7 +54,7 @@
             this.textBoxName.Location = new System.Drawing.Point(111, 6);
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(100, 20);
-            this.textBoxName.TabIndex = 1;
+            this.textBoxName.TabIndex = 0;
             // 
             // labelValidate
             // 
@@ -71,7 +71,7 @@
             this.checkBoxValidate.Location = new System.Drawing.Point(111, 42);
             this.checkBoxValidate.Name = "checkBoxValidate";
             this.checkBoxValidate.Size = new System.Drawing.Size(189, 17);
-            this.checkBoxValidate.TabIndex = 2;
+            this.checkBoxValidate.TabIndex = 1;
             this.checkBoxValidate.Text = "[All items must be valid to proceed]";
             this.checkBoxValidate.UseVisualStyleBackColor = true;
             // 
@@ -81,7 +81,7 @@
             this.buttonOk.Location = new System.Drawing.Point(12, 154);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 3;
+            this.buttonOk.TabIndex = 4;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -93,7 +93,7 @@
             this.buttonCancel.Location = new System.Drawing.Point(217, 154);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 3;
+            this.buttonCancel.TabIndex = 5;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -122,7 +122,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(181, 20);
-            this.textBox1.TabIndex = 6;
+            this.textBox1.TabIndex = 2;
             this.textBox1.Text = "Not Yet Supported";
             // 
             // textBox2
@@ -131,7 +131,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(181, 20);
-            this.textBox2.TabIndex = 7;
+            this.textBox2.TabIndex = 3;
             this.textBox2.Text = "Not Yet Supported";
             // 
             // StepDefinition
@@ -140,7 +140,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(304, 189);
+            this.ClientSize = new System.Drawing.Size(300, 185);
             this.ControlBox = false;
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
