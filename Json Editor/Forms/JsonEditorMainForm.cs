@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Linq;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace ZTn.Json.Editor.Forms
 {
@@ -428,11 +429,16 @@ namespace ZTn.Json.Editor.Forms
             {
                 using (var writer = new HtmlTextWriter(stringWriter))
                 {
+                    writer.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
                     foreach (JToken step in JsonEditorItem.JTokenValue.Children())
                     {
+                        var imgSrc = Path.Combine(Helper.AssemblyDirectory, "Resources", "backwizard.png");
+                        var uri = new System.Uri(imgSrc).AbsoluteUri;
+                        writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                        writer.AddAttribute(HtmlTextWriterAttribute.Style, "background-image: url('" + uri + "'); background-position: right; color:#FFFFFF; height:50px; display: flex; vertical-align: middle;");
+
                         writer.RenderBeginTag(HtmlTextWriterTag.Div);
                         writer.RenderBeginTag(HtmlTextWriterTag.H3);
-                        //if (step != null & step.FirstNode.FirstNode != null)
                         var property = GetNodeByKey(step.Children(), "step_title") as JProperty;
                         if (property != null)
                         {
@@ -442,6 +448,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             writer.Write("Step title not found ?!");
                         }
+                        writer.RenderEndTag();
                         writer.RenderEndTag();
                         var items = GetNodeByKey(step.Children(), "items");
                         GenerateHtmlStep(writer, items);
