@@ -24,6 +24,8 @@ namespace ZTn.Json.Editor.Forms
         private string subitemWidth = null;
         private string subitemHeight = null;
         private string subitemInvalidValue = null;
+        private List<ComboItem> combolist = new List<ComboItem>();
+        private int comboIndex = -1;
 
         public SubitemDefinition(string type)
         {
@@ -37,18 +39,25 @@ namespace ZTn.Json.Editor.Forms
                     comboBoxSelect.Visible = true;
                     comboBoxSelect.SelectedIndex = 1;
                     textBoxDefaultValue.Visible = false;
-                    textBoxEmptyValue.ReadOnly = true;
+                    labelDefaultValue.Visible = true;
+                    textBoxEmptyValue.Visible = false;
+                    labelEmptyValue.Visible = false;
                     break;
                 case "textfield":
                 case "password":
                     comboBoxSelect.Visible = false;
                     textBoxDefaultValue.Visible = true;
+                    labelDefaultValue.Visible = true;
+                    textBoxEmptyValue.Visible = true;
+                    labelEmptyValue.Visible = true;
                     textBoxEmptyValue.ReadOnly = false;
                     break;
                 case "combobox":
                     comboBoxSelect.Visible = false;
                     textBoxDefaultValue.Visible = false;
-                    textBoxEmptyValue.ReadOnly = true;
+                    labelDefaultValue.Visible = false;
+                    textBoxEmptyValue.Visible = false;
+                    labelEmptyValue.Visible = false;
                     break;
             }
 
@@ -66,6 +75,7 @@ namespace ZTn.Json.Editor.Forms
         public new string Width { get { return subitemWidth; } }
         public new string Height { get { return subitemHeight; } }
         public string InvalidValue { get { return subitemInvalidValue; } }
+        public List<ComboItem> ComboItems { get { return combolist; } }
 
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -95,6 +105,11 @@ namespace ZTn.Json.Editor.Forms
             subitemHeight = textBoxHeight.Text;
             subitemInvalidValue = textBoxInvalid.Text;
 
+            foreach (var item in listBoxComboValues.Items)
+            {
+                combolist.Add(item as ComboItem);
+            }
+
             this.Close();
         }
 
@@ -107,6 +122,7 @@ namespace ZTn.Json.Editor.Forms
         private void textBox_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxKey, "");
+            buttonOk.Enabled = true;
         }
 
         private void textBox_Validating(object sender, CancelEventArgs e)
@@ -114,7 +130,71 @@ namespace ZTn.Json.Editor.Forms
             var key = Helper.CleanUpText(textBoxKey.Text);
             if (key != textBoxKey.Text)
             {
-                errorProvider.SetError(textBoxKey, "You may not use special characters or blanks");
+                errorProvider.SetError(textBoxKey, "You may not use special characters or blanks.");
+            }
+            else if (string.IsNullOrEmpty( key ))
+            {
+                errorProvider.SetError(textBoxKey, "You may not use an empty Key.");
+            }
+        }
+
+        private void textBoxDefaultValue_TextChanged(object sender, EventArgs e)
+        {
+            textBoxEmptyValue.ReadOnly = !string.IsNullOrEmpty(textBoxDefaultValue.Text);
+        }
+
+        private void listBoxComboValues_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxComboValues.SelectedItem as ComboItem;
+            if (selected != null && comboIndex != listBoxComboValues.SelectedIndex)
+            {
+                textBoxValue.Text = selected.value;
+                textBoxDisplay.Text = selected.display;
+                textBoxDisplay.Enabled = true;
+                textBoxValue.Enabled = true;
+                textBoxValue.Focus();
+            }
+            comboIndex = listBoxComboValues.SelectedIndex;
+        }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            var index = listBoxComboValues.Items.Add(new ComboItem("value", "name"));
+            listBoxComboValues.SelectedIndex = index;
+        }
+
+        private void buttonRemove_Click(object sender, EventArgs e)
+        {
+            if (listBoxComboValues.SelectedItem != null)
+                listBoxComboValues.Items.RemoveAt(listBoxComboValues.SelectedIndex);
+            if (listBoxComboValues.Items.Count > 0)
+                listBoxComboValues.SelectedIndex = 0;
+            else
+            {
+                textBoxDisplay.Enabled = false;
+                textBoxValue.Enabled = false;
+            }
+        }
+
+        private void textBoxValue_TextChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxComboValues.SelectedItem as ComboItem;
+            if (selected != null)
+            {
+                selected.value = textBoxValue.Text;
+                listBoxComboValues.DisplayMember = "";
+                listBoxComboValues.DisplayMember = "-";
+            }
+        }
+
+        private void textBoxDisplay_TextChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxComboValues.SelectedItem as ComboItem;
+            if (selected != null)
+            {
+                selected.display = textBoxDisplay.Text;
+                listBoxComboValues.DisplayMember = "";
+                listBoxComboValues.DisplayMember = "-";
             }
         }
     }
