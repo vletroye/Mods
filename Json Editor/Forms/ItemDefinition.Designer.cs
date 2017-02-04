@@ -49,7 +49,7 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonOk.Enabled = false;
-            this.buttonOk.Location = new System.Drawing.Point(12, 60);
+            this.buttonOk.Location = new System.Drawing.Point(12, 64);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 2;
@@ -61,7 +61,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(355, 60);
+            this.buttonCancel.Location = new System.Drawing.Point(339, 64);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 3;
@@ -82,7 +82,7 @@
             // 
             this.textBoxDescription.Location = new System.Drawing.Point(111, 33);
             this.textBoxDescription.Name = "textBoxDescription";
-            this.textBoxDescription.Size = new System.Drawing.Size(319, 20);
+            this.textBoxDescription.Size = new System.Drawing.Size(303, 20);
             this.textBoxDescription.TabIndex = 1;
             // 
             // comboBoxItemType
@@ -107,7 +107,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(430, 83);
+            this.ClientSize = new System.Drawing.Size(426, 99);
             this.ControlBox = false;
             this.Controls.Add(this.comboBoxItemType);
             this.Controls.Add(this.textBoxDescription);
@@ -117,6 +117,7 @@
             this.Controls.Add(this.labelValidate);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(442, 138);
             this.MinimizeBox = false;
             this.Name = "ItemDefinition";
             this.ShowIcon = false;
