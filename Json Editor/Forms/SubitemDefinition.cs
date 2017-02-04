@@ -58,10 +58,14 @@ namespace ZTn.Json.Editor.Forms
                     labelDefaultValue.Visible = false;
                     textBoxEmptyValue.Visible = false;
                     labelEmptyValue.Visible = false;
+
+                    listBoxComboValues.Enabled = true;
+                    buttonAdd.Enabled = true;
+
                     break;
             }
 
-            labelTypeDesc.Text = Helper.GetSubItemType(subitemType);
+            this.Text = Helper.GetSubItemType(subitemType) + " definition";
         }
 
         public string Key { get { return subitemKey; } }
@@ -127,14 +131,18 @@ namespace ZTn.Json.Editor.Forms
 
         private void textBox_Validating(object sender, CancelEventArgs e)
         {
+            buttonOk.Enabled = false;
             var key = Helper.CleanUpText(textBoxKey.Text);
             if (key != textBoxKey.Text)
             {
                 errorProvider.SetError(textBoxKey, "You may not use special characters or blanks.");
+                e.Cancel = true;
             }
             else if (string.IsNullOrEmpty( key ))
             {
                 errorProvider.SetError(textBoxKey, "You may not use an empty Key.");
+                textBoxKey.Text = "Enter_A_Value";
+                e.Cancel = true;
             }
         }
 
@@ -155,6 +163,7 @@ namespace ZTn.Json.Editor.Forms
                 textBoxValue.Focus();
             }
             comboIndex = listBoxComboValues.SelectedIndex;
+            buttonRemove.Enabled = (comboIndex >= 0);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
