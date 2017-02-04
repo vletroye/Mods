@@ -32,6 +32,8 @@ namespace ZTn.Json.Editor.Forms
 
         private System.Timers.Timer jsonValidationTimer;
 
+        private bool validJSon = true;
+
         #endregion
 
         #region >> Properties
@@ -50,7 +52,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 OpenJson(path);
             }
-            catch
+            catch (Exception ex)
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
@@ -110,6 +112,15 @@ namespace ZTn.Json.Editor.Forms
         public JsonEditorMainForm()
         {
             InitializeComponent();
+
+            
+            //var scintillaJson = new ScintillaNET.Scintilla();
+            //scintillaJson.Width = jsonValueTextBox.Width;
+            //scintillaJson.Height = jsonValueTextBox.Height;
+            //scintillaJson.Width = jsonValueTextBox.Width;
+            //scintillaJson.Width = jsonValueTextBox.Width;
+            //tabControl.TabPages[tab].Controls.Add(scintillaScript);
+
 
             jsonTypeComboBox.DataSource = Enum.GetValues(typeof(JTokenType));
 
@@ -330,6 +341,8 @@ namespace ZTn.Json.Editor.Forms
 
         private void SetJsonStatus(string text, bool isError)
         {
+            validJSon = !isError;
+
             if (InvokeRequired)
             {
                 Invoke(new SetJsonStatusDelegate(SetActionStatus), text, isError);
@@ -362,9 +375,17 @@ namespace ZTn.Json.Editor.Forms
 
             try
             {
-                jsonTreeView.SelectedNode = node.AfterJsonTextChange(jsonValueTextBox.Text);
+                var newNode = node.AfterJsonTextChange(jsonValueTextBox.Text);
+                if (newNode != null)
+                {
+                    jsonTreeView.SelectedNode = newNode;
 
-                SetJsonStatus("Json format validated.", false);
+                    SetJsonStatus("Json format validated.", false);
+                }
+                else
+                {
+                    SetJsonStatus("INVALID Json format", true);
+                }
             }
             catch (JsonReaderException exception)
             {
@@ -387,26 +408,33 @@ namespace ZTn.Json.Editor.Forms
                 return;
             }
 
-            try
+            DialogResult response = DialogResult.Yes;
+            if (!validJSon)
+                response = MessageBox.Show("This wizard is incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+            if (response == DialogResult.Yes)
             {
-                using (var stream = new FileStream(OpenedFileName, FileMode.Open))
+                try
                 {
-                    JsonEditorItem.Save(stream);
+                    using (var stream = new FileStream(OpenedFileName, FileMode.Truncate))
+                    {
+                        JsonEditorItem.Save(stream);
+                    }
                 }
+                catch
+                {
+                    MessageBox.Show(this, $"An error occured when saving file as \"{OpenedFileName}\".", @"Save As...");
+
+                    OpenedFileName = null;
+                    SetActionStatus(@"Wizard NOT saved.", true);
+
+                    return;
+                }
+
+                SetActionStatus(@"Wizard successfully saved.", false);
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
-            catch
-            {
-                MessageBox.Show(this, $"An error occured when saving file as \"{OpenedFileName}\".", @"Save As...");
-
-                OpenedFileName = null;
-                SetActionStatus(@"Wizard NOT saved.", true);
-
-                return;
-            }
-
-            SetActionStatus(@"Wizard successfully saved.", false);
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
