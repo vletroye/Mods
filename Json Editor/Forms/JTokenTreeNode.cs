@@ -57,13 +57,17 @@ namespace ZTn.Json.Editor.Forms
         public virtual TreeNode AfterJsonTextChange(string jsonString)
         {
             var jTokenRoot = new JTokenRoot(jsonString);
-
-            if (JTokenTag.Parent != null)
+            TreeNode node = null;
+            if (jTokenRoot.JTokenValue != null)
             {
-                JTokenTag.Replace(jTokenRoot.JTokenValue);
-            }
+                if (JTokenTag.Parent != null)
+                {
+                    JTokenTag.Replace(jTokenRoot.JTokenValue);
+                }
 
-            return InsertInParent(JsonTreeNodeFactory.Create(jTokenRoot.JTokenValue), true);
+                node = InsertInParent(JsonTreeNodeFactory.Create(jTokenRoot.JTokenValue), true);
+            }
+            return node;
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.Windows.Forms;
 
 namespace ZTn.Json.Editor
 {
@@ -101,9 +102,17 @@ namespace ZTn.Json.Editor
                 return;
             }
 
-            using (var streamWriter = new StreamWriter(jsonStream))
+            var json = jTokenValue.ToString();
+            DialogResult response = DialogResult.Yes;
+            if (string.IsNullOrEmpty(json) || json == "[]")
+                response = MessageBox.Show("This wizard is empty, incomplete or incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+            if (response == DialogResult.Yes)
             {
-                streamWriter.Write(jTokenValue.ToString());
+                using (var streamWriter = new StreamWriter(jsonStream))
+                {
+                    streamWriter.Write(json);
+                }
             }
         }
     }
