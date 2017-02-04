@@ -48,6 +48,7 @@
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonOk.Enabled = false;
             this.buttonOk.Location = new System.Drawing.Point(12, 60);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -98,6 +99,7 @@
             this.comboBoxItemType.Name = "comboBoxItemType";
             this.comboBoxItemType.Size = new System.Drawing.Size(121, 21);
             this.comboBoxItemType.TabIndex = 0;
+            this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
             // 
             // ItemDefinition
             // 
@@ -105,7 +107,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(434, 87);
+            this.ClientSize = new System.Drawing.Size(430, 83);
             this.ControlBox = false;
             this.Controls.Add(this.comboBoxItemType);
             this.Controls.Add(this.textBoxDescription);

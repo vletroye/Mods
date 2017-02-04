@@ -34,7 +34,7 @@
             this.buttonPreview = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.jsonTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.jsonValueTextBox = new System.Windows.Forms.TextBox();
+            this.jsonValueEditor = new ScintillaNET.Scintilla();
             this.jsonValueLabel = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.newtonsoftJsonTypeTextBox = new System.Windows.Forms.TextBox();
@@ -78,7 +78,7 @@
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.buttonPreview);
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.buttonCancel);
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonTypeComboBox);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonValueTextBox);
+            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonValueEditor);
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonValueLabel);
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.label2);
             this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.newtonsoftJsonTypeTextBox);
@@ -131,20 +131,18 @@
             this.jsonTypeComboBox.Size = new System.Drawing.Size(154, 21);
             this.jsonTypeComboBox.TabIndex = 7;
             // 
-            // jsonValueTextBox
+            // jsonValueEditor
             // 
-            this.jsonValueTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.jsonValueEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.jsonValueTextBox.Font = new System.Drawing.Font("Consolas", 8.25F);
-            this.jsonValueTextBox.Location = new System.Drawing.Point(3, 97);
-            this.jsonValueTextBox.Multiline = true;
-            this.jsonValueTextBox.Name = "jsonValueTextBox";
-            this.jsonValueTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.jsonValueTextBox.Size = new System.Drawing.Size(312, 434);
-            this.jsonValueTextBox.TabIndex = 6;
-            this.jsonValueTextBox.Enter += new System.EventHandler(this.jsonValueTextBox_Enter);
-            this.jsonValueTextBox.Leave += new System.EventHandler(this.jsonValueTextBox_Leave);
+            this.jsonValueEditor.Font = new System.Drawing.Font("Consolas", 8.25F);
+            this.jsonValueEditor.Location = new System.Drawing.Point(3, 97);
+            this.jsonValueEditor.Name = "jsonValueEditor";
+            this.jsonValueEditor.Size = new System.Drawing.Size(312, 434);
+            this.jsonValueEditor.TabIndex = 6;
+            this.jsonValueEditor.Enter += new System.EventHandler(this.jsonValueEditor_Enter);
+            this.jsonValueEditor.Leave += new System.EventHandler(this.jsonValueEditor_Leave);
             // 
             // jsonValueLabel
             // 
@@ -156,7 +154,7 @@
             this.jsonValueLabel.Size = new System.Drawing.Size(65, 13);
             this.jsonValueLabel.TabIndex = 5;
             this.jsonValueLabel.Text = "JSON Value";
-            this.jsonValueLabel.TextChanged += new System.EventHandler(this.jsonValueTextBox_TextChanged);
+            this.jsonValueLabel.TextChanged += new System.EventHandler(this.jsonValueEditor_TextChanged);
             // 
             // label2
             // 
@@ -340,7 +338,7 @@
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.Label jsonValueLabel;
         private System.Windows.Forms.SplitContainer jsonTreeViewSplitContainer;
-        private System.Windows.Forms.TextBox jsonValueTextBox;
+        private ScintillaNET.Scintilla jsonValueEditor;
         private System.Windows.Forms.ComboBox jsonTypeComboBox;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutJsonEditorToolStripMenuItem;

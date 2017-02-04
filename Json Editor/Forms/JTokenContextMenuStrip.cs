@@ -294,8 +294,32 @@ namespace ZTn.Json.Editor.Forms
                 var subitemDisabled = newSubitem.Disable;
                 var subitemHidden = newSubitem.Hidden;
                 var subitemPreventMark = newSubitem.PreventMark;
+                var subitemComboList = newSubitem.ComboItems;
 
                 JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"), true);
+
+                if (subitemComboList.Count > 0)
+                {
+                    var comboNode = JTokenNode;
+                    JTokenNode = (JTokenTreeNode)InsertProperty("store", new JObject()).FirstNode;
+                    InsertProperty("xtype", "arraystore");
+                    var storeNode = JTokenNode;
+                    JTokenNode = (JTokenTreeNode)InsertProperty("fields", new JArray()).FirstNode;
+                    InsertJToken(new JValue("ComboId"));
+                    InsertJToken(new JValue("ComboText"));
+                    JTokenNode = storeNode;
+                    JTokenNode = (JTokenTreeNode)InsertProperty("data", new JArray()).FirstNode;
+                    foreach (var item in subitemComboList)
+                    {
+                        InsertJToken(new JArray(new JValue(item.value), new JValue(item.display)));
+                    }
+
+                    JTokenNode = comboNode;
+                    InsertProperty("mode", "local");
+                    InsertProperty("editable", false);
+                    InsertProperty("displayfield", "ComboText");
+                    InsertProperty("valuefield", "ComboId");
+                }
 
                 if (subitemDisabled) InsertProperty("disabled", subitemDisabled);
                 if (subitemHidden) InsertProperty("hidden", subitemHidden);
@@ -307,14 +331,6 @@ namespace ZTn.Json.Editor.Forms
                 if (!string.IsNullOrEmpty(subitemHeight))
                 {
                     InsertProperty("height", subitemHeight);
-                }
-                if (!string.IsNullOrEmpty(subitemEmptyValue))
-                {
-                    InsertProperty("emptyText", subitemEmptyValue);
-                }
-                if (!string.IsNullOrEmpty(subitemDefaultValue))
-                {
-                    InsertProperty("defaultValue", subitemDefaultValue); //Should I do the same Typo 'defaultVaule' as in official Synology documentation??
                 }
                 if (!string.IsNullOrEmpty(subitemDescription))
                 {

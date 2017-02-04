@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using ZTn.Json.Editor.Linq;
 using System.Diagnostics;
 using System.Reflection;
+using ScintillaNET;
 
 namespace ZTn.Json.Editor.Forms
 {
@@ -52,7 +53,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 OpenJson(path);
             }
-            catch (Exception ex)
+            catch
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
@@ -113,14 +114,7 @@ namespace ZTn.Json.Editor.Forms
         {
             InitializeComponent();
 
-            
-            //var scintillaJson = new ScintillaNET.Scintilla();
-            //scintillaJson.Width = jsonValueTextBox.Width;
-            //scintillaJson.Height = jsonValueTextBox.Height;
-            //scintillaJson.Width = jsonValueTextBox.Width;
-            //scintillaJson.Width = jsonValueTextBox.Width;
-            //tabControl.TabPages[tab].Controls.Add(scintillaScript);
-
+            InitJsonEditor(jsonValueEditor);
 
             jsonTypeComboBox.DataSource = Enum.GetValues(typeof(JTokenType));
 
@@ -145,6 +139,32 @@ namespace ZTn.Json.Editor.Forms
                     OpenedFileName = null;
                 }
             }
+        }
+
+        private void InitJsonEditor(Scintilla textArea)
+        {
+            //textArea.WrapMode = WrapMode.None;
+            //textArea.IndentationGuides = IndentView.LookBoth;
+            // Configure the default style
+            textArea.StyleResetDefault();
+            textArea.Styles[Style.Default].Font = "Consolas";
+            textArea.Styles[Style.Default].Size = 10;
+            textArea.StyleClearAll();
+
+            textArea.Lexer = ScintillaNET.Lexer.Json;
+
+            textArea.Styles[ScintillaNET.Style.Json.Keyword].ForeColor = Color.DarkViolet;
+            textArea.Styles[ScintillaNET.Style.Json.Number].ForeColor = Color.Plum;
+            textArea.Styles[ScintillaNET.Style.Json.PropertyName].ForeColor = Color.DarkBlue;
+            textArea.Styles[ScintillaNET.Style.Json.String].ForeColor = Color.Red;
+            textArea.Styles[ScintillaNET.Style.Json.StringEol].ForeColor = Color.DarkOrange;
+            textArea.Styles[ScintillaNET.Style.Json.Uri].ForeColor = Color.MediumBlue;
+            textArea.Styles[ScintillaNET.Style.Json.Operator].ForeColor = Color.Gray;
+            textArea.Styles[ScintillaNET.Style.Json.Default].ForeColor = Color.DarkViolet;
+            textArea.Styles[ScintillaNET.Style.Json.LdKeyword].ForeColor = Color.DarkViolet;
+
+            textArea.SetKeywords(0, "step_title items type desc subitems activeate deactivate key defaultVaule emptyText validator disabled height hidden invalidText preventMark width allowBlank minLength maxLength vtype regex fn blankText grow growMax growMin htmlEncode maxLengthText minLengthText api_store autoSelect displayField editable forceSelection handleHeight listAlign listEmptyText listWidth maxHeight minChars minHeight minListWidth mode pageSize queryDelay resizable selectOnFocus store title typeAhead typeAheadDelay valueField baseParams data fields idProperty root xtype");
+            textArea.SetKeywords(1, "false null true");
         }
 
         #endregion
@@ -212,7 +232,7 @@ namespace ZTn.Json.Editor.Forms
             node?.AfterExpand();
         }
 
-        private void jsonValueTextBox_TextChanged(object sender, EventArgs e)
+        private void jsonValueEditor_TextChanged(object sender, EventArgs e)
         {
             var node = jsonTreeView.SelectedNode as IJsonTreeNode;
             if (node == null)
@@ -223,14 +243,14 @@ namespace ZTn.Json.Editor.Forms
             StartValidationTimer(node);
         }
 
-        private void jsonValueTextBox_Leave(object sender, EventArgs e)
+        private void jsonValueEditor_Leave(object sender, EventArgs e)
         {
-            jsonValueTextBox.TextChanged -= jsonValueTextBox_TextChanged;
+            jsonValueEditor.TextChanged -= jsonValueEditor_TextChanged;
         }
 
-        private void jsonValueTextBox_Enter(object sender, EventArgs e)
+        private void jsonValueEditor_Enter(object sender, EventArgs e)
         {
-            jsonValueTextBox.TextChanged += jsonValueTextBox_TextChanged;
+            jsonValueEditor.TextChanged += jsonValueEditor_TextChanged;
         }
 
         #region >> Methods jsonTreeView_AfterSelect
@@ -257,7 +277,7 @@ namespace ZTn.Json.Editor.Forms
 
             jsonTypeComboBox.Text = $"{JTokenType.Undefined}: {node.GetType().FullName}";
 
-            jsonValueTextBox.ReadOnly = true;
+            jsonValueEditor.ReadOnly = true;
         }
 
         // ReSharper disable once UnusedParameter.Local
@@ -267,10 +287,10 @@ namespace ZTn.Json.Editor.Forms
 
             jsonTypeComboBox.Text = node.JTokenTag.Type.ToString();
 
-            // If jsonValueTextBox is focused then it triggers this event in the update process, so don't update it again ! (risk: infinite loop between events).
-            if (!jsonValueTextBox.Focused)
+            // If jsonValueEditor is focused then it triggers this event in the update process, so don't update it again ! (risk: infinite loop between events).
+            if (!jsonValueEditor.Focused)
             {
-                jsonValueTextBox.Text = node.JTokenTag.ToString();
+                jsonValueEditor.Text = node.JTokenTag.ToString();
             }
         }
 
@@ -284,10 +304,10 @@ namespace ZTn.Json.Editor.Forms
             switch (node.JValueTag.Type)
             {
                 case JTokenType.String:
-                    jsonValueTextBox.Text = $@"""{node.JValueTag}""";
+                    jsonValueEditor.Text = $@"""{node.JValueTag}""";
                     break;
                 default:
-                    jsonValueTextBox.Text = $"{node.JValueTag}";
+                    jsonValueEditor.Text = $"{node.JValueTag}";
                     break;
             }
         }
@@ -375,7 +395,7 @@ namespace ZTn.Json.Editor.Forms
 
             try
             {
-                var newNode = node.AfterJsonTextChange(jsonValueTextBox.Text);
+                var newNode = node.AfterJsonTextChange(jsonValueEditor.Text);
                 if (newNode != null)
                 {
                     jsonTreeView.SelectedNode = newNode;
@@ -547,6 +567,66 @@ namespace ZTn.Json.Editor.Forms
                 writer.RenderBeginTag(HtmlTextWriterTag.Legend);
             writer.Write(description);
             writer.RenderEndTag();
+
+            var subitems = GetNodeByKey(item.Children(), "subitems");
+            var array = subitems.First;
+            if (array != null)
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                foreach (JToken combo in array.Children())
+                {
+                    var desc = GetNodeByKey(combo.Children(), "desc") as JProperty;
+                    if (desc != null)
+                        if (desc.Value.ToString() == "")
+                            desc = GetNodeByKey(combo.Children(), "key") as JProperty;
+                    if (desc != null)
+                    {
+                        writer.Write(desc.Value.ToString());
+                        writer.Write(": ");
+                    }
+                    var value = GetNodeByKey(combo.Children(), "defaultValue") as JProperty;
+                    if (value != null)
+                        if (value.Value.ToString() != "")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Value, value.Value.ToString());
+                    //if (value == null || value.Value.ToString() != "")
+                    //{
+                    //    var empty = GetNodeByKey(combo.Children(), "emptyText") as JProperty;
+                    //    if (empty != null)
+                    //        if (empty.Value.ToString() != "")
+                    //            writer.AddAttribute(HtmlTextWriterAttribute.Value, empty.Value.ToString());
+                    //}
+                    var disabled = GetNodeByKey(combo.Children(), "disabled") as JProperty;
+                    if (disabled != null)
+                        if (disabled.Value.ToString() == "true")
+                            writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");
+
+                    writer.RenderBeginTag(HtmlTextWriterTag.Select);
+                    var mode = GetNodeByKey(combo.Children(), "mode") as JProperty;
+                    if (mode.Value.ToString() == "local")
+                    {
+                        var store = GetNodeByKey(combo.Children(), "store");
+                        var data = GetNodeByKey(store.First.Children(), "data");
+
+                        foreach (var element in data.First.Children())
+                        {
+                            var displayName = element.Last.ToString();
+                            writer.RenderBeginTag(HtmlTextWriterTag.Option);
+                            writer.Write(displayName);
+                            writer.RenderEndTag();
+                        }
+                    }
+                    writer.RenderEndTag();
+                    writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                    writer.RenderEndTag();
+                }
+                writer.RenderEndTag();
+            }
+            else
+            {
+                writer.Write("Missing an [Array] under 'subitems'");
+            }
+            writer.RenderEndTag();
         }
 
         private void GenerateHtmlPassword(HtmlTextWriter writer, JToken item, string description)
@@ -573,7 +653,10 @@ namespace ZTn.Json.Editor.Forms
                         if (desc.Value.ToString() == "")
                             desc = GetNodeByKey(radio.Children(), "key") as JProperty;
                     if (desc != null)
+                    {
                         writer.Write(desc.Value.ToString());
+                        writer.Write(": ");
+                    }
                     var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
                     if (value != null)
                         if (value.Value.ToString() != "")
@@ -627,7 +710,10 @@ namespace ZTn.Json.Editor.Forms
                         if (desc.Value.ToString() == "")
                             desc = GetNodeByKey(radio.Children(), "key") as JProperty;
                     if (desc != null)
+                    {
                         writer.Write(desc.Value.ToString());
+                        writer.Write(": ");
+                    }
                     var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
                     if (value != null)
                         if (value.Value.ToString() != "")
@@ -681,7 +767,10 @@ namespace ZTn.Json.Editor.Forms
                         if (desc.Value.ToString() == "")
                             desc = GetNodeByKey(radio.Children(), "key") as JProperty;
                     if (desc != null)
+                    { 
                         writer.Write(desc.Value.ToString());
+                        writer.Write(": ");
+                    }
                     var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
                     if (value != null)
                         if (value.Value.ToString() == "true")
@@ -725,7 +814,10 @@ namespace ZTn.Json.Editor.Forms
                         if (desc.Value.ToString() == "")
                             desc = GetNodeByKey(radio.Children(), "key") as JProperty;
                     if (desc != null)
+                    {
                         writer.Write(desc.Value.ToString());
+                        writer.Write(": ");
+                    }
                     var value = GetNodeByKey(radio.Children(), "defaultValue") as JProperty;
                     if (value != null)
                         if (value.Value.ToString() == "true")

@@ -35,5 +35,10 @@ namespace ZTn.Json.Editor.Forms
             itemType = null;
             this.Close();
         }
+
+        private void comboBoxItemType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            buttonOk.Enabled = comboBoxItemType.SelectedIndex >= 0;
+        }
     }
 }

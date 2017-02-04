@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.labelValidate = new System.Windows.Forms.Label();
+            this.labelKey = new System.Windows.Forms.Label();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.labelDescription = new System.Windows.Forms.Label();
@@ -37,10 +37,10 @@
             this.textBoxKey = new System.Windows.Forms.TextBox();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.textBoxDefaultValue = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelDefaultValue = new System.Windows.Forms.Label();
             this.comboBoxSelect = new System.Windows.Forms.ComboBox();
             this.textBoxEmptyValue = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelEmptyValue = new System.Windows.Forms.Label();
             this.checkBoxDisabled = new System.Windows.Forms.CheckBox();
             this.checkBoxPreventMark = new System.Windows.Forms.CheckBox();
             this.checkBoxHidden = new System.Windows.Forms.CheckBox();
@@ -51,25 +51,31 @@
             this.textBoxHeight = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.labelTypeDesc = new System.Windows.Forms.Label();
+            this.listBoxComboValues = new System.Windows.Forms.ListBox();
+            this.textBoxValue = new System.Windows.Forms.TextBox();
+            this.textBoxDisplay = new System.Windows.Forms.TextBox();
+            this.buttonAdd = new System.Windows.Forms.Button();
+            this.buttonRemove = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
-            // labelValidate
+            // labelKey
             // 
-            this.labelValidate.AutoSize = true;
-            this.labelValidate.Location = new System.Drawing.Point(47, 9);
-            this.labelValidate.Name = "labelValidate";
-            this.labelValidate.Size = new System.Drawing.Size(28, 13);
-            this.labelValidate.TabIndex = 0;
-            this.labelValidate.Text = "Key:";
+            this.labelKey.AutoSize = true;
+            this.labelKey.Location = new System.Drawing.Point(47, 9);
+            this.labelKey.Name = "labelKey";
+            this.labelKey.Size = new System.Drawing.Size(28, 13);
+            this.labelKey.TabIndex = 0;
+            this.labelKey.Text = "Key:";
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(4, 228);
+            this.buttonOk.Enabled = false;
+            this.buttonOk.Location = new System.Drawing.Point(4, 230);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
-            this.buttonOk.TabIndex = 11;
+            this.buttonOk.TabIndex = 16;
             this.buttonOk.Text = "Ok";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
@@ -78,10 +84,10 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(322, 228);
+            this.buttonCancel.Location = new System.Drawing.Point(602, 230);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 12;
+            this.buttonCancel.TabIndex = 17;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -121,15 +127,16 @@
             this.textBoxDefaultValue.Name = "textBoxDefaultValue";
             this.textBoxDefaultValue.Size = new System.Drawing.Size(319, 20);
             this.textBoxDefaultValue.TabIndex = 3;
+            this.textBoxDefaultValue.TextChanged += new System.EventHandler(this.textBoxDefaultValue_TextChanged);
             // 
-            // label1
+            // labelDefaultValue
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1, 62);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 13);
-            this.label1.TabIndex = 8;
-            this.label1.Text = "Default Value:";
+            this.labelDefaultValue.AutoSize = true;
+            this.labelDefaultValue.Location = new System.Drawing.Point(1, 62);
+            this.labelDefaultValue.Name = "labelDefaultValue";
+            this.labelDefaultValue.Size = new System.Drawing.Size(74, 13);
+            this.labelDefaultValue.TabIndex = 8;
+            this.labelDefaultValue.Text = "Default Value:";
             // 
             // comboBoxSelect
             // 
@@ -150,14 +157,14 @@
             this.textBoxEmptyValue.Size = new System.Drawing.Size(319, 20);
             this.textBoxEmptyValue.TabIndex = 4;
             // 
-            // label2
+            // labelEmptyValue
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 88);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Empty Value:";
+            this.labelEmptyValue.AutoSize = true;
+            this.labelEmptyValue.Location = new System.Drawing.Point(6, 88);
+            this.labelEmptyValue.Name = "labelEmptyValue";
+            this.labelEmptyValue.Size = new System.Drawing.Size(69, 13);
+            this.labelEmptyValue.TabIndex = 11;
+            this.labelEmptyValue.Text = "Empty Value:";
             // 
             // checkBoxDisabled
             // 
@@ -249,14 +256,72 @@
             this.labelTypeDesc.TabIndex = 22;
             this.labelTypeDesc.Text = "[...]";
             // 
+            // listBoxComboValues
+            // 
+            this.listBoxComboValues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.listBoxComboValues.FormattingEnabled = true;
+            this.listBoxComboValues.Location = new System.Drawing.Point(421, 36);
+            this.listBoxComboValues.Name = "listBoxComboValues";
+            this.listBoxComboValues.Size = new System.Drawing.Size(256, 147);
+            this.listBoxComboValues.TabIndex = 11;
+            this.listBoxComboValues.SelectedIndexChanged += new System.EventHandler(this.listBoxComboValues_SelectedIndexChanged);
+            // 
+            // textBoxValue
+            // 
+            this.textBoxValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxValue.Enabled = false;
+            this.textBoxValue.Location = new System.Drawing.Point(421, 190);
+            this.textBoxValue.Name = "textBoxValue";
+            this.textBoxValue.Size = new System.Drawing.Size(88, 20);
+            this.textBoxValue.TabIndex = 12;
+            this.textBoxValue.TextChanged += new System.EventHandler(this.textBoxValue_TextChanged);
+            // 
+            // textBoxDisplay
+            // 
+            this.textBoxDisplay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxDisplay.Enabled = false;
+            this.textBoxDisplay.Location = new System.Drawing.Point(515, 190);
+            this.textBoxDisplay.Name = "textBoxDisplay";
+            this.textBoxDisplay.Size = new System.Drawing.Size(162, 20);
+            this.textBoxDisplay.TabIndex = 13;
+            this.textBoxDisplay.TextChanged += new System.EventHandler(this.textBoxDisplay_TextChanged);
+            // 
+            // buttonAdd
+            // 
+            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonAdd.Location = new System.Drawing.Point(421, 216);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(25, 23);
+            this.buttonAdd.TabIndex = 14;
+            this.buttonAdd.Text = "+";
+            this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+            // 
+            // buttonRemove
+            // 
+            this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonRemove.Location = new System.Drawing.Point(452, 216);
+            this.buttonRemove.Name = "buttonRemove";
+            this.buttonRemove.Size = new System.Drawing.Size(25, 23);
+            this.buttonRemove.TabIndex = 15;
+            this.buttonRemove.Text = "-";
+            this.buttonRemove.UseVisualStyleBackColor = true;
+            this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+            // 
             // SubitemDefinition
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(404, 263);
+            this.ClientSize = new System.Drawing.Size(676, 253);
             this.ControlBox = false;
+            this.Controls.Add(this.buttonRemove);
+            this.Controls.Add(this.buttonAdd);
+            this.Controls.Add(this.textBoxDisplay);
+            this.Controls.Add(this.textBoxValue);
+            this.Controls.Add(this.listBoxComboValues);
             this.Controls.Add(this.labelTypeDesc);
             this.Controls.Add(this.textBoxHeight);
             this.Controls.Add(this.label4);
@@ -268,16 +333,16 @@
             this.Controls.Add(this.checkBoxPreventMark);
             this.Controls.Add(this.checkBoxDisabled);
             this.Controls.Add(this.textBoxEmptyValue);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.labelEmptyValue);
             this.Controls.Add(this.comboBoxSelect);
             this.Controls.Add(this.textBoxDefaultValue);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelDefaultValue);
             this.Controls.Add(this.textBoxKey);
             this.Controls.Add(this.textBoxDescription);
             this.Controls.Add(this.labelDescription);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
-            this.Controls.Add(this.labelValidate);
+            this.Controls.Add(this.labelKey);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -293,7 +358,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label labelValidate;
+        private System.Windows.Forms.Label labelKey;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Label labelDescription;
@@ -301,7 +366,7 @@
         private System.Windows.Forms.TextBox textBoxKey;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.TextBox textBoxDefaultValue;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelDefaultValue;
         private System.Windows.Forms.TextBox textBoxHeight;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBoxWidth;
@@ -312,8 +377,13 @@
         private System.Windows.Forms.CheckBox checkBoxPreventMark;
         private System.Windows.Forms.CheckBox checkBoxDisabled;
         private System.Windows.Forms.TextBox textBoxEmptyValue;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelEmptyValue;
         private System.Windows.Forms.ComboBox comboBoxSelect;
         private System.Windows.Forms.Label labelTypeDesc;
+        private System.Windows.Forms.ListBox listBoxComboValues;
+        private System.Windows.Forms.Button buttonRemove;
+        private System.Windows.Forms.Button buttonAdd;
+        private System.Windows.Forms.TextBox textBoxDisplay;
+        private System.Windows.Forms.TextBox textBoxValue;
     }
 }
