@@ -71,7 +71,7 @@
     <Compile Include="Forms\AboutBox.Designer.cs">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ComboItem.cs" />
+    <Compile Include="Forms\NameValue.cs" />
     <Compile Include="Forms\SubitemDefinition.cs">
       <SubType>Form</SubType>
     </Compile>

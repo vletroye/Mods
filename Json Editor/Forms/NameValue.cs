@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace ZTn.Json.Editor.Forms
 {
-    public class ComboItem
+    public class NameValue
     {
         public string value;
-        public string display;
+        public string name;
 
-        public  ComboItem(string value, string display)
+        public NameValue(string value, string name)
         {
             this.value = value;
-            this.display = display;
+            this.name = name;
         }
-                public override string ToString()
+        public override string ToString()
         {
-            return "(" + value + "): " + display;
+            return name + ": " + value;
         }
     }
 }
