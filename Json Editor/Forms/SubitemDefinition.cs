@@ -24,8 +24,18 @@ namespace ZTn.Json.Editor.Forms
         private string subitemWidth = null;
         private string subitemHeight = null;
         private string subitemInvalidValue = null;
-        private List<ComboItem> combolist = new List<ComboItem>();
+        private string subitemRoot = null;
+        private string subitemApi = null;
+        private string subitemValueField = null;
+        private string subitemDisplayField = null;
+        private bool subitemValueFieldUnique = false;
+        private bool subitemDisplayFieldUnique = false;
+
+        private List<NameValue> subitemData = new List<NameValue>();
+        private List<NameValue> subitemBaseParams = new List<NameValue>();
+
         private int comboIndex = -1;
+        private int comboDynamicIndex = -1;
 
         public SubitemDefinition(string type)
         {
@@ -42,6 +52,9 @@ namespace ZTn.Json.Editor.Forms
                     labelDefaultValue.Visible = true;
                     textBoxEmptyValue.Visible = false;
                     labelEmptyValue.Visible = false;
+
+                    tabControlDefinition.TabPages.RemoveAt(2);
+                    tabControlDefinition.TabPages.RemoveAt(1);
                     break;
                 case "textfield":
                 case "password":
@@ -51,6 +64,9 @@ namespace ZTn.Json.Editor.Forms
                     textBoxEmptyValue.Visible = true;
                     labelEmptyValue.Visible = true;
                     textBoxEmptyValue.ReadOnly = false;
+
+                    tabControlDefinition.TabPages.RemoveAt(2);
+                    tabControlDefinition.TabPages.RemoveAt(1);
                     break;
                 case "combobox":
                     comboBoxSelect.Visible = false;
@@ -58,9 +74,12 @@ namespace ZTn.Json.Editor.Forms
                     labelDefaultValue.Visible = false;
                     textBoxEmptyValue.Visible = false;
                     labelEmptyValue.Visible = false;
+                    labelDefaultValue.Text = "Editable";
 
-                    listBoxComboValues.Enabled = true;
-                    buttonAdd.Enabled = true;
+                    listBoxData.Enabled = true;
+                    listBoxBaseParams.Enabled = true;
+                    buttonAddData.Enabled = true;
+                    buttonAddParam.Enabled = true;
 
                     break;
             }
@@ -79,8 +98,15 @@ namespace ZTn.Json.Editor.Forms
         public new string Width { get { return subitemWidth; } }
         public new string Height { get { return subitemHeight; } }
         public string InvalidValue { get { return subitemInvalidValue; } }
-        public List<ComboItem> ComboItems { get { return combolist; } }
+        public List<NameValue> Data { get { return subitemData; } }
+        public List<NameValue> BaseParams { get { return subitemBaseParams; } }
 
+        public string Root { get { return subitemRoot; } }
+        public string Api { get { return subitemApi; } }
+        public string ValueField { get { return subitemValueField; } }
+        public string DisplayField { get { return subitemDisplayField; } }
+        public bool ValueFieldIsUnique { get { return subitemValueFieldUnique; } }
+        public bool DisplayFieldIsUnique { get { return subitemDisplayFieldUnique; } }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
@@ -109,9 +135,30 @@ namespace ZTn.Json.Editor.Forms
             subitemHeight = textBoxHeight.Text;
             subitemInvalidValue = textBoxInvalid.Text;
 
-            foreach (var item in listBoxComboValues.Items)
+            if (checkBoxStatic.Checked)
             {
-                combolist.Add(item as ComboItem);
+                foreach (var item in listBoxData.Items)
+                {
+                    subitemData.Add(item as NameValue);
+                }
+                subitemValueField = textBoxStaticValueField.Text;
+                subitemDisplayField = textBoxStaticDisplayField.Text;
+                subitemValueFieldUnique = radioButtonStaticValueField.Checked;
+                subitemDisplayFieldUnique = radioButtonStaticDisplayField.Checked;
+
+            }
+            if (checkBoxDynamic.Checked)
+            {
+                foreach (var item in listBoxBaseParams.Items)
+                {
+                    subitemBaseParams.Add(item as NameValue);
+                }
+                subitemRoot = textBoxRoot.Text;
+                subitemApi = textBoxApiStore.Text;
+                subitemValueField = textBoxDynamicValueField.Text;
+                subitemDisplayField = textBoxDynamicDisplayField.Text;
+                subitemValueFieldUnique = radioButtonDynamicValueField.Checked;
+                subitemDisplayFieldUnique = radioButtonDynamicDisplayField.Checked;
             }
 
             this.Close();
@@ -123,13 +170,13 @@ namespace ZTn.Json.Editor.Forms
             this.Close();
         }
 
-        private void textBox_Validated(object sender, EventArgs e)
+        private void textBoxKey_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxKey, "");
             buttonOk.Enabled = true;
         }
 
-        private void textBox_Validating(object sender, CancelEventArgs e)
+        private void textBoxKey_Validating(object sender, CancelEventArgs e)
         {
             buttonOk.Enabled = false;
             var key = Helper.CleanUpText(textBoxKey.Text);
@@ -138,7 +185,7 @@ namespace ZTn.Json.Editor.Forms
                 errorProvider.SetError(textBoxKey, "You may not use special characters or blanks.");
                 e.Cancel = true;
             }
-            else if (string.IsNullOrEmpty( key ))
+            else if (string.IsNullOrEmpty(key))
             {
                 errorProvider.SetError(textBoxKey, "You may not use an empty Key.");
                 textBoxKey.Text = "Enter_A_Value";
@@ -151,60 +198,130 @@ namespace ZTn.Json.Editor.Forms
             textBoxEmptyValue.ReadOnly = !string.IsNullOrEmpty(textBoxDefaultValue.Text);
         }
 
-        private void listBoxComboValues_SelectedIndexChanged(object sender, EventArgs e)
+        private void listBoxData_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selected = listBoxComboValues.SelectedItem as ComboItem;
-            if (selected != null && comboIndex != listBoxComboValues.SelectedIndex)
+            var selected = listBoxData.SelectedItem as NameValue;
+            if (selected != null && comboIndex != listBoxData.SelectedIndex)
             {
-                textBoxValue.Text = selected.value;
-                textBoxDisplay.Text = selected.display;
-                textBoxDisplay.Enabled = true;
-                textBoxValue.Enabled = true;
-                textBoxValue.Focus();
+                textBoxDataValue.Text = selected.value;
+                textBoxDataName.Text = selected.name;
+                textBoxDataName.Enabled = true;
+                textBoxDataValue.Enabled = true;
+                textBoxDataName.Focus();
             }
-            comboIndex = listBoxComboValues.SelectedIndex;
-            buttonRemove.Enabled = (comboIndex >= 0);
+            comboIndex = listBoxData.SelectedIndex;
+            buttonRemoveData.Enabled = (comboIndex >= 0);
         }
 
-        private void buttonAdd_Click(object sender, EventArgs e)
+        private void buttonAddData_Click(object sender, EventArgs e)
         {
-            var index = listBoxComboValues.Items.Add(new ComboItem("value", "name"));
-            listBoxComboValues.SelectedIndex = index;
+            var index = listBoxData.Items.Add(new NameValue("value", "name"));
+            listBoxData.SelectedIndex = index;
+            checkBoxStatic.Checked = true;
+            checkBoxDynamic.Checked = false;
         }
 
-        private void buttonRemove_Click(object sender, EventArgs e)
+        private void buttonRemoveData_Click(object sender, EventArgs e)
         {
-            if (listBoxComboValues.SelectedItem != null)
-                listBoxComboValues.Items.RemoveAt(listBoxComboValues.SelectedIndex);
-            if (listBoxComboValues.Items.Count > 0)
-                listBoxComboValues.SelectedIndex = 0;
+            if (listBoxData.SelectedItem != null)
+                listBoxData.Items.RemoveAt(listBoxData.SelectedIndex);
+            if (listBoxData.Items.Count > 0)
+                listBoxData.SelectedIndex = 0;
             else
             {
-                textBoxDisplay.Enabled = false;
-                textBoxValue.Enabled = false;
+                textBoxDataName.Enabled = false;
+                textBoxDataValue.Enabled = false;
             }
         }
 
-        private void textBoxValue_TextChanged(object sender, EventArgs e)
+        private void textBoxDataValue_TextChanged(object sender, EventArgs e)
         {
-            var selected = listBoxComboValues.SelectedItem as ComboItem;
+            var selected = listBoxData.SelectedItem as NameValue;
             if (selected != null)
             {
-                selected.value = textBoxValue.Text;
-                listBoxComboValues.DisplayMember = "";
-                listBoxComboValues.DisplayMember = "-";
+                selected.value = textBoxDataValue.Text;
+                listBoxData.DisplayMember = "";
+                listBoxData.DisplayMember = "-";
             }
         }
 
-        private void textBoxDisplay_TextChanged(object sender, EventArgs e)
+        private void textBoxDataDisplay_TextChanged(object sender, EventArgs e)
         {
-            var selected = listBoxComboValues.SelectedItem as ComboItem;
+            var selected = listBoxData.SelectedItem as NameValue;
             if (selected != null)
             {
-                selected.display = textBoxDisplay.Text;
-                listBoxComboValues.DisplayMember = "";
-                listBoxComboValues.DisplayMember = "-";
+                selected.name = textBoxDataName.Text;
+                listBoxData.DisplayMember = "";
+                listBoxData.DisplayMember = "-";
             }
+        }
+
+        private void buttonAddParam_Click(object sender, EventArgs e)
+        {
+            var index = listBoxBaseParams.Items.Add(new NameValue("name", "value"));
+            listBoxBaseParams.SelectedIndex = index;
+            checkBoxDynamic.Checked = true;
+            checkBoxStatic.Checked = false;
+        }
+
+        private void buttonRemoveParam_Click(object sender, EventArgs e)
+        {
+            if (listBoxBaseParams.SelectedItem != null)
+                listBoxBaseParams.Items.RemoveAt(listBoxBaseParams.SelectedIndex);
+            if (listBoxBaseParams.Items.Count > 0)
+                listBoxBaseParams.SelectedIndex = 0;
+            else
+            {
+                textBoxParamName.Enabled = false;
+                textBoxParamValue.Enabled = false;
+            }
+        }
+
+        private void listBoxBaseParams_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxBaseParams.SelectedItem as NameValue;
+            if (selected != null && comboDynamicIndex != listBoxBaseParams.SelectedIndex)
+            {
+                textBoxParamName.Text = selected.name;
+                textBoxParamValue.Text = selected.value;
+                textBoxParamName.Enabled = true;
+                textBoxParamValue.Enabled = true;
+                textBoxParamName.Focus();
+            }
+            comboDynamicIndex = listBoxBaseParams.SelectedIndex;
+            buttonRemoveParam.Enabled = (comboDynamicIndex >= 0);
+        }
+
+        private void textBoxParamName_TextChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxBaseParams.SelectedItem as NameValue;
+            if (selected != null)
+            {
+                selected.name = textBoxParamName.Text;
+                listBoxBaseParams.DisplayMember = "";
+                listBoxBaseParams.DisplayMember = "-";
+            }
+        }
+
+        private void textBoxParamValue_TextChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxBaseParams.SelectedItem as NameValue;
+            if (selected != null)
+            {
+                selected.value = textBoxParamValue.Text;
+                listBoxBaseParams.DisplayMember = "";
+                listBoxBaseParams.DisplayMember = "-";
+            }
+        }
+
+        private void checkBoxStatic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxStatic.Checked) checkBoxDynamic.Checked = false;
+        }
+
+        private void checkBoxDynamic_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxDynamic.Checked) checkBoxStatic.Checked = false;
         }
     }
 }
