@@ -28,12 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemDefinition));
             this.labelValidate = new System.Windows.Forms.Label();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.labelDescription = new System.Windows.Forms.Label();
             this.textBoxDescription = new System.Windows.Forms.TextBox();
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
+            this.toolTipItemDefinition = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // labelValidate
@@ -84,6 +87,7 @@
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.Size = new System.Drawing.Size(303, 20);
             this.textBoxDescription.TabIndex = 1;
+            this.toolTipItemDefinition.SetToolTip(this.textBoxDescription, "Syno Property: desc [Optional]\r\nDescribe a component in the label text.\r\n");
             // 
             // comboBoxItemType
             // 
@@ -99,6 +103,7 @@
             this.comboBoxItemType.Name = "comboBoxItemType";
             this.comboBoxItemType.Size = new System.Drawing.Size(121, 21);
             this.comboBoxItemType.TabIndex = 0;
+            this.toolTipItemDefinition.SetToolTip(this.comboBoxItemType, resources.GetString("comboBoxItemType.ToolTip"));
             this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
             // 
             // ItemDefinition
@@ -107,7 +112,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(426, 99);
+            this.ClientSize = new System.Drawing.Size(422, 95);
             this.ControlBox = false;
             this.Controls.Add(this.comboBoxItemType);
             this.Controls.Add(this.textBoxDescription);
@@ -136,5 +141,6 @@
         private System.Windows.Forms.Label labelDescription;
         private System.Windows.Forms.TextBox textBoxDescription;
         private System.Windows.Forms.ComboBox comboBoxItemType;
+        private System.Windows.Forms.ToolTip toolTipItemDefinition;
     }
 }

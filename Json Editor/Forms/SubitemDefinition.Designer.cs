@@ -1,4 +1,6 @@
-﻿namespace ZTn.Json.Editor.Forms
+﻿using System.Windows.Forms;
+
+namespace ZTn.Json.Editor.Forms
 {
     partial class SubitemDefinition
     {
@@ -29,11 +31,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SubitemDefinition));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.tabControlDefinition = new System.Windows.Forms.TabControl();
             this.tabPageDetails = new System.Windows.Forms.TabPage();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.labelValidator = new System.Windows.Forms.Label();
+            this.checkBoxStatic = new System.Windows.Forms.CheckBox();
             this.comboBoxSelect = new System.Windows.Forms.ComboBox();
             this.textBoxKey = new System.Windows.Forms.TextBox();
             this.labelKey = new System.Windows.Forms.Label();
@@ -52,20 +58,6 @@
             this.checkBoxPreventMark = new System.Windows.Forms.CheckBox();
             this.labelInvalidText = new System.Windows.Forms.Label();
             this.checkBoxHidden = new System.Windows.Forms.CheckBox();
-            this.tabPageStaticCombo = new System.Windows.Forms.TabPage();
-            this.labelData = new System.Windows.Forms.Label();
-            this.radioButtonStaticValueField = new System.Windows.Forms.RadioButton();
-            this.radioButtonStaticDisplayField = new System.Windows.Forms.RadioButton();
-            this.labelStaticValueField = new System.Windows.Forms.Label();
-            this.textBoxStaticValueField = new System.Windows.Forms.TextBox();
-            this.labelStaticDisplayField = new System.Windows.Forms.Label();
-            this.textBoxStaticDisplayField = new System.Windows.Forms.TextBox();
-            this.checkBoxStatic = new System.Windows.Forms.CheckBox();
-            this.listBoxData = new System.Windows.Forms.ListBox();
-            this.buttonRemoveData = new System.Windows.Forms.Button();
-            this.textBoxDataValue = new System.Windows.Forms.TextBox();
-            this.buttonAddData = new System.Windows.Forms.Button();
-            this.textBoxDataName = new System.Windows.Forms.TextBox();
             this.tabPageDynamicCombo = new System.Windows.Forms.TabPage();
             this.radioButtonDynamicValueField = new System.Windows.Forms.RadioButton();
             this.radioButtonDynamicDisplayField = new System.Windows.Forms.RadioButton();
@@ -83,19 +75,26 @@
             this.textBoxDynamicValueField = new System.Windows.Forms.TextBox();
             this.labelDynamicDisplayField = new System.Windows.Forms.Label();
             this.textBoxDynamicDisplayField = new System.Windows.Forms.TextBox();
-            this.checkBoxDynamic = new System.Windows.Forms.CheckBox();
+            this.tabPageHelp = new System.Windows.Forms.TabPage();
+            this.dataGridViewHelp = new System.Windows.Forms.DataGridView();
+            this.GridProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GridSupported = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GridDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.GridDSMRequirement = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolTipSubitemDefinition = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.tabControlDefinition.SuspendLayout();
             this.tabPageDetails.SuspendLayout();
-            this.tabPageStaticCombo.SuspendLayout();
             this.tabPageDynamicCombo.SuspendLayout();
+            this.tabPageHelp.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewHelp)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonOk.Enabled = false;
-            this.buttonOk.Location = new System.Drawing.Point(12, 292);
+            this.buttonOk.Location = new System.Drawing.Point(12, 308);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 16;
@@ -107,7 +106,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(359, 292);
+            this.buttonCancel.Location = new System.Drawing.Point(507, 308);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 17;
@@ -125,16 +124,19 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlDefinition.Controls.Add(this.tabPageDetails);
-            this.tabControlDefinition.Controls.Add(this.tabPageStaticCombo);
             this.tabControlDefinition.Controls.Add(this.tabPageDynamicCombo);
+            this.tabControlDefinition.Controls.Add(this.tabPageHelp);
             this.tabControlDefinition.Location = new System.Drawing.Point(12, 12);
             this.tabControlDefinition.Name = "tabControlDefinition";
             this.tabControlDefinition.SelectedIndex = 0;
-            this.tabControlDefinition.Size = new System.Drawing.Size(421, 260);
+            this.tabControlDefinition.Size = new System.Drawing.Size(574, 288);
             this.tabControlDefinition.TabIndex = 0;
             // 
             // tabPageDetails
             // 
+            this.tabPageDetails.Controls.Add(this.textBox1);
+            this.tabPageDetails.Controls.Add(this.labelValidator);
+            this.tabPageDetails.Controls.Add(this.checkBoxStatic);
             this.tabPageDetails.Controls.Add(this.comboBoxSelect);
             this.tabPageDetails.Controls.Add(this.textBoxKey);
             this.tabPageDetails.Controls.Add(this.labelKey);
@@ -156,10 +158,44 @@
             this.tabPageDetails.Location = new System.Drawing.Point(4, 22);
             this.tabPageDetails.Name = "tabPageDetails";
             this.tabPageDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDetails.Size = new System.Drawing.Size(413, 234);
+            this.tabPageDetails.Size = new System.Drawing.Size(566, 262);
             this.tabPageDetails.TabIndex = 0;
             this.tabPageDetails.Text = "Main Settings";
             this.tabPageDetails.UseVisualStyleBackColor = true;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(81, 215);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(319, 20);
+            this.textBox1.TabIndex = 22;
+            this.textBox1.Text = "Not Yet Supported";
+            this.toolTipSubitemDefinition.SetToolTip(this.textBox1, "Syno Property: validator\r\nJSON-style object to describe validation functions. \r\nI" +
+        "f the validation fails with the user\'s value, the user cannot go to the next ste" +
+        "p of the wizard. ");
+            // 
+            // labelValidator
+            // 
+            this.labelValidator.AutoSize = true;
+            this.labelValidator.Location = new System.Drawing.Point(28, 218);
+            this.labelValidator.Name = "labelValidator";
+            this.labelValidator.Size = new System.Drawing.Size(51, 13);
+            this.labelValidator.TabIndex = 23;
+            this.labelValidator.Text = "Validator:";
+            // 
+            // checkBoxStatic
+            // 
+            this.checkBoxStatic.AutoSize = true;
+            this.checkBoxStatic.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxStatic.Location = new System.Drawing.Point(241, 166);
+            this.checkBoxStatic.Name = "checkBoxStatic";
+            this.checkBoxStatic.Size = new System.Drawing.Size(123, 17);
+            this.checkBoxStatic.TabIndex = 21;
+            this.checkBoxStatic.Text = "Use a Static Combo:";
+            this.toolTipSubitemDefinition.SetToolTip(this.checkBoxStatic, resources.GetString("checkBoxStatic.ToolTip"));
+            this.checkBoxStatic.UseVisualStyleBackColor = true;
+            this.checkBoxStatic.CheckedChanged += new System.EventHandler(this.checkBoxStatic_CheckedChanged);
             // 
             // comboBoxSelect
             // 
@@ -172,6 +208,8 @@
             this.comboBoxSelect.Name = "comboBoxSelect";
             this.comboBoxSelect.Size = new System.Drawing.Size(57, 21);
             this.comboBoxSelect.TabIndex = 2;
+            this.toolTipSubitemDefinition.SetToolTip(this.comboBoxSelect, "Syno Property: defaultValue [Optional]\r\nTrue/false value to initialize “singlesel" +
+        "ect” or “multiselect” component.");
             // 
             // textBoxKey
             // 
@@ -179,6 +217,7 @@
             this.textBoxKey.Name = "textBoxKey";
             this.textBoxKey.Size = new System.Drawing.Size(168, 20);
             this.textBoxKey.TabIndex = 0;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxKey, resources.GetString("textBoxKey.ToolTip"));
             this.textBoxKey.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxKey_Validating);
             this.textBoxKey.Validated += new System.EventHandler(this.textBoxKey_Validated);
             // 
@@ -206,6 +245,7 @@
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.Size = new System.Drawing.Size(319, 20);
             this.textBoxDescription.TabIndex = 1;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxDescription, "Syno Property: desc [Optional]\r\nDescribe a component in the label text.");
             // 
             // labelDefaultValue
             // 
@@ -222,6 +262,8 @@
             this.textBoxDefaultValue.Name = "textBoxDefaultValue";
             this.textBoxDefaultValue.Size = new System.Drawing.Size(319, 20);
             this.textBoxDefaultValue.TabIndex = 3;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxDefaultValue, "Syno Property: defaultValue [Optional]\r\nA string value to initialize “textfield” " +
+        "or “password” component.");
             this.textBoxDefaultValue.TextChanged += new System.EventHandler(this.textBoxDefaultValue_TextChanged);
             // 
             // textBoxHeight
@@ -231,6 +273,7 @@
             this.textBoxHeight.ReadOnly = true;
             this.textBoxHeight.Size = new System.Drawing.Size(50, 20);
             this.textBoxHeight.TabIndex = 9;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxHeight, "Syno Property: height\r\nThe hieght of this component in pixels.");
             // 
             // labelHeight
             // 
@@ -257,6 +300,7 @@
             this.textBoxWidth.ReadOnly = true;
             this.textBoxWidth.Size = new System.Drawing.Size(50, 20);
             this.textBoxWidth.TabIndex = 8;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxWidth, "Syno Property: width\r\nThe width of this component in pixels.");
             // 
             // textBoxEmptyValue
             // 
@@ -264,6 +308,9 @@
             this.textBoxEmptyValue.Name = "textBoxEmptyValue";
             this.textBoxEmptyValue.Size = new System.Drawing.Size(319, 20);
             this.textBoxEmptyValue.TabIndex = 4;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxEmptyValue, "Syno Property: emptyText [Optional]\r\nThe prompt text to place into an empty “text" +
+        "field” or “password” component to prompt the user how to fill in if defaultVaule" +
+        " is not set.");
             // 
             // labelWidth
             // 
@@ -282,6 +329,7 @@
             this.checkBoxDisabled.Size = new System.Drawing.Size(67, 17);
             this.checkBoxDisabled.TabIndex = 5;
             this.checkBoxDisabled.Text = "Disabled";
+            this.toolTipSubitemDefinition.SetToolTip(this.checkBoxDisabled, "Syno Property: disabled\r\nTrue to disable the field (defaults to false).");
             this.checkBoxDisabled.UseVisualStyleBackColor = true;
             // 
             // textBoxInvalid
@@ -291,6 +339,8 @@
             this.textBoxInvalid.ReadOnly = true;
             this.textBoxInvalid.Size = new System.Drawing.Size(319, 20);
             this.textBoxInvalid.TabIndex = 10;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxInvalid, "Syno Property: invalidText\r\nThe error text to use when marking a field invalid an" +
+        "d no message is provided.");
             // 
             // checkBoxPreventMark
             // 
@@ -300,6 +350,8 @@
             this.checkBoxPreventMark.Size = new System.Drawing.Size(90, 17);
             this.checkBoxPreventMark.TabIndex = 6;
             this.checkBoxPreventMark.Text = "Prevent Mark";
+            this.toolTipSubitemDefinition.SetToolTip(this.checkBoxPreventMark, "Syno Property: preventMark\r\nTrue to disable marking the field invalid. Defaults t" +
+        "o false.");
             this.checkBoxPreventMark.UseVisualStyleBackColor = true;
             // 
             // labelInvalidText
@@ -319,161 +371,8 @@
             this.checkBoxHidden.Size = new System.Drawing.Size(60, 17);
             this.checkBoxHidden.TabIndex = 7;
             this.checkBoxHidden.Text = "Hidden";
+            this.toolTipSubitemDefinition.SetToolTip(this.checkBoxHidden, "Syno Property: hidden\r\nTrue to hide this component.");
             this.checkBoxHidden.UseVisualStyleBackColor = true;
-            // 
-            // tabPageStaticCombo
-            // 
-            this.tabPageStaticCombo.Controls.Add(this.labelData);
-            this.tabPageStaticCombo.Controls.Add(this.radioButtonStaticValueField);
-            this.tabPageStaticCombo.Controls.Add(this.radioButtonStaticDisplayField);
-            this.tabPageStaticCombo.Controls.Add(this.labelStaticValueField);
-            this.tabPageStaticCombo.Controls.Add(this.textBoxStaticValueField);
-            this.tabPageStaticCombo.Controls.Add(this.labelStaticDisplayField);
-            this.tabPageStaticCombo.Controls.Add(this.textBoxStaticDisplayField);
-            this.tabPageStaticCombo.Controls.Add(this.checkBoxStatic);
-            this.tabPageStaticCombo.Controls.Add(this.listBoxData);
-            this.tabPageStaticCombo.Controls.Add(this.buttonRemoveData);
-            this.tabPageStaticCombo.Controls.Add(this.textBoxDataValue);
-            this.tabPageStaticCombo.Controls.Add(this.buttonAddData);
-            this.tabPageStaticCombo.Controls.Add(this.textBoxDataName);
-            this.tabPageStaticCombo.Location = new System.Drawing.Point(4, 22);
-            this.tabPageStaticCombo.Name = "tabPageStaticCombo";
-            this.tabPageStaticCombo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageStaticCombo.Size = new System.Drawing.Size(413, 234);
-            this.tabPageStaticCombo.TabIndex = 1;
-            this.tabPageStaticCombo.Text = "Static Combo";
-            this.tabPageStaticCombo.UseVisualStyleBackColor = true;
-            // 
-            // labelData
-            // 
-            this.labelData.AutoSize = true;
-            this.labelData.Location = new System.Drawing.Point(47, 58);
-            this.labelData.Name = "labelData";
-            this.labelData.Size = new System.Drawing.Size(33, 13);
-            this.labelData.TabIndex = 41;
-            this.labelData.Text = "Data:";
-            // 
-            // radioButtonStaticValueField
-            // 
-            this.radioButtonStaticValueField.AutoSize = true;
-            this.radioButtonStaticValueField.Location = new System.Drawing.Point(188, 33);
-            this.radioButtonStaticValueField.Name = "radioButtonStaticValueField";
-            this.radioButtonStaticValueField.Size = new System.Drawing.Size(69, 17);
-            this.radioButtonStaticValueField.TabIndex = 4;
-            this.radioButtonStaticValueField.TabStop = true;
-            this.radioButtonStaticValueField.Text = "is Unique";
-            this.radioButtonStaticValueField.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonStaticDisplayField
-            // 
-            this.radioButtonStaticDisplayField.AutoSize = true;
-            this.radioButtonStaticDisplayField.Location = new System.Drawing.Point(188, 8);
-            this.radioButtonStaticDisplayField.Name = "radioButtonStaticDisplayField";
-            this.radioButtonStaticDisplayField.Size = new System.Drawing.Size(69, 17);
-            this.radioButtonStaticDisplayField.TabIndex = 3;
-            this.radioButtonStaticDisplayField.TabStop = true;
-            this.radioButtonStaticDisplayField.Text = "is Unique";
-            this.radioButtonStaticDisplayField.UseVisualStyleBackColor = true;
-            // 
-            // labelStaticValueField
-            // 
-            this.labelStaticValueField.AutoSize = true;
-            this.labelStaticValueField.Location = new System.Drawing.Point(18, 36);
-            this.labelStaticValueField.Name = "labelStaticValueField";
-            this.labelStaticValueField.Size = new System.Drawing.Size(62, 13);
-            this.labelStaticValueField.TabIndex = 38;
-            this.labelStaticValueField.Text = "Value Field:";
-            // 
-            // textBoxStaticValueField
-            // 
-            this.textBoxStaticValueField.Location = new System.Drawing.Point(82, 32);
-            this.textBoxStaticValueField.Name = "textBoxStaticValueField";
-            this.textBoxStaticValueField.Size = new System.Drawing.Size(100, 20);
-            this.textBoxStaticValueField.TabIndex = 2;
-            // 
-            // labelStaticDisplayField
-            // 
-            this.labelStaticDisplayField.AutoSize = true;
-            this.labelStaticDisplayField.Location = new System.Drawing.Point(11, 10);
-            this.labelStaticDisplayField.Name = "labelStaticDisplayField";
-            this.labelStaticDisplayField.Size = new System.Drawing.Size(69, 13);
-            this.labelStaticDisplayField.TabIndex = 36;
-            this.labelStaticDisplayField.Text = "Display Field:";
-            // 
-            // textBoxStaticDisplayField
-            // 
-            this.textBoxStaticDisplayField.Location = new System.Drawing.Point(82, 6);
-            this.textBoxStaticDisplayField.Name = "textBoxStaticDisplayField";
-            this.textBoxStaticDisplayField.Size = new System.Drawing.Size(100, 20);
-            this.textBoxStaticDisplayField.TabIndex = 1;
-            // 
-            // checkBoxStatic
-            // 
-            this.checkBoxStatic.AutoSize = true;
-            this.checkBoxStatic.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxStatic.Location = new System.Drawing.Point(287, 6);
-            this.checkBoxStatic.Name = "checkBoxStatic";
-            this.checkBoxStatic.Size = new System.Drawing.Size(120, 17);
-            this.checkBoxStatic.TabIndex = 0;
-            this.checkBoxStatic.Text = "Use a Static Combo";
-            this.checkBoxStatic.UseVisualStyleBackColor = true;
-            this.checkBoxStatic.CheckedChanged += new System.EventHandler(this.checkBoxStatic_CheckedChanged);
-            // 
-            // listBoxData
-            // 
-            this.listBoxData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.listBoxData.Enabled = false;
-            this.listBoxData.FormattingEnabled = true;
-            this.listBoxData.Location = new System.Drawing.Point(82, 58);
-            this.listBoxData.Name = "listBoxData";
-            this.listBoxData.Size = new System.Drawing.Size(255, 121);
-            this.listBoxData.TabIndex = 5;
-            this.listBoxData.SelectedIndexChanged += new System.EventHandler(this.listBoxData_SelectedIndexChanged);
-            // 
-            // buttonRemoveData
-            // 
-            this.buttonRemoveData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonRemoveData.Enabled = false;
-            this.buttonRemoveData.Location = new System.Drawing.Point(113, 195);
-            this.buttonRemoveData.Name = "buttonRemoveData";
-            this.buttonRemoveData.Size = new System.Drawing.Size(25, 20);
-            this.buttonRemoveData.TabIndex = 9;
-            this.buttonRemoveData.Text = "-";
-            this.buttonRemoveData.UseVisualStyleBackColor = true;
-            this.buttonRemoveData.Click += new System.EventHandler(this.buttonRemoveData_Click);
-            // 
-            // textBoxDataValue
-            // 
-            this.textBoxDataValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxDataValue.Enabled = false;
-            this.textBoxDataValue.Location = new System.Drawing.Point(273, 195);
-            this.textBoxDataValue.Name = "textBoxDataValue";
-            this.textBoxDataValue.Size = new System.Drawing.Size(64, 20);
-            this.textBoxDataValue.TabIndex = 7;
-            this.textBoxDataValue.TextChanged += new System.EventHandler(this.textBoxDataValue_TextChanged);
-            // 
-            // buttonAddData
-            // 
-            this.buttonAddData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAddData.Enabled = false;
-            this.buttonAddData.Location = new System.Drawing.Point(82, 195);
-            this.buttonAddData.Name = "buttonAddData";
-            this.buttonAddData.Size = new System.Drawing.Size(25, 20);
-            this.buttonAddData.TabIndex = 8;
-            this.buttonAddData.Text = "+";
-            this.buttonAddData.UseVisualStyleBackColor = true;
-            this.buttonAddData.Click += new System.EventHandler(this.buttonAddData_Click);
-            // 
-            // textBoxDataName
-            // 
-            this.textBoxDataName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxDataName.Enabled = false;
-            this.textBoxDataName.Location = new System.Drawing.Point(144, 195);
-            this.textBoxDataName.Name = "textBoxDataName";
-            this.textBoxDataName.Size = new System.Drawing.Size(120, 20);
-            this.textBoxDataName.TabIndex = 6;
-            this.textBoxDataName.TextChanged += new System.EventHandler(this.textBoxDataDisplay_TextChanged);
             // 
             // tabPageDynamicCombo
             // 
@@ -493,13 +392,12 @@
             this.tabPageDynamicCombo.Controls.Add(this.textBoxDynamicValueField);
             this.tabPageDynamicCombo.Controls.Add(this.labelDynamicDisplayField);
             this.tabPageDynamicCombo.Controls.Add(this.textBoxDynamicDisplayField);
-            this.tabPageDynamicCombo.Controls.Add(this.checkBoxDynamic);
             this.tabPageDynamicCombo.Location = new System.Drawing.Point(4, 22);
             this.tabPageDynamicCombo.Name = "tabPageDynamicCombo";
             this.tabPageDynamicCombo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDynamicCombo.Size = new System.Drawing.Size(413, 234);
+            this.tabPageDynamicCombo.Size = new System.Drawing.Size(566, 262);
             this.tabPageDynamicCombo.TabIndex = 2;
-            this.tabPageDynamicCombo.Text = "Dynamic Combo";
+            this.tabPageDynamicCombo.Text = "Combo Settings";
             this.tabPageDynamicCombo.UseVisualStyleBackColor = true;
             // 
             // radioButtonDynamicValueField
@@ -511,6 +409,8 @@
             this.radioButtonDynamicValueField.TabIndex = 4;
             this.radioButtonDynamicValueField.TabStop = true;
             this.radioButtonDynamicValueField.Text = "is Unique";
+            this.toolTipSubitemDefinition.SetToolTip(this.radioButtonDynamicValueField, "Syno Property: idProperty\r\nIdentity of the property within data that contains a u" +
+        "nique value.\r\nSelect this to use the Value Field as idProperty.");
             this.radioButtonDynamicValueField.UseVisualStyleBackColor = true;
             // 
             // radioButtonDynamicDisplayField
@@ -522,6 +422,8 @@
             this.radioButtonDynamicDisplayField.TabIndex = 3;
             this.radioButtonDynamicDisplayField.TabStop = true;
             this.radioButtonDynamicDisplayField.Text = "is Unique";
+            this.toolTipSubitemDefinition.SetToolTip(this.radioButtonDynamicDisplayField, "Syno Property: idProperty\r\nIdentity of the property within data that contains a u" +
+        "nique value.\r\nSelect this to use the Display Field as idProperty.");
             this.radioButtonDynamicDisplayField.UseVisualStyleBackColor = true;
             // 
             // labelRoot
@@ -539,6 +441,8 @@
             this.textBoxRoot.Name = "textBoxRoot";
             this.textBoxRoot.Size = new System.Drawing.Size(100, 20);
             this.textBoxRoot.TabIndex = 6;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxRoot, "Syno Property: root\r\nThe name of the property which contains the array of data. D" +
+        "efaults to undefined.");
             // 
             // labelBaseParams
             // 
@@ -548,6 +452,7 @@
             this.labelBaseParams.Size = new System.Drawing.Size(72, 13);
             this.labelBaseParams.TabIndex = 31;
             this.labelBaseParams.Text = "Base Params:";
+            this.labelBaseParams.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // listBoxBaseParams
             // 
@@ -557,15 +462,16 @@
             this.listBoxBaseParams.FormattingEnabled = true;
             this.listBoxBaseParams.Location = new System.Drawing.Point(82, 110);
             this.listBoxBaseParams.Name = "listBoxBaseParams";
-            this.listBoxBaseParams.Size = new System.Drawing.Size(256, 69);
+            this.listBoxBaseParams.Size = new System.Drawing.Size(256, 82);
             this.listBoxBaseParams.TabIndex = 7;
+            this.toolTipSubitemDefinition.SetToolTip(this.listBoxBaseParams, resources.GetString("listBoxBaseParams.ToolTip"));
             this.listBoxBaseParams.SelectedIndexChanged += new System.EventHandler(this.listBoxBaseParams_SelectedIndexChanged);
             // 
             // buttonRemoveParam
             // 
             this.buttonRemoveParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonRemoveParam.Enabled = false;
-            this.buttonRemoveParam.Location = new System.Drawing.Point(113, 195);
+            this.buttonRemoveParam.Location = new System.Drawing.Point(113, 223);
             this.buttonRemoveParam.Name = "buttonRemoveParam";
             this.buttonRemoveParam.Size = new System.Drawing.Size(25, 20);
             this.buttonRemoveParam.TabIndex = 11;
@@ -577,17 +483,20 @@
             // 
             this.textBoxParamName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBoxParamName.Enabled = false;
-            this.textBoxParamName.Location = new System.Drawing.Point(144, 195);
+            this.textBoxParamName.Location = new System.Drawing.Point(144, 223);
             this.textBoxParamName.Name = "textBoxParamName";
             this.textBoxParamName.Size = new System.Drawing.Size(120, 20);
             this.textBoxParamName.TabIndex = 8;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxParamName, "Name to be added in the list above.");
             this.textBoxParamName.TextChanged += new System.EventHandler(this.textBoxParamName_TextChanged);
+            this.textBoxParamName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxParamName_Validating);
+            this.textBoxParamName.Validated += new System.EventHandler(this.textBoxParamName_Validated);
             // 
             // buttonAddParam
             // 
             this.buttonAddParam.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonAddParam.Enabled = false;
-            this.buttonAddParam.Location = new System.Drawing.Point(82, 195);
+            this.buttonAddParam.Location = new System.Drawing.Point(82, 223);
             this.buttonAddParam.Name = "buttonAddParam";
             this.buttonAddParam.Size = new System.Drawing.Size(25, 20);
             this.buttonAddParam.TabIndex = 10;
@@ -599,10 +508,11 @@
             // 
             this.textBoxParamValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBoxParamValue.Enabled = false;
-            this.textBoxParamValue.Location = new System.Drawing.Point(273, 195);
+            this.textBoxParamValue.Location = new System.Drawing.Point(273, 223);
             this.textBoxParamValue.Name = "textBoxParamValue";
             this.textBoxParamValue.Size = new System.Drawing.Size(65, 20);
             this.textBoxParamValue.TabIndex = 9;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxParamValue, resources.GetString("textBoxParamValue.ToolTip"));
             this.textBoxParamValue.TextChanged += new System.EventHandler(this.textBoxParamValue_TextChanged);
             // 
             // labelApiStore
@@ -620,6 +530,8 @@
             this.textBoxApiStore.Name = "textBoxApiStore";
             this.textBoxApiStore.Size = new System.Drawing.Size(325, 20);
             this.textBoxApiStore.TabIndex = 5;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxApiStore, "Syno Property: api (in  api_store)\r\nName of the WebAPI to be requested to get a r" +
+        "esponse in the data strusture for combobox use.");
             // 
             // labelDynamicValueField
             // 
@@ -636,6 +548,8 @@
             this.textBoxDynamicValueField.Name = "textBoxDynamicValueField";
             this.textBoxDynamicValueField.Size = new System.Drawing.Size(100, 20);
             this.textBoxDynamicValueField.TabIndex = 2;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxDynamicValueField, "Syno Property: valueField\r\nThe underlying data value name to bind to this combobo" +
+        "x.");
             // 
             // labelDynamicDisplayField
             // 
@@ -652,18 +566,66 @@
             this.textBoxDynamicDisplayField.Name = "textBoxDynamicDisplayField";
             this.textBoxDynamicDisplayField.Size = new System.Drawing.Size(100, 20);
             this.textBoxDynamicDisplayField.TabIndex = 1;
+            this.toolTipSubitemDefinition.SetToolTip(this.textBoxDynamicDisplayField, "Syno Property: displayField\r\nThe underlying data field name to bind to this combo" +
+        "box.");
             // 
-            // checkBoxDynamic
+            // tabPageHelp
             // 
-            this.checkBoxDynamic.AutoSize = true;
-            this.checkBoxDynamic.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxDynamic.Location = new System.Drawing.Point(273, 6);
-            this.checkBoxDynamic.Name = "checkBoxDynamic";
-            this.checkBoxDynamic.Size = new System.Drawing.Size(134, 17);
-            this.checkBoxDynamic.TabIndex = 0;
-            this.checkBoxDynamic.Text = "Use a Dynamic Combo";
-            this.checkBoxDynamic.UseVisualStyleBackColor = true;
-            this.checkBoxDynamic.CheckedChanged += new System.EventHandler(this.checkBoxDynamic_CheckedChanged);
+            this.tabPageHelp.Controls.Add(this.dataGridViewHelp);
+            this.tabPageHelp.Location = new System.Drawing.Point(4, 22);
+            this.tabPageHelp.Name = "tabPageHelp";
+            this.tabPageHelp.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageHelp.Size = new System.Drawing.Size(566, 262);
+            this.tabPageHelp.TabIndex = 3;
+            this.tabPageHelp.Text = "Help";
+            this.tabPageHelp.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewHelp
+            // 
+            this.dataGridViewHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewHelp.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewHelp.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.GridProperty,
+            this.GridSupported,
+            this.GridDescription,
+            this.GridDSMRequirement});
+            this.dataGridViewHelp.Location = new System.Drawing.Point(3, 6);
+            this.dataGridViewHelp.MultiSelect = false;
+            this.dataGridViewHelp.Name = "dataGridViewHelp";
+            this.dataGridViewHelp.ReadOnly = true;
+            this.dataGridViewHelp.Size = new System.Drawing.Size(557, 238);
+            this.dataGridViewHelp.TabIndex = 18;
+            this.dataGridViewHelp.SelectionChanged += new System.EventHandler(this.dataGridViewHelp_SelectionChanged);
+            this.dataGridViewHelp.Paint += new System.Windows.Forms.PaintEventHandler(this.dataGridViewHelp_Paint);
+            // 
+            // GridProperty
+            // 
+            this.GridProperty.HeaderText = "Property";
+            this.GridProperty.Name = "GridProperty";
+            this.GridProperty.ReadOnly = true;
+            this.GridProperty.Width = 80;
+            // 
+            // GridSupported
+            // 
+            this.GridSupported.HeaderText = "Supported";
+            this.GridSupported.Name = "GridSupported";
+            this.GridSupported.ReadOnly = true;
+            this.GridSupported.Width = 70;
+            // 
+            // GridDescription
+            // 
+            this.GridDescription.HeaderText = "Description";
+            this.GridDescription.Name = "GridDescription";
+            this.GridDescription.ReadOnly = true;
+            this.GridDescription.Width = 300;
+            // 
+            // GridDSMRequirement
+            // 
+            this.GridDSMRequirement.HeaderText = "DSM Requirement";
+            this.GridDSMRequirement.Name = "GridDSMRequirement";
+            this.GridDSMRequirement.ReadOnly = true;
             // 
             // SubitemDefinition
             // 
@@ -671,14 +633,14 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(446, 327);
+            this.ClientSize = new System.Drawing.Size(594, 362);
             this.ControlBox = false;
             this.Controls.Add(this.tabControlDefinition);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(462, 378);
             this.Name = "SubitemDefinition";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
@@ -688,10 +650,10 @@
             this.tabControlDefinition.ResumeLayout(false);
             this.tabPageDetails.ResumeLayout(false);
             this.tabPageDetails.PerformLayout();
-            this.tabPageStaticCombo.ResumeLayout(false);
-            this.tabPageStaticCombo.PerformLayout();
             this.tabPageDynamicCombo.ResumeLayout(false);
             this.tabPageDynamicCombo.PerformLayout();
+            this.tabPageHelp.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewHelp)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -702,7 +664,6 @@
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.TabControl tabControlDefinition;
         private System.Windows.Forms.TabPage tabPageDetails;
-        private System.Windows.Forms.TabPage tabPageStaticCombo;
         private System.Windows.Forms.TextBox textBoxKey;
         private System.Windows.Forms.Label labelKey;
         private System.Windows.Forms.Label labelDescription;
@@ -721,14 +682,7 @@
         private System.Windows.Forms.CheckBox checkBoxPreventMark;
         private System.Windows.Forms.Label labelInvalidText;
         private System.Windows.Forms.CheckBox checkBoxHidden;
-        private System.Windows.Forms.ListBox listBoxData;
-        private System.Windows.Forms.Button buttonRemoveData;
-        private System.Windows.Forms.TextBox textBoxDataValue;
-        private System.Windows.Forms.Button buttonAddData;
-        private System.Windows.Forms.TextBox textBoxDataName;
         private System.Windows.Forms.TabPage tabPageDynamicCombo;
-        private System.Windows.Forms.CheckBox checkBoxStatic;
-        private System.Windows.Forms.CheckBox checkBoxDynamic;
         private System.Windows.Forms.RadioButton radioButtonDynamicValueField;
         private System.Windows.Forms.RadioButton radioButtonDynamicDisplayField;
         private System.Windows.Forms.Label labelRoot;
@@ -745,12 +699,15 @@
         private System.Windows.Forms.TextBox textBoxDynamicValueField;
         private System.Windows.Forms.Label labelDynamicDisplayField;
         private System.Windows.Forms.TextBox textBoxDynamicDisplayField;
-        private System.Windows.Forms.Label labelData;
-        private System.Windows.Forms.RadioButton radioButtonStaticValueField;
-        private System.Windows.Forms.RadioButton radioButtonStaticDisplayField;
-        private System.Windows.Forms.Label labelStaticValueField;
-        private System.Windows.Forms.TextBox textBoxStaticValueField;
-        private System.Windows.Forms.Label labelStaticDisplayField;
-        private System.Windows.Forms.TextBox textBoxStaticDisplayField;
+        private System.Windows.Forms.CheckBox checkBoxStatic;
+        private System.Windows.Forms.ToolTip toolTipSubitemDefinition;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label labelValidator;
+        private System.Windows.Forms.TabPage tabPageHelp;
+        private System.Windows.Forms.DataGridView dataGridViewHelp;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GridProperty;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GridSupported;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GridDescription;
+        private System.Windows.Forms.DataGridViewTextBoxColumn GridDSMRequirement;
     }
 }
