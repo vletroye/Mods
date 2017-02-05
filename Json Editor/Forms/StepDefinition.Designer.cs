@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(StepDefinition));
             this.labelName = new System.Windows.Forms.Label();
             this.textBoxName = new System.Windows.Forms.TextBox();
             this.labelValidate = new System.Windows.Forms.Label();
@@ -38,6 +40,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.toolTipStepDefinition = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // labelName
@@ -55,6 +58,8 @@
             this.textBoxName.Name = "textBoxName";
             this.textBoxName.Size = new System.Drawing.Size(100, 20);
             this.textBoxName.TabIndex = 0;
+            this.toolTipStepDefinition.SetToolTip(this.textBoxName, "Syno Property: step_title [Optional]\r\nDescribes the title of the current step per" +
+        "formed in the wizard.");
             // 
             // labelValidate
             // 
@@ -73,12 +78,13 @@
             this.checkBoxValidate.Size = new System.Drawing.Size(189, 17);
             this.checkBoxValidate.TabIndex = 1;
             this.checkBoxValidate.Text = "[All items must be valid to proceed]";
+            this.toolTipStepDefinition.SetToolTip(this.checkBoxValidate, resources.GetString("checkBoxValidate.ToolTip"));
             this.checkBoxValidate.UseVisualStyleBackColor = true;
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(12, 154);
+            this.buttonOk.Location = new System.Drawing.Point(12, 150);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 4;
@@ -90,7 +96,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(217, 154);
+            this.buttonCancel.Location = new System.Drawing.Point(217, 150);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 5;
@@ -124,6 +130,8 @@
             this.textBox1.Size = new System.Drawing.Size(181, 20);
             this.textBox1.TabIndex = 2;
             this.textBox1.Text = "Not Yet Supported";
+            this.toolTipStepDefinition.SetToolTip(this.textBox1, "Syno Property: activate\r\nJSON-style string to describe a function which is run af" +
+        "ter the step of the wizard has been visually activated.");
             // 
             // textBox2
             // 
@@ -133,6 +141,8 @@
             this.textBox2.Size = new System.Drawing.Size(181, 20);
             this.textBox2.TabIndex = 3;
             this.textBox2.Text = "Not Yet Supported";
+            this.toolTipStepDefinition.SetToolTip(this.textBox2, "Syno Property: deactivate\r\nJSON-style string to describe a function which is run " +
+        "after the step of the wizard has been visually deactivated.");
             // 
             // StepDefinition
             // 
@@ -140,7 +150,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(296, 181);
+            this.ClientSize = new System.Drawing.Size(304, 185);
             this.ControlBox = false;
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
@@ -177,5 +187,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ToolTip toolTipStepDefinition;
     }
 }

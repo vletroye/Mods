@@ -137,6 +137,9 @@
     <EmbeddedResource Include="ScriptForm.resx">
       <DependentUpon>ScriptForm.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="HelpSynoWizard.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -149,7 +152,7 @@
     <Content Include="PackagingSyno.ico" />
     <Content Include="Preferences.png" />
     <None Include="Resources\EditedScript.png" />
-    <Content Include="Resources\backwizard.png">
+    <Content Include="backwizard.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Mods.ico" />

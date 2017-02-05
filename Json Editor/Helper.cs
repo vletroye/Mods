@@ -42,7 +42,7 @@ namespace ZTn.Json.Editor
 
         internal static string GetSubItemType(string type)
         {
-            string subitemType= "";
+            string subitemType = "";
             switch (type)
             {
                 case "singleselect":
@@ -62,6 +62,6 @@ namespace ZTn.Json.Editor
                     break;
             }
             return subitemType;
-        }
+        }      
     }
 }

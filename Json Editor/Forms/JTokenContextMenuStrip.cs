@@ -294,86 +294,89 @@ namespace ZTn.Json.Editor.Forms
                 var subitemDisabled = newSubitem.Disable;
                 var subitemHidden = newSubitem.Hidden;
                 var subitemPreventMark = newSubitem.PreventMark;
-                var subitemData = newSubitem.Data;
                 var subitemBaseParams = newSubitem.BaseParams;
                 var subitemRoot = newSubitem.Root;
                 var subitemApi = newSubitem.Api;
                 var subitemValueField = newSubitem.ValueField;
                 var subitemDisplayField = newSubitem.DisplayField;
+                var subitemStaticCombo  = newSubitem.StaticCombo;
                 var subitemValueFieldUnique = newSubitem.ValueFieldIsUnique;
                 var subitemDisplayFieldUnique = newSubitem.DisplayFieldIsUnique;
 
 
                 JTokenNode = (JTokenTreeNode)InsertJToken(JObject.Parse("{}"), true);
 
-                // Static Combo is filled
-                if (subitemData.Count > 0)
-                {
-                    var comboNode = JTokenNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("store", new JObject()).FirstNode;
-                    InsertProperty("xtype", "arraystore");
-                    var storeNode = JTokenNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("fields", new JArray()).FirstNode;
-                    if (!string.IsNullOrEmpty(subitemValueField))
-                        InsertJToken(new JValue(subitemValueField));
-                    if (!string.IsNullOrEmpty(subitemDisplayField))
-                        InsertJToken(new JValue(subitemDisplayField));
-                    JTokenNode = storeNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("data", new JArray()).FirstNode;
-                    foreach (var item in subitemData)
-                    {
-                        InsertJToken(new JArray(new JValue(item.value), new JValue(item.name)));
-                    }
-
-                    JTokenNode = comboNode;
-                    InsertProperty("mode", "local");
-                    if (string.IsNullOrEmpty(subitemDefaultValue))
-                        subitemDefaultValue = "false";
-                    InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
-                    if (!string.IsNullOrEmpty(subitemValueField))
-                        InsertProperty("valuefield", "ComboId");
-                    if (!string.IsNullOrEmpty(subitemDisplayField))
-                        InsertProperty("displayfield", "ComboText");
-                }
-                // Dynamic Combo is filled
                 if (subitemBaseParams.Count > 0)
                 {
-                    var comboNode = JTokenNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("api_store", new JObject()).FirstNode;
-                    InsertProperty("api", subitemApi);
-                    InsertProperty("method", "list");
-                    InsertProperty("version", 1);
-                    InsertProperty("root", subitemRoot);
-                    if (subitemValueFieldUnique)
+                    if (subitemStaticCombo)
                     {
-                        InsertProperty("idProperty", subitemValueField);
-                    }
-                    else if (subitemDisplayFieldUnique)
-                    {
-                        InsertProperty("idProperty", subitemDisplayField);
-                    }
-                    var storeNode = JTokenNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("fields", new JArray()).FirstNode;
-                    if (!string.IsNullOrEmpty(subitemValueField))
-                        InsertJToken(new JValue(subitemValueField));
-                    if (!string.IsNullOrEmpty(subitemDisplayField))
-                        InsertJToken(new JValue(subitemDisplayField));
-                    JTokenNode = storeNode;
-                    JTokenNode = (JTokenTreeNode)InsertProperty("baseParams", new JObject()).FirstNode;
-                    foreach (var item in subitemBaseParams)
-                    {
-                        InsertProperty(item.name, item.value);
-                    }
+                        // Static Combo is filled
+                        var comboNode = JTokenNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("store", new JObject()).FirstNode;
+                        InsertProperty("xtype", "arraystore");
+                        var storeNode = JTokenNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("fields", new JArray()).FirstNode;
+                        if (!string.IsNullOrEmpty(subitemValueField))
+                            InsertJToken(new JValue(subitemValueField));
+                        if (!string.IsNullOrEmpty(subitemDisplayField))
+                            InsertJToken(new JValue(subitemDisplayField));
+                        JTokenNode = storeNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("data", new JArray()).FirstNode;
+                        foreach (var item in subitemBaseParams)
+                        {
+                            InsertJToken(new JArray(new JValue(item.value), new JValue(item.name)));
+                        }
 
-                    JTokenNode = comboNode;
-                    InsertProperty("mode", "remote");
-                    if (string.IsNullOrEmpty(subitemDefaultValue))
-                        subitemDefaultValue = "false";
-                    InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
-                    if (!string.IsNullOrEmpty(subitemValueField))
-                        InsertProperty("valuefield", subitemValueField);
-                    if (!string.IsNullOrEmpty(subitemDisplayField))
-                        InsertProperty("displayfield", subitemDisplayField);
+                        JTokenNode = comboNode;
+                        InsertProperty("mode", "local");
+                        if (string.IsNullOrEmpty(subitemDefaultValue))
+                            subitemDefaultValue = "false";
+                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
+                        if (!string.IsNullOrEmpty(subitemValueField))
+                            InsertProperty("valuefield", subitemValueField);
+                        if (!string.IsNullOrEmpty(subitemDisplayField))
+                            InsertProperty("displayfield", subitemDisplayField);
+                    }
+                    else
+                    {
+                        // Dynamic Combo is filled
+                        var comboNode = JTokenNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("api_store", new JObject()).FirstNode;
+                        InsertProperty("api", subitemApi);
+                        InsertProperty("method", "list");
+                        InsertProperty("version", 1);
+                        InsertProperty("root", subitemRoot);
+                        if (subitemValueFieldUnique)
+                        {
+                            InsertProperty("idProperty", subitemValueField);
+                        }
+                        else if (subitemDisplayFieldUnique)
+                        {
+                            InsertProperty("idProperty", subitemDisplayField);
+                        }
+                        var storeNode = JTokenNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("fields", new JArray()).FirstNode;
+                        if (!string.IsNullOrEmpty(subitemValueField))
+                            InsertJToken(new JValue(subitemValueField));
+                        if (!string.IsNullOrEmpty(subitemDisplayField))
+                            InsertJToken(new JValue(subitemDisplayField));
+                        JTokenNode = storeNode;
+                        JTokenNode = (JTokenTreeNode)InsertProperty("baseParams", new JObject()).FirstNode;
+                        foreach (var item in subitemBaseParams)
+                        {
+                            InsertProperty(item.name, item.value);
+                        }
+
+                        JTokenNode = comboNode;
+                        InsertProperty("mode", "remote");
+                        if (string.IsNullOrEmpty(subitemDefaultValue))
+                            subitemDefaultValue = "false";
+                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
+                        if (!string.IsNullOrEmpty(subitemValueField))
+                            InsertProperty("valuefield", subitemValueField);
+                        if (!string.IsNullOrEmpty(subitemDisplayField))
+                            InsertProperty("displayfield", subitemDisplayField);
+                    }
                 }
 
                 if (subitemDisabled) InsertProperty("disabled", subitemDisabled);
