@@ -299,7 +299,7 @@ namespace ZTn.Json.Editor.Forms
                 var subitemApi = newSubitem.Api;
                 var subitemValueField = newSubitem.ValueField;
                 var subitemDisplayField = newSubitem.DisplayField;
-                var subitemStaticCombo  = newSubitem.StaticCombo;
+                var subitemStaticCombo = newSubitem.StaticCombo;
                 var subitemValueFieldUnique = newSubitem.ValueFieldIsUnique;
                 var subitemDisplayFieldUnique = newSubitem.DisplayFieldIsUnique;
 
@@ -331,7 +331,7 @@ namespace ZTn.Json.Editor.Forms
                         InsertProperty("mode", "local");
                         if (string.IsNullOrEmpty(subitemDefaultValue))
                             subitemDefaultValue = "false";
-                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
+                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue)); //TODO: fix this. Should use "Editable"
                         if (!string.IsNullOrEmpty(subitemValueField))
                             InsertProperty("valuefield", subitemValueField);
                         if (!string.IsNullOrEmpty(subitemDisplayField))
@@ -371,7 +371,7 @@ namespace ZTn.Json.Editor.Forms
                         InsertProperty("mode", "remote");
                         if (string.IsNullOrEmpty(subitemDefaultValue))
                             subitemDefaultValue = "false";
-                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue));
+                        InsertProperty("editable", Convert.ToBoolean(subitemDefaultValue)); //TODO: fix this. Should use "Editable"
                         if (!string.IsNullOrEmpty(subitemValueField))
                             InsertProperty("valuefield", subitemValueField);
                         if (!string.IsNullOrEmpty(subitemDisplayField))
@@ -393,6 +393,10 @@ namespace ZTn.Json.Editor.Forms
                 if (!string.IsNullOrEmpty(subitemDescription))
                 {
                     InsertProperty("desc", subitemDescription);
+                }
+                if (!string.IsNullOrEmpty(subitemDefaultValue))
+                {
+                    InsertProperty("defaultValue", subitemDefaultValue);
                 }
                 InsertProperty("key", subitemKey);
 

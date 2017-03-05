@@ -246,20 +246,25 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var json = File.ReadAllText(config);
                 list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+
+                if (list == null || list.items.Count == 0)
+                {
+                    json = Properties.Settings.Default.Packages;
+                    if (!string.IsNullOrEmpty(json))
+                    {
+                        list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+                    }
+                    else
+                    {
+                        list = new Package();
+                    }
+                }
+            }
+            else
+            {
+                list = new Package();
             }
 
-            if (list == null || list.items.Count == 0)
-            {
-                var json = Properties.Settings.Default.Packages;
-                if (!string.IsNullOrEmpty(json))
-                {
-                    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-                }
-                else
-                {
-                    list = new Package();
-                }
-            }
             groupBoxItem.Enabled = false;
         }
 
@@ -281,32 +286,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (info["maintainer"] == "...")
                     info["maintainer"] = Environment.UserName;
 
-                foreach (var control in groupBoxPackage.Controls)
-                {
-                    var textBox = control as TextBox;
-                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
-                    {
-                        var keys = textBox.Tag.ToString().Split(';');
-                        var key = keys[0].Substring(3);
-                        if (info.Keys.Contains(key))
-                            textBox.Text = info[key];
-                        else
-                            textBox.Text = "";
-                    }
-                    var checkBox = control as CheckBox;
-                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
-                    {
-                        var keys = checkBox.Tag.ToString().Split(';');
-                        var key = keys[0].Substring(3);
-                        if (info.Keys.Contains(key))
-                            checkBox.Checked = info[key] == "yes";
-                        else
-                            checkBox.Checked = false;
-                    }
-                }
-
-                LoadPictureBox(pictureBoxPkg_256, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG")));
-                LoadPictureBox(pictureBoxPkg_72, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG")));
+                FillInfoScreen();
 
                 groupBoxPackage.Enabled = false;
 
@@ -326,6 +306,44 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 MessageBox.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void FillInfoScreen()
+        {
+            foreach (var control in groupBoxPackage.Controls)
+            {
+                var textBox = control as TextBox;
+                if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                {
+                    var keys = textBox.Tag.ToString().Split(';');
+                    var key = keys[0].Substring(3);
+                    if (info != null && info.Keys.Contains(key))
+                        textBox.Text = info[key];
+                    else
+                        textBox.Text = "";
+                }
+                var checkBox = control as CheckBox;
+                if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                {
+                    var keys = checkBox.Tag.ToString().Split(';');
+                    var key = keys[0].Substring(3);
+                    if (info != null && info.Keys.Contains(key))
+                        checkBox.Checked = info[key] == "yes";
+                    else
+                        checkBox.Checked = false;
+                }
+            }
+
+            if (string.IsNullOrEmpty(PackageRootPath))
+            {
+                LoadPictureBox(pictureBoxPkg_256, null);
+                LoadPictureBox(pictureBoxPkg_72, null);
+            }
+            else
+            {
+                LoadPictureBox(pictureBoxPkg_256, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG")));
+                LoadPictureBox(pictureBoxPkg_72, LoadImageFromFile(Path.Combine(PackageRootPath, "PACKAGE_ICON.PNG")));
             }
         }
 
@@ -452,6 +470,8 @@ namespace BeatificaBytes.Synology.Mods
                 imageName = Path.Combine(PackageRootPath, "PACKAGE_ICON_256.PNG");
                 SavePkgImage(pictureBoxPkg_256, imageName);
             }
+
+            dirty = false;
         }
 
         // Create the SPK
@@ -554,16 +574,26 @@ namespace BeatificaBytes.Synology.Mods
                 if (state == State.Edit)
                     candidate.Value.guid = current.Value.guid;
 
-                CleanupPreviousItem(current, candidate);
-                RenamePreviousItem(current, candidate);
-                SaveItemDetails(candidate);
+                bool succeed;
+                succeed = CleanupPreviousItem(current, candidate);
+                if (succeed)
+                    succeed = RenamePreviousItem(current, candidate);
 
-                SaveItemsConfig();
+                if (succeed)
+                {
+                    SaveItemDetails(candidate);
 
-                scriptValue = null;
-                runnerValue = null;
-                webAppIndex = null;
-                webAppFolder = null;
+                    SaveItemsConfig();
+
+                    scriptValue = null;
+                    runnerValue = null;
+                    webAppIndex = null;
+                    webAppFolder = null;
+                }
+                else
+                {
+                    MessageBox.Show("The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
 
@@ -632,52 +662,86 @@ namespace BeatificaBytes.Synology.Mods
                 e.Cancel = false;
         }
 
-        private void RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        private bool RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
         {
+            bool succeed = true;
+
             var cleanedCurrent = Helper.CleanUpText(current.Value.title);
             var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
-            var answer = DialogResult.Yes;
 
             if (cleanedCurrent != null)
             {
                 //Rename a Script
                 if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
                 {
-                    RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+                    succeed = RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
                 }
 
                 //Rename a WebApp 
                 if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
                 {
-                    var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-                    if (Directory.Exists(existingWebAppFolder))
+                    succeed = RenameWebApp(candidate.Value.title, cleanedCurrent, cleanedCandidate);
+                }
+            }
+
+            return succeed;
+        }
+
+        private bool RenameWebApp(string candidate, string cleanedCurrent, string cleanedCandidate)
+        {
+            bool succeed = false;
+            var answer = DialogResult.Yes;
+
+            var existingWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+            if (Directory.Exists(existingWebAppFolder))
+            {
+                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
+                if (Directory.Exists(targetWebAppFolder))
+                {
+                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (answer == DialogResult.Yes)
                     {
-                        var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
-                        if (Directory.Exists(targetWebAppFolder))
+                        var ex = Helper.DeleteDirectory(targetWebAppFolder);
+                        if (ex != null)
                         {
-                            answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            if (answer == DialogResult.Yes)
-                            {
-                                Helper.DeleteDirectory(targetWebAppFolder);
-                            }
+                            MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", candidate, ex.Message));
+                            answer = DialogResult.Abort;
                         }
-                        if (answer == DialogResult.Yes)
+                    }
+                }
+                if (answer == DialogResult.Yes)
+                {
+                    bool retry = true;
+                    while (retry)
+                    {
+                        try
                         {
                             Directory.Move(existingWebAppFolder, targetWebAppFolder);
+                            retry = false;
+                            succeed = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message == "The process cannot access the file because it is being used by another process.")
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your WebApp '{0}' cannot be renamed because its folder is in use.\nDo you want to retry (close first any other application using that folder)?", candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                retry = (answer == DialogResult.Yes);
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                succeed = true;
+            }
+
+            return succeed;
         }
 
-        private void CleanupPreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        private bool CleanupPreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
         {
-            if (current.Key != null)
-            {
-                list.items.Remove(current.Key);
-                BindData(list);
-                DeleteItemPictures(current.Value.icon);
-            }
+            bool succeed = true;
 
             var cleanedCurrent = Helper.CleanUpText(current.Value.title);
             var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
@@ -685,14 +749,23 @@ namespace BeatificaBytes.Synology.Mods
             //Clean Up a WebApp previously defined if replaced by another type
             if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType != (int)UrlType.WebApp)
             {
-                DeleteWebApp(cleanedCurrent);
+                succeed = DeleteWebApp(cleanedCurrent);
             }
 
             //Clean Up a Script previously defined if replaced by another type
             if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType != (int)UrlType.Script)
             {
-                DeleteScript(cleanedCurrent);
+                succeed = DeleteScript(cleanedCurrent);
             }
+
+            if (succeed && current.Key != null)
+            {
+                list.items.Remove(current.Key);
+                BindData(list);
+                DeleteItemPictures(current.Value.icon);
+            }
+
+            return succeed;
         }
 
         private void SaveItemDetails(KeyValuePair<string, AppsData> candidate)
@@ -717,8 +790,9 @@ namespace BeatificaBytes.Synology.Mods
             DisplayItem(candidate);
         }
 
-        private void RenameScript(string packageName, string cleanedCurrent, string cleanedCandidate)
+        private bool RenameScript(string candidate, string cleanedCurrent, string cleanedCandidate)
         {
+            bool succeed = false;
             var answer = DialogResult.Yes;
 
             var current = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
@@ -727,31 +801,91 @@ namespace BeatificaBytes.Synology.Mods
                 var target = Path.Combine(PackageRootPath, @"package\ui", cleanedCandidate);
                 if (Directory.Exists(target))
                 {
-                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], packageName), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    answer = MessageBox.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (answer == DialogResult.Yes)
                     {
-                        Helper.DeleteDirectory(target);
+                        var ex = Helper.DeleteDirectory(target);
+                        if (ex != null)
+                        {
+                            MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", target, ex.Message));
+                            answer = DialogResult.Abort;
+                        }
                     }
                 }
                 if (answer == DialogResult.Yes)
                 {
-                    Directory.Move(current, target);
+                    bool retry = true;
+                    while (retry)
+                    {
+                        try
+                        {
+                            Directory.Move(current, target);
+                            retry = false;
+                            succeed = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.Message == "The process cannot access the file because it is being used by another process.")
+                            {
+                                answer = MessageBox.Show(this, string.Format("Your WevApp '{0}' cannot be renamed because its folder is in use.\nDo you want to retry (close first any other application using that folder)?", candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                retry = (answer == DialogResult.Yes);
+                            }
+                        }
+                    }
                 }
             }
+            else
+            {
+                succeed = true;
+            }
+
+            return succeed;
         }
 
-        private void DeleteScript(string cleanedCurrent)
+        private bool DeleteScript(string cleanedCurrent)
         {
-            var target = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
-            if (File.Exists(target))
-                Helper.DeleteDirectory(target);
+            bool succeed = false;
+            var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
+            if (File.Exists(targetScript))
+            {
+                var ex = Helper.DeleteDirectory(targetScript);
+                if (ex != null)
+                {
+                    MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", targetScript, ex.Message));
+                }
+                else
+                {
+                    succeed = true;
+                }
+            }
+            else
+            {
+                succeed = true;
+            }
+            return succeed;
         }
 
-        private void DeleteWebApp(string cleanedCurrent)
+        private bool DeleteWebApp(string cleanedCurrent)
         {
+            bool succeed = false;
             var targetWebAppFolder = Path.Combine(PackageRootPath, @"package\ui", cleanedCurrent);
             if (Directory.Exists(targetWebAppFolder))
-                Helper.DeleteDirectory(targetWebAppFolder);
+            {
+                var ex = Helper.DeleteDirectory(targetWebAppFolder);
+                if (ex != null)
+                {
+                    MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", targetWebAppFolder, ex.Message));
+                }
+                else
+                {
+                    succeed = true;
+                }
+            }
+            else
+            {
+                succeed = true;
+            }
+            return succeed;
         }
 
         private void ChangeItemType(int selectedIndex)
@@ -889,8 +1023,9 @@ namespace BeatificaBytes.Synology.Mods
             return result;
         }
 
-        private void CreateWebApp(KeyValuePair<string, AppsData> current)
+        private bool CreateWebApp(KeyValuePair<string, AppsData> current)
         {
+            bool succeed = true;
             if (webAppIndex != null && webAppFolder != null)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
@@ -898,15 +1033,28 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                 {
-                    Helper.DeleteDirectory(targetWebAppFolder);
+                    var ex = Helper.DeleteDirectory(targetWebAppFolder);
+                    if (ex != null)
+                    {
+                        MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", targetWebAppFolder, ex.Message));
+                    }
+                    else
+                    {
+                        succeed = false;
+                    }
                 }
 
-                Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
+                if (succeed)
+                    Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
             }
+
+            return succeed; //TODO: Handle this return value
         }
 
-        private void CreateScript(KeyValuePair<string, AppsData> current, string script, string runner)
+        private bool CreateScript(KeyValuePair<string, AppsData> current, string script, string runner)
         {
+            bool succeed = true;
+
             if (script != null)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
@@ -916,21 +1064,31 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (Directory.Exists(target))
                 {
-                    Helper.DeleteDirectory(target);
+                    var ex = Helper.DeleteDirectory(target);
+                    if (ex != null)
+                    {
+                        MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", target, ex.Message));
+                        succeed = false;
+                    }
                 }
 
-                Directory.CreateDirectory(target);
+                if (succeed)
+                {
+                    Directory.CreateDirectory(target);
 
-                // Create sh script (ANSI) to be executed by the php runner script
-                using (TextWriter text = new StreamWriter(targetScript, true, Encoding.GetEncoding(1252)))
-                {
-                    text.Write(script);
-                }
-                using (TextWriter text = new StreamWriter(targetRunner, true, Encoding.GetEncoding(1252)))
-                {
-                    text.Write(runner);
+                    // Create sh script (ANSI) to be executed by the php runner script
+                    using (TextWriter text = new StreamWriter(targetScript, true, Encoding.GetEncoding(1252)))
+                    {
+                        text.Write(script);
+                    }
+                    using (TextWriter text = new StreamWriter(targetRunner, true, Encoding.GetEncoding(1252)))
+                    {
+                        text.Write(runner);
+                    }
                 }
             }
+
+            return succeed; //TODO: handle this return value
         }
 
         private void SaveItemsConfig()
@@ -1049,7 +1207,18 @@ namespace BeatificaBytes.Synology.Mods
             textBoxItem.Text = urlText;
             checkBoxAllUsers.Checked = users;
             checkBoxMultiInstance.Checked = show ? item.Value.allowMultiInstance : false;
-            comboBoxItemType.SelectedIndex = show ? item.Value.itemType : (int)UrlType.Url;
+
+            if (show)
+            {
+                if (!Enum.IsDefined(typeof(UrlType), item.Value.itemType))
+                {
+                    MessageBox.Show("The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    item.Value.itemType = (int)UrlType.Script;
+                }
+                comboBoxItemType.SelectedIndex = item.Value.itemType;
+            }
+            else
+                comboBoxItemType.SelectedIndex = (int)UrlType.Url;
 
             EnableItemDetails();
 
@@ -1318,6 +1487,9 @@ namespace BeatificaBytes.Synology.Mods
             var size = picture.Tag.ToString().Split(';')[1];
 
             openFileDialog4Mods.Title = string.Format("Pick a png, jpg or bmp of {0}x{0}", size);
+            openFileDialog4Mods.Filter = "jpg (*.jpg)|*.jpg|png (*.png)|*.png|bmp (*.bmp)|*.bmp";
+            openFileDialog4Mods.FilterIndex = 2;
+            openFileDialog4Mods.FileName = null;
             DialogResult result = openFileDialog4Mods.ShowDialog(this);
             if (result == DialogResult.OK)
             {
@@ -1337,6 +1509,9 @@ namespace BeatificaBytes.Synology.Mods
                 var size = picture.Tag.ToString().Split(';')[1];
 
                 openFileDialog4Mods.Title = string.Format("Pick a png, jpg or bmp of {0}x{0}", size);
+                openFileDialog4Mods.Filter = "jpg (*.jpg)|*.jpg|png (*.png)|*.png|bmp (*.bmp)|*.bmp";
+                openFileDialog4Mods.FilterIndex = 2;
+                openFileDialog4Mods.FileName = null;
                 DialogResult result = openFileDialog4Mods.ShowDialog(this);
                 if (result == DialogResult.OK)
                 {
@@ -1776,17 +1951,13 @@ namespace BeatificaBytes.Synology.Mods
         }
         private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
         {
-            Uri outUri;
-            //if (!Uri.IsWellFormedUriString(textBox.Text, UriKind.Absolute))
-            if (!(Uri.TryCreate(textBox.Text, UriKind.Absolute, out outUri)
-            && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps)))
+            if (!Helper.IsValidUrl(textBox.Text))
             {
                 e.Cancel = true;
                 textBox.Select(0, textBox.Text.Length);
                 errorProvider.SetError(textBox, "You didn't type a well formed http(s) absolute Url.");
             }
         }
-
 
         // Reset errors possibly displayed on any Control
         private void ResetValidateChildren()
@@ -1814,6 +1985,23 @@ namespace BeatificaBytes.Synology.Mods
                     var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
                     var targetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.sh");
                     var targetRunner = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName, "mods.php");
+                    var target = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName);
+
+                    //Upgrade old script versions
+                    if (!Directory.Exists(target))
+                    {
+                        var oldTargetScript = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".sh");
+                        var oldTargetRunner = Path.Combine(PackageRootPath, @"package\ui", cleanedScriptName + ".php");
+                        if (File.Exists(oldTargetScript) && File.Exists(oldTargetRunner))
+                        {
+                            Directory.CreateDirectory(target);
+                            File.Move(oldTargetRunner, targetRunner);
+                            File.Move(oldTargetScript, targetScript);
+
+                            current.Value.url = targetRunner;
+                        }
+                    }
+
                     EditScript(targetScript, targetRunner);
                     break;
             }
@@ -1868,12 +2056,19 @@ namespace BeatificaBytes.Synology.Mods
 
                     if (response == DialogResult.Yes)
                     {
-                        SaveItemsConfig();
-                        SavePackageInfo();
+                        if (ValidateChildren())
+                        {
+                            SaveItemsConfig();
+                            SavePackageInfo();
 
-                        SavePackageSettings();
-                        CreateRecentsMenu();
-                        dirty = false;
+                            SavePackageSettings();
+                            CreateRecentsMenu();
+                            dirty = false;
+                        }
+                        else
+                        {
+                            response = DialogResult.Cancel;
+                        }
                     }
                 }
             }
@@ -1890,14 +2085,7 @@ namespace BeatificaBytes.Synology.Mods
             Properties.Settings.Default.PackageRoot = PackageRootPath;
             if (Properties.Settings.Default.Recents != null)
             {
-                for (var item = 0; item < Properties.Settings.Default.Recents.Count; item++)
-                {
-                    if (Properties.Settings.Default.Recents[item] == PackageRootPath)
-                    {
-                        Properties.Settings.Default.Recents.RemoveAt(item);
-                        Properties.Settings.Default.RecentsName.RemoveAt(item);
-                    }
-                }
+                RemoveRecentPath(PackageRootPath);
                 if (Properties.Settings.Default.Recents.Count >= 5)
                 {
                     Properties.Settings.Default.Recents.RemoveAt(0);
@@ -1915,6 +2103,18 @@ namespace BeatificaBytes.Synology.Mods
             Properties.Settings.Default.Save();
         }
 
+        private void RemoveRecentPath(string path)
+        {
+            for (var item = 0; item < Properties.Settings.Default.Recents.Count; item++)
+            {
+                if (Properties.Settings.Default.Recents[item] == path)
+                {
+                    Properties.Settings.Default.Recents.RemoveAt(item);
+                    Properties.Settings.Default.RecentsName.RemoveAt(item);
+                }
+            }
+        }
+
         private bool CheckChanges()
         {
             bool dirty = false;
@@ -1928,18 +2128,23 @@ namespace BeatificaBytes.Synology.Mods
                         var keys = textBox.Tag.ToString().Split(';');
                         var key = keys[0].Substring(3);
 
-                        dirty = textBox.Text != info[key];
+                        if (info.ContainsKey(key))
+                        {
+                            dirty = textBox.Text != info[key];
 
-                        if (dirty)
-                            break;
+                            if (dirty)
+                                break;
+                        }
                     }
                 }
 
             return dirty;
         }
 
-        private void ResetPackage()
+        private bool ResetPackage()
         {
+            bool succeed = true;
+
             if (info != null)
             {
                 var answer = MessageBox.Show(this, "Do you really want to reset the complete Package to its defaults?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
@@ -1952,9 +2157,17 @@ namespace BeatificaBytes.Synology.Mods
                         else
                         {
                             if (Directory.Exists(PackageRootPath))
-                                Helper.DeleteDirectory(PackageRootPath);
+                            {
+                                var ex = Helper.DeleteDirectory(PackageRootPath);
+                                if (ex != null)
+                                {
+                                    MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message));
+                                    succeed = false;
+                                }
+                            }
 
-                            NewPackage(PackageRootPath);
+                            if (succeed)
+                                NewPackage(PackageRootPath);
                         }
                     }
                     catch
@@ -1967,6 +2180,8 @@ namespace BeatificaBytes.Synology.Mods
             {
                 MessageBox.Show(this, "There is no Package loaded.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
+            return succeed; //TODO: Handle this return value;
         }
 
         private void NewPackage(string path = null)
@@ -1988,11 +2203,11 @@ namespace BeatificaBytes.Synology.Mods
                 if (answer == DialogResult.Yes)
                     OpenPackage(path);
             }
-            else if (result == DialogResult.Cancel)
+            else if (result == DialogResult.Abort)
             {
                 MessageBox.Show(this, "This folder already contains some Files. Please, select an empty Folder.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-            else
+            else if (result != DialogResult.Cancel && result != DialogResult.Abort)
             {
                 PackageRootPath = path;
 
@@ -2045,8 +2260,10 @@ namespace BeatificaBytes.Synology.Mods
             OpenPackage();
         }
 
-        private void OpenPackage(string path = null)
+        private bool OpenPackage(string path = null)
         {
+            bool succeed = true;
+
             DialogResult result = DialogResult.Cancel;
             if (path == null)
             {
@@ -2067,9 +2284,15 @@ namespace BeatificaBytes.Synology.Mods
                 if (result != DialogResult.Yes)
                 {
                     result = DialogResult.Cancel;
+                    succeed = false;
                 }
             }
-            if (result != DialogResult.Cancel)
+            else if (result == DialogResult.Abort)
+            {
+                MessageBox.Show(this, "The selected Folder does not contain a valid Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                succeed = false;
+            }
+            if (result != DialogResult.Cancel && result != DialogResult.Abort)
             {
                 PackageRootPath = path;
 
@@ -2090,10 +2313,8 @@ namespace BeatificaBytes.Synology.Mods
                 BindData(list);
                 DisplayItem();
             }
-            else
-            {
-                MessageBox.Show(this, "The selected Folder does not contain a valid Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
+            return succeed;
         }
 
         private void CopyPackagingBinaries()
@@ -2167,7 +2388,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (content.Count > 0)
                     {
                         // Folder contains something else than a package
-                        createNewPackage = DialogResult.Cancel;
+                        createNewPackage = DialogResult.Abort;
                     }
                     else
                     {
@@ -2191,23 +2412,30 @@ namespace BeatificaBytes.Synology.Mods
 
         private void generateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GeneratePackage();
+            if (ValidateChildren())
+                GeneratePackage();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SavePackage() != DialogResult.Cancel)
+            if (SavePackage() == DialogResult.Yes)
                 MessageBox.Show(this, "Package saved.", "Notification");
-            else
-                MessageBox.Show(this, "Nothing to save.", "Notification");
         }
 
         private void MenuItemOpenRecent_ClickHandler(object sender, EventArgs e)
         {
             ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
             String path = clickedItem.Tag.ToString();
-            SavePackage();
-            OpenPackage(path);
+            if (SavePackage() != DialogResult.Cancel)
+            {
+                var succeed = OpenPackage(path);
+                if (!succeed)
+                {
+                    RemoveRecentPath(path);
+                    Properties.Settings.Default.Save();
+                    CreateRecentsMenu();
+                }
+            }
         }
 
         private void scriptRunnerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2262,13 +2490,20 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var result = MessageBox.Show(this, "Are you sure you want to delete your wizard?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
-                    Helper.DeleteDirectory(wizard);
-                wizardExist = false;
+                {
+                    wizardExist = false;
+                    var ex = Helper.DeleteDirectory(wizard);
+                    if (ex != null)
+                    {
+                        MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", wizard, ex.Message));
+                        wizardExist = true;
+                    }
+                }
             }
             else
             {
                 Directory.CreateDirectory(wizard);
-                MessageBox.Show(this, "You can know Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, "You can now Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 wizardExist = true;
             }
             EnableItemDetails();
@@ -2329,28 +2564,6 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
             }
-        }
-
-        private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var info = new ProcessStartInfo("https://mods.codeplex.com/documentation");
-            info.UseShellExecute = true;
-            Process.Start(info);
-        }
-
-        private void supportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var info = new ProcessStartInfo("https://mods.codeplex.com/discussions");
-            info.UseShellExecute = true;
-            Process.Start(info);
-        }
-
-
-        private void packeDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/");
-            info.UseShellExecute = true;
-            Process.Start(info);
         }
 
         private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
@@ -2436,6 +2649,107 @@ namespace BeatificaBytes.Synology.Mods
         private void buttonAdvanced_Click(object sender, EventArgs e)
         {
             MessageBox.Show(this, "Coming soon: Support for more optional Fields", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(string.IsNullOrEmpty(PackageRootPath)))
+                Process.Start(PackageRootPath);
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(PackageRootPath) && MessageBox.Show("Are you sure that ou want to delete this Package ? This operation cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                RemoveRecentPath(PackageRootPath);
+                Properties.Settings.Default.Save();
+                CreateRecentsMenu();
+                var ex = Helper.DeleteDirectory(PackageRootPath);
+                if (ex != null)
+                {
+                    MessageBox.Show(string.Format("A Fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+                CloseCurrentPackage();
+            }
+        }
+
+        private void CloseCurrentPackage()
+        {
+            PackageRootPath = "";
+            textBoxPackage.Focus();
+            ResetValidateChildren(); // Reset Error Validation on all controls
+
+            info = null;
+            list = new Package();
+            FillInfoScreen();
+            BindData(list);
+            DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloseCurrentPackage();
+        }
+
+        private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://mods.codeplex.com/documentation");
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void supportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://mods.codeplex.com/discussions");
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void packeDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/");
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void labelMaintainerUrl_Click(object sender, EventArgs e)
+        {
+            if (Helper.IsValidUrl(textBoxMaintainerUrl.Text))
+            {
+                var info = new ProcessStartInfo(textBoxMaintainerUrl.Text);
+                info.UseShellExecute = true;
+                Process.Start(info);
+            }
+        }
+
+        private void labelPublisherUrl_Click(object sender, EventArgs e)
+        {
+            if (Helper.IsValidUrl(textBoxPublisherUrl.Text))
+            {
+                var info = new ProcessStartInfo(textBoxPublisherUrl.Text);
+                info.UseShellExecute = true;
+                Process.Start(info);
+            }
+        }
+
+        private void labelHelpUrl_Click(object sender, EventArgs e)
+        {
+            if (Helper.IsValidUrl(textBoxHelpUrl.Text))
+            {
+                var info = new ProcessStartInfo(textBoxHelpUrl.Text);
+                info.UseShellExecute = true;
+                Process.Start(info);
+            }
+        }
+
+        private void labelReportUrl_Click(object sender, EventArgs e)
+        {
+            if (Helper.IsValidUrl(TextBoxReportUrl.Text))
+            {
+                var info = new ProcessStartInfo(TextBoxReportUrl.Text);
+                info.UseShellExecute = true;
+                Process.Start(info);
+            }
         }
     }
 }

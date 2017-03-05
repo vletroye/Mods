@@ -70,26 +70,51 @@ namespace BeatificaBytes.Synology.Mods
             return string.Format("{0}.{1}.{2:0000}", versions[0], versions[1], minor);
         }
 
-        internal static void DeleteDirectory(string path)
+        internal static Exception DeleteDirectory(string path)
         {
-            foreach (string directory in Directory.GetDirectories(path))
+            Exception succeed = null;
+
+            if (path == null) path = "";
+
+            if (!Directory.Exists(path))
             {
-                DeleteDirectory(directory);
+                succeed = new FileNotFoundException(string.Format("'{0}' does not exist.", path), path);
+            }
+            else
+            {
+                foreach (string directory in Directory.GetDirectories(path))
+                {
+                    succeed = DeleteDirectory(directory);
+                    if (succeed != null)
+                        break;
+                }
+
+                if (succeed == null)
+                {
+                    try
+                    {
+                        try
+                        {
+                            Directory.Delete(path, true);
+                            while (Directory.Exists(path)) { }
+                        }
+                        catch (IOException)
+                        {
+                            Directory.Delete(path, true);
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            Directory.Delete(path, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        succeed = ex;
+                    }
+                }
             }
 
-            try
-            {
-                Directory.Delete(path, true);
-                while (Directory.Exists(path)) { }
-            }
-            catch (IOException)
-            {
-                Directory.Delete(path, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Directory.Delete(path, true);
-            }
+            return succeed;
         }
 
         internal static void CopyDirectory(string strSource, string strDestination)
@@ -197,7 +222,6 @@ namespace BeatificaBytes.Synology.Mods
                 result = DialogResult.Cancel;
 
             return result;
-
         }
 
         public static Color IntToColor(int rgb)
@@ -219,6 +243,13 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             return result;
+        }
+
+        internal static bool IsValidUrl(string Url)
+        {
+            Uri outUri;
+            return (Uri.TryCreate(Url, UriKind.Absolute, out outUri)
+                        && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps));
         }
     }
 }

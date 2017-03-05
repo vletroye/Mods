@@ -58,6 +58,20 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBox_16 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
+            this.buttonAdd = new System.Windows.Forms.Button();
+            this.checkBoxAllUsers = new System.Windows.Forms.CheckBox();
+            this.buttonEdit = new System.Windows.Forms.Button();
+            this.buttonDelete = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
+            this.checkBoxSize = new System.Windows.Forms.CheckBox();
+            this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
+            this.comboBoxTransparency = new System.Windows.Forms.ComboBox();
+            this.textBoxPublisherUrl = new System.Windows.Forms.TextBox();
+            this.textBoxHelpUrl = new System.Windows.Forms.TextBox();
+            this.TextBoxReportUrl = new System.Windows.Forms.TextBox();
+            this.textBoxFirmware = new System.Windows.Forms.TextBox();
+            this.buttonAdvanced = new System.Windows.Forms.Button();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -69,21 +83,17 @@ namespace BeatificaBytes.Synology.Mods
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
+            this.labelFirmware = new System.Windows.Forms.Label();
+            this.checkBoxBeta = new System.Windows.Forms.CheckBox();
+            this.labelHelpUrl = new System.Windows.Forms.Label();
+            this.labelReportUrl = new System.Windows.Forms.Label();
+            this.labelPublisherUrl = new System.Windows.Forms.Label();
             this.labelPublisher = new System.Windows.Forms.Label();
             this.listViewItems = new System.Windows.Forms.ListView();
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
-            this.buttonAdd = new System.Windows.Forms.Button();
-            this.checkBoxAllUsers = new System.Windows.Forms.CheckBox();
-            this.buttonEdit = new System.Windows.Forms.Button();
-            this.buttonDelete = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonSave = new System.Windows.Forms.Button();
-            this.checkBoxSize = new System.Windows.Forms.CheckBox();
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
-            this.checkBoxMultiInstance = new System.Windows.Forms.CheckBox();
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
-            this.comboBoxTransparency = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -93,10 +103,13 @@ namespace BeatificaBytes.Synology.Mods
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addWizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptRunnerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.startScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.postInstallScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,6 +117,7 @@ namespace BeatificaBytes.Synology.Mods
             this.postUninstallScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preUpgradeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.postUpgradeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.wizardInstallUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wizardUninstallUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wizardUpgradeUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,22 +126,11 @@ namespace BeatificaBytes.Synology.Mods
             this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.labelPublisherUrl = new System.Windows.Forms.Label();
-            this.textBoxPublisherUrl = new System.Windows.Forms.TextBox();
-            this.labelHelpUrl = new System.Windows.Forms.Label();
-            this.textBoxHelpUrl = new System.Windows.Forms.TextBox();
-            this.labelReportUrl = new System.Windows.Forms.Label();
-            this.TextBoxReportUrl = new System.Windows.Forms.TextBox();
-            this.checkBoxBeta = new System.Windows.Forms.CheckBox();
-            this.labelFirmware = new System.Windows.Forms.Label();
-            this.textBoxFirmware = new System.Windows.Forms.TextBox();
             this.folderBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
             this.webpageBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
-            this.buttonAdvanced = new System.Windows.Forms.Button();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -485,6 +488,198 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
             this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
             // 
+            // buttonAdd
+            // 
+            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonAdd.Location = new System.Drawing.Point(6, 318);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(75, 23);
+            this.buttonAdd.TabIndex = 8;
+            this.buttonAdd.Text = "Add";
+            this.toolTip4Mods.SetToolTip(this.buttonAdd, "Add a new item in the package.");
+            this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAddItem_Click);
+            // 
+            // checkBoxAllUsers
+            // 
+            this.checkBoxAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxAllUsers.AutoSize = true;
+            this.checkBoxAllUsers.Location = new System.Drawing.Point(20, 267);
+            this.checkBoxAllUsers.Name = "checkBoxAllUsers";
+            this.checkBoxAllUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxAllUsers.Size = new System.Drawing.Size(85, 17);
+            this.checkBoxAllUsers.TabIndex = 7;
+            this.checkBoxAllUsers.Text = "For All Users";
+            this.toolTip4Mods.SetToolTip(this.checkBoxAllUsers, "If you select this item, all users defined on your NAS will have access to the it" +
+        "em.\r\nIf you don\'t select this item, only the user who installed the package will" +
+        " have access to the item.");
+            this.checkBoxAllUsers.UseVisualStyleBackColor = true;
+            // 
+            // buttonEdit
+            // 
+            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonEdit.Location = new System.Drawing.Point(168, 318);
+            this.buttonEdit.Name = "buttonEdit";
+            this.buttonEdit.Size = new System.Drawing.Size(75, 23);
+            this.buttonEdit.TabIndex = 10;
+            this.buttonEdit.Text = "Edit";
+            this.toolTip4Mods.SetToolTip(this.buttonEdit, "Edit the item currently selected in the list above.");
+            this.buttonEdit.UseVisualStyleBackColor = true;
+            this.buttonEdit.Click += new System.EventHandler(this.buttonEditItem_Click);
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonDelete.Location = new System.Drawing.Point(87, 318);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(75, 23);
+            this.buttonDelete.TabIndex = 9;
+            this.buttonDelete.Text = "Delete";
+            this.toolTip4Mods.SetToolTip(this.buttonDelete, "Delete the item currently selected in the list above.");
+            this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDeleteItem_Click);
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCancel.CausesValidation = false;
+            this.buttonCancel.Location = new System.Drawing.Point(249, 318);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+            this.buttonCancel.TabIndex = 11;
+            this.buttonCancel.Text = "Cancel";
+            this.toolTip4Mods.SetToolTip(this.buttonCancel, "Cancel all changes done on the item currently edited.");
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancelItem_Click);
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSave.Location = new System.Drawing.Point(330, 318);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(75, 23);
+            this.buttonSave.TabIndex = 12;
+            this.buttonSave.Text = "Save";
+            this.toolTip4Mods.SetToolTip(this.buttonSave, "Save all changes done on the item currently edited.\r\nNB.: This is not saving the " +
+        "changes done in the \'Package Information\' pane.");
+            this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSaveItem_Click);
+            // 
+            // checkBoxSize
+            // 
+            this.checkBoxSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxSize.AutoSize = true;
+            this.checkBoxSize.Checked = true;
+            this.checkBoxSize.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSize.Location = new System.Drawing.Point(619, 122);
+            this.checkBoxSize.Name = "checkBoxSize";
+            this.checkBoxSize.Size = new System.Drawing.Size(131, 17);
+            this.checkBoxSize.TabIndex = 2;
+            this.checkBoxSize.Text = "Same Icon for all sizes";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSize, resources.GetString("checkBoxSize.ToolTip"));
+            this.checkBoxSize.UseVisualStyleBackColor = true;
+            this.checkBoxSize.CheckedChanged += new System.EventHandler(this.checkBoxSize_CheckedChanged);
+            // 
+            // checkBoxMultiInstance
+            // 
+            this.checkBoxMultiInstance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxMultiInstance.AutoSize = true;
+            this.checkBoxMultiInstance.Checked = true;
+            this.checkBoxMultiInstance.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMultiInstance.Location = new System.Drawing.Point(13, 244);
+            this.checkBoxMultiInstance.Name = "checkBoxMultiInstance";
+            this.checkBoxMultiInstance.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxMultiInstance.Size = new System.Drawing.Size(92, 17);
+            this.checkBoxMultiInstance.TabIndex = 6;
+            this.checkBoxMultiInstance.Text = "Multi Instance";
+            this.toolTip4Mods.SetToolTip(this.checkBoxMultiInstance, "When you select this option, the item can be opened several times simulteanously " +
+        "in DSM.\r\nIf you don\'t select this option, you will only ba able to run once inst" +
+        "ance of the item.");
+            this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxTransparency
+            // 
+            this.comboBoxTransparency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxTransparency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxTransparency.FormattingEnabled = true;
+            this.comboBoxTransparency.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "5",
+            "10",
+            "15",
+            "20",
+            "25",
+            "30"});
+            this.comboBoxTransparency.Location = new System.Drawing.Point(735, 318);
+            this.comboBoxTransparency.Name = "comboBoxTransparency";
+            this.comboBoxTransparency.Size = new System.Drawing.Size(48, 21);
+            this.comboBoxTransparency.TabIndex = 13;
+            this.toolTip4Mods.SetToolTip(this.comboBoxTransparency, "When importing a new image, you will be asked if it must be made transparent. Ans" +
+        "wering \'yes\', all colors equal to image\'s pixel (1,1) +/- this value will be set" +
+        " as transparent.");
+            // 
+            // textBoxPublisherUrl
+            // 
+            this.textBoxPublisherUrl.Location = new System.Drawing.Point(330, 98);
+            this.textBoxPublisherUrl.Name = "textBoxPublisherUrl";
+            this.textBoxPublisherUrl.Size = new System.Drawing.Size(209, 20);
+            this.textBoxPublisherUrl.TabIndex = 8;
+            this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
+            this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
+        "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
+            this.textBoxPublisherUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisherUrl_Validating);
+            this.textBoxPublisherUrl.Validated += new System.EventHandler(this.textBoxPublisherUrl_Validated);
+            // 
+            // textBoxHelpUrl
+            // 
+            this.textBoxHelpUrl.Location = new System.Drawing.Point(334, 190);
+            this.textBoxHelpUrl.Name = "textBoxHelpUrl";
+            this.textBoxHelpUrl.Size = new System.Drawing.Size(453, 20);
+            this.textBoxHelpUrl.TabIndex = 11;
+            this.textBoxHelpUrl.Tag = "PKGhelpurl";
+            this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
+        "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
+            this.textBoxHelpUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxHelpUrl_Validating);
+            this.textBoxHelpUrl.Validated += new System.EventHandler(this.textBoxHelpUrl_Validated);
+            // 
+            // TextBoxReportUrl
+            // 
+            this.TextBoxReportUrl.Location = new System.Drawing.Point(334, 219);
+            this.TextBoxReportUrl.Name = "TextBoxReportUrl";
+            this.TextBoxReportUrl.Size = new System.Drawing.Size(453, 20);
+            this.TextBoxReportUrl.TabIndex = 13;
+            this.TextBoxReportUrl.Tag = "PKGreport_url";
+            this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
+        "by clicking on developer\'s name in DSM\'s Package Center.");
+            this.TextBoxReportUrl.Visible = false;
+            this.TextBoxReportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.TextBoxReportUrl_Validating);
+            this.TextBoxReportUrl.Validated += new System.EventHandler(this.TextBoxReportUrl_Validated);
+            // 
+            // textBoxFirmware
+            // 
+            this.textBoxFirmware.Location = new System.Drawing.Point(102, 190);
+            this.textBoxFirmware.Name = "textBoxFirmware";
+            this.textBoxFirmware.Size = new System.Drawing.Size(73, 20);
+            this.textBoxFirmware.TabIndex = 10;
+            this.textBoxFirmware.Tag = "PKGfirmware";
+            this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\nValue: X.Y" +
+        "-Z DSM major number, DSM minor number, DSM build number");
+            this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
+            this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
+            // 
+            // buttonAdvanced
+            // 
+            this.buttonAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAdvanced.Location = new System.Drawing.Point(715, 98);
+            this.buttonAdvanced.Name = "buttonAdvanced";
+            this.buttonAdvanced.Size = new System.Drawing.Size(72, 23);
+            this.buttonAdvanced.TabIndex = 14;
+            this.buttonAdvanced.Text = "Advanced";
+            this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields.");
+            this.buttonAdvanced.UseVisualStyleBackColor = true;
+            this.buttonAdvanced.Click += new System.EventHandler(this.buttonAdvanced_Click);
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -511,6 +706,7 @@ namespace BeatificaBytes.Synology.Mods
             this.labelMaintainerUrl.Size = new System.Drawing.Size(82, 13);
             this.labelMaintainerUrl.TabIndex = 33;
             this.labelMaintainerUrl.Text = "Developer\'s Url:";
+            this.labelMaintainerUrl.Click += new System.EventHandler(this.labelMaintainerUrl_Click);
             // 
             // labelPackage
             // 
@@ -608,6 +804,59 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
+            // labelFirmware
+            // 
+            this.labelFirmware.AutoSize = true;
+            this.labelFirmware.Location = new System.Drawing.Point(10, 194);
+            this.labelFirmware.Name = "labelFirmware";
+            this.labelFirmware.Size = new System.Drawing.Size(89, 13);
+            this.labelFirmware.TabIndex = 64;
+            this.labelFirmware.Text = "Earliest Firmware:";
+            // 
+            // checkBoxBeta
+            // 
+            this.checkBoxBeta.AutoSize = true;
+            this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxBeta.Location = new System.Drawing.Point(32, 219);
+            this.checkBoxBeta.Name = "checkBoxBeta";
+            this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxBeta.TabIndex = 12;
+            this.checkBoxBeta.Tag = "PKGbeta";
+            this.checkBoxBeta.Text = "Beta Version";
+            this.checkBoxBeta.UseVisualStyleBackColor = true;
+            this.checkBoxBeta.CheckedChanged += new System.EventHandler(this.checkBoxBeta_CheckedChanged);
+            // 
+            // labelHelpUrl
+            // 
+            this.labelHelpUrl.AutoSize = true;
+            this.labelHelpUrl.Location = new System.Drawing.Point(229, 194);
+            this.labelHelpUrl.Name = "labelHelpUrl";
+            this.labelHelpUrl.Size = new System.Drawing.Size(98, 13);
+            this.labelHelpUrl.TabIndex = 61;
+            this.labelHelpUrl.Text = "Help && How-To Url:";
+            this.labelHelpUrl.Click += new System.EventHandler(this.labelHelpUrl_Click);
+            // 
+            // labelReportUrl
+            // 
+            this.labelReportUrl.AutoSize = true;
+            this.labelReportUrl.Location = new System.Drawing.Point(271, 219);
+            this.labelReportUrl.Name = "labelReportUrl";
+            this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
+            this.labelReportUrl.TabIndex = 59;
+            this.labelReportUrl.Text = "Report Url:";
+            this.labelReportUrl.Visible = false;
+            this.labelReportUrl.Click += new System.EventHandler(this.labelReportUrl_Click);
+            // 
+            // labelPublisherUrl
+            // 
+            this.labelPublisherUrl.AutoSize = true;
+            this.labelPublisherUrl.Location = new System.Drawing.Point(251, 101);
+            this.labelPublisherUrl.Name = "labelPublisherUrl";
+            this.labelPublisherUrl.Size = new System.Drawing.Size(76, 13);
+            this.labelPublisherUrl.TabIndex = 57;
+            this.labelPublisherUrl.Text = "Publisher\'s Url:";
+            this.labelPublisherUrl.Click += new System.EventHandler(this.labelPublisherUrl_Click);
+            // 
             // labelPublisher
             // 
             this.labelPublisher.AutoSize = true;
@@ -650,98 +899,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelDesc.TabIndex = 5;
             this.labelDesc.Text = "Description:";
             // 
-            // buttonAdd
-            // 
-            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAdd.Location = new System.Drawing.Point(6, 318);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(75, 23);
-            this.buttonAdd.TabIndex = 8;
-            this.buttonAdd.Text = "Add";
-            this.toolTip4Mods.SetToolTip(this.buttonAdd, "Add a new item in the package.");
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAddItem_Click);
-            // 
-            // checkBoxAllUsers
-            // 
-            this.checkBoxAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBoxAllUsers.AutoSize = true;
-            this.checkBoxAllUsers.Location = new System.Drawing.Point(20, 267);
-            this.checkBoxAllUsers.Name = "checkBoxAllUsers";
-            this.checkBoxAllUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxAllUsers.Size = new System.Drawing.Size(85, 17);
-            this.checkBoxAllUsers.TabIndex = 7;
-            this.checkBoxAllUsers.Text = "For All Users";
-            this.toolTip4Mods.SetToolTip(this.checkBoxAllUsers, "If you select this item, all users defined on your NAS will have access to the it" +
-        "em.\r\nIf you don\'t select this item, only the user who installed the package will" +
-        " have access to the item.");
-            this.checkBoxAllUsers.UseVisualStyleBackColor = true;
-            // 
-            // buttonEdit
-            // 
-            this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonEdit.Location = new System.Drawing.Point(168, 318);
-            this.buttonEdit.Name = "buttonEdit";
-            this.buttonEdit.Size = new System.Drawing.Size(75, 23);
-            this.buttonEdit.TabIndex = 10;
-            this.buttonEdit.Text = "Edit";
-            this.toolTip4Mods.SetToolTip(this.buttonEdit, "Edit the item currently selected in the list above.");
-            this.buttonEdit.UseVisualStyleBackColor = true;
-            this.buttonEdit.Click += new System.EventHandler(this.buttonEditItem_Click);
-            // 
-            // buttonDelete
-            // 
-            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonDelete.Location = new System.Drawing.Point(87, 318);
-            this.buttonDelete.Name = "buttonDelete";
-            this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-            this.buttonDelete.TabIndex = 9;
-            this.buttonDelete.Text = "Delete";
-            this.toolTip4Mods.SetToolTip(this.buttonDelete, "Delete the item currently selected in the list above.");
-            this.buttonDelete.UseVisualStyleBackColor = true;
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDeleteItem_Click);
-            // 
-            // buttonCancel
-            // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonCancel.CausesValidation = false;
-            this.buttonCancel.Location = new System.Drawing.Point(249, 318);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 11;
-            this.buttonCancel.Text = "Cancel";
-            this.toolTip4Mods.SetToolTip(this.buttonCancel, "Cancel all changes done on the item currently edited.");
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancelItem_Click);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSave.Location = new System.Drawing.Point(330, 318);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(75, 23);
-            this.buttonSave.TabIndex = 12;
-            this.buttonSave.Text = "Save";
-            this.toolTip4Mods.SetToolTip(this.buttonSave, "Save all changes done on the item currently edited.\r\nNB.: This is not saving the " +
-        "changes done in the \'Package Information\' pane.");
-            this.buttonSave.UseVisualStyleBackColor = true;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSaveItem_Click);
-            // 
-            // checkBoxSize
-            // 
-            this.checkBoxSize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxSize.AutoSize = true;
-            this.checkBoxSize.Checked = true;
-            this.checkBoxSize.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSize.Location = new System.Drawing.Point(619, 122);
-            this.checkBoxSize.Name = "checkBoxSize";
-            this.checkBoxSize.Size = new System.Drawing.Size(131, 17);
-            this.checkBoxSize.TabIndex = 2;
-            this.checkBoxSize.Text = "Same Icon for all sizes";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSize, resources.GetString("checkBoxSize.ToolTip"));
-            this.checkBoxSize.UseVisualStyleBackColor = true;
-            this.checkBoxSize.CheckedChanged += new System.EventHandler(this.checkBoxSize_CheckedChanged);
-            // 
             // comboBoxItemType
             // 
             this.comboBoxItemType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -756,23 +913,6 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxItemType.Size = new System.Drawing.Size(58, 21);
             this.comboBoxItemType.TabIndex = 4;
             this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
-            // 
-            // checkBoxMultiInstance
-            // 
-            this.checkBoxMultiInstance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.checkBoxMultiInstance.AutoSize = true;
-            this.checkBoxMultiInstance.Checked = true;
-            this.checkBoxMultiInstance.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMultiInstance.Location = new System.Drawing.Point(13, 244);
-            this.checkBoxMultiInstance.Name = "checkBoxMultiInstance";
-            this.checkBoxMultiInstance.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.checkBoxMultiInstance.Size = new System.Drawing.Size(92, 17);
-            this.checkBoxMultiInstance.TabIndex = 6;
-            this.checkBoxMultiInstance.Text = "Multi Instance";
-            this.toolTip4Mods.SetToolTip(this.checkBoxMultiInstance, "When you select this option, the item can be opened several times simulteanously " +
-        "in DSM.\r\nIf you don\'t select this option, you will only ba able to run once inst" +
-        "ance of the item.");
-            this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
             // 
             // groupBoxItem
             // 
@@ -811,28 +951,6 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.TabIndex = 39;
             this.groupBoxItem.TabStop = false;
             this.groupBoxItem.Text = "ITEM INFORMATION";
-            // 
-            // comboBoxTransparency
-            // 
-            this.comboBoxTransparency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxTransparency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxTransparency.FormattingEnabled = true;
-            this.comboBoxTransparency.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "5",
-            "10",
-            "15",
-            "20",
-            "25",
-            "30"});
-            this.comboBoxTransparency.Location = new System.Drawing.Point(735, 318);
-            this.comboBoxTransparency.Name = "comboBoxTransparency";
-            this.comboBoxTransparency.Size = new System.Drawing.Size(48, 21);
-            this.comboBoxTransparency.TabIndex = 13;
-            this.toolTip4Mods.SetToolTip(this.comboBoxTransparency, "When importing a new image, you will be asked if it must be made transparent. Ans" +
-        "wering \'yes\', all colors equal to image\'s pixel (1,1) +/- this value will be set" +
-        " as transparent.");
             // 
             // menuStrip1
             // 
@@ -896,9 +1014,12 @@ namespace BeatificaBytes.Synology.Mods
             // packageToolStripMenuItem
             // 
             this.packageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeToolStripMenuItem,
             this.resetToolStripMenuItem,
+            this.toolStripMenuItem1,
             this.generateToolStripMenuItem,
-            this.addWizardToolStripMenuItem});
+            this.addWizardToolStripMenuItem,
+            this.openFolderToolStripMenuItem});
             this.packageToolStripMenuItem.Name = "packageToolStripMenuItem";
             this.packageToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.packageToolStripMenuItem.Text = "Package";
@@ -906,23 +1027,37 @@ namespace BeatificaBytes.Synology.Mods
             // resetToolStripMenuItem
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Text = "Delete";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // generateToolStripMenuItem
             // 
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.generateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generateToolStripMenuItem.Text = "Generate";
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
             // addWizardToolStripMenuItem
             // 
             this.addWizardToolStripMenuItem.Name = "addWizardToolStripMenuItem";
-            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addWizardToolStripMenuItem.Text = "Create Wizard";
             this.addWizardToolStripMenuItem.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openFolderToolStripMenuItem.Text = "Open Folder";
+            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -950,6 +1085,11 @@ namespace BeatificaBytes.Synology.Mods
             this.scriptRunnerToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.scriptRunnerToolStripMenuItem.Text = "Default Runner";
             this.scriptRunnerToolStripMenuItem.Click += new System.EventHandler(this.scriptRunnerToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // startScriptToolStripMenuItem
             // 
@@ -1007,6 +1147,11 @@ namespace BeatificaBytes.Synology.Mods
             this.postUpgradeScriptToolStripMenuItem.Text = "Post-Upgrade Script";
             this.postUpgradeScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
+            // 
             // wizardInstallUIToolStripMenuItem
             // 
             this.wizardInstallUIToolStripMenuItem.Name = "wizardInstallUIToolStripMenuItem";
@@ -1047,12 +1192,14 @@ namespace BeatificaBytes.Synology.Mods
             this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
             this.documentationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.documentationToolStripMenuItem.Text = "Documentation";
+            this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
             // supportToolStripMenuItem
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
             this.supportToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.supportToolStripMenuItem.Text = "Support";
+            this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -1067,16 +1214,6 @@ namespace BeatificaBytes.Synology.Mods
             this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.packeDevGuideToolStripMenuItem.Text = "Package DevGuide";
             this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(178, 6);
             // 
             // groupBoxTip
             // 
@@ -1099,105 +1236,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(772, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
-            // 
-            // labelPublisherUrl
-            // 
-            this.labelPublisherUrl.AutoSize = true;
-            this.labelPublisherUrl.Location = new System.Drawing.Point(251, 101);
-            this.labelPublisherUrl.Name = "labelPublisherUrl";
-            this.labelPublisherUrl.Size = new System.Drawing.Size(76, 13);
-            this.labelPublisherUrl.TabIndex = 57;
-            this.labelPublisherUrl.Text = "Publisher\'s Url:";
-            // 
-            // textBoxPublisherUrl
-            // 
-            this.textBoxPublisherUrl.Location = new System.Drawing.Point(330, 98);
-            this.textBoxPublisherUrl.Name = "textBoxPublisherUrl";
-            this.textBoxPublisherUrl.Size = new System.Drawing.Size(209, 20);
-            this.textBoxPublisherUrl.TabIndex = 8;
-            this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
-            this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
-        "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
-            this.textBoxPublisherUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisherUrl_Validating);
-            this.textBoxPublisherUrl.Validated += new System.EventHandler(this.textBoxPublisherUrl_Validated);
-            // 
-            // labelHelpUrl
-            // 
-            this.labelHelpUrl.AutoSize = true;
-            this.labelHelpUrl.Location = new System.Drawing.Point(229, 194);
-            this.labelHelpUrl.Name = "labelHelpUrl";
-            this.labelHelpUrl.Size = new System.Drawing.Size(98, 13);
-            this.labelHelpUrl.TabIndex = 61;
-            this.labelHelpUrl.Text = "Help && How-To Url:";
-            // 
-            // textBoxHelpUrl
-            // 
-            this.textBoxHelpUrl.Location = new System.Drawing.Point(334, 190);
-            this.textBoxHelpUrl.Name = "textBoxHelpUrl";
-            this.textBoxHelpUrl.Size = new System.Drawing.Size(453, 20);
-            this.textBoxHelpUrl.TabIndex = 11;
-            this.textBoxHelpUrl.Tag = "PKGhelpurl";
-            this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
-        "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
-            this.textBoxHelpUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxHelpUrl_Validating);
-            this.textBoxHelpUrl.Validated += new System.EventHandler(this.textBoxHelpUrl_Validated);
-            // 
-            // labelReportUrl
-            // 
-            this.labelReportUrl.AutoSize = true;
-            this.labelReportUrl.Location = new System.Drawing.Point(271, 219);
-            this.labelReportUrl.Name = "labelReportUrl";
-            this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
-            this.labelReportUrl.TabIndex = 59;
-            this.labelReportUrl.Text = "Report Url:";
-            this.labelReportUrl.Visible = false;
-            // 
-            // TextBoxReportUrl
-            // 
-            this.TextBoxReportUrl.Location = new System.Drawing.Point(334, 219);
-            this.TextBoxReportUrl.Name = "TextBoxReportUrl";
-            this.TextBoxReportUrl.Size = new System.Drawing.Size(453, 20);
-            this.TextBoxReportUrl.TabIndex = 13;
-            this.TextBoxReportUrl.Tag = "PKGreport_url";
-            this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
-        "by clicking on developer\'s name in DSM\'s Package Center.");
-            this.TextBoxReportUrl.Visible = false;
-            this.TextBoxReportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.TextBoxReportUrl_Validating);
-            this.TextBoxReportUrl.Validated += new System.EventHandler(this.TextBoxReportUrl_Validated);
-            // 
-            // checkBoxBeta
-            // 
-            this.checkBoxBeta.AutoSize = true;
-            this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxBeta.Location = new System.Drawing.Point(32, 219);
-            this.checkBoxBeta.Name = "checkBoxBeta";
-            this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxBeta.TabIndex = 12;
-            this.checkBoxBeta.Tag = "PKGbeta";
-            this.checkBoxBeta.Text = "Beta Version";
-            this.checkBoxBeta.UseVisualStyleBackColor = true;
-            this.checkBoxBeta.CheckedChanged += new System.EventHandler(this.checkBoxBeta_CheckedChanged);
-            // 
-            // labelFirmware
-            // 
-            this.labelFirmware.AutoSize = true;
-            this.labelFirmware.Location = new System.Drawing.Point(10, 194);
-            this.labelFirmware.Name = "labelFirmware";
-            this.labelFirmware.Size = new System.Drawing.Size(89, 13);
-            this.labelFirmware.TabIndex = 64;
-            this.labelFirmware.Text = "Earliest Firmware:";
-            // 
-            // textBoxFirmware
-            // 
-            this.textBoxFirmware.Location = new System.Drawing.Point(102, 190);
-            this.textBoxFirmware.Name = "textBoxFirmware";
-            this.textBoxFirmware.Size = new System.Drawing.Size(73, 20);
-            this.textBoxFirmware.TabIndex = 10;
-            this.textBoxFirmware.Tag = "PKGfirmware";
-            this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\nValue: X.Y" +
-        "-Z DSM major number, DSM minor number, DSM build number");
-            this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
-            this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
             // folderBrowserDialog4Mods
             // 
@@ -1223,17 +1261,12 @@ namespace BeatificaBytes.Synology.Mods
             this.webpageBrowserDialog4Mods.ShowFullPathInEditBox = true;
             this.webpageBrowserDialog4Mods.ShowNewFolderButton = true;
             // 
-            // buttonAdvanced
+            // closeToolStripMenuItem
             // 
-            this.buttonAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAdvanced.Location = new System.Drawing.Point(715, 98);
-            this.buttonAdvanced.Name = "buttonAdvanced";
-            this.buttonAdvanced.Size = new System.Drawing.Size(72, 23);
-            this.buttonAdvanced.TabIndex = 14;
-            this.buttonAdvanced.Text = "Advanced";
-            this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields.");
-            this.buttonAdvanced.UseVisualStyleBackColor = true;
-            this.buttonAdvanced.Click += new System.EventHandler(this.buttonAdvanced_Click);
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1371,6 +1404,9 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.TextBox textBoxFirmware;
         private System.Windows.Forms.CheckBox checkBoxBeta;
         private System.Windows.Forms.Button buttonAdvanced;
+        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
     }
 }
 
