@@ -150,7 +150,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Content Include="PackagingSyno.ico" />
-    <Content Include="Preferences.png" />
     <None Include="Resources\EditedScript.png" />
     <Content Include="backwizard.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -977,13 +977,43 @@ namespace BeatificaBytes.Synology.Mods
             else
                 inputRunner = File.ReadAllText(defaultRunnerPath);
 
-            DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, out outputScript, out outputRunner);
+            DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, GetAllWizardVariables(), out outputScript, out outputRunner);
             if (result == DialogResult.OK)
             {
                 scriptValue = outputScript;
                 runnerValue = outputRunner;
             }
             return result;
+        }
+
+        private List<Tuple<string, string>> GetAllWizardVariables()
+        {
+            List<Tuple<string, string>> variables = null;
+
+            var wizard = Path.Combine(PackageRootPath, "WIZARD_UIFILES");
+
+            if (Directory.Exists(wizard))
+            {
+                variables = new List<Tuple<string, string>>();
+                string line;
+                foreach (var filename in Directory.GetFiles(wizard))
+                {
+                    // Read the file and display it line by line.
+                    using (var file = new StreamReader(filename))
+                    {
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            Match match = Regex.Match(line, @"""key"".*:.*""(.*)""", RegexOptions.IgnoreCase);
+                            if (match.Success)
+                            {
+                                variables.Add(new Tuple<string, string>(match.Groups[1].Value, string.Format("Variables from Wizard file '{0}'", Path.GetFileName(filename))));
+                            }
+                        }
+                    }
+                }
+            }
+
+            return variables;
         }
 
         private DialogResult EditWebApp()
@@ -2063,6 +2093,8 @@ namespace BeatificaBytes.Synology.Mods
 
                             SavePackageSettings();
                             CreateRecentsMenu();
+
+                            ResetEditScriptMenuIcons();
                             dirty = false;
                         }
                         else
@@ -2070,6 +2102,10 @@ namespace BeatificaBytes.Synology.Mods
                             response = DialogResult.Cancel;
                         }
                     }
+                }
+                else
+                {
+                    ResetEditScriptMenuIcons();
                 }
             }
             else
@@ -2219,6 +2255,8 @@ namespace BeatificaBytes.Synology.Mods
                 LoadPackageInfo();
                 BindData(list);
                 DisplayItem();
+
+                ResetEditScriptMenuIcons();
             }
         }
 
@@ -2244,14 +2282,19 @@ namespace BeatificaBytes.Synology.Mods
                     Process.Start(PackageRootPath);
                 }
 
-                foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
-                {
-                    menu.Image = null;
-                }
+                ResetEditScriptMenuIcons();
             }
             else
             {
                 MessageBox.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void ResetEditScriptMenuIcons()
+        {
+            foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
+            {
+                menu.Image = null;
             }
         }
 
@@ -2312,6 +2355,8 @@ namespace BeatificaBytes.Synology.Mods
                 LoadPackageInfo();
                 BindData(list);
                 DisplayItem();
+
+                ResetEditScriptMenuIcons();
             }
 
             return succeed;
@@ -2442,7 +2487,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var runner = File.ReadAllText(defaultRunnerPath);
             string outputRunner = string.Empty;
-            DialogResult result = Helper.ScriptEditor(null, runner, out outputRunner);
+            DialogResult result = Helper.ScriptEditor(null, runner, null, out outputRunner);
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(defaultRunnerPath, outputRunner);
@@ -2462,7 +2507,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var inputScript = File.ReadAllText(scriptPath);
                 var outputScript = "";
-                DialogResult result = Helper.ScriptEditor(inputScript, null, out outputScript);
+                DialogResult result = Helper.ScriptEditor(inputScript, null, GetAllWizardVariables(), out outputScript);
                 if (result == DialogResult.OK)
                 {
                     File.WriteAllText(scriptPath, outputScript);
@@ -2545,7 +2590,7 @@ namespace BeatificaBytes.Synology.Mods
                     var outputWizard = "";
 
                     string outputRunner = string.Empty;
-                    result = Helper.ScriptEditor(inputWizard, null, out outputWizard);
+                    result = Helper.ScriptEditor(inputWizard, null, null, out outputWizard);
                     if (result == DialogResult.OK)
                     {
                         File.WriteAllText(jsonPath, outputWizard);
