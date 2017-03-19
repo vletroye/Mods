@@ -33,7 +33,10 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageScript = new System.Windows.Forms.TabPage();
             this.tabPageRunner = new System.Windows.Forms.TabPage();
+            this.tabPageVariables = new System.Windows.Forms.TabPage();
+            this.listBoxVariables = new System.Windows.Forms.ListBox();
             this.tabControl.SuspendLayout();
+            this.tabPageVariables.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -66,6 +69,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabPageScript);
             this.tabControl.Controls.Add(this.tabPageRunner);
+            this.tabControl.Controls.Add(this.tabPageVariables);
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
@@ -92,6 +96,30 @@
             this.tabPageRunner.Text = "Runner Editor";
             this.tabPageRunner.UseVisualStyleBackColor = true;
             // 
+            // tabPageVariables
+            // 
+            this.tabPageVariables.Controls.Add(this.listBoxVariables);
+            this.tabPageVariables.Location = new System.Drawing.Point(4, 22);
+            this.tabPageVariables.Name = "tabPageVariables";
+            this.tabPageVariables.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageVariables.Size = new System.Drawing.Size(566, 553);
+            this.tabPageVariables.TabIndex = 2;
+            this.tabPageVariables.Text = "Variables";
+            this.tabPageVariables.UseVisualStyleBackColor = true;
+            // 
+            // listBoxVariables
+            // 
+            this.listBoxVariables.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listBoxVariables.FormattingEnabled = true;
+            this.listBoxVariables.HorizontalScrollbar = true;
+            this.listBoxVariables.Location = new System.Drawing.Point(6, 6);
+            this.listBoxVariables.Name = "listBoxVariables";
+            this.listBoxVariables.Size = new System.Drawing.Size(554, 537);
+            this.listBoxVariables.TabIndex = 0;
+            this.listBoxVariables.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxVariables_MouseDoubleClick);
+            // 
             // ScriptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -112,6 +140,7 @@
             this.Text = "Edit Your Script - Powered by ScintillaNet";
             this.Load += new System.EventHandler(this.ScriptForm_Load);
             this.tabControl.ResumeLayout(false);
+            this.tabPageVariables.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -122,5 +151,7 @@
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabPageScript;
         private System.Windows.Forms.TabPage tabPageRunner;
+        private System.Windows.Forms.TabPage tabPageVariables;
+        private System.Windows.Forms.ListBox listBoxVariables;
     }
 }

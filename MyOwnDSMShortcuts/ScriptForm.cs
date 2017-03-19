@@ -20,6 +20,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private string script = "";
         private string runner = "";
+        private List<Tuple<string, string>> variables = null;
 
         public ScriptForm()
         {
@@ -53,6 +54,14 @@ namespace BeatificaBytes.Synology.Mods
             {
                 runner = value;
             }
+        }
+
+        public List<Tuple<string, string>> Variables
+        {
+            get
+            { return variables; }
+            set
+            { variables = value; }
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -97,6 +106,41 @@ namespace BeatificaBytes.Synology.Mods
             else
                 tabControl.TabPages.RemoveAt(tab);
 
+            if (variables == null)
+            {
+                tabControl.TabPages.RemoveAt(tabControl.TabPages.Count - 1);
+            }
+            else
+            {
+                listBoxVariables.Items.Clear();
+                GetSynoEnvVariables(variables);
+                foreach (var tuple in variables)
+                {
+                    listBoxVariables.Items.Add(string.Format("{0}: {1}.", tuple.Item1, tuple.Item2));
+                }
+            }
+        }
+
+        private void GetSynoEnvVariables(List<Tuple<string, string>> variables)
+        {
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGNAME", "Package identify which is defined in INFO"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGVER", "Package version which is defined in INFO"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGDEST", "Target directory where the package is stored"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGDEST_VOL", "Target volume where the package is stored [DSM >= 4.2]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGPORT", "adminport port which is defined in INFO.This port will be occupied by this package with its management interface"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKGINST_TEMP_DIR", "The temporary directory where the package are extracted when installing or upgrading it"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_TEMP_LOGFILE", "A temporary file path for a script to log information or error messages"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_TEMP_UPGRADE_FOLDER", "The temporary directory when the package is upgrading.You can move the files from the previous version of the package to it in preupgrade script and move them back in postupgrade [DSM >= 6.0]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_DSM_LANGUAGE", "End user's DSM language"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_DSM_VERSION_MAJOR", "End user’s major number of DSM version which is formatted as [DSM major number].[DSM minor number]-[DSM build number]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_DSM_VERSION_MINOR", "End user’s minor number of DSM version which is formatted as [DSM major number].[DSM minor number]-[DSM build number]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_DSM_VERSION_BUILD", "End user’s DSM build number of DSM version which is formatted as [DSM major number].[DSM minor number]-[DSM build number]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_DSM_ARCH", "End user’s DSM CPU architecture"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKG_STATUS", "Package status presented by these values: INSTALL, UPGRADE, UNINSTALL, START, STOP or empty [DSM >= 4.0]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_OLD_PKGVER", "Existing package version which is defined in INFO (only in preupgrade script)"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_TEMP_SPKFILE", "The location of package spk file is temporarily stored in DS when the package is installing/upgrading [DSM >= 4.2]"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_USERNAME", "The user name who installs, upgrades, uninstalls, starts or stops the package.If the value is empty, the action is triggered by DSM, not by the end user [DSM >= 5.2"));
+            variables.Add(new Tuple<string, string>("SYNOPKG_PKG_PROGRESS_PATH", "A temporary file path for a script to showing the progress in installing and upgrading a package [DSM >= 5.2]"));
         }
 
         private void InitScriptEditor(Scintilla textArea, Lexer type)
@@ -307,8 +351,21 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
         }
-
         #endregion
 
+        private void listBoxVariables_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
+            if (listBoxVariables.SelectedIndex != -1)
+            {
+                var rect = listBoxVariables.GetItemRectangle(listBoxVariables.SelectedIndex);
+                if (rect.Contains(e.Location))
+                {
+                    var text = listBoxVariables.SelectedItem as string;
+                    text = text.Split(':')[0];
+                    Clipboard.SetText(text);
+                }
+            }
+        }
     }
 }
