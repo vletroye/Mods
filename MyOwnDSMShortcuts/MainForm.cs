@@ -1660,11 +1660,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private Image LoadImageFromFile(string picture)
         {
-            Image image;
-            using (FileStream stream = new FileStream(picture, FileMode.Open, FileAccess.Read))
-            {
-                image = Image.FromStream(stream);
-            }
+            Image image = null;
+            if (File.Exists(picture))
+                using (FileStream stream = new FileStream(picture, FileMode.Open, FileAccess.Read))
+                {
+                    image = Image.FromStream(stream);
+                }
             return image;
         }
 
@@ -2380,7 +2381,7 @@ namespace BeatificaBytes.Synology.Mods
         // Return Cancel to neither create nor load a package
         private DialogResult GetPackagePath(ref string path)
         {
-            DialogResult createNewPackage = DialogResult.Cancel;
+            DialogResult getPackage = DialogResult.Cancel;
 
             DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
             if (result == DialogResult.OK)
@@ -2388,7 +2389,7 @@ namespace BeatificaBytes.Synology.Mods
                 path = folderBrowserDialog4Mods.SelectedPath;
                 if (Directory.Exists(path))
                 {
-                    createNewPackage = IsPackageFolderEmpty(path);
+                    getPackage = IsPackageFolderEmpty(path);
                 }
                 else
                 {
@@ -2398,7 +2399,7 @@ namespace BeatificaBytes.Synology.Mods
                         MessageBox.Show(this, string.Format("Something went wrong when picking the folder {0}", path), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            return createNewPackage;
+            return getPackage;
         }
 
         private DialogResult IsPackageFolderEmpty(string path)
