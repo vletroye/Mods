@@ -1,0 +1,124 @@
+<div class="wikidoc">
+<p><strong>WARNING: This is the documentation for the CTP 4.2. The CTP 6.1. won't be documented but you can read the release notes.&nbsp;</strong></p>
+<p>&nbsp;</p>
+<p>Mods (My Own DSM Shortcuts) is an application for Windows, developed in C#, generating Synology&nbsp;packages (.spk) that&nbsp;add&nbsp;icons in DSM's&nbsp;Main menu in order to&nbsp;open Url's, execute Shell Scripts or php Scripts.</p>
+<ul>
+<li>If an Url&nbsp;is&nbsp;provided to Mods, it will be opened in a new tab in&nbsp;your browser
+</li><li>If a Shell Script is provided, the output stream&nbsp;will be displayed in a popup window on your DSM (in a iFrame)
+</li><li>If webpages (php or html) are&nbsp;provided, they will be packaged and deployed on the Synolgoy and the entry page will be opened in a popup window on your DSM.
+</li></ul>
+<p>The icons can next be dragged-and-dropped on DSM's Desktop to create&nbsp;shortcuts (Hence the name: My Own DSM Shortcuts).</p>
+<p>NB.: The package created by mods can be fully customized manually. Ex.: If you need a more advanced installation script, an installation wizard... And there is no need to enable the Web Station&nbsp;to use the packages created by Mods. It's requiring however
+ the third party package&nbsp;<a title="Init 3rdParty Package" href="https://www.cphub.net/?id=40&pid=594" target="_blank">&quot;Init 3rdParty&quot;</a></p>
+<p>&nbsp;</p>
+<h1><span style="text-decoration:underline"><strong>Run Mods on Windows</strong></span></h1>
+<p>To generate a&nbsp;Dummy Package that add&nbsp;shortcuts in your DSM:</p>
+<ol>
+<li>Run the&nbsp;Mods.exe. </li><li>Click on the configuration icon (top-right) to specify
+<ol>
+<li>either an empty directory where your&nbsp;new&nbsp;package will&nbsp;be generated.&nbsp;
+</li><li>or&nbsp;a directory&nbsp;containing an existing package to reload and edit. </li></ol>
+</li><li>Configure your Package with information for Synology's Package Center:
+<ol>
+<li>a Package name. It may only contain letters and figures. No blank or special characters. This name&nbsp;is used for the .spk file and for the folders where the package&nbsp;is&nbsp;stored/installed on your&nbsp;Synology:
+<ol>
+<li>/usr/syno/etc/packages/&lt;package name&gt; </li><li>/var/packages/&lt;package name&gt; </li><li>/volume1/@appstore/&lt;package name&gt; </li></ol>
+</li><li>a Version. This one must be formatted like {0.0.0}. NB.: The last figure is incremented each time one regenerates&nbsp;the Package. This is to solve a current issue where the icon is not refreshed when one deploys a new version of the package (with a new
+ icon).. </li><li>a Display Name. It will be&nbsp;visible in the Package Center. </li><li>the Maintainer. It's you. This name is used both as&nbsp;maintainer and distributor.
+</li><li>a DSM name. This is the name of the App as known by&nbsp;the DSM. It should be like a&nbsp;namespace org.yourOrgName.yourPackageName.
+</li><li>a Description of the Package. This one will be displayed within the Package Center. It's used&nbsp;as English and international descriptions.
+</li><li>a Url. This one is used as url for&nbsp;both the maintainer and the distributor.
+</li></ol>
+</li><li>Add now Url's, Scripts or WebApp into your Package by clicking on &quot;Add&quot; at the bottom-left.
+</li><li>Enter a &quot;Title&quot; and select a&nbsp;type &quot;Url&quot;, &quot;Script&quot; or &quot;WebApp&quot; (a &quot;Description&quot; is optional).
+<ul>
+<li>Url&nbsp;for websites hosted on the NAS can&nbsp;be like:
+<ul>
+<li>/myWebSite/ (Ex. /net2ftp/index.php). </li><li>:port&nbsp;(Ex. :8080). </li><li>:port/myWebSite (Ex. :9000/net2ftp/index.php) </li><li>https://:port/myWebSite (Ex. https://:9443/net2ftp/index.php) </li></ul>
+</li><li>Url for non local websites will be like: http://myDomain/MyWebSite/.&nbsp;Https and specific port can be specified if required (Ex.:&nbsp;https://admincp.example.com:1443/config.php).
+</li><li>Shell Scripts&nbsp;can be used (but you may encounter issues with execution rights)
+<ul>
+<li>Scripts will be executed by a php page via a &quot;Shell_Exec&quot; command </li><li>Their output stream will be caught and displayed in the popup window </li><li>To also catch the error stream, end your script with:&nbsp;2&gt;&amp;1 </li><li>That php page will be embedded in the package itself </li><li>Scripts must not be typed between quotes </li></ul>
+</li><li>WebApp can be any set of html/php pages.&nbsp;
+<ul>
+<li>You will have to provide the root folder containing those pages </li><li>You will have to select an entry php or html page to be displayed&nbsp;in the popup window
+</li><li>This root folder and all its subfolders will be embedded in the package itself!
+</li></ul>
+</li></ul>
+</li><li>Tick the option&nbsp;&quot;For All Users&quot; if you want to create a shortcut to that URL for everybody.
+</li><li>Tick the option&nbsp;&quot;Multi Instance&quot; if you want to be able to open several instances of a Shell Script or of a WebApp
+</li><li>If you want, drag and drop your own icons (.png only) to replace the default ones.
+<ul>
+<li>Icons larger than expected will be resized. </li><li>You can also double click an icon to&nbsp;replace it. </li><li>By default, you are prompted to confirm that the new&nbsp;custom&nbsp;icon may be&nbsp;used for all sizes. You can untick the&nbsp;option &quot;Use the same Icon for all sizes&quot; to not be prompted anymore.
+</li></ul>
+</li><li>Click &quot;Save&quot;. </li><li>Loop on step 4 for each URL's you want to add into the Package. </li><li>Possibly select an existing Urls and &quot;Delete&quot; or &quot;Edit&quot; it.
+<ul>
+<li>You can also double-click an existing Url to &quot;Edit&quot; it. </li></ul>
+</li><li>Finally click on &quot;Package&quot; to create the dummy .spk. Once created, you will be&nbsp;prompted to possibly open the output&nbsp;directory.
+</li></ol>
+<p>&nbsp;<img src="http://i.imgur.com/rPNXXQt.png" alt="Screenshot" width="400" style="display:block; margin-left:auto; margin-right:auto"></p>
+<p>&nbsp;</p>
+<p>NB.: all the information set to configure the&nbsp;Package are used to create the &quot;INFO&quot; file located in the root of the package directory. You can update them manually as explained bellow, before regenerating&nbsp;the Package.</p>
+<p>NB.: all the information set to configure URL's in the Package are used to create the &quot;config&quot; file located in the subfolder \package\ui of the package directory. You can also update them manually&nbsp;before&nbsp;regenerating&nbsp;the Package.</p>
+<p>PS.: if your url, Scripts or webApp does not open as expected, test in within Chrome and open the debug window (F12) to see what can possibly be the problem. A Internal&nbsp;Server Error can be a bug in a php page. Chrome can also prevent an external URL
+ to be opened in a iFrame, etc...&nbsp;</p>
+<h1><span style="text-decoration:underline">Generate the package manually</span></h1>
+<p>To generate a&nbsp;Dummy Package that&nbsp;create&nbsp;shortcuts in your DSM manually:</p>
+<ol>
+<li>Go to the &quot;Resources&quot; folder found in the zip you have downloaded . </li><li>Unzip the file Package.zip </li><li>Edit the &quot;config&quot; file located under \package\ui.
+<ol>
+<li>It's a json structure </li><li>Duplicate the section &quot;be.beatificabytes.sample&quot; once per URL you want to configure. The name of that section must be unique!
+</li><li>Change only the&nbsp;fields &quot;title&quot;, &quot;desc&quot;, &quot;allUsers&quot; and &quot;url&quot;.
+<ul>
+<li>Url&nbsp;for website hosted on the NAS will be like: /myWebSite/ (Ex.: /net2ftp/index.php).
+</li><li>Url for non local website will be like: http://myDomain/MyWebSite/.&nbsp;Https and specific port can be specified if required (Ex.:&nbsp;https://admincp.example.com:1443/config.php).
+</li></ul>
+</li><li>Custom&nbsp;icons can be added in the folder&nbsp;\package\ui\images. They must all be&nbsp;named with the same prefix&nbsp;followed by their&nbsp;width. The common&nbsp;prefix followed by {0} must be set&nbsp;in the config file for the field &quot;icon&quot;. Ex.:
+ images/MyOwnIcon{0}.png will be used to icons named&nbsp;MyOwnIcon96.png,&nbsp;MyOwnIcon128.png,&nbsp;MyOwnIcon256.png
+</li></ol>
+</li><li>Edit the &quot;INFO&quot; file located in the root to customize your Package </li><li>Replace Package's icons&nbsp;PACKAGE_ICON.PNG and&nbsp;PACKAGE_ICON_256.PNG, located next to the INFO&nbsp;file,&nbsp;by your own&nbsp;icons.
+</li><li>Finally&nbsp;create the .spk package as&nbsp;scripted in Pack.cmd file (also next to&nbsp;the INFO file) or run this script ;)
+<ol>
+<li>Create a tar file named package.tar with the content of the folder \package\ (I.e.: with the &quot;ui&quot; folder)
+</li><li>GZip that package.tar file into a package.tgz </li><li>Create a tar file with the
+<ul>
+<li>&quot;package.tgz&quot; </li><li>the folder &quot;scripts&quot; </li><li>the INFO file </li><li>the two Package_Icon png </li></ul>
+</li></ol>
+<ul>
+<li>!! renamed the &quot;mods.spk&quot; with&nbsp;your own package name. </li></ul>
+</li></ol>
+<p>NB.: all changes done in the &quot;INFO&quot; or &quot;config&quot; files, as well as icons replaced behind the scene will be taken into account&nbsp;by Mods.exe during the next run.</p>
+<h1><span style="text-decoration:underline">Customize&nbsp;the package manually</span></h1>
+<p>Having access to all the resources added in the&nbsp;package, you can customize them at will. Ex.: you can modify the installation script, etc...&nbsp;</p>
+<p>The new Dev Guide of Synology is quite helpful although not yet&nbsp;100% correct/up-to-date/complete:&nbsp;<a title="Dev Guide Synology" href="https://developer.synology.com/developer-guide/" target="_blank">https://developer.synology.com/developer-guide/</a></p>
+<h1><span style="text-decoration:underline"><strong>Install the package on your DSM</strong></span></h1>
+<p>Once your Package ready,&nbsp;go to your DSM &gt; &quot;Package Center&quot; &gt; &quot;Manual Install&quot; &gt; &quot;Browse&quot;, and select the .spk file.</p>
+<p>&nbsp;</p>
+<p>Once the package installed, you can hide/show&nbsp;the shortcuts by stopping/starting&nbsp;Mods. You can also Drag and Drop the shortcut from DSM's Start&nbsp;Menu onto DSM's Desktop. This is coded in the shell scripts available in the Package's subfolder
+ \Mod\scripts. You can customize them at will ;)</p>
+<p>&nbsp;<img src="http://i.imgur.com/gavnFb1.png" alt="Package Installation" width="400" height="282" style="display:block; margin-left:auto; margin-right:auto"></p>
+<p>&nbsp;</p>
+<h1><span style="text-decoration:underline">And here is the result</span></h1>
+<h1><span style="text-decoration:underline"><img src="http://i.imgur.com/zGddwbw.png" alt="My Own DSM Shorcuts" width="400" height="234" style="display:block; margin-left:auto; margin-right:auto"></span></h1>
+<h1>&nbsp;</h1>
+<h1><u>Prerequisite</u></h1>
+<p>The third party package named &quot;Init_3rdPary&quot; from QTIP must be installed in order to support running&nbsp;&quot;scripts&quot;. Those being run by php, via a shell execute, some initialization is indeed required.</p>
+<h1><span style="text-decoration:underline">Sample</span></h1>
+<p>Get &quot;<a title="ModsSamples" href="http://download-codeplex.sec.s-msft.com/Download?ProjectName=mods&DownloadId=1604341">ModsSamples.spk</a>&quot; here attached, generated with CTP 4.2</p>
+<p>This package created with Mods contains three&nbsp;shortcuts. One to&nbsp;execute a script (ps -gaceux), one to open www.synology.com in a new tab and one to open a WebApp with 3 pages (two php pages and one html page).</p>
+<p>&nbsp;</p>
+<p>Or Get the new version &quot;<a href="https://mods.codeplex.com/downloads/get/1631707">ModsSamples.spk</a>&quot;, generated with CTP 6.1.&nbsp;</p>
+<p>This package created with Mods contains six shortcuts. One to&nbsp;execute a command (ps -gaceux), one to open mods.codeplex.com&nbsp;in a new tab, one to open multiple instances of a WebApp w(a Chat box), one to open the home page of your Synology (if any
+ on your WebStation), one with a Command to display CPU information and one with a more complex script.</p>
+<p>&nbsp;</p>
+<h1><span style="text-decoration:underline">Some tips</span></h1>
+<ul>
+<li>All the icons used when configuring urls&nbsp;are backuped when generating&nbsp;a package. So, if you delete by accident the target directory, you will not loose them. When reconfiguring the target directory, you will however have to confirm that you want
+ to recover all the icons. </li><li>If you change (reconfigure)&nbsp;the target directory,&nbsp;you will also&nbsp;be prompted&nbsp;to recover the icons.
+</li><li>Preferably always uninstall your package before installing a new version - or at least, change the version of the new Package. Currently, I only autoincrement the version when the Package's icons are replaced as this was the only way to force DSM to display
+ the new icons. </li><li>More details about INFO, config file and scripts on&nbsp;<a title="Synology Package Files" href="http://forum.synology.com/wiki/index.php/Synology_package_files" target="_blank">http://forum.synology.com/wiki/index.php/Synology_package_files</a>
+</li><li>package content is deployed under&nbsp;/usr/syno/synoman/webman/3rdparty/ </li></ul>
+<p>&nbsp;&nbsp;</p>
+<p>NB.: The default Icon of Mods is from&nbsp;<a title="Arrioch" href="http://arrioch.deviantart.com/" target="_blank">Arrioch</a>&nbsp;(Milos Mirkovic) and was&nbsp;found on&nbsp;<a title="Icon Archive" href="http://www.iconarchive.com/artist/arrioch.html" target="_blank">Icon
+ Archive</a>&nbsp;free of charge for non-commercial uses. I like his work very much ;)</p>
+</div><div class="ClearBoth"></div>

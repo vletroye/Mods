@@ -1,0 +1,40 @@
+<div class="wikidoc">
+<p>This project has been created as a workaround for the lack of &quot;Custom Shortcut on Synology Desktop&quot;.<br>
+<br>
+See the Feature Request here:&nbsp;<a title="Request Shortcut Feature" href="http://forum.synology.com/enu/viewtopic.php?f=3&t=93823" target="_blank">http://forum.synology.com/enu/viewtopic.php?f=3&amp;t=93823</a></p>
+<p>&nbsp;</p>
+<p>It was first aimed at opening URL's in new Tabs. It has&nbsp;next been extended to run Shell Scripts and to&nbsp;open&nbsp;web pages (php or html) in floating popup windows on DSM's desktop.</p>
+<p>Finally, it has been completed with support to create actual packages for Synology (.spk), embedding web applications and custom installation wizards and scripts.</p>
+<p>Mods is a Windows Applications.&nbsp;</p>
+<p><img src="http://i.imgur.com/4q6idMy.png" alt="" width="540" height="478"></p>
+<p><br>
+<br>
+Package created with Mods can add several shortcuts in DSM's menu to open URLs, WebApps or Shell Scripts:</p>
+<ul>
+<li>Urls can be either &quot;relative paths&quot; to websites hosted on the Synology itself or &quot;absolute Uri's&quot; of any websites hosted on Internet. Clicking on their&nbsp;icons will open the related URL's in a new browser tab.
+</li><li>Shell Scripts are executed by Synology and their outputs are displayed in real time in popup windows (iFrames) on DSM's Desktop
+</li><li>WebApps (set of php and&nbsp;html pages) are embedded in the package and deployed into the Synology. They are also opened in popup windows&nbsp;(iFrames) on DSM's Desktop.
+</li></ul>
+<p style="padding-left:30px">WebApps or Shell Scripts are only available since&nbsp;the CTP 4.</p>
+<p>In addition, one can configure the Package with start/stop scripts, pre/post-install, uninstall and upgrade scripts, as well as install, upgrade and uninstall wizards UI.</p>
+<p>&nbsp;</p>
+<p>Each shortcut can&nbsp;be configured with a custom&nbsp;&quot;title&quot; and &quot;icon&quot;.</p>
+<p>Notice:</p>
+<ul>
+<li>DSM's context data (like &quot;current user&quot;) cannot be passed as parameters on&nbsp;the URL. The URLs are static.
+</li><li>The third party package <a title="Init_3rdParty" href="https://www.cphub.net/?id=40&pid=594" target="_blank">
+Init_3rdParty</a>&nbsp;is mandatory. </li><li>Mods is only tested on my DS1815&#43; with DSM 6.x </li></ul>
+<p><br>
+<br>
+Here bellow, a shortcut to my blog has been added in DSM's main menu. I did next drag &amp; drop it onto&nbsp;DSM's desktop to create a shortcut there.<br>
+<br>
+<img src="http://i.imgur.com/zGddwbw.png" alt="My Own DSM Shortcuts" width="600" height="351"></p>
+<p>&nbsp;</p>
+<p>here is next an icon which executes a simple Shell Command 'ps -gaceux' has been added on DSM's desktop</p>
+<p><img src="http://i.imgur.com/wnWR5Vx.png" alt="Shell Command" width="600" height="529"></p>
+<p>&nbsp;</p>
+<p>And finally, here is the free web application <a title="php Server Monitor" href="https://www.phpservermonitor.org/" target="_blank">
+php Server Monitor</a>&nbsp;deployed within DSM via a Package made with Mods, and displayed in a popup/floating windows.&nbsp;</p>
+<p><img src="http://i.imgur.com/G3F775E.png?1" alt="" width="600" height="380"></p>
+<p>&nbsp;</p>
+</div><div class="ClearBoth"></div>
