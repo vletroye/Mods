@@ -43,6 +43,6 @@ here is next an icon which executes a simple Shell Command ‘ps -gaceux’ has 
 
  
 
-And finally, here is the free web application [php Server Monitor](https://www.phpservermonitor.org) deployed within DSM via a Package made with Mods, and displayed in a popup/floating windows. 
+And finally, here is the free web application [php Server Monitor](https://www.phpservermonitor.org) deployed within DSM via a Package made with Mods, and displayed in a popup/floating window. 
 
 ![](http://i.imgur.com/G3F775E.png?1)
