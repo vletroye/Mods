@@ -1,4 +1,3 @@
-# Mods
 ![](http://i.imgur.com/AMGwFll.png) **MODS - Own DSM Shortcuts Packager for Synology**
 
 This project has been created as a workaround for the lack of “Custom Shortcut on Synology Desktop”.
