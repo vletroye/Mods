@@ -1,7 +1,7 @@
 ![](http://i.imgur.com/AMGwFll.png) **MODS - Own DSM Shortcuts Packager for Synology**
 
 This project has been created as a workaround for the lack of “Custom Shortcut on Synology Desktop”.
-See the Feature Request here: 
+See the Feature Request here: http://forum.synology.com/enu/viewtopic.php?f=3&t=93823
 
 It was first aimed at opening URL’s in new Tabs. It has next been extended to run Shell Scripts and to open web pages (php or html) in floating popup windows on DSM’s desktop.
 
