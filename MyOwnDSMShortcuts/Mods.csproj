@@ -99,9 +99,7 @@
     </Compile>
     <Compile Include="AppsData.cs" />
     <Compile Include="CCursor.cs" />
-    <Compile Include="FolderBrowserDialogEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -111,6 +109,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflector.cs" />
     <Compile Include="ScriptForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -167,6 +166,9 @@
     <None Include="Resources\PackagingSyno.png" />
     <Content Include="Resources\PackagingSyno.ico" />
     <Content Include="Resources\Ps_Exec.php">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Unpack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

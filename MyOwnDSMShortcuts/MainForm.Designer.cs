@@ -129,8 +129,10 @@ namespace BeatificaBytes.Synology.Mods
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.folderBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
-            this.webpageBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
+            //this.folderBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
+            //this.webpageBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
+            this.folderBrowserDialog4Mods = new OpenFolderDialog();
+            this.webpageBrowserDialog4Mods = new OpenFolderDialog();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -238,7 +240,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxItem
             // 
-            this.textBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxItem.Location = new System.Drawing.Point(91, 217);
             this.textBoxItem.Name = "textBoxItem";
@@ -262,7 +264,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxDesc
             // 
-            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDesc.Location = new System.Drawing.Point(91, 149);
             this.textBoxDesc.Multiline = true;
@@ -764,7 +766,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxPackage
             // 
-            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxPackage.Controls.Add(this.buttonAdvanced);
             this.groupBoxPackage.Controls.Add(this.labelFirmware);
@@ -868,8 +870,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // listViewItems
             // 
-            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewItems.Location = new System.Drawing.Point(14, 19);
             this.listViewItems.Name = "listViewItems";
@@ -916,8 +918,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxItem
             // 
-            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxItem.Controls.Add(this.labelTransparency);
             this.groupBoxItem.Controls.Add(this.comboBoxTransparency);
@@ -1224,7 +1226,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxTip
             // 
-            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTip.Controls.Add(this.labelToolTip);
             this.groupBoxTip.Location = new System.Drawing.Point(3, 671);
@@ -1236,7 +1238,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // labelToolTip
             // 
-            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelToolTip.Location = new System.Drawing.Point(10, 18);
             this.labelToolTip.Name = "labelToolTip";
@@ -1246,27 +1248,27 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // folderBrowserDialog4Mods
             // 
-            this.folderBrowserDialog4Mods.Description = "";
-            this.folderBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
-            this.folderBrowserDialog4Mods.NewStyle = true;
-            this.folderBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
-            this.folderBrowserDialog4Mods.SelectedPath = "";
-            this.folderBrowserDialog4Mods.ShowBothFilesAndFolders = false;
-            this.folderBrowserDialog4Mods.ShowEditBox = true;
-            this.folderBrowserDialog4Mods.ShowFullPathInEditBox = true;
-            this.folderBrowserDialog4Mods.ShowNewFolderButton = true;
+            //this.folderBrowserDialog4Mods.Description = "";
+            //this.folderBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
+            //this.folderBrowserDialog4Mods.NewStyle = true;
+            //this.folderBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
+            this.folderBrowserDialog4Mods.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            //this.folderBrowserDialog4Mods.ShowBothFilesAndFolders = false;
+            //this.folderBrowserDialog4Mods.ShowEditBox = true;
+            //this.folderBrowserDialog4Mods.ShowFullPathInEditBox = true;
+            //this.folderBrowserDialog4Mods.ShowNewFolderButton = true;
             // 
             // webpageBrowserDialog4Mods
             // 
-            this.webpageBrowserDialog4Mods.Description = "";
-            this.webpageBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
-            this.webpageBrowserDialog4Mods.NewStyle = true;
-            this.webpageBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
-            this.webpageBrowserDialog4Mods.SelectedPath = "";
-            this.webpageBrowserDialog4Mods.ShowBothFilesAndFolders = false;
-            this.webpageBrowserDialog4Mods.ShowEditBox = true;
-            this.webpageBrowserDialog4Mods.ShowFullPathInEditBox = true;
-            this.webpageBrowserDialog4Mods.ShowNewFolderButton = true;
+            //this.webpageBrowserDialog4Mods.Description = "";
+            //this.webpageBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
+            //this.webpageBrowserDialog4Mods.NewStyle = true;
+            //this.webpageBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
+            this.webpageBrowserDialog4Mods.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+            //this.webpageBrowserDialog4Mods.ShowBothFilesAndFolders = false;
+            //this.webpageBrowserDialog4Mods.ShowEditBox = true;
+            //this.webpageBrowserDialog4Mods.ShowFullPathInEditBox = true;
+            //this.webpageBrowserDialog4Mods.ShowNewFolderButton = true;
             // 
             // MainForm
             // 
@@ -1311,8 +1313,10 @@ namespace BeatificaBytes.Synology.Mods
         #endregion
         private System.Windows.Forms.ToolTip toolTip4Mods;
         private System.Windows.Forms.OpenFileDialog openFileDialog4Mods;
-        private Ionic.Utils.FolderBrowserDialogEx folderBrowserDialog4Mods;
-        private Ionic.Utils.FolderBrowserDialogEx webpageBrowserDialog4Mods;
+        //private Ionic.Utils.FolderBrowserDialogEx folderBrowserDialog4Mods;
+        //private Ionic.Utils.FolderBrowserDialogEx webpageBrowserDialog4Mods;
+        private OpenFolderDialog folderBrowserDialog4Mods;
+        private OpenFolderDialog webpageBrowserDialog4Mods;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.GroupBox groupBoxPackage;
         private System.Windows.Forms.Label labelDSMAppName;

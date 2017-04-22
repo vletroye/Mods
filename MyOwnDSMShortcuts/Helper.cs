@@ -174,20 +174,20 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static string PickFolder(string path)
         {
-            var folderDialogEx = new Ionic.Utils.FolderBrowserDialogEx();
-            folderDialogEx.Description = "Select a folder to extract to:";
-            folderDialogEx.ShowNewFolderButton = true;
-            folderDialogEx.ShowEditBox = true;
-            //dlg1.NewStyle = false;
-            folderDialogEx.SelectedPath = path;
-            folderDialogEx.ShowFullPathInEditBox = true;
-            folderDialogEx.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            //var folderDialogEx = new Ionic.Utils.FolderBrowserDialogEx();
+            var folderDialogEx = new OpenFolderDialog();
+            folderDialogEx.Title= "Select a folder to extract to:";
+            //folderDialogEx.ShowNewFolderButton = true;
+            //folderDialogEx.ShowEditBox = true;
+            //folderDialogEx.ShowFullPathInEditBox = true;
+            //folderDialogEx.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            folderDialogEx.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.MyComputer);
 
             // Show the FolderBrowserDialog.
-            DialogResult result = folderDialogEx.ShowDialog();
-            if (result == DialogResult.OK)
+            bool result = folderDialogEx.ShowDialog();
+            if (result )
             {
-                path = folderDialogEx.SelectedPath;
+                path = folderDialogEx.FileName;
             }
             return path;
         }

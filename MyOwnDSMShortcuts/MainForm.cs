@@ -948,7 +948,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         if (answer == DialogResult.Yes)
                         {
-                            if (EditWebApp() != DialogResult.OK)
+                            if (!EditWebApp())
                             {
                                 selectedIndex = (int)UrlType.Url;
                             }
@@ -1016,25 +1016,25 @@ namespace BeatificaBytes.Synology.Mods
             return variables;
         }
 
-        private DialogResult EditWebApp()
+        private bool EditWebApp()
         {
-            webpageBrowserDialog4Mods.Description = "Pick the folder containing the sources of your WebApp.";
-            DialogResult result = webpageBrowserDialog4Mods.ShowDialog(this);
-            if (result == DialogResult.OK)
+            webpageBrowserDialog4Mods.Title = "Pick the folder containing the sources of your WebApp.";
+            var result = webpageBrowserDialog4Mods.ShowDialog();
+            if (result)
             {
                 openFileDialog4Mods.Title = "Pick the index page.";
-                openFileDialog4Mods.InitialDirectory = webpageBrowserDialog4Mods.SelectedPath;
+                openFileDialog4Mods.InitialDirectory = webpageBrowserDialog4Mods.FileName;
                 openFileDialog4Mods.Filter = "html (*.html)|*.html|php (*.php)|*.php";
                 openFileDialog4Mods.FilterIndex = 2;
                 openFileDialog4Mods.FileName = null;
-                var files = Directory.GetFiles(webpageBrowserDialog4Mods.SelectedPath).Select(path => Path.GetFileName(path)).ToArray();
+                var files = Directory.GetFiles(webpageBrowserDialog4Mods.FileName).Select(path => Path.GetFileName(path)).ToArray();
                 openFileDialog4Mods.FileName = Helper.FindFileIndex(files, "index.php") ?? Helper.FindFileIndex(files, "index.html") ?? Helper.FindFileIndex(files, "default.php") ?? Helper.FindFileIndex(files, "default.html") ?? null;
 
-                result = openFileDialog4Mods.ShowDialog(this);
-                if (result == DialogResult.OK)
+                result = (openFileDialog4Mods.ShowDialog() == DialogResult.OK);
+                if (result)
                 {
                     webAppIndex = openFileDialog4Mods.FileName;
-                    webAppFolder = webpageBrowserDialog4Mods.SelectedPath;
+                    webAppFolder = webpageBrowserDialog4Mods.FileName;
 
                     if (!webAppIndex.StartsWith(webAppFolder))
                     {
@@ -2291,6 +2291,33 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        private void ExtractPackage()
+        {
+            var unpackCmd = Path.Combine(PackageRootPath, "Unpack.cmd");
+            if (File.Exists(unpackCmd))
+            {
+                using (new CWaitCursor())
+                {
+                    // Execute the script to generate the SPK
+                    Process pack = new Process();
+                    pack.StartInfo.FileName = unpackCmd;
+                    pack.StartInfo.Arguments = "";
+                    pack.StartInfo.WorkingDirectory = PackageRootPath;
+                    pack.StartInfo.UseShellExecute = false;
+                    pack.StartInfo.RedirectStandardOutput = true;
+                    pack.StartInfo.CreateNoWindow = true;
+                    pack.Start();
+                    Console.WriteLine(pack.StandardOutput.ReadToEnd());
+                    pack.WaitForExit();
+                }
+
+            }
+            else
+            {
+                MessageBox.Show(this, "For some reason, required resource files are missing. Your package can't be extracted", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
         private void ResetEditScriptMenuIcons()
         {
             foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
@@ -2311,9 +2338,9 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = DialogResult.Cancel;
             if (path == null)
             {
-                folderBrowserDialog4Mods.Description = "Pick a folder to store the new Package or a folder containing an existing Package.";
+                folderBrowserDialog4Mods.Title = "Pick a folder to store the new Package or a folder containing an existing Package.";
                 if (!string.IsNullOrEmpty(PackageRootPath))
-                    folderBrowserDialog4Mods.SelectedPath = PackageRootPath;
+                    folderBrowserDialog4Mods.InitialDirectory = PackageRootPath;
 
                 result = GetPackagePath(ref path);
             }
@@ -2348,8 +2375,22 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
+                    string spk = null;
+
+                    //Check if the folder contains a unique SPK.
+                    var content = Directory.GetDirectories(path).ToList();
+                    content.AddRange(Directory.GetFiles(path));
+                    if (content.Count == 1 && content[0].EndsWith(".spk", StringComparison.InvariantCultureIgnoreCase))
+                        spk = content[0];
+
                     // Update with possibly new versions
                     CopyPackagingBinaries();
+
+                    if (!string.IsNullOrEmpty(spk))
+                    {
+                        //deflate the spk.
+                        ExtractPackage();
+                    }
                 }
 
                 InitData();
@@ -2374,6 +2415,9 @@ namespace BeatificaBytes.Synology.Mods
             if (File.Exists(Path.Combine(PackageRootPath, "Pack.cmd")))
                 File.Delete(Path.Combine(PackageRootPath, "Pack.cmd"));
             File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(PackageRootPath, "Pack.cmd"));
+            if (File.Exists(Path.Combine(PackageRootPath, "Unpack.cmd")))
+                File.Delete(Path.Combine(PackageRootPath, "Unpack.cmd"));
+            File.Copy(Path.Combine(ResourcesRootPath, "Unpack.cmd"), Path.Combine(PackageRootPath, "Unpack.cmd"));
         }
 
         // Return Yes to create a new package
@@ -2383,10 +2427,10 @@ namespace BeatificaBytes.Synology.Mods
         {
             DialogResult getPackage = DialogResult.Cancel;
 
-            DialogResult result = folderBrowserDialog4Mods.ShowDialog(this);
-            if (result == DialogResult.OK)
+            var result = folderBrowserDialog4Mods.ShowDialog();
+            if (result)
             {
-                path = folderBrowserDialog4Mods.SelectedPath;
+                path = folderBrowserDialog4Mods.FileName;
                 if (Directory.Exists(path))
                 {
                     getPackage = IsPackageFolderEmpty(path);
@@ -2417,6 +2461,7 @@ namespace BeatificaBytes.Synology.Mods
                         content.Remove(Path.Combine(path, "7z.exe"));
                         content.Remove(Path.Combine(path, "INFO"));
                         content.Remove(Path.Combine(path, "Pack.cmd"));
+                        content.Remove(Path.Combine(path, "Unpack.cmd"));
                         content.Remove(Path.Combine(path, "PACKAGE_ICON.PNG"));
                         content.Remove(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
                         content.Remove(Path.Combine(path, "package"));
@@ -2438,7 +2483,7 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     else
                     {
-                        // Folder contains an existing Package
+                        // Folder contains an existing "extracted" Package (not a single spk file)
                         createNewPackage = DialogResult.No;
                     }
                 }

@@ -59,18 +59,4 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs16
-		SccProjectUniqueName0 = Mods.csproj
-		SccLocalPath0 = .
-		SccLocalPath1 = .
-		SccProjectUniqueName2 = ..\\Json\u0020Editor\\Json\u0020Editor.csproj
-		SccProjectName2 = ../Json\u0020Editor
-		SccLocalPath2 = ..\\Json\u0020Editor
-		SccProjectUniqueName3 = ..\\ScintillaNET\\ScintillaNET.csproj
-		SccProjectName3 = ../ScintillaNET
-		SccLocalPath3 = ..\\ScintillaNET
-	EndGlobalSection
 EndGlobal
