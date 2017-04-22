@@ -2739,14 +2739,14 @@ namespace BeatificaBytes.Synology.Mods
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = new ProcessStartInfo("https://mods.codeplex.com/documentation");
+            var info = new ProcessStartInfo("https://github.com/vletroye/Mods/wiki/Documentation");
             info.UseShellExecute = true;
             Process.Start(info);
         }
 
         private void supportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = new ProcessStartInfo("https://mods.codeplex.com/discussions");
+            var info = new ProcessStartInfo("https://github.com/vletroye/Mods/issues");
             info.UseShellExecute = true;
             Process.Start(info);
         }

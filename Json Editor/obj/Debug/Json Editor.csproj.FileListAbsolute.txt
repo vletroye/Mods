@@ -1,0 +1,19 @@
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ZTn.Json.Editor.dll.config
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ZTn.Json.Editor.dll
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ZTn.Json.Editor.pdb
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\Newtonsoft.Json.dll
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ScintillaNET.dll
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ScintillaNET.pdb
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\ScintillaNET.xml
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\Newtonsoft.Json.pdb
+E:\Work\Development\Git\Mods\Mods\Json Editor\bin\Debug\Newtonsoft.Json.xml
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\Json Editor.csprojResolveAssemblyReference.cache
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Forms.AboutBox.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Forms.SubitemDefinition.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Forms.JsonEditorMainForm.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Forms.ItemDefinition.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Forms.StepDefinition.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.Properties.Resources.resources
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\Json Editor.csproj.GenerateResource.Cache
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.dll
+E:\Work\Development\Git\Mods\Mods\Json Editor\obj\Debug\ZTn.Json.Editor.pdb
