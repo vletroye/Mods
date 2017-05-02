@@ -28,18 +28,28 @@ namespace BeatificaBytes.Synology.Mods
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            if (Properties.Settings.Default.UpgradeRequired)
+            var hash = args.SingleOrDefault(arg => arg.StartsWith("hash:"));
+            if (!string.IsNullOrEmpty(hash))
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpgradeRequired = false;
-                Properties.Settings.Default.Save();
+                var path = hash.Replace("hash:", "");
+                if (path == ".") path = AppDomain.CurrentDomain.BaseDirectory;
+                Helper.ComputeMD5Hash(path);
             }
+            else
+            {
+                if (Properties.Settings.Default.UpgradeRequired)
+                {
+                    Properties.Settings.Default.Upgrade();
+                    Properties.Settings.Default.UpgradeRequired = false;
+                    Properties.Settings.Default.Save();
+                }
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm());
+            }
         }
     }
 }

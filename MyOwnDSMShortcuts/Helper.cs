@@ -9,12 +9,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace BeatificaBytes.Synology.Mods
 {
     public class Helper
     {
-        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9]", RegexOptions.Compiled);
+        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-]", RegexOptions.Compiled);
 
         // Remove all characters that cannot be used in names stored in a package
         internal static string CleanUpText(string text)
@@ -119,22 +120,29 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static void CopyDirectory(string strSource, string strDestination)
         {
-            if (!Directory.Exists(strDestination))
+            if (strDestination.StartsWith(strSource))
             {
-                Directory.CreateDirectory(strDestination);
+                MessageBox.Show(string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-
-            DirectoryInfo dirInfo = new DirectoryInfo(strSource);
-            FileInfo[] files = dirInfo.GetFiles();
-            foreach (FileInfo tempfile in files)
+            else
             {
-                tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
-            }
+                if (!Directory.Exists(strDestination))
+                {
+                    Directory.CreateDirectory(strDestination);
+                }
 
-            DirectoryInfo[] directories = dirInfo.GetDirectories();
-            foreach (DirectoryInfo tempdir in directories)
-            {
-                CopyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+                DirectoryInfo dirInfo = new DirectoryInfo(strSource);
+                FileInfo[] files = dirInfo.GetFiles();
+                foreach (FileInfo tempfile in files)
+                {
+                    tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
+                }
+
+                DirectoryInfo[] directories = dirInfo.GetDirectories();
+                foreach (DirectoryInfo tempdir in directories)
+                {
+                    CopyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+                }
             }
         }
 
@@ -149,43 +157,15 @@ namespace BeatificaBytes.Synology.Mods
             return file;
         }
 
-        //internal static DateTime GetLinkerTime(Assembly assembly, TimeZoneInfo target = null)
-        //{
-        //    var filePath = assembly.Location;
-        //    const int c_PeHeaderOffset = 60;
-        //    const int c_LinkerTimestampOffset = 8;
-
-        //    var buffer = new byte[2048];
-
-        //    using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-        //        stream.Read(buffer, 0, 2048);
-
-        //    var offset = BitConverter.ToInt32(buffer, c_PeHeaderOffset);
-        //    var secondsSince1970 = BitConverter.ToInt32(buffer, offset + c_LinkerTimestampOffset);
-        //    var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        //    var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
-
-        //    var tz = target ?? TimeZoneInfo.Local;
-        //    var localTime = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tz);
-
-        //    return localTime;
-        //}
-
         internal static string PickFolder(string path)
         {
-            //var folderDialogEx = new Ionic.Utils.FolderBrowserDialogEx();
             var folderDialogEx = new OpenFolderDialog();
-            folderDialogEx.Title= "Select a folder to extract to:";
-            //folderDialogEx.ShowNewFolderButton = true;
-            //folderDialogEx.ShowEditBox = true;
-            //folderDialogEx.ShowFullPathInEditBox = true;
-            //folderDialogEx.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            folderDialogEx.Title = "Select a folder to extract to:";
             folderDialogEx.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.MyComputer);
 
             // Show the FolderBrowserDialog.
             bool result = folderDialogEx.ShowDialog();
-            if (result )
+            if (result)
             {
                 path = folderDialogEx.FileName;
             }
@@ -251,6 +231,48 @@ namespace BeatificaBytes.Synology.Mods
             Uri outUri;
             return (Uri.TryCreate(Url, UriKind.Absolute, out outUri)
                         && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps));
+        }
+
+
+        public static void ComputeMD5Hash(string path)
+        {
+            string hash = "";
+            var package = Path.Combine(path, "package.tgz");
+            var info = Path.Combine(path, "INFO");
+
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(package))
+                {
+                    var hashByte = md5.ComputeHash(stream);
+                    hash = BitConverter.ToString(hashByte).Replace("-", "").ToLower();
+                }
+            }
+
+            if (File.Exists(info))
+            {
+                var lines = File.ReadAllLines(info);
+                using (StreamWriter outputFile = new StreamWriter(info))
+                {
+                    bool check = false;
+                    foreach (var line in lines)
+                    {
+                        var key = line.Substring(0, line.IndexOf('='));
+                        var value = line.Substring(line.IndexOf('=') + 1);
+                        value = value.Trim(new char[] { '"' });
+
+                        if (key == "checksum")
+                        {
+                            value = hash;
+                            check = true;
+                        }
+
+                        outputFile.WriteLine("{0}=\"{1}\"", key, value);
+                    }
+                    if (!check)
+                        outputFile.WriteLine("checksum=\"{0}\"", hash);
+                }
+            }
         }
     }
 }

@@ -72,6 +72,9 @@ namespace BeatificaBytes.Synology.Mods
             this.TextBoxReportUrl = new System.Windows.Forms.TextBox();
             this.textBoxFirmware = new System.Windows.Forms.TextBox();
             this.buttonAdvanced = new System.Windows.Forms.Button();
+            this.checkBoxBeta = new System.Windows.Forms.CheckBox();
+            this.comboBoxItemType = new System.Windows.Forms.ComboBox();
+            this.textBoxSupportUrl = new System.Windows.Forms.TextBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -83,8 +86,8 @@ namespace BeatificaBytes.Synology.Mods
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
+            this.labelSupportUrl = new System.Windows.Forms.Label();
             this.labelFirmware = new System.Windows.Forms.Label();
-            this.checkBoxBeta = new System.Windows.Forms.CheckBox();
             this.labelHelpUrl = new System.Windows.Forms.Label();
             this.labelReportUrl = new System.Windows.Forms.Label();
             this.labelPublisherUrl = new System.Windows.Forms.Label();
@@ -92,7 +95,6 @@ namespace BeatificaBytes.Synology.Mods
             this.listViewItems = new System.Windows.Forms.ListView();
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
-            this.comboBoxItemType = new System.Windows.Forms.ComboBox();
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -129,10 +131,7 @@ namespace BeatificaBytes.Synology.Mods
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            //this.folderBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
-            //this.webpageBrowserDialog4Mods = new Ionic.Utils.FolderBrowserDialogEx();
-            this.folderBrowserDialog4Mods = new OpenFolderDialog();
-            this.webpageBrowserDialog4Mods = new OpenFolderDialog();
+            this.checkBoxSingleApp = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -160,6 +159,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainerUrl.Tag = "PKGmaintainer_url";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainerUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
+            this.textBoxMaintainerUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxMaintainerUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxMaintainerUrl_Validating);
             this.textBoxMaintainerUrl.Validated += new System.EventHandler(this.textBoxMaintainerUrl_Validated);
             // 
@@ -174,6 +174,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
         "ter.");
+            this.textBoxDescription.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDescription.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDescription_Validating);
             this.textBoxDescription.Validated += new System.EventHandler(this.textBoxDescription_Validated);
             // 
@@ -187,6 +188,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package. This name may not include any special character or" +
         " blanks.\r\nPackage Center will create a /var/packages/[package identity] folder t" +
         "o put package files.");
+            this.textBoxPackage.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPackage.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPackage_Validating);
             this.textBoxPackage.Validated += new System.EventHandler(this.textBoxPackage_Validated);
             // 
@@ -197,8 +199,9 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDisplay.Size = new System.Drawing.Size(141, 20);
             this.textBoxDisplay.TabIndex = 3;
             this.textBoxDisplay.Tag = "PKGdisplayname";
-            this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t ener a Disp" +
-        "lay name, the Package name will be displayed.");
+            this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t enter a Dis" +
+        "play name, the Package name will be displayed.");
+            this.textBoxDisplay.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDisplay.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDisplay_Validating);
             this.textBoxDisplay.Validated += new System.EventHandler(this.textBoxDisplay_Validated);
             // 
@@ -211,6 +214,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainer.Tag = "PKGmaintainer";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainer, "Enter the name of the person who developped the items in your package.\r\nThis name" +
         " will be displayed in DSM\'s Package Center.");
+            this.textBoxMaintainer.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxMaintainer.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxMaintainer_Validating);
             this.textBoxMaintainer.Validated += new System.EventHandler(this.textBoxMaintainer_Validated);
             // 
@@ -222,6 +226,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxVersion.TabIndex = 2;
             this.textBoxVersion.Tag = "PKGversion";
             this.toolTip4Mods.SetToolTip(this.textBoxVersion, resources.GetString("textBoxVersion.ToolTip"));
+            this.textBoxVersion.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxVersion.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
             this.textBoxVersion.Validated += new System.EventHandler(this.textBoxVersion_Validated);
             // 
@@ -235,12 +240,13 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxDsmAppName, "Enter an application name for your package. Ex.: com.yourSite.yourPackageName\r\nTh" +
         "is name must be unique in the universe and will be used behind the scene when in" +
         "stalling your package on DSM.");
+            this.textBoxDsmAppName.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDsmAppName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDsmAppName_Validating);
             this.textBoxDsmAppName.Validated += new System.EventHandler(this.textBoxDsmAppName_Validated);
             // 
             // textBoxItem
             // 
-            this.textBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.textBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxItem.Location = new System.Drawing.Point(91, 217);
             this.textBoxItem.Name = "textBoxItem";
@@ -248,6 +254,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxItem.TabIndex = 5;
             this.toolTip4Mods.SetToolTip(this.textBoxItem, "Select a Type first");
             this.textBoxItem.DoubleClick += new System.EventHandler(this.textBoxItem_DoubleClick);
+            this.textBoxItem.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxItem.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxItem_Validating);
             this.textBoxItem.Validated += new System.EventHandler(this.textBoxItem_Validated);
             // 
@@ -259,12 +266,13 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxTitle.Size = new System.Drawing.Size(108, 20);
             this.textBoxTitle.TabIndex = 1;
             this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the Item. It will to be displayed on DSM.");
+            this.textBoxTitle.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
             this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
             // 
             // textBoxDesc
             // 
-            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDesc.Location = new System.Drawing.Point(91, 149);
             this.textBoxDesc.Multiline = true;
@@ -273,6 +281,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDesc.Size = new System.Drawing.Size(388, 62);
             this.textBoxDesc.TabIndex = 3;
             this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
+            this.textBoxDesc.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonPackage
             // 
@@ -286,6 +295,7 @@ namespace BeatificaBytes.Synology.Mods
         " saved.");
             this.buttonPackage.UseVisualStyleBackColor = true;
             this.buttonPackage.Click += new System.EventHandler(this.buttonPackage_Click);
+            this.buttonPackage.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonReset
             // 
@@ -299,6 +309,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values.");
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            this.buttonReset.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // labelTransparency
             // 
@@ -320,6 +331,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisher.Tag = "PKGdistributor";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisher, "Enter the name of the person who create the package.\r\nThis name will be displayed" +
         " in DSM\'s Package Center.");
+            this.textBoxPublisher.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPublisher.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisher_Validating);
             this.textBoxPublisher.Validated += new System.EventHandler(this.textBoxPublisher_Validated);
             // 
@@ -501,6 +513,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonAdd, "Add a new item in the package.");
             this.buttonAdd.UseVisualStyleBackColor = true;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAddItem_Click);
+            this.buttonAdd.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxAllUsers
             // 
@@ -516,6 +529,7 @@ namespace BeatificaBytes.Synology.Mods
         "em.\r\nIf you don\'t select this item, only the user who installed the package will" +
         " have access to the item.");
             this.checkBoxAllUsers.UseVisualStyleBackColor = true;
+            this.checkBoxAllUsers.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonEdit
             // 
@@ -528,6 +542,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonEdit, "Edit the item currently selected in the list above.");
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEditItem_Click);
+            this.buttonEdit.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonDelete
             // 
@@ -540,6 +555,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonDelete, "Delete the item currently selected in the list above.");
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDeleteItem_Click);
+            this.buttonDelete.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonCancel
             // 
@@ -553,6 +569,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonCancel, "Cancel all changes done on the item currently edited.");
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancelItem_Click);
+            this.buttonCancel.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonSave
             // 
@@ -566,6 +583,7 @@ namespace BeatificaBytes.Synology.Mods
         "changes done in the \'Package Information\' pane.");
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSaveItem_Click);
+            this.buttonSave.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxSize
             // 
@@ -581,6 +599,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.checkBoxSize, resources.GetString("checkBoxSize.ToolTip"));
             this.checkBoxSize.UseVisualStyleBackColor = true;
             this.checkBoxSize.CheckedChanged += new System.EventHandler(this.checkBoxSize_CheckedChanged);
+            this.checkBoxSize.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxMultiInstance
             // 
@@ -598,6 +617,7 @@ namespace BeatificaBytes.Synology.Mods
         "in DSM.\r\nIf you don\'t select this option, you will only ba able to run once inst" +
         "ance of the item.");
             this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
+            this.checkBoxMultiInstance.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // comboBoxTransparency
             // 
@@ -620,6 +640,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.comboBoxTransparency, "When importing a new image, you will be asked if it must be made transparent. Ans" +
         "wering \'yes\', all colors equal to image\'s pixel (1,1) +/- this value will be set" +
         " as transparent.");
+            this.comboBoxTransparency.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // textBoxPublisherUrl
             // 
@@ -630,24 +651,26 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
+            this.textBoxPublisherUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPublisherUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisherUrl_Validating);
             this.textBoxPublisherUrl.Validated += new System.EventHandler(this.textBoxPublisherUrl_Validated);
             // 
             // textBoxHelpUrl
             // 
-            this.textBoxHelpUrl.Location = new System.Drawing.Point(334, 190);
+            this.textBoxHelpUrl.Location = new System.Drawing.Point(330, 191);
             this.textBoxHelpUrl.Name = "textBoxHelpUrl";
             this.textBoxHelpUrl.Size = new System.Drawing.Size(453, 20);
             this.textBoxHelpUrl.TabIndex = 11;
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
+            this.textBoxHelpUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxHelpUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxHelpUrl_Validating);
             this.textBoxHelpUrl.Validated += new System.EventHandler(this.textBoxHelpUrl_Validated);
             // 
             // TextBoxReportUrl
             // 
-            this.TextBoxReportUrl.Location = new System.Drawing.Point(334, 219);
+            this.TextBoxReportUrl.Location = new System.Drawing.Point(330, 242);
             this.TextBoxReportUrl.Name = "TextBoxReportUrl";
             this.TextBoxReportUrl.Size = new System.Drawing.Size(453, 20);
             this.TextBoxReportUrl.TabIndex = 13;
@@ -655,6 +678,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
             this.TextBoxReportUrl.Visible = false;
+            this.TextBoxReportUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.TextBoxReportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.TextBoxReportUrl_Validating);
             this.TextBoxReportUrl.Validated += new System.EventHandler(this.TextBoxReportUrl_Validated);
             // 
@@ -667,6 +691,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxFirmware.Tag = "PKGfirmware";
             this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\nValue: X.Y" +
         "-Z DSM major number, DSM minor number, DSM build number");
+            this.textBoxFirmware.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
             this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
@@ -681,6 +706,51 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields.");
             this.buttonAdvanced.UseVisualStyleBackColor = true;
             this.buttonAdvanced.Click += new System.EventHandler(this.buttonAdvanced_Click);
+            this.buttonAdvanced.Enter += new System.EventHandler(this.OnMouseEnter);
+            // 
+            // checkBoxBeta
+            // 
+            this.checkBoxBeta.AutoSize = true;
+            this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxBeta.Location = new System.Drawing.Point(30, 242);
+            this.checkBoxBeta.Name = "checkBoxBeta";
+            this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxBeta.TabIndex = 12;
+            this.checkBoxBeta.Tag = "PKGbeta";
+            this.checkBoxBeta.Text = "Beta Version";
+            this.toolTip4Mods.SetToolTip(this.checkBoxBeta, "Check this option if your package is still in a beta phase.");
+            this.checkBoxBeta.UseVisualStyleBackColor = true;
+            this.checkBoxBeta.CheckedChanged += new System.EventHandler(this.checkBoxBeta_CheckedChanged);
+            this.checkBoxBeta.Enter += new System.EventHandler(this.OnMouseEnter);
+            // 
+            // comboBoxItemType
+            // 
+            this.comboBoxItemType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxItemType.FormattingEnabled = true;
+            this.comboBoxItemType.Items.AddRange(new object[] {
+            "Url",
+            "Script",
+            "WebApp"});
+            this.comboBoxItemType.Location = new System.Drawing.Point(6, 217);
+            this.comboBoxItemType.Name = "comboBoxItemType";
+            this.comboBoxItemType.Size = new System.Drawing.Size(76, 21);
+            this.comboBoxItemType.TabIndex = 4;
+            this.toolTip4Mods.SetToolTip(this.comboBoxItemType, "Select here the type of item to be added in the Package: a simple URL to open a w" +
+        "ebsite in a new tab, a script to execute be executed by a shell, or a web app to" +
+        " open windowed within DSM.");
+            this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
+            this.comboBoxItemType.Enter += new System.EventHandler(this.OnMouseEnter);
+            // 
+            // textBoxSupportUrl
+            // 
+            this.textBoxSupportUrl.Location = new System.Drawing.Point(330, 216);
+            this.textBoxSupportUrl.Name = "textBoxSupportUrl";
+            this.textBoxSupportUrl.Size = new System.Drawing.Size(453, 20);
+            this.textBoxSupportUrl.TabIndex = 65;
+            this.textBoxSupportUrl.Tag = "PKGsupport_url";
+            this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
+        ".");
             // 
             // openFileDialog4Mods
             // 
@@ -766,8 +836,11 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxPackage
             // 
-            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPackage.Controls.Add(this.checkBoxSingleApp);
+            this.groupBoxPackage.Controls.Add(this.labelSupportUrl);
+            this.groupBoxPackage.Controls.Add(this.textBoxSupportUrl);
             this.groupBoxPackage.Controls.Add(this.buttonAdvanced);
             this.groupBoxPackage.Controls.Add(this.labelFirmware);
             this.groupBoxPackage.Controls.Add(this.textBoxFirmware);
@@ -806,6 +879,15 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
+            // labelSupportUrl
+            // 
+            this.labelSupportUrl.AutoSize = true;
+            this.labelSupportUrl.Location = new System.Drawing.Point(262, 220);
+            this.labelSupportUrl.Name = "labelSupportUrl";
+            this.labelSupportUrl.Size = new System.Drawing.Size(63, 13);
+            this.labelSupportUrl.TabIndex = 66;
+            this.labelSupportUrl.Text = "Support Url:";
+            // 
             // labelFirmware
             // 
             this.labelFirmware.AutoSize = true;
@@ -815,23 +897,10 @@ namespace BeatificaBytes.Synology.Mods
             this.labelFirmware.TabIndex = 64;
             this.labelFirmware.Text = "Earliest Firmware:";
             // 
-            // checkBoxBeta
-            // 
-            this.checkBoxBeta.AutoSize = true;
-            this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxBeta.Location = new System.Drawing.Point(32, 219);
-            this.checkBoxBeta.Name = "checkBoxBeta";
-            this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxBeta.TabIndex = 12;
-            this.checkBoxBeta.Tag = "PKGbeta";
-            this.checkBoxBeta.Text = "Beta Version";
-            this.checkBoxBeta.UseVisualStyleBackColor = true;
-            this.checkBoxBeta.CheckedChanged += new System.EventHandler(this.checkBoxBeta_CheckedChanged);
-            // 
             // labelHelpUrl
             // 
             this.labelHelpUrl.AutoSize = true;
-            this.labelHelpUrl.Location = new System.Drawing.Point(229, 194);
+            this.labelHelpUrl.Location = new System.Drawing.Point(225, 195);
             this.labelHelpUrl.Name = "labelHelpUrl";
             this.labelHelpUrl.Size = new System.Drawing.Size(98, 13);
             this.labelHelpUrl.TabIndex = 61;
@@ -841,7 +910,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelReportUrl
             // 
             this.labelReportUrl.AutoSize = true;
-            this.labelReportUrl.Location = new System.Drawing.Point(271, 219);
+            this.labelReportUrl.Location = new System.Drawing.Point(267, 246);
             this.labelReportUrl.Name = "labelReportUrl";
             this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
             this.labelReportUrl.TabIndex = 59;
@@ -870,12 +939,12 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // listViewItems
             // 
-            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewItems.Location = new System.Drawing.Point(14, 19);
+            this.listViewItems.Location = new System.Drawing.Point(6, 19);
             this.listViewItems.Name = "listViewItems";
-            this.listViewItems.Size = new System.Drawing.Size(773, 98);
+            this.listViewItems.Size = new System.Drawing.Size(781, 98);
             this.listViewItems.TabIndex = 0;
             this.listViewItems.UseCompatibleStateImageBehavior = false;
             this.listViewItems.SelectedIndexChanged += new System.EventHandler(this.listViewItems_SelectedIndexChanged);
@@ -901,25 +970,10 @@ namespace BeatificaBytes.Synology.Mods
             this.labelDesc.TabIndex = 5;
             this.labelDesc.Text = "Description:";
             // 
-            // comboBoxItemType
-            // 
-            this.comboBoxItemType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.comboBoxItemType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxItemType.FormattingEnabled = true;
-            this.comboBoxItemType.Items.AddRange(new object[] {
-            "Url",
-            "Script",
-            "WebApp"});
-            this.comboBoxItemType.Location = new System.Drawing.Point(24, 217);
-            this.comboBoxItemType.Name = "comboBoxItemType";
-            this.comboBoxItemType.Size = new System.Drawing.Size(58, 21);
-            this.comboBoxItemType.TabIndex = 4;
-            this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
-            // 
             // groupBoxItem
             // 
-            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxItem.Controls.Add(this.labelTransparency);
             this.groupBoxItem.Controls.Add(this.comboBoxTransparency);
@@ -982,34 +1036,34 @@ namespace BeatificaBytes.Synology.Mods
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // openRecentToolStripMenuItem
             // 
             this.openRecentToolStripMenuItem.Name = "openRecentToolStripMenuItem";
-            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.openRecentToolStripMenuItem.Text = "Open Recent";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -1226,7 +1280,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxTip
             // 
-            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTip.Controls.Add(this.labelToolTip);
             this.groupBoxTip.Location = new System.Drawing.Point(3, 671);
@@ -1238,7 +1292,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // labelToolTip
             // 
-            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelToolTip.Location = new System.Drawing.Point(10, 18);
             this.labelToolTip.Name = "labelToolTip";
@@ -1246,29 +1300,21 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
-            // folderBrowserDialog4Mods
+            // checkBoxSingleApp
             // 
-            //this.folderBrowserDialog4Mods.Description = "";
-            //this.folderBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
-            //this.folderBrowserDialog4Mods.NewStyle = true;
-            //this.folderBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
-            this.folderBrowserDialog4Mods.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-            //this.folderBrowserDialog4Mods.ShowBothFilesAndFolders = false;
-            //this.folderBrowserDialog4Mods.ShowEditBox = true;
-            //this.folderBrowserDialog4Mods.ShowFullPathInEditBox = true;
-            //this.folderBrowserDialog4Mods.ShowNewFolderButton = true;
-            // 
-            // webpageBrowserDialog4Mods
-            // 
-            //this.webpageBrowserDialog4Mods.Description = "";
-            //this.webpageBrowserDialog4Mods.DontIncludeNetworkFoldersBelowDomainLevel = false;
-            //this.webpageBrowserDialog4Mods.NewStyle = true;
-            //this.webpageBrowserDialog4Mods.RootFolder = System.Environment.SpecialFolder.Desktop;
-            this.webpageBrowserDialog4Mods.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-            //this.webpageBrowserDialog4Mods.ShowBothFilesAndFolders = false;
-            //this.webpageBrowserDialog4Mods.ShowEditBox = true;
-            //this.webpageBrowserDialog4Mods.ShowFullPathInEditBox = true;
-            //this.webpageBrowserDialog4Mods.ShowNewFolderButton = true;
+            this.checkBoxSingleApp.AutoSize = true;
+            this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSingleApp.Location = new System.Drawing.Point(39, 218);
+            this.checkBoxSingleApp.Name = "checkBoxSingleApp";
+            this.checkBoxSingleApp.Size = new System.Drawing.Size(77, 17);
+            this.checkBoxSingleApp.TabIndex = 67;
+            this.checkBoxSingleApp.Tag = "PKGsingleApp";
+            this.checkBoxSingleApp.Text = "Single App";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSingleApp, "Check this option if your package will only contain one url, script or applicatio" +
+        "n. This option is also enabled if you open a third party package.");
+            this.checkBoxSingleApp.UseVisualStyleBackColor = true;
+            this.checkBoxSingleApp.CheckedChanged += new System.EventHandler(this.checkBoxSingleApp_CheckedChanged);
+            this.checkBoxSingleApp.CheckStateChanged += new System.EventHandler(this.checkBoxSingleApp_CheckStateChanged);
             // 
             // MainForm
             // 
@@ -1315,8 +1361,8 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.OpenFileDialog openFileDialog4Mods;
         //private Ionic.Utils.FolderBrowserDialogEx folderBrowserDialog4Mods;
         //private Ionic.Utils.FolderBrowserDialogEx webpageBrowserDialog4Mods;
-        private OpenFolderDialog folderBrowserDialog4Mods;
-        private OpenFolderDialog webpageBrowserDialog4Mods;
+        private OpenFolderDialog folderBrowserDialog4Mods = new OpenFolderDialog();
+        private OpenFolderDialog webpageBrowserDialog4Mods = new OpenFolderDialog();
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.GroupBox groupBoxPackage;
         private System.Windows.Forms.Label labelDSMAppName;
@@ -1412,6 +1458,9 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.Label labelSupportUrl;
+        private System.Windows.Forms.TextBox textBoxSupportUrl;
+        private System.Windows.Forms.CheckBox checkBoxSingleApp;
     }
 }
 

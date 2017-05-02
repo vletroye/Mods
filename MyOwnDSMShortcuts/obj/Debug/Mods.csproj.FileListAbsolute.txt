@@ -1,12 +1,13 @@
-E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe.config
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\HelpSynoWizard.csv
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\backwizard.png
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Pack.cmd
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Package.zip
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Ps_Exec.php
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Unpack.cmd
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\7z.dll
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\7z.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\settings.png
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe.config
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.pdb
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Newtonsoft.Json.dll

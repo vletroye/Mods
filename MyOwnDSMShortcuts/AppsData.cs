@@ -24,6 +24,7 @@ namespace BeatificaBytes.Synology.Mods
             type = "url";
             icon = "images/default_{0}.png";
             guid = Guid.NewGuid();
+            itemType = -1;
         }
 
         internal Guid guid { get; set; }
@@ -36,8 +37,6 @@ namespace BeatificaBytes.Synology.Mods
         public string url { get; set; }
         public int port { get; set; }
         public int itemType { get; set; }
-        public string appWindow { get; set; }
         public bool allowMultiInstance { get; set; }
-        //public string urlDetail { get; set; }
     }
 }
