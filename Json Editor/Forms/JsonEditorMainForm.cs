@@ -53,7 +53,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 OpenJson(path);
             }
-            catch
+            catch (Exception ex)
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
@@ -62,10 +62,12 @@ namespace ZTn.Json.Editor.Forms
 
         private void OpenJson(string path)
         {
+            var info = new FileInfo(path);
             using (var stream = new FileStream(path, FileMode.Open))
             {
                 SetJsonSourceStream(stream, path);
             }
+
             ExpandWizardNodes(jsonTreeView.Nodes[0]);
         }
 
@@ -480,7 +482,7 @@ namespace ZTn.Json.Editor.Forms
                     writer.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
                     foreach (JToken step in JsonEditorItem.JTokenValue.Children())
                     {
-                        var imgSrc = Path.Combine(Helper.AssemblyDirectory,"backwizard.png");
+                        var imgSrc = Path.Combine(Helper.AssemblyDirectory, "backwizard.png");
                         var uri = new System.Uri(imgSrc).AbsoluteUri;
                         writer.RenderBeginTag(HtmlTextWriterTag.Div);
                         writer.AddAttribute(HtmlTextWriterAttribute.Style, "background-image: url('" + uri + "'); background-position: right; color:#FFFFFF; height:50px; display: flex; vertical-align: middle;");
@@ -767,7 +769,7 @@ namespace ZTn.Json.Editor.Forms
                         if (desc.Value.ToString() == "")
                             desc = GetNodeByKey(radio.Children(), "key") as JProperty;
                     if (desc != null)
-                    { 
+                    {
                         writer.Write(desc.Value.ToString());
                         writer.Write(": ");
                     }

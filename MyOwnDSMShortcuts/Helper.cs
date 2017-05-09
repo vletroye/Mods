@@ -66,9 +66,17 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static string IncrementVersion(string version)
         {
-            var versions = version.Split(new char[] { '.', '-' });
-            var minor = int.Parse(versions[2]) + 1;
-            return string.Format("{0}.{1}.{2:0000}", versions[0], versions[1], minor);
+            var versions = version.Replace("b",".").Split(new char[] { '.', '-' });
+            var major = 0;
+            var minor = 0;
+            var build = 1;
+            if (versions.Length > 2)
+                build = int.Parse(versions[2]) + 1;
+            if (versions.Length > 1)
+                minor = int.Parse(versions[1]);
+            if (versions.Length > 0)
+                major = int.Parse(versions[0]);
+            return string.Format("{0}.{1}.{2:0000}", major, minor, build);
         }
 
         internal static Exception DeleteDirectory(string path)
@@ -120,28 +128,32 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static void CopyDirectory(string strSource, string strDestination)
         {
-            if (strDestination.StartsWith(strSource))
+            using (new CWaitCursor())
             {
-                MessageBox.Show(string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else
-            {
-                if (!Directory.Exists(strDestination))
-                {
-                    Directory.CreateDirectory(strDestination);
-                }
 
-                DirectoryInfo dirInfo = new DirectoryInfo(strSource);
-                FileInfo[] files = dirInfo.GetFiles();
-                foreach (FileInfo tempfile in files)
+                if (strDestination.StartsWith(strSource))
                 {
-                    tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
+                    MessageBox.Show(string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
-
-                DirectoryInfo[] directories = dirInfo.GetDirectories();
-                foreach (DirectoryInfo tempdir in directories)
+                else
                 {
-                    CopyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+                    if (!Directory.Exists(strDestination))
+                    {
+                        Directory.CreateDirectory(strDestination);
+                    }
+
+                    DirectoryInfo dirInfo = new DirectoryInfo(strSource);
+                    FileInfo[] files = dirInfo.GetFiles();
+                    foreach (FileInfo tempfile in files)
+                    {
+                        tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
+                    }
+
+                    DirectoryInfo[] directories = dirInfo.GetDirectories();
+                    foreach (DirectoryInfo tempdir in directories)
+                    {
+                        CopyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+                    }
                 }
             }
         }

@@ -10,6 +10,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -58,6 +60,10 @@ namespace BeatificaBytes.Synology.Mods
 
         Dictionary<string, PictureBox> pictureBoxes;
         Dictionary<string, string> info;
+
+        Image picturePkg_72 = null;
+        Image picturePkg_120 = null;
+        Image picturePkg_256 = null;
 
         KeyValuePair<string, AppsData> current;
         State state;
@@ -211,71 +217,165 @@ namespace BeatificaBytes.Synology.Mods
         private void BindData(Package list)
         {
             listViewItems.Items.Clear();
-
-            foreach (var item in list.items)
+            if (list != null)
             {
-                var uri = item.Value.url;
-                if (item.Value.itemType == (int)UrlType.Url && uri.StartsWith("/"))
-                    uri = string.Format("{0}://{1}:{2}{3}", item.Value.protocol, WebSynology, item.Value.port, uri);
+                foreach (var item in list.items)
+                {
+                    var uri = item.Value.url;
+                    if (item.Value.itemType == (int)UrlType.Url && uri.StartsWith("/"))
+                        uri = string.Format("{0}://{1}:{2}{3}", item.Value.protocol, WebSynology, item.Value.port, uri);
 
 
-                // Define the list items
-                var lvi = new ListViewItem(item.Value.title);
-                lvi.SubItems.Add(uri);
-                lvi.Tag = item;
+                    // Define the list items
+                    var lvi = new ListViewItem(item.Value.title);
+                    lvi.SubItems.Add(uri);
+                    lvi.Tag = item;
+
+                    // Add the list items to the ListView
+                    listViewItems.Items.Add(lvi);
+                }
+
+                listViewItems.Sort();
+            }
+            else
+            {
+                var lvi = new ListViewItem("No Items");
+                lvi.SubItems.Add("This package only contains scripts");
+                lvi.Tag = new KeyValuePair<string, AppsData>(null, null);
 
                 // Add the list items to the ListView
                 listViewItems.Items.Add(lvi);
             }
-
-            listViewItems.Sort();
         }
 
         private void LoadPackageConfig(string path)
         {
-            var config = Path.Combine(path, string.Format(CONFIGFILE, info["dsmuidir"]));
-            if (File.Exists(config))
-            {
-                var json = File.ReadAllText(config);
-                list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-
-                if (list == null || list.items.Count == 0)
-                {
-                    json = Properties.Settings.Default.Packages;
-                    if (!string.IsNullOrEmpty(json))
-                    {
-                        list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-                    }
-                    else
-                    {
-                        list = new Package();
-                    }
-                }
-            }
+            string ui = null;
+            if (info.ContainsKey("dsmuidir"))
+                ui = info["dsmuidir"];
             else
             {
-                list = new Package();
-            }
-
-            foreach (var item in list.items)
-            {
-                if (item.Value.itemType == -1)
-                    if (item.Value.type == "legacy") item.Value.itemType = (int)UrlType.WebApp;
-                //if (item.Value.url.StartsWith("/webman/3rdparty/") ) item.Value.itemType = (int)UrlType.WebApp;
-            }
-
-            if (list.items.Count == 1 && !info.ContainsKey("singleApp"))
-            {
-                var title = list.items.First().Value.title;
-                title = Helper.CleanUpText(title);
-
-                if (list.items.First().Value.url.Contains(string.Format("/{0}/", title)))
+                var fileList = new DirectoryInfo(Path.Combine(path, "package")).GetFiles("config", SearchOption.AllDirectories);
+                if (fileList.Length > 0)
                 {
-                    info.Add("singleApp", "no");
+                    ui = fileList[0].FullName.Replace(Path.Combine(path, "package"), "").Replace("config", "").Trim(new char[] {'\\'});
+                    info.Add("dsmuidir", ui);
+                }
+                else
+                    ui = null;
+
+            }
+
+            if (ui != null)
+            {
+                var config = Path.Combine(path, string.Format(CONFIGFILE, ui));
+                if (File.Exists(config))
+                {
+                    var json = File.ReadAllText(config);
+                    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+
+                    if (list == null || list.items.Count == 0)
+                    {
+                        json = Properties.Settings.Default.Packages;
+                        if (!string.IsNullOrEmpty(json))
+                        {
+                            list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+                        }
+                        else
+                        {
+                            list = new Package();
+                        }
+                    }
                 }
                 else
                 {
-                    info.Add("singleApp", "yes");
+                    list = new Package();
+                }
+
+                foreach (var item in list.items)
+                {
+                    if (item.Value.itemType == -1)
+                        if (item.Value.type == "legacy") item.Value.itemType = (int)UrlType.WebApp;
+                    //if (item.Value.url.StartsWith("/webman/3rdparty/") ) item.Value.itemType = (int)UrlType.WebApp;
+                }
+            }
+            if (!info.ContainsKey("singleApp"))
+            {
+                if (list != null && list.items.Count == 1)
+                {
+                    var title = list.items.First().Value.title;
+                    title = Helper.CleanUpText(title);
+
+                    if (list.items.First().Value.url.Contains(string.Format("/{0}/", title)))
+                    {
+                        info.Add("singleApp", "no");
+                    }
+                    else
+                    {
+                        info.Add("singleApp", "yes");
+                    }
+                }
+                else
+                {
+                    info.Add("singleApp", "no");
+                }
+            }
+
+            var pkg72 = new FileInfo(Path.Combine(path, "PACKAGE_ICON.PNG"));
+            if (pkg72.Exists)
+            {
+                picturePkg_72 = LoadImageFromFile(pkg72.FullName);
+            }
+            else
+            {
+                if (info.ContainsKey("package_icon"))
+                {
+                    picturePkg_72 = LoadImageFromBase64(info["package_icon"]);
+                }
+                else
+                {
+
+                    picturePkg_72 = null;
+                }
+            }
+            var pkg120 = new FileInfo(Path.Combine(path, "PACKAGE_ICON_120.PNG"));
+            if (pkg120.Exists)
+            {
+                picturePkg_120 = LoadImageFromFile(pkg120.FullName);
+            }
+            else
+            {
+                if (info.ContainsKey("package_icon_120"))
+                {
+                    picturePkg_120 = LoadImageFromBase64(info["package_icon_120"]);
+                }
+                else if (info.ContainsKey("package_icon120"))
+                {
+                    picturePkg_120 = LoadImageFromBase64(info["package_icon120"]);
+                }
+                else
+                {
+                    picturePkg_120 = null;
+                }
+            }
+            var pkg256 = new FileInfo(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
+            if (pkg256.Exists)
+            {
+                picturePkg_256 = LoadImageFromFile(pkg256.FullName);
+            }
+            else
+            {
+                if (info.ContainsKey("package_icon_256"))
+                {
+                    picturePkg_256 = LoadImageFromBase64(info["package_icon_256"]);
+                }
+                else if (info.ContainsKey("package_icon256"))
+                {
+                    picturePkg_256 = LoadImageFromBase64(info["package_icon256"]);
+                }
+                else
+                {
+                    picturePkg_256 = null;
                 }
             }
 
@@ -333,44 +433,117 @@ namespace BeatificaBytes.Synology.Mods
             FillInfoScreen(path);
         }
 
-        private void FillInfoScreen(string path)
+        private string GetUIDir(string path)
         {
-            foreach (var control in groupBoxPackage.Controls)
+            string value = null;
+
+            var file = Path.Combine(path, "INFO");
+            if (File.Exists(file))
             {
-                var textBox = control as TextBox;
-                if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                var lines = File.ReadAllLines(file);
+                foreach (var line in lines)
                 {
-                    var keys = textBox.Tag.ToString().Split(';');
-                    textBox.Text = "";
-                    foreach (var key in keys)
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        var subkey = key.Substring(3);
-                        if (info != null && info.Keys.Contains(subkey) && string.IsNullOrEmpty(textBox.Text))
-                            textBox.Text = info[subkey];
+                        var key = line.Substring(0, line.IndexOf('='));
+                        if (key == "dsmuidir")
+                        {
+                            value = line.Substring(line.IndexOf('=') + 1);
+                            value = value.Trim(new char[] { '"' });
+                            break;
+                        }
                     }
                 }
-                var checkBox = control as CheckBox;
-                if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
-                {
-                    var keys = checkBox.Tag.ToString().Split(';');
-                    var key = keys[0].Substring(3);
-                    if (info != null && info.Keys.Contains(key))
-                        checkBox.Checked = info[key] == "yes";
-                    else
-                        checkBox.Checked = false;
-                }
-            }
-
-            if (string.IsNullOrEmpty(path))
-            {
-                LoadPictureBox(pictureBoxPkg_256, null);
-                LoadPictureBox(pictureBoxPkg_72, null);
             }
             else
             {
-                LoadPictureBox(pictureBoxPkg_256, LoadImageFromFile(Path.Combine(path, "PACKAGE_ICON_256.PNG")));
-                LoadPictureBox(pictureBoxPkg_72, LoadImageFromFile(Path.Combine(path, "PACKAGE_ICON.PNG")));
+                MessageBox.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            return value;
+        }
+
+        private void FillInfoScreen(string path)
+        {
+            if (info != null)
+            {
+                var unused = new List<string>(info.Keys);
+                foreach (var control in groupBoxPackage.Controls)
+                {
+                    var textBox = control as TextBox;
+                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = textBox.Tag.ToString().Split(';');
+                        textBox.Text = "";
+                        foreach (var key in keys)
+                        {
+                            var subkey = key.Substring(3);
+                            if (info.Keys.Contains(subkey))
+                            {
+                                if (string.IsNullOrEmpty(textBox.Text))
+                                    textBox.Text = info[subkey];
+                                unused.Remove(subkey);
+                            }
+                        }
+                    }
+                    var checkBox = control as CheckBox;
+                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = checkBox.Tag.ToString().Split(';');
+                        var key = keys[0].Substring(3);
+                        if (info.Keys.Contains(key))
+                        {
+                            unused.Remove(key);
+                            checkBox.Checked = info[key] == "yes";
+                        }
+                        else
+                            checkBox.Checked = false;
+                    }
+                }
+
+                //Remove unused info element that are not to be displayed to the user
+                var unusedkeys = new List<String>(unused);
+                foreach (var key in unusedkeys)
+                {
+                    if (key.StartsWith("#"))
+                        unused.Remove(key); // commented info
+                    if (key.StartsWith("description_"))
+                        unused.Remove(key); // multilingual description
+                    if (key.StartsWith("displayname_"))
+                        unused.Remove(key); // multilingual display name
+
+                }
+                unused.Remove("dsmuidir");
+                unused.Remove("checksum");
+                unused.Remove("adminport");//Not yet supported but ignored
+                unused.Remove("arch");//Not yet supported but ignored
+                unused.Remove("reloadui");//Not yet supported but ignored
+                unused.Remove("startable");//Not yet supported but ignored
+
+                unused.Remove("thirdparty");//Not yet supported but ignored
+                unused.Remove("startstop_restart_services");//Not yet supported but ignored
+                unused.Remove("install_dep_packages");//Not yet supported but ignored
+
+                unused.Remove("package_icon");//Not yet supported but ignored
+                unused.Remove("package_icon_120");//Not yet supported but ignored
+                unused.Remove("package_icon_256");//Not yet supported but ignored
+                unused.Remove("package_icon120");//Not yet supported but ignored
+                unused.Remove("package_icon256");//Not yet supported but ignored
+
+                if (unused.Count > 0)
+                {
+                    var msg = "There are a few unsupported info in this package. You can edit those via the 'Advanced' button." + Environment.NewLine + Environment.NewLine + unused.Aggregate((i, j) => i + Environment.NewLine + j + ": " + info[j]);
+                    MessageBox.Show(this, msg, "Warning");
+                }
+            }
+
+            if (picturePkg_256 == null && picturePkg_120 != null)
+            {
+                picturePkg_256 = picturePkg_120;
+            }
+
+            LoadPictureBox(pictureBoxPkg_256, picturePkg_256);
+            LoadPictureBox(pictureBoxPkg_72, picturePkg_72);
         }
 
         private void InitialConfiguration(string path)
@@ -384,8 +557,8 @@ namespace BeatificaBytes.Synology.Mods
                 unzip.StartInfo.RedirectStandardOutput = true;
                 unzip.StartInfo.CreateNoWindow = true;
                 unzip.Start();
+                unzip.WaitForExit(10000);
                 if (unzip.StartInfo.RedirectStandardOutput) Console.WriteLine(unzip.StandardOutput.ReadToEnd());
-                unzip.WaitForExit();
 
                 CopyPackagingBinaries(path);
             }
@@ -492,10 +665,10 @@ namespace BeatificaBytes.Synology.Mods
                 pack.StartInfo.RedirectStandardOutput = true;
                 pack.StartInfo.CreateNoWindow = true;
                 pack.Start();
+                pack.WaitForExit(10000);
                 if (pack.StartInfo.RedirectStandardOutput) Console.WriteLine(pack.StandardOutput.ReadToEnd());
-                pack.WaitForExit();
                 if (pack.ExitCode == 2)
-                    MessageBox.Show("Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 
                 // Rename the new Package with its target name
@@ -514,7 +687,7 @@ namespace BeatificaBytes.Synology.Mods
             var image = pictureBox.Image;
             if (File.Exists(path))
                 File.Delete(path);
-            if (image !=null) image.Save(path, ImageFormat.Png);
+            if (image != null) image.Save(path, ImageFormat.Png);
 
             // TODO: check that PKG images are saved when closing Mods
         }
@@ -523,7 +696,7 @@ namespace BeatificaBytes.Synology.Mods
         #region Manage List of items --------------------------------------------------------------------------------------------------------------
         private void listViewItems_DoubleClick(object sender, EventArgs e)
         {
-            if (listViewItems.SelectedItems.Count == 1)
+            if (list != null && listViewItems.SelectedItems.Count == 1)
             {
                 buttonEditItem_Click(sender, e);
             }
@@ -533,7 +706,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (state != State.Edit)
             {
-                if (listViewItems.SelectedItems.Count > 0)
+                if (list != null && listViewItems.SelectedItems.Count > 0)
                 {
                     state = State.View;
                     DisplayDetails((KeyValuePair<string, AppsData>)listViewItems.SelectedItems[0].Tag);
@@ -598,7 +771,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    MessageBox.Show("The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
         }
@@ -1295,7 +1468,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (item.Value.itemType != -1 && !Enum.IsDefined(typeof(UrlType), item.Value.itemType))
                 {
-                    MessageBox.Show("The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(this, "The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     item.Value.itemType = (int)UrlType.Script;
                 }
                 //if (item.Value.itemType == 0 && item.Value.url.StartsWith("/webman/3rdparty/"))
@@ -1326,7 +1499,7 @@ namespace BeatificaBytes.Synology.Mods
                 enabling = false;
                 packaging = false;
 
-                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling, enabling);
+                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling && list != null, enabling);
                 EnableItemButtonDetails(enabling, enabling, enabling, enabling, enabling, packaging);
 
                 EnableItemMenuDetails(false, false, false, false, true, true, true, false);
@@ -1339,16 +1512,16 @@ namespace BeatificaBytes.Synology.Mods
                 enabling = (state != State.View && state != State.None);
                 packaging = listViewItems.Items.Count > 0 && !enabling;
 
-                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling, enabling);
+                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling && list != null, enabling);
                 switch (state)
                 {
                     case State.View:
-                        add = (info["singleApp"] == "no") || (list.items.Count == 0);
+                        add = list != null && (info["singleApp"] == "no" || list.items.Count == 0);
                         EnableItemButtonDetails(add, true, false, false, true, packaging);
                         EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true);
                         break;
                     case State.None:
-                        add = (info["singleApp"] == "no") || (list.items.Count == 0);
+                        add = list != null && (info["singleApp"] == "no" || list.items.Count == 0);
                         EnableItemButtonDetails(add, false, false, false, false, packaging);
                         EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true);
                         break;
@@ -1732,6 +1905,18 @@ namespace BeatificaBytes.Synology.Mods
             return copy;
         }
 
+        private Image LoadImageFromBase64(string picture)
+        {
+            byte[] base64 = Convert.FromBase64String(picture);
+
+            Image image = null;
+            using (var ms = new MemoryStream(base64, 0, base64.Length))
+            {
+                image = Image.FromStream(ms, true);
+            }
+            return image;
+        }
+
         private Image LoadImageFromFile(string picture)
         {
             Image image = null;
@@ -1747,7 +1932,9 @@ namespace BeatificaBytes.Synology.Mods
         private string GetIconFullPath(string item, string size)
         {
             var icons = string.Format(item, size).Split('/');
-            var picture = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], icons[0], icons[1]);
+            string picture = null;
+            if (info.ContainsKey("dsmuidir"))
+                picture = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], icons[0], icons[1]);
             return picture;
         }
 
@@ -2383,15 +2570,17 @@ namespace BeatificaBytes.Synology.Mods
                     unpack.StartInfo.CreateNoWindow = true;
                     unpack.StartInfo.Verb = "runas"; //Required to run as admin as some packages have "symlink" resulting in "ERROR: Can not create symbolic link : Access is denied."
                     unpack.Start();
+                    unpack.WaitForExit(30000);
                     if (unpack.StartInfo.RedirectStandardOutput) Console.WriteLine(unpack.StandardOutput.ReadToEnd());
-                    unpack.WaitForExit();
                     if (unpack.ExitCode == 2)
                     {
                         result = false;
-                        MessageBox.Show("Extraction of the package has failed. Possibly try to run Unpack.cmd as Administrator in your package folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(this, "Extraction of the package has failed. Possibly try to run Unpack.cmd as Administrator in your package folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                }
 
+                    //As the package has been run as admin, Users don't have full control access
+                    GrantAccess(path);
+                }
             }
             else
             {
@@ -2399,6 +2588,14 @@ namespace BeatificaBytes.Synology.Mods
                 result = false;
             }
             return result;
+        }
+
+        private void GrantAccess(string fullPath)
+        {
+            DirectoryInfo dInfo = new DirectoryInfo(fullPath);
+            DirectorySecurity dSecurity = dInfo.GetAccessControl();
+            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+            dInfo.SetAccessControl(dSecurity);
         }
 
         private void ResetEditScriptMenuIcons()
@@ -2411,6 +2608,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            CloseCurrentPackage();
             OpenPackage();
         }
 
@@ -2539,6 +2737,13 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (createNewPackage != DialogResult.Abort)
                 {
+                    string uiDir = null;
+                    FileInfo info = new FileInfo(Path.Combine(path, "INFO"));
+                    if (info.Exists)
+                    {
+                        uiDir = GetUIDir(path);
+                    }
+
                     var content = Directory.GetDirectories(path).ToList();
                     content.AddRange(Directory.GetFiles(path));
                     if (content.Count > 0)
@@ -2552,25 +2757,57 @@ namespace BeatificaBytes.Synology.Mods
 
                         content.Remove(Path.Combine(path, "INFO"));
                         content.Remove(Path.Combine(path, "PACKAGE_ICON.PNG"));
+                        content.Remove(Path.Combine(path, "PACKAGE_ICON_120.PNG")); //?? Found in some packages
                         content.Remove(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
                         content.Remove(Path.Combine(path, "package"));
                         content.Remove(Path.Combine(path, "scripts"));
                         content.Remove(Path.Combine(path, "WIZARD_UIFILES"));
-                        content.Remove(Path.Combine(path, "syno_signature.asc"));
 
+                        //content.Remove(Path.Combine(path, "syno_signature.asc")); // Not yet supported
+
+                        content.Remove(Path.Combine(path, "LICENSE"));
+                        content.Remove(Path.Combine(path, "CHANGELOG"));
+
+                        if (!string.IsNullOrEmpty(uiDir))
+                        {
+                            content.Remove(Path.Combine(path, uiDir));
+                        }
 
                         var remaining = content.ToList();
+                        var spkCount = 0;
                         foreach (var spk in remaining)
                         {
                             if (spk.EndsWith(".spk"))
                             {
                                 content.Remove(spk);
+                                spkCount++;
+                            }
+                            else
+                            {
+                                Debug.Print("Package Folder contains unknow '{0}'", spk);
                             }
                         }
                         if (content.Count > 0)
                         {
-                            // Folder contains something else than a package
-                            createNewPackage = DialogResult.Abort;
+                            if (info.Exists)
+                            {
+                                var msg = "This Package contains unknown elements. Do you want to proceed anyway ?" + Environment.NewLine + Environment.NewLine + content.Aggregate((i, j) => i + Environment.NewLine + j);
+                                if (MessageBox.Show(this, msg, "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.No)
+                                {
+                                    // Folder contains unknow elements
+                                    createNewPackage = DialogResult.Abort;
+                                }
+                                else
+                                {
+                                    // Folder contains an existing "extracted" Package (not a single spk file)
+                                    createNewPackage = DialogResult.No;
+                                }
+                            }
+                            else
+                            {
+                                // Folder contains something else than a package
+                                createNewPackage = DialogResult.Abort;
+                            }
                         }
                         else
                         {
@@ -2611,6 +2848,7 @@ namespace BeatificaBytes.Synology.Mods
             String path = clickedItem.Tag.ToString();
             if (SavePackage(PackageRootPath) != DialogResult.Cancel)
             {
+                CloseCurrentPackage();
                 var succeed = OpenPackage(path);
                 if (!succeed)
                 {
@@ -2738,12 +2976,21 @@ namespace BeatificaBytes.Synology.Mods
                 else
                 {
                     var jsonEditor = new JsonEditorMainForm();
-                    jsonEditor.OpenFile(jsonPath);
-                    jsonEditor.StartPosition = FormStartPosition.CenterParent;
-                    result = jsonEditor.ShowDialog();
-                    if (result == DialogResult.OK)
+
+                    try
                     {
-                        menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                        jsonEditor.OpenFile(jsonPath);
+
+                        jsonEditor.StartPosition = FormStartPosition.CenterParent;
+                        result = jsonEditor.ShowDialog();
+                        if (result == DialogResult.OK)
+                        {
+                            menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                        }
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        MessageBox.Show(this, "You may not open this file due to security restriction. Try to run this app as Administrator or grant 'Modify' on this file to the group USERS.", "Security Issue", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -2848,10 +3095,10 @@ namespace BeatificaBytes.Synology.Mods
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(infoName, outputScript);
+                LoadPackageInfo(PackageRootPath);
+                BindData(list);
+                DisplayItem();
             }
-            LoadPackageInfo(PackageRootPath);
-            BindData(list);
-            DisplayItem();
         }
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2862,7 +3109,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(PackageRootPath) && MessageBox.Show("Are you sure that ou want to delete this Package ? This operation cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (!string.IsNullOrEmpty(PackageRootPath) && MessageBox.Show(this, "Are you sure that ou want to delete this Package ? This operation cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 RemoveRecentPath(PackageRootPath);
                 Properties.Settings.Default.Save();
@@ -2870,7 +3117,7 @@ namespace BeatificaBytes.Synology.Mods
                 var ex = Helper.DeleteDirectory(PackageRootPath);
                 if (ex != null)
                 {
-                    MessageBox.Show(string.Format("A Fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(this, string.Format("A Fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
                 CloseCurrentPackage();
             }
@@ -2883,7 +3130,7 @@ namespace BeatificaBytes.Synology.Mods
             ResetValidateChildren(); // Reset Error Validation on all controls
 
             info = null;
-            list = new Package();
+            list = null;
             FillInfoScreen(PackageRootPath);
             BindData(list);
             DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
@@ -2978,7 +3225,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                if (list.items.Count == 1)
+                if (list != null && list.items.Count == 1)
                 {
                     var title = list.items.First().Value.title;
                     title = Helper.CleanUpText(title);
@@ -2999,9 +3246,21 @@ namespace BeatificaBytes.Synology.Mods
             EnableItemDetails();
         }
 
-        private void checkBoxSingleApp_CheckStateChanged(object sender, EventArgs e)
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            openFileDialog4Mods.Title = "Select a packge file";
+            openFileDialog4Mods.Filter = "spk (*.spk)|*.spk";
+            openFileDialog4Mods.FilterIndex = 0;
+            openFileDialog4Mods.FileName = null;
+            DialogResult result = openFileDialog4Mods.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                var spk = new FileInfo(openFileDialog4Mods.FileName);
+                var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                Directory.CreateDirectory(path);
+                spk.CopyTo(Path.Combine(path, spk.Name));
+                OpenPackage(path);
+            }
         }
     }
 }

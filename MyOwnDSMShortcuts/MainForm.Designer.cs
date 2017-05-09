@@ -75,6 +75,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxBeta = new System.Windows.Forms.CheckBox();
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
             this.textBoxSupportUrl = new System.Windows.Forms.TextBox();
+            this.checkBoxSingleApp = new System.Windows.Forms.CheckBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -131,7 +132,7 @@ namespace BeatificaBytes.Synology.Mods
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.checkBoxSingleApp = new System.Windows.Forms.CheckBox();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -198,7 +199,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDisplay.Name = "textBoxDisplay";
             this.textBoxDisplay.Size = new System.Drawing.Size(141, 20);
             this.textBoxDisplay.TabIndex = 3;
-            this.textBoxDisplay.Tag = "PKGdisplayname";
+            this.textBoxDisplay.Tag = "PKGdisplayname_enu;PKGdisplayname";
             this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t enter a Dis" +
         "play name, the Package name will be displayed.");
             this.textBoxDisplay.Enter += new System.EventHandler(this.OnMouseEnter);
@@ -752,6 +753,21 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
         ".");
             // 
+            // checkBoxSingleApp
+            // 
+            this.checkBoxSingleApp.AutoSize = true;
+            this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSingleApp.Location = new System.Drawing.Point(39, 218);
+            this.checkBoxSingleApp.Name = "checkBoxSingleApp";
+            this.checkBoxSingleApp.Size = new System.Drawing.Size(77, 17);
+            this.checkBoxSingleApp.TabIndex = 67;
+            this.checkBoxSingleApp.Tag = "PKGsingleApp";
+            this.checkBoxSingleApp.Text = "Single App";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSingleApp, "Check this option if your package will only contain one url, script or applicatio" +
+        "n. This option is also enabled if you open a third party package.");
+            this.checkBoxSingleApp.UseVisualStyleBackColor = true;
+            this.checkBoxSingleApp.CheckedChanged += new System.EventHandler(this.checkBoxSingleApp_CheckedChanged);
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -1027,6 +1043,7 @@ namespace BeatificaBytes.Synology.Mods
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
             this.openRecentToolStripMenuItem,
+            this.importToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.filesToolStripMenuItem.Name = "filesToolStripMenuItem";
@@ -1036,34 +1053,34 @@ namespace BeatificaBytes.Synology.Mods
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // openRecentToolStripMenuItem
             // 
             this.openRecentToolStripMenuItem.Name = "openRecentToolStripMenuItem";
-            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openRecentToolStripMenuItem.Text = "Open Recent";
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -1083,42 +1100,42 @@ namespace BeatificaBytes.Synology.Mods
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // resetToolStripMenuItem
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(147, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem1.Text = "Delete";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // generateToolStripMenuItem
             // 
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.generateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.generateToolStripMenuItem.Text = "Generate";
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
             // addWizardToolStripMenuItem
             // 
             this.addWizardToolStripMenuItem.Name = "addWizardToolStripMenuItem";
-            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addWizardToolStripMenuItem.Text = "Create Wizard";
             this.addWizardToolStripMenuItem.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
             // 
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openFolderToolStripMenuItem.Text = "Open Folder";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -1300,21 +1317,12 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
-            // checkBoxSingleApp
+            // importToolStripMenuItem
             // 
-            this.checkBoxSingleApp.AutoSize = true;
-            this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSingleApp.Location = new System.Drawing.Point(39, 218);
-            this.checkBoxSingleApp.Name = "checkBoxSingleApp";
-            this.checkBoxSingleApp.Size = new System.Drawing.Size(77, 17);
-            this.checkBoxSingleApp.TabIndex = 67;
-            this.checkBoxSingleApp.Tag = "PKGsingleApp";
-            this.checkBoxSingleApp.Text = "Single App";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSingleApp, "Check this option if your package will only contain one url, script or applicatio" +
-        "n. This option is also enabled if you open a third party package.");
-            this.checkBoxSingleApp.UseVisualStyleBackColor = true;
-            this.checkBoxSingleApp.CheckedChanged += new System.EventHandler(this.checkBoxSingleApp_CheckedChanged);
-            this.checkBoxSingleApp.CheckStateChanged += new System.EventHandler(this.checkBoxSingleApp_CheckStateChanged);
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importToolStripMenuItem.Text = "Import";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1461,6 +1469,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.Label labelSupportUrl;
         private System.Windows.Forms.TextBox textBoxSupportUrl;
         private System.Windows.Forms.CheckBox checkBoxSingleApp;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
     }
 }
 

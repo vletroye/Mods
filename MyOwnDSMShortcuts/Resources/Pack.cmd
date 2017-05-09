@@ -12,7 +12,7 @@ if errorlevel 1 (
 move package.tgz ..\
 cd ..
 Mods.exe hash:.
-7z.exe a -ttar mods.spk package.tgz scripts WIZARD_UIFILES Info PACKAGE_ICON*.PNG
+7z.exe a -ttar mods.spk package.tgz scripts WIZARD_UIFILES CHANGELOG INFO LICENSE PACKAGE_ICON*.PNG
 if errorlevel 1 (
    cd ..
    echo Error while creating package.
