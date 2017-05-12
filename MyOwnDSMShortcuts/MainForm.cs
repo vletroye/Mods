@@ -258,7 +258,7 @@ namespace BeatificaBytes.Synology.Mods
                 var fileList = new DirectoryInfo(Path.Combine(path, "package")).GetFiles("config", SearchOption.AllDirectories);
                 if (fileList.Length > 0)
                 {
-                    ui = fileList[0].FullName.Replace(Path.Combine(path, "package"), "").Replace("config", "").Trim(new char[] {'\\'});
+                    ui = fileList[0].FullName.Replace(Path.Combine(path, "package"), "").Replace("config", "").Trim(new char[] { '\\' });
                     info.Add("dsmuidir", ui);
                 }
                 else
@@ -1597,7 +1597,7 @@ namespace BeatificaBytes.Synology.Mods
             int port = WebPort;
 
             var url = textBoxItem.Text.Trim();
-            var key = string.Format("SYNO.SDS._ThirdParty.App.{0}", title.Replace(" ", ""));
+            var key = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(title));
             //var key = dsmName;
 
             var urlType = comboBoxItemType.SelectedIndex;
