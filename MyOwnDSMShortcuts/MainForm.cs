@@ -1556,6 +1556,7 @@ namespace BeatificaBytes.Synology.Mods
             saveToolStripMenuItem.Enabled = menuSave;
             newToolStripMenuItem.Enabled = menuNew;
             openToolStripMenuItem.Enabled = menuOpen;
+            importToolStripMenuItem.Enabled = menuOpen;
             openRecentToolStripMenuItem.Enabled = menuRecent;
             foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
             {
