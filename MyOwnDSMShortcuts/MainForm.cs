@@ -1935,7 +1935,10 @@ namespace BeatificaBytes.Synology.Mods
             var icons = string.Format(item, size).Split('/');
             string picture = null;
             if (info.ContainsKey("dsmuidir"))
-                picture = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], icons[0], icons[1]);
+                if (icons.Length > 1)
+                    picture = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], icons[0], icons[1]);
+                else
+                    picture = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], icons[0]);
             return picture;
         }
 
