@@ -585,62 +585,66 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SavePackageInfo(string path)
         {
-            if (info != null)
+            using (new CWaitCursor())
             {
-                // Collect Package Info from controls tagged like PKG...
-                foreach (var control in groupBoxPackage.Controls)
+
+                if (info != null)
                 {
-                    var textBox = control as TextBox;
-                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                    // Collect Package Info from controls tagged like PKG...
+                    foreach (var control in groupBoxPackage.Controls)
                     {
-                        var keys = textBox.Tag.ToString().Split(';');
-                        foreach (var key in keys)
+                        var textBox = control as TextBox;
+                        if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
                         {
-                            var keyId = key.Substring(3);
-                            if (info.Keys.Contains(keyId))
-                                info[keyId] = textBox.Text.Trim();
-                            else
-                                info.Add(keyId, textBox.Text.Trim());
+                            var keys = textBox.Tag.ToString().Split(';');
+                            foreach (var key in keys)
+                            {
+                                var keyId = key.Substring(3);
+                                if (info.Keys.Contains(keyId))
+                                    info[keyId] = textBox.Text.Trim();
+                                else
+                                    info.Add(keyId, textBox.Text.Trim());
+                            }
+                        }
+                        var checkBox = control as CheckBox;
+                        if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                        {
+                            var keys = checkBox.Tag.ToString().Split(';');
+                            foreach (var key in keys)
+                            {
+                                var keyId = key.Substring(3);
+                                var value = checkBox.Checked ? "yes" : "no";
+                                if (info.Keys.Contains(keyId))
+                                    info[keyId] = value;
+                                else
+                                    info.Add(keyId, value);
+                            }
                         }
                     }
-                    var checkBox = control as CheckBox;
-                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+
+                    // Delete existing INFO file
+                    var infoName = Path.Combine(path, "INFO");
+                    if (File.Exists(infoName))
+                        File.Delete(infoName);
+
+                    // Write the new INFO file
+                    using (StreamWriter outputFile = new StreamWriter(infoName))
                     {
-                        var keys = checkBox.Tag.ToString().Split(';');
-                        foreach (var key in keys)
+                        foreach (var element in info)
                         {
-                            var keyId = key.Substring(3);
-                            var value = checkBox.Checked ? "yes" : "no";
-                            if (info.Keys.Contains(keyId))
-                                info[keyId] = value;
-                            else
-                                info.Add(keyId, value);
+                            outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
                         }
                     }
+
+                    // Save Package's icons
+                    var imageName = Path.Combine(path, "PACKAGE_ICON.PNG");
+                    SavePkgImage(pictureBoxPkg_72, imageName);
+                    imageName = Path.Combine(path, "PACKAGE_ICON_256.PNG");
+                    SavePkgImage(pictureBoxPkg_256, imageName);
                 }
 
-                // Delete existing INFO file
-                var infoName = Path.Combine(path, "INFO");
-                if (File.Exists(infoName))
-                    File.Delete(infoName);
-
-                // Write the new INFO file
-                using (StreamWriter outputFile = new StreamWriter(infoName))
-                {
-                    foreach (var element in info)
-                    {
-                        outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
-                    }
-                }
-
-                // Save Package's icons
-                var imageName = Path.Combine(path, "PACKAGE_ICON.PNG");
-                SavePkgImage(pictureBoxPkg_72, imageName);
-                imageName = Path.Combine(path, "PACKAGE_ICON_256.PNG");
-                SavePkgImage(pictureBoxPkg_256, imageName);
+                dirty = false;
             }
-
-            dirty = false;
         }
 
         // Create the SPK
@@ -1830,7 +1834,7 @@ namespace BeatificaBytes.Synology.Mods
         private Image LoadImage(string picture)
         {
             var transparency = int.Parse(comboBoxTransparency.SelectedItem.ToString());
-            if (MessageBox.Show(this, "Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            if (MessageBox.Show(this, "Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
             {
                 transparency = 0;
             }
@@ -1998,6 +2002,8 @@ namespace BeatificaBytes.Synology.Mods
                 if (image != null)
                 {
                     var path = GetIconFullPath(iconName, size);
+                    if (!Directory.Exists(Path.GetDirectoryName(path)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
                     if (File.Exists(path))
                         File.Delete(path);
                     image.Save(path, ImageFormat.Png);
@@ -2038,6 +2044,8 @@ namespace BeatificaBytes.Synology.Mods
                 var oldName = info.Count > 0 ? info["package"] : newName;
                 if (newName != oldName)
                 {
+                    textBoxDsmAppName.Text = textBoxDsmAppName.Text.Replace(oldName, newName);
+
                     oldName = string.Format("/webman/3rdparty/{0}", oldName);
                     newName = string.Format("/webman/3rdparty/{0}", newName);
 
@@ -2051,6 +2059,7 @@ namespace BeatificaBytes.Synology.Mods
                     BindData(list);
                     //DisplayItem();
                     info["package"] = textBoxPackage.Text;
+
                 }
             }
         }
@@ -2344,49 +2353,52 @@ namespace BeatificaBytes.Synology.Mods
 
         private DialogResult SavePackage(string path, bool force = false)
         {
-            DialogResult response = DialogResult.Yes;
-            if (info != null)
+            using (new CWaitCursor())
             {
-                if (!dirty)
-                    dirty = CheckChanges();
-                if (dirty)
+
+                DialogResult response = DialogResult.Yes;
+                if (info != null)
                 {
-                    if (!force)
-                        response = MessageBox.Show(this, "Do you want to save changes done in the current Package", "Warning", MessageBoxButtons.YesNoCancel);
-
-                    if (response == DialogResult.Yes)
+                    if (!dirty)
+                        dirty = CheckChanges();
+                    if (dirty)
                     {
-                        if (ValidateChildren())
+                        if (!force)
+                            response = MessageBox.Show(this, "Do you want to save changes done in the current Package", "Warning", MessageBoxButtons.YesNoCancel);
+
+                        if (response == DialogResult.Yes)
                         {
-                            if (info.ContainsKey("checksum"))
-                                info.Remove("checksum");
+                            if (ValidateChildren())
+                            {
+                                if (info.ContainsKey("checksum"))
+                                    info.Remove("checksum");
 
-                            SaveItemsConfig();
-                            SavePackageInfo(path);
+                                SaveItemsConfig();
+                                SavePackageInfo(path);
 
-                            SavePackageSettings();
-                            CreateRecentsMenu();
+                                SavePackageSettings();
+                                CreateRecentsMenu();
 
-                            ResetEditScriptMenuIcons();
-                            dirty = false;
+                                ResetEditScriptMenuIcons();
+                                dirty = false;
+                            }
+                            else
+                            {
+                                response = DialogResult.Cancel;
+                            }
                         }
-                        else
-                        {
-                            response = DialogResult.Cancel;
-                        }
+                    }
+                    else
+                    {
+                        ResetEditScriptMenuIcons();
                     }
                 }
                 else
                 {
-                    ResetEditScriptMenuIcons();
+                    response = DialogResult.No;
                 }
+                return response;
             }
-            else
-            {
-                response = DialogResult.No;
-            }
-
-            return response;
         }
 
         private void SavePackageSettings()

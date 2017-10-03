@@ -66,7 +66,7 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static string IncrementVersion(string version)
         {
-            var versions = version.Replace("b",".").Split(new char[] { '.', '-' });
+            var versions = version.Replace("b", ".").Split(new char[] { '.', '-' });
             var major = 0;
             var minor = 0;
             var build = 1;
@@ -245,6 +245,16 @@ namespace BeatificaBytes.Synology.Mods
                         && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps));
         }
 
+
+        public static void EncryptAndSign(string sourcePath, string targetPath, string passPhrase, string publicKeyFileName, string privateKeyFileName)
+        {
+            PgpEncryptionKeys encryptionKeys = new PgpEncryptionKeys(publicKeyFileName, privateKeyFileName, passPhrase);
+            PgpEncrypt encrypter = new PgpEncrypt(encryptionKeys);
+            using (Stream outputStream = File.Create(targetPath))
+            {
+                encrypter.EncryptAndSign(outputStream, new FileInfo(sourcePath));
+            }
+        }
 
         public static void ComputeMD5Hash(string path)
         {
