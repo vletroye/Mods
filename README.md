@@ -11,7 +11,7 @@ Mods is a Windows Applications.
 
 ![](http://i.imgur.com/4q6idMy.png)
 
-Package created with Mods can add several shortcuts in DSM’s menu to open URLs, WebApps or Shell Scripts:
+Packages created with Mods can add several shortcuts in DSM’s menu to open URLs, WebApps or Shell Scripts:
 
 -   Urls can be either “relative paths” to websites hosted on the Synology itself or “absolute Uri’s” of any websites hosted on Internet. Clicking on their icons will open the related URL’s in a new browser tab.
 -   Shell Scripts are executed by Synology and their outputs are displayed in real time in popup windows (iFrames) on DSM’s Desktop
@@ -43,6 +43,12 @@ here is next an icon which executes a simple Shell Command ‘ps -gaceux’ has 
 
  
 
-And finally, here is the free web application [php Server Monitor](https://www.phpservermonitor.org) deployed within DSM via a Package made with Mods, and displayed in a popup/floating window. 
+Here is the free web application [php Server Monitor](https://www.phpservermonitor.org) deployed within DSM via a Package made with Mods, and displayed in a popup/floating window. 
 
 ![](http://i.imgur.com/G3F775E.png?1)
+
+Here is the famous [Web Console](http://www.web-console.org) running in a popup window of the DSM
+
+![](http://i.imgur.com/Q5pqh9S.png)
+
+All those spk samples are available in the folder "Various Samples"
