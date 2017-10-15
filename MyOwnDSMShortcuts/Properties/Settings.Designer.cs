@@ -79,7 +79,23 @@ namespace BeatificaBytes.Synology.Mods.Properties {
                 this["PackageRoot"] = value;
             }
         }
-        
+
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PackageRepo
+        {
+            get
+            {
+                return ((string)(this["PackageRepo"]));
+            }
+            set
+            {
+                this["PackageRepo"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]

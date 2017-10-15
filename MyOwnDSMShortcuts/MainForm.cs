@@ -48,6 +48,7 @@ namespace BeatificaBytes.Synology.Mods
         string defaultRunnerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "default.runner");
         string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
         string PackageRootPath = Properties.Settings.Default.PackageRoot;
+        string PackageRepoPath = Properties.Settings.Default.PackageRepo;
         string WebSynology = Properties.Settings.Default.Synology;
         string WebProtocol = Properties.Settings.Default.Protocol;
         int WebPort = Properties.Settings.Default.Port;
@@ -578,9 +579,22 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         // Click on Button Create Package
-        private void buttonPackage_Click(object sender, EventArgs e)
+        private void buttonPublish_Click(object sender, EventArgs e)
         {
             GeneratePackage(PackageRootPath);
+
+            SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
+            if (!string.IsNullOrEmpty(PackageRepoPath))
+                SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepoPath;
+            else
+                SpkRepoBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRepo;
+
+            if (SpkRepoBrowserDialog4Mods.ShowDialog())
+            {
+                PackageRepoPath = SpkRepoBrowserDialog4Mods.FileName;
+            }
+
+            PublishPackage(PackageRootPath, PackageRepoPath);
         }
 
         private void SavePackageInfo(string path)
@@ -1579,14 +1593,14 @@ namespace BeatificaBytes.Synology.Mods
             comboBoxItemType.Enabled = bcomboBoxItemType;
         }
 
-        private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bButtonPackage)
+        private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bbuttonPublish)
         {
             buttonAdd.Enabled = bButtonAdd;
             buttonEdit.Enabled = bButtonEdit;
             buttonSave.Enabled = bButtonSave;
             buttonCancel.Enabled = bButtonCancel;
             buttonDelete.Enabled = bButtonDelete;
-            buttonPackage.Enabled = bButtonPackage;
+            buttonPublish.Enabled = bbuttonPublish;
         }
 
         // Parse the data of the details zone
@@ -1975,17 +1989,24 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var size = int.Parse(pictureBox.Tag.ToString().Split(';')[1]);
 
-                var copy = new Bitmap(size, size);
-                using (Graphics g = Graphics.FromImage(copy))
-                {
-                    g.SmoothingMode = SmoothingMode.AntiAlias;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(image, 0, 0, size, size);
-                }
+                Bitmap copy = ResizeImage(image, size);
 
                 pictureBox.Image = copy;
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             }
+        }
+
+        private static Bitmap ResizeImage(Image image, int size)
+        {
+            var copy = new Bitmap(size, size);
+            using (Graphics g = Graphics.FromImage(copy))
+            {
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(image, 0, 0, size, size);
+            }
+
+            return copy;
         }
 
         // Save all the pictures of the current Item
@@ -2403,6 +2424,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SavePackageSettings()
         {
+            Properties.Settings.Default.PackageRepo = PackageRepoPath;
             Properties.Settings.Default.PackageRoot = PackageRootPath;
             if (Properties.Settings.Default.Recents != null)
             {
@@ -2558,13 +2580,36 @@ namespace BeatificaBytes.Synology.Mods
                 CreatePackage(path);
             }
 
-            var answer = MessageBox.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-            if (answer == DialogResult.Yes)
-            {
-                Process.Start(PackageRootPath);
-            }
-
             ResetEditScriptMenuIcons();
+        }
+
+        private void PublishPackage(string PackagePath, string PackageRepo)
+        {
+            var packName = info["package"];
+
+            try
+            {
+                publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
+                publishFile(Path.Combine(PackagePath, "INFO"), Path.Combine(PackageRepo, packName + ".nfo"));
+                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_72.png"));
+
+                var pathImage = Path.Combine(PackageRepo, packName + "_120.png");
+                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON_256.PNG"), pathImage);
+
+                var image = LoadImage(pathImage, 0, 120);
+                image.Save(pathImage, ImageFormat.Png);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to copy files: {0}", ex.Message));
+            }
+        }
+        private void publishFile(string src, string dest)
+        {
+            if (File.Exists(dest))
+                File.Delete(dest);
+
+            File.Copy(src, dest);
         }
 
         private bool ExtractPackage(string path)
@@ -2638,6 +2683,8 @@ namespace BeatificaBytes.Synology.Mods
                 folderBrowserDialog4Mods.Title = "Pick a folder to store the new Package or a folder containing an existing Package.";
                 if (!string.IsNullOrEmpty(PackageRootPath))
                     folderBrowserDialog4Mods.InitialDirectory = PackageRootPath;
+                else
+                    folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
 
                 result = GetPackagePath(ref path);
             }
@@ -2849,7 +2896,14 @@ namespace BeatificaBytes.Synology.Mods
         private void generateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (ValidateChildren())
+            {
                 GeneratePackage(PackageRootPath);
+                var answer = MessageBox.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (answer == DialogResult.Yes)
+                {
+                    Process.Start(PackageRootPath);
+                }
+            }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
