@@ -28,3 +28,5 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\BouncyCastle.dll
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\BouncyCastle.pdb
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Magick.NET-Q16-AnyCPU.dll
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Magick.NET-Q16-AnyCPU.xml

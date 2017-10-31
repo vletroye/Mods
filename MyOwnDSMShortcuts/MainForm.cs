@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ImageMagick;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -791,6 +792,10 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     MessageBox.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
+            }
+            else
+            {
+                MessageBox.Show(this, "The changes may not be saved as long as you don't fix all issues.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1878,48 +1883,41 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                Image image = LoadImageFromFile(picture);
-
-                using (Graphics g = Graphics.FromImage(copy))
+                if (transparency > 0)
                 {
-                    g.SmoothingMode = SmoothingMode.AntiAlias;
-                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    g.DrawImage(image, 0, 0, copy.Width, copy.Height);
-
-                    var backColor = copy.GetPixel(1, 1);
-                    if (transparency > 0)
+                    using (MagickImage image = new MagickImage(picture))
                     {
-                        var Rl = Helper.roundByte(backColor.R, -transparency);
-                        var Ru = Helper.roundByte(backColor.R, transparency);
-                        var Gl = Helper.roundByte(backColor.G, -transparency);
-                        var Gu = Helper.roundByte(backColor.G, transparency);
-                        var Bl = Helper.roundByte(backColor.B, -transparency);
-                        var Bu = Helper.roundByte(backColor.B, transparency);
+                        image.Format = MagickFormat.Png;
 
-                        var steps = (Ru - Rl + 1) * (Gu - Gl + 1) * (Bu - Bl + 1);
-                        var total = steps;
+                        var backColor = image.GetPixels().GetPixel(1,1).ToColor();
 
-                        for (int R = Rl; R <= Ru; R++)
-                            for (int G = Gl; G <= Gu; G++)
-                                for (int B = Bl; B <= Bu; B++)
-                                {
-                                    copy.MakeTransparent(Color.FromArgb(R, G, B));
-                                    steps--;
-                                    if (steps % 100 == 0)
-                                    {
-                                        labelToolTip.Text = string.Format("MAKING IMAGE TRANSPARENT [{0}%]", Math.Round((double)(total - steps) * 100 / total));
-                                        labelToolTip.Invalidate();
-                                        labelToolTip.Update();
-                                        labelToolTip.Refresh();
-                                        Application.DoEvents();
-                                    }
-                                }
-                        g.DrawImage(image, 0, 0, copy.Width, copy.Height);
+                        image.ColorFuzz = new Percentage(transparency);
+                        image.BackgroundColor = MagickColors.None;
+                        image.Transparent(backColor);
+                        //image.TransparentChroma(new ColorRGB(Rl, Gl, Bl), new ColorRGB(Ru, Gu, Bu));
+                        
+                        using (Graphics g = Graphics.FromImage(copy))
+                        {
+                            g.SmoothingMode = SmoothingMode.AntiAlias;
+                            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            g.DrawImage(image.ToBitmap(), 0, 0, copy.Width, copy.Height);
+                        }
+                    }
+                }
+                else
+                {
+                    using (Image image = LoadImageFromFile(picture))
+                    {
+                        using (Graphics g = Graphics.FromImage(copy))
+                        {
+                            g.SmoothingMode = SmoothingMode.AntiAlias;
+                            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            g.DrawImage(image, 0, 0, copy.Width, copy.Height);
+                        }
                     }
                 }
 
                 labelToolTip.Text = "";
-                image.Dispose();
             }
             return copy;
         }
@@ -2591,13 +2589,15 @@ namespace BeatificaBytes.Synology.Mods
             {
                 publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
                 publishFile(Path.Combine(PackagePath, "INFO"), Path.Combine(PackageRepo, packName + ".nfo"));
-                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_72.png"));
+                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_thumb_72.png"));
 
-                var pathImage = Path.Combine(PackageRepo, packName + "_120.png");
+                var pathImage = Path.Combine(PackageRepo, packName + "_thumb_120.png");
                 publishFile(Path.Combine(PackagePath, "PACKAGE_ICON_256.PNG"), pathImage);
 
                 var image = LoadImage(pathImage, 0, 120);
                 image.Save(pathImage, ImageFormat.Png);
+
+                MessageBox.Show(this, "The package has been successfuly published", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -2909,7 +2909,7 @@ namespace BeatificaBytes.Synology.Mods
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SavePackage(PackageRootPath) == DialogResult.Yes)
-                MessageBox.Show(this, "Package saved.", "Notification");
+                MessageBox.Show(this, "Package saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void MenuItemOpenRecent_ClickHandler(object sender, EventArgs e)

@@ -33,7 +33,7 @@ namespace BeatificaBytes.Synology.Mods
             return text;
         }
 
-        internal static byte roundByte(byte code, int range)
+        internal static byte roundShort(ushort code, int range)
         {
             var value = (int)code + range;
             if (value < 0) value = 0;

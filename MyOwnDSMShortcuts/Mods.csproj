@@ -75,6 +75,10 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.0.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\JSon.Net\Bin\Net45\Newtonsoft.Json.dll</HintPath>
@@ -156,6 +160,8 @@
     <Content Include="backwizard.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Magick.NET-Q16-AnyCPU.dll" />
+    <Content Include="Resources\Magick.NET-Q16-AnyCPU.xml" />
     <Content Include="Resources\Mods.ico" />
     <Content Include="Resources\Newtonsoft.Json.dll" />
     <Content Include="Resources\Newtonsoft.Json.pdb" />
