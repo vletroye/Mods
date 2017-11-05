@@ -1204,7 +1204,7 @@ namespace BeatificaBytes.Synology.Mods
             else
                 inputRunner = File.ReadAllText(defaultRunnerPath);
 
-            DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, GetAllWizardVariables(), out outputScript, out outputRunner);
+            DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, GetAllWizardVariables(), out outputScript, out outputRunner, new HelpInfo(new Uri("https://www.shellscript.sh/"), "Shell Scripting Tutorial"));
             if (result == DialogResult.OK)
             {
                 scriptValue = outputScript;
@@ -2440,7 +2440,7 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             Properties.Settings.Default.Recents.Add(PackageRootPath);
-            Properties.Settings.Default.RecentsName.Add(info["package"]);
+            Properties.Settings.Default.RecentsName.Add(info["displayname"]);
             Properties.Settings.Default.Save();
         }
 
@@ -2933,7 +2933,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var runner = File.ReadAllText(defaultRunnerPath);
             string outputRunner = string.Empty;
-            DialogResult result = Helper.ScriptEditor(null, runner, null, out outputRunner);
+            DialogResult result = Helper.ScriptEditor(null, runner, null, out outputRunner, new HelpInfo(new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP"));
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(defaultRunnerPath, outputRunner);
@@ -2953,7 +2953,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var inputScript = File.ReadAllText(scriptPath);
                 var outputScript = "";
-                DialogResult result = Helper.ScriptEditor(inputScript, null, GetAllWizardVariables(), out outputScript);
+                DialogResult result = Helper.ScriptEditor(inputScript, null, GetAllWizardVariables(), out outputScript, new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files"));
                 if (result == DialogResult.OK)
                 {
                     File.WriteAllText(scriptPath, outputScript);
@@ -3036,7 +3036,7 @@ namespace BeatificaBytes.Synology.Mods
                     var outputWizard = "";
 
                     string outputRunner = string.Empty;
-                    result = Helper.ScriptEditor(inputWizard, null, null, out outputWizard);
+                    result = Helper.ScriptEditor(inputWizard, null, null, out outputWizard, new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html"), "Details about Wizard File"));
                     if (result == DialogResult.OK)
                     {
                         File.WriteAllText(jsonPath, outputWizard);
@@ -3161,7 +3161,7 @@ namespace BeatificaBytes.Synology.Mods
             var infoName = Path.Combine(PackageRootPath, "INFO");
             var inputScript = File.ReadAllText(infoName);
             var outputScript = "";
-            DialogResult result = Helper.ScriptEditor(inputScript, null, null, out outputScript);
+            DialogResult result = Helper.ScriptEditor(inputScript, null, null, out outputScript, new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings"));
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(infoName, outputScript);

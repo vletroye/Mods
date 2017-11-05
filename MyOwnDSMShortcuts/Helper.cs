@@ -194,12 +194,13 @@ namespace BeatificaBytes.Synology.Mods
             return (event_list[object_value] != null);
         }
 
-        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, List<Tuple<string, string>> variables, out string outputScript, out string outputRunner)
+        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, List<Tuple<string, string>> variables, out string outputScript, out string outputRunner, HelpInfo help)
         {
             var editScript = new ScriptForm();
             editScript.Script = inputScript;
             editScript.Runner = inputRunner;
             editScript.Variables = variables;
+            editScript.Help = help;
             editScript.StartPosition = FormStartPosition.CenterParent;
             var result = editScript.ShowDialog(Application.OpenForms[0]);
             outputScript = editScript.Script;
@@ -222,17 +223,17 @@ namespace BeatificaBytes.Synology.Mods
             return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
 
-        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, List<Tuple<string, string>> variables, out string output)
+        internal static DialogResult ScriptEditor(string inputScript, string inputRunner, List<Tuple<string, string>> variables, out string output, HelpInfo help)
         {
             var outputFake = "";
             DialogResult result;
             if (inputScript == null)
             {
-                result = ScriptEditor(null, inputRunner, null, out outputFake, out output);
+                result = ScriptEditor(null, inputRunner, null, out outputFake, out output, help);
             }
             else
             {
-                result = ScriptEditor(inputScript, null, variables, out output, out outputFake);
+                result = ScriptEditor(inputScript, null, variables, out output, out outputFake, help);
             }
 
             return result;

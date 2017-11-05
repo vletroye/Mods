@@ -50,6 +50,7 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.jsonStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.jsonTreeView = new ZTn.Json.Editor.Forms.JTokenTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.jsonTreeViewSplitContainer)).BeginInit();
             this.jsonTreeViewSplitContainer.Panel1.SuspendLayout();
@@ -57,12 +58,17 @@
             this.jsonTreeViewSplitContainer.SuspendLayout();
             this.formMenuStrip.SuspendLayout();
             this.guiStatusStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // jsonTreeViewSplitContainer
             // 
-            this.jsonTreeViewSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.jsonTreeViewSplitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.jsonTreeViewSplitContainer.Location = new System.Drawing.Point(0, 24);
             this.jsonTreeViewSplitContainer.Name = "jsonTreeViewSplitContainer";
             // 
@@ -75,23 +81,16 @@
             // jsonTreeViewSplitContainer.Panel2
             // 
             this.jsonTreeViewSplitContainer.Panel2.BackColor = System.Drawing.Color.Transparent;
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.buttonPreview);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.buttonCancel);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonTypeComboBox);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonValueEditor);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.jsonValueLabel);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.label2);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.newtonsoftJsonTypeTextBox);
-            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.label1);
+            this.jsonTreeViewSplitContainer.Panel2.Controls.Add(this.splitContainer1);
             this.jsonTreeViewSplitContainer.Panel2MinSize = 320;
-            this.jsonTreeViewSplitContainer.Size = new System.Drawing.Size(764, 563);
-            this.jsonTreeViewSplitContainer.SplitterDistance = 439;
+            this.jsonTreeViewSplitContainer.Size = new System.Drawing.Size(924, 540);
+            this.jsonTreeViewSplitContainer.SplitterDistance = 280;
             this.jsonTreeViewSplitContainer.TabIndex = 8;
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(3, 537);
+            this.buttonOk.Location = new System.Drawing.Point(3, 514);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
@@ -101,7 +100,8 @@
             // 
             // buttonPreview
             // 
-            this.buttonPreview.Location = new System.Drawing.Point(240, 16);
+            this.buttonPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPreview.Location = new System.Drawing.Point(197, 16);
             this.buttonPreview.Name = "buttonPreview";
             this.buttonPreview.Size = new System.Drawing.Size(75, 23);
             this.buttonPreview.TabIndex = 11;
@@ -113,7 +113,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(243, 537);
+            this.buttonCancel.Location = new System.Drawing.Point(203, 514);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -139,7 +139,7 @@
             this.jsonValueEditor.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.jsonValueEditor.Location = new System.Drawing.Point(3, 97);
             this.jsonValueEditor.Name = "jsonValueEditor";
-            this.jsonValueEditor.Size = new System.Drawing.Size(312, 434);
+            this.jsonValueEditor.Size = new System.Drawing.Size(275, 411);
             this.jsonValueEditor.TabIndex = 6;
             this.jsonValueEditor.Enter += new System.EventHandler(this.jsonValueEditor_Enter);
             this.jsonValueEditor.Leave += new System.EventHandler(this.jsonValueEditor_Leave);
@@ -189,7 +189,7 @@
             this.aboutToolStripMenuItem});
             this.formMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.formMenuStrip.Name = "formMenuStrip";
-            this.formMenuStrip.Size = new System.Drawing.Size(770, 24);
+            this.formMenuStrip.Size = new System.Drawing.Size(932, 24);
             this.formMenuStrip.TabIndex = 0;
             this.formMenuStrip.Text = "menuStrip1";
             // 
@@ -240,7 +240,7 @@
             this.jsonStatusLabel});
             this.guiStatusStrip.Location = new System.Drawing.Point(0, 613);
             this.guiStatusStrip.Name = "guiStatusStrip";
-            this.guiStatusStrip.Size = new System.Drawing.Size(770, 22);
+            this.guiStatusStrip.Size = new System.Drawing.Size(932, 22);
             this.guiStatusStrip.TabIndex = 9;
             this.guiStatusStrip.Text = "statusStrip";
             // 
@@ -253,7 +253,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(654, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(816, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // jsonStatusLabel
@@ -268,11 +268,35 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.webBrowserPreview.IsWebBrowserContextMenuEnabled = false;
-            this.webBrowserPreview.Location = new System.Drawing.Point(770, 24);
+            this.webBrowserPreview.Location = new System.Drawing.Point(3, 3);
             this.webBrowserPreview.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowserPreview.Name = "webBrowserPreview";
-            this.webBrowserPreview.Size = new System.Drawing.Size(20, 531);
+            this.webBrowserPreview.Size = new System.Drawing.Size(349, 508);
             this.webBrowserPreview.TabIndex = 10;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.buttonPreview);
+            this.splitContainer1.Panel1.Controls.Add(this.jsonValueEditor);
+            this.splitContainer1.Panel1.Controls.Add(this.newtonsoftJsonTypeTextBox);
+            this.splitContainer1.Panel1.Controls.Add(this.buttonCancel);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.label2);
+            this.splitContainer1.Panel1.Controls.Add(this.jsonTypeComboBox);
+            this.splitContainer1.Panel1.Controls.Add(this.jsonValueLabel);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.webBrowserPreview);
+            this.splitContainer1.Size = new System.Drawing.Size(640, 540);
+            this.splitContainer1.SplitterDistance = 281;
+            this.splitContainer1.TabIndex = 0;
             // 
             // jsonTreeView
             // 
@@ -283,7 +307,7 @@
             this.jsonTreeView.HideSelection = false;
             this.jsonTreeView.Location = new System.Drawing.Point(3, 3);
             this.jsonTreeView.Name = "jsonTreeView";
-            this.jsonTreeView.Size = new System.Drawing.Size(433, 528);
+            this.jsonTreeView.Size = new System.Drawing.Size(274, 505);
             this.jsonTreeView.TabIndex = 0;
             this.jsonTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.jsonTreeView_AfterSelect);
             this.jsonTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.jsonTreeView_NodeMouseClick);
@@ -293,9 +317,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(770, 635);
+            this.ClientSize = new System.Drawing.Size(932, 635);
             this.ControlBox = false;
-            this.Controls.Add(this.webBrowserPreview);
             this.Controls.Add(this.guiStatusStrip);
             this.Controls.Add(this.jsonTreeViewSplitContainer);
             this.Controls.Add(this.formMenuStrip);
@@ -310,13 +333,17 @@
             this.Text = "Edit your wizard - Powered by ZTn Json Editor";
             this.jsonTreeViewSplitContainer.Panel1.ResumeLayout(false);
             this.jsonTreeViewSplitContainer.Panel2.ResumeLayout(false);
-            this.jsonTreeViewSplitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.jsonTreeViewSplitContainer)).EndInit();
             this.jsonTreeViewSplitContainer.ResumeLayout(false);
             this.formMenuStrip.ResumeLayout(false);
             this.formMenuStrip.PerformLayout();
             this.guiStatusStrip.ResumeLayout(false);
             this.guiStatusStrip.PerformLayout();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -352,6 +379,7 @@
         private System.Windows.Forms.ToolStripMenuItem wizardDevGuideToolStripMenuItem;
         private System.Windows.Forms.WebBrowser webBrowserPreview;
         private System.Windows.Forms.Button buttonPreview;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
 

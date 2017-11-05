@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="AppsData.cs" />
     <Compile Include="CCursor.cs" />
+    <Compile Include="Help.cs" />
     <Compile Include="OpenFolderDialog.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="MainForm.cs">

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScintillaNET;
+using System.Diagnostics;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -20,6 +21,10 @@ namespace BeatificaBytes.Synology.Mods
 
         private string script = "";
         private string runner = "";
+        private HelpInfo helpMain = null;
+        private HelpInfo helpVar = new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/script_env_var.html"), "Details about environment variables");
+        private HelpInfo helpRun = new HelpInfo(new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
+        private HelpInfo help = null;
         private List<Tuple<string, string>> variables = null;
 
         public ScriptForm()
@@ -50,18 +55,30 @@ namespace BeatificaBytes.Synology.Mods
                 var value = runner;
                 return value;
             }
-            set
-            {
-                runner = value;
-            }
+            set { runner = value; }
         }
 
         public List<Tuple<string, string>> Variables
         {
-            get
-            { return variables; }
+            get { return variables; }
+            set { variables = value; }
+        }
+
+        public HelpInfo Help
+        {
+            get { return help; }
             set
-            { variables = value; }
+            {
+                help = value;
+                SetHelpToolTip(help);
+                if (helpMain == null)
+                    helpMain = value;
+            }
+        }
+
+        private void SetHelpToolTip(HelpInfo help)
+        {
+            toolTip.SetToolTip(linkLabel, help.Label);
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -116,7 +133,10 @@ namespace BeatificaBytes.Synology.Mods
                 GetSynoEnvVariables(variables);
                 foreach (var tuple in variables)
                 {
-                    listBoxVariables.Items.Add(string.Format("{0}: {1}.", tuple.Item1, tuple.Item2));
+                    if (!String.IsNullOrEmpty(tuple.Item2))
+                        listBoxVariables.Items.Add(string.Format("{0}: {1}.", tuple.Item1, tuple.Item2));
+                    else
+                        listBoxVariables.Items.Add(tuple.Item1);
                 }
             }
         }
@@ -141,6 +161,8 @@ namespace BeatificaBytes.Synology.Mods
             variables.Add(new Tuple<string, string>("SYNOPKG_TEMP_SPKFILE", "The location of package spk file is temporarily stored in DS when the package is installing/upgrading [DSM >= 4.2]"));
             variables.Add(new Tuple<string, string>("SYNOPKG_USERNAME", "The user name who installs, upgrades, uninstalls, starts or stops the package.If the value is empty, the action is triggered by DSM, not by the end user [DSM >= 5.2"));
             variables.Add(new Tuple<string, string>("SYNOPKG_PKG_PROGRESS_PATH", "A temporary file path for a script to showing the progress in installing and upgrading a package [DSM >= 5.2]"));
+            variables.Add(new Tuple<string, string>("", ""));
+            variables.Add(new Tuple<string, string>("See more details via the Help link", ""));
         }
 
         private void InitScriptEditor(Scintilla textArea, Lexer type)
@@ -365,6 +387,29 @@ namespace BeatificaBytes.Synology.Mods
                     text = text.Split(':')[0];
                     Clipboard.SetText(text);
                 }
+            }
+        }
+
+        private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var info = new ProcessStartInfo(help.Url.AbsoluteUri);
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (tabControl.SelectedTab.Text)
+            {
+                case "Variables":
+                    Help = helpVar;
+                    break;
+                case "Runner Editor":
+                    Help = helpRun;
+                    break;
+                default:
+                    Help = helpMain;
+                    break;
             }
         }
     }

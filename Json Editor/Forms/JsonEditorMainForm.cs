@@ -53,7 +53,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 OpenJson(path);
             }
-            catch (Exception ex)
+            catch 
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
@@ -141,6 +141,33 @@ namespace ZTn.Json.Editor.Forms
                     OpenedFileName = null;
                 }
             }
+
+            webBrowserPreview.DocumentText = @" 
+<!DOCTYPE html PUBLIC ' -//W3C//DTD HTML 4.01//EN' 'http://www.w3.org/TR/html4/strict.dtd'>
+<style type='text/css'>
+    #container {     
+        display:table;
+        border-collapse:collapse;
+        height:200px;
+        width:100%;
+        border:1px solid #000; 
+    }
+    #layout {
+        display:table-row;    
+    }
+    #content {     
+    display:table-cell;   
+        text-align:center;  
+        vertical-align:middle;     
+    }            
+</style>      
+<div id='container'>
+    <div id='layout'>
+        <div id ='content'>
+            Click on 'Preview'
+        </div>      
+    </div>    
+</div>";
         }
 
         private void InitJsonEditor(Scintilla textArea)
@@ -564,11 +591,18 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
-                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
-            writer.Write(description);
-            writer.RenderEndTag();
+            {
+                //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+                writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                writer.Write(description);
+                writer.RenderEndTag();
+                writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                writer.RenderEndTag();
+            }
 
             var subitems = GetNodeByKey(item.Children(), "subitems");
             var array = subitems.First;
@@ -635,12 +669,18 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
-                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
-            writer.Write(description);
-            writer.RenderEndTag();
-
+            {
+                //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+                writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                writer.Write(description);
+                writer.RenderEndTag();
+                writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                writer.RenderEndTag();
+            }
 
             var subitems = GetNodeByKey(item.Children(), "subitems");
             var array = subitems.First;
@@ -693,11 +733,18 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
-                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
-            writer.Write(description);
-            writer.RenderEndTag();
+            {
+                //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+                writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                writer.Write(description);
+                writer.RenderEndTag();
+                writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                writer.RenderEndTag();
+            }
 
             var subitems = GetNodeByKey(item.Children(), "subitems");
             var array = subitems.First;
@@ -750,11 +797,18 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
-                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
-            writer.Write(description);
-            writer.RenderEndTag();
+            {
+                //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+                writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                writer.Write(description);
+                writer.RenderEndTag();
+                writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                writer.RenderEndTag();
+            }
 
             var subitems = GetNodeByKey(item.Children(), "subitems");
             var array = subitems.First;
@@ -797,11 +851,18 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
+            writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            writer.RenderEndTag();
             writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
-                writer.RenderBeginTag(HtmlTextWriterTag.Legend);
-            writer.Write(description);
-            writer.RenderEndTag();
+            {
+                //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
+                writer.RenderBeginTag(HtmlTextWriterTag.Span);
+                writer.Write(description);
+                writer.RenderEndTag();
+                writer.RenderBeginTag(HtmlTextWriterTag.Br);
+                writer.RenderEndTag();
+            }
 
             var subitems = GetNodeByKey(item.Children(), "subitems");
             var array = subitems.First;
@@ -842,8 +903,6 @@ namespace ZTn.Json.Editor.Forms
 
         private void buttonPreview_Click(object sender, EventArgs e)
         {
-            if (this.Width <= 786)
-                this.Width = 1024;
             var preview = GenerateHtmlPreview();
 
             webBrowserPreview.DocumentText = preview;

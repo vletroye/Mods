@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.tabControl = new System.Windows.Forms.TabControl();
@@ -35,6 +36,8 @@
             this.tabPageRunner = new System.Windows.Forms.TabPage();
             this.tabPageVariables = new System.Windows.Forms.TabPage();
             this.listBoxVariables = new System.Windows.Forms.ListBox();
+            this.linkLabel = new System.Windows.Forms.LinkLabel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageVariables.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +78,7 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(574, 579);
             this.tabControl.TabIndex = 4;
+            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
             // tabPageScript
             // 
@@ -120,6 +124,17 @@
             this.listBoxVariables.TabIndex = 0;
             this.listBoxVariables.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxVariables_MouseDoubleClick);
             // 
+            // linkLabel
+            // 
+            this.linkLabel.AutoSize = true;
+            this.linkLabel.Location = new System.Drawing.Point(566, 3);
+            this.linkLabel.Name = "linkLabel";
+            this.linkLabel.Size = new System.Drawing.Size(29, 13);
+            this.linkLabel.TabIndex = 5;
+            this.linkLabel.TabStop = true;
+            this.linkLabel.Text = "Help";
+            this.linkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
+            // 
             // ScriptForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -127,6 +142,7 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(598, 632);
             this.ControlBox = false;
+            this.Controls.Add(this.linkLabel);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.tabControl);
@@ -142,6 +158,7 @@
             this.tabControl.ResumeLayout(false);
             this.tabPageVariables.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -153,5 +170,7 @@
         private System.Windows.Forms.TabPage tabPageRunner;
         private System.Windows.Forms.TabPage tabPageVariables;
         private System.Windows.Forms.ListBox listBoxVariables;
+        private System.Windows.Forms.LinkLabel linkLabel;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

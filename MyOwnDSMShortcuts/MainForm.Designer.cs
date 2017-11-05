@@ -109,8 +109,9 @@ namespace BeatificaBytes.Synology.Mods
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addWizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scriptRunnerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,7 +134,7 @@ namespace BeatificaBytes.Synology.Mods
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -1054,41 +1055,41 @@ namespace BeatificaBytes.Synology.Mods
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // openRecentToolStripMenuItem
             // 
             this.openRecentToolStripMenuItem.Name = "openRecentToolStripMenuItem";
-            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.openRecentToolStripMenuItem.Text = "Open Recent";
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.importToolStripMenuItem.Text = "Import";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -1109,42 +1110,47 @@ namespace BeatificaBytes.Synology.Mods
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.closeToolStripMenuItem.Text = "Close";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // resetToolStripMenuItem
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(147, 22);
             this.toolStripMenuItem1.Text = "Delete";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-            // 
-            // generateToolStripMenuItem
-            // 
-            this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.generateToolStripMenuItem.Text = "Generate";
-            this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
             // addWizardToolStripMenuItem
             // 
             this.addWizardToolStripMenuItem.Name = "addWizardToolStripMenuItem";
-            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.addWizardToolStripMenuItem.Text = "Create Wizard";
             this.addWizardToolStripMenuItem.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(144, 6);
+            // 
+            // generateToolStripMenuItem
+            // 
+            this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
+            this.generateToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.generateToolStripMenuItem.Text = "Generate";
+            this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.openFolderToolStripMenuItem.Text = "Open Folder";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -1270,8 +1276,9 @@ namespace BeatificaBytes.Synology.Mods
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.documentationToolStripMenuItem,
             this.supportToolStripMenuItem,
-            this.aboutToolStripMenuItem,
-            this.packeDevGuideToolStripMenuItem});
+            this.packeDevGuideToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -1279,29 +1286,29 @@ namespace BeatificaBytes.Synology.Mods
             // documentationToolStripMenuItem
             // 
             this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.documentationToolStripMenuItem.Text = "Documentation";
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.documentationToolStripMenuItem.Text = "Mods Wiki";
             this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
             // supportToolStripMenuItem
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-            this.supportToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.supportToolStripMenuItem.Text = "Support";
+            this.supportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.supportToolStripMenuItem.Text = "Mods Support";
             this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // packeDevGuideToolStripMenuItem
             // 
             this.packeDevGuideToolStripMenuItem.Name = "packeDevGuideToolStripMenuItem";
-            this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.packeDevGuideToolStripMenuItem.Text = "Package DevGuide";
+            this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.packeDevGuideToolStripMenuItem.Text = "Synology DevGuide";
             this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
             // 
             // groupBoxTip
@@ -1326,10 +1333,10 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
-            // toolStripSeparator3
+            // toolStripSeparator4
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
             // 
             // MainForm
             // 
@@ -1479,6 +1486,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.CheckBox checkBoxSingleApp;
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 
