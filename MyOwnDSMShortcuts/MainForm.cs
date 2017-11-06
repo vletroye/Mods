@@ -2076,7 +2076,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
                     BindData(list);
-                    //DisplayItem();
+                    DisplayItem();
                     info["package"] = textBoxPackage.Text;
 
                 }
