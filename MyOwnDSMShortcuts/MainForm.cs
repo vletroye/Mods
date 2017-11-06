@@ -2440,7 +2440,14 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             Properties.Settings.Default.Recents.Add(PackageRootPath);
-            Properties.Settings.Default.RecentsName.Add(info["displayname"]);
+            if (info.ContainsKey("displayname"))
+            {
+                Properties.Settings.Default.RecentsName.Add(info["displayname"]);
+            }
+            else
+            {
+                Properties.Settings.Default.RecentsName.Add(info["package"]);
+            }
             Properties.Settings.Default.Save();
         }
 
