@@ -23,39 +23,6 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<Synology>")]
-        public string Synology {
-            get {
-                return ((string)(this["Synology"]));
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http")]
-        public string Protocol {
-            get {
-                return ((string)(this["Protocol"]));
-            }
-            set {
-                this["Protocol"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("80")]
-        public int Port {
-            get {
-                return ((int)(this["Port"]));
-            }
-            set {
-                this["Port"] = value;
-            }
-        }
-        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -79,23 +46,7 @@ namespace BeatificaBytes.Synology.Mods.Properties {
                 this["PackageRoot"] = value;
             }
         }
-
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PackageRepo
-        {
-            get
-            {
-                return ((string)(this["PackageRepo"]));
-            }
-            set
-            {
-                this["PackageRepo"] = value;
-            }
-        }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
@@ -105,15 +56,6 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["SourceImages"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CTP 6.1")]
-        public string Version {
-            get {
-                return ((string)(this["Version"]));
             }
         }
         
@@ -180,6 +122,27 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["UpgradeRequired"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CTP 8.0")]
+        public string Version {
+            get {
+                return ((string)(this["Version"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PackageRepo {
+            get {
+                return ((string)(this["PackageRepo"]));
+            }
+            set {
+                this["PackageRepo"] = value;
             }
         }
     }

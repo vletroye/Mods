@@ -40,7 +40,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainer = new System.Windows.Forms.TextBox();
             this.textBoxVersion = new System.Windows.Forms.TextBox();
             this.textBoxDsmAppName = new System.Windows.Forms.TextBox();
-            this.textBoxItem = new System.Windows.Forms.TextBox();
+            this.textBoxUrl = new System.Windows.Forms.TextBox();
             this.textBoxTitle = new System.Windows.Forms.TextBox();
             this.textBoxDesc = new System.Windows.Forms.TextBox();
             this.buttonPublish = new System.Windows.Forms.Button();
@@ -76,6 +76,8 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
             this.textBoxSupportUrl = new System.Windows.Forms.TextBox();
             this.checkBoxSingleApp = new System.Windows.Forms.CheckBox();
+            this.comboBoxProtocol = new System.Windows.Forms.ComboBox();
+            this.textBoxPort = new System.Windows.Forms.TextBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -103,11 +105,12 @@ namespace BeatificaBytes.Synology.Mods
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openRecentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.addWizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -130,11 +133,11 @@ namespace BeatificaBytes.Synology.Mods
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -247,27 +250,28 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDsmAppName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDsmAppName_Validating);
             this.textBoxDsmAppName.Validated += new System.EventHandler(this.textBoxDsmAppName_Validated);
             // 
-            // textBoxItem
+            // textBoxUrl
             // 
-            this.textBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxItem.Location = new System.Drawing.Point(91, 217);
-            this.textBoxItem.Name = "textBoxItem";
-            this.textBoxItem.Size = new System.Drawing.Size(286, 20);
-            this.textBoxItem.TabIndex = 5;
-            this.toolTip4Mods.SetToolTip(this.textBoxItem, "Select a Type first");
-            this.textBoxItem.DoubleClick += new System.EventHandler(this.textBoxItem_DoubleClick);
-            this.textBoxItem.Enter += new System.EventHandler(this.OnMouseEnter);
-            this.textBoxItem.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxItem_Validating);
-            this.textBoxItem.Validated += new System.EventHandler(this.textBoxItem_Validated);
+            this.textBoxUrl.Location = new System.Drawing.Point(217, 191);
+            this.textBoxUrl.Name = "textBoxUrl";
+            this.textBoxUrl.Size = new System.Drawing.Size(262, 20);
+            this.textBoxUrl.TabIndex = 6;
+            this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Select a Type first");
+            this.textBoxUrl.TextChanged += new System.EventHandler(this.textBoxUrl_TextChanged);
+            this.textBoxUrl.DoubleClick += new System.EventHandler(this.textBoxItem_DoubleClick);
+            this.textBoxUrl.Enter += new System.EventHandler(this.OnMouseEnter);
+            this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxItem_Validating);
+            this.textBoxUrl.Validated += new System.EventHandler(this.textBoxItem_Validated);
             // 
             // textBoxTitle
             // 
             this.textBoxTitle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBoxTitle.Location = new System.Drawing.Point(91, 123);
             this.textBoxTitle.Name = "textBoxTitle";
-            this.textBoxTitle.Size = new System.Drawing.Size(108, 20);
-            this.textBoxTitle.TabIndex = 1;
+            this.textBoxTitle.Size = new System.Drawing.Size(120, 20);
+            this.textBoxTitle.TabIndex = 0;
             this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the Item. It will to be displayed on DSM.");
             this.textBoxTitle.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
@@ -277,12 +281,12 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxDesc.Location = new System.Drawing.Point(91, 149);
+            this.textBoxDesc.Location = new System.Drawing.Point(217, 123);
             this.textBoxDesc.Multiline = true;
             this.textBoxDesc.Name = "textBoxDesc";
             this.textBoxDesc.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxDesc.Size = new System.Drawing.Size(388, 62);
-            this.textBoxDesc.TabIndex = 3;
+            this.textBoxDesc.Size = new System.Drawing.Size(396, 59);
+            this.textBoxDesc.TabIndex = 1;
             this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
             this.textBoxDesc.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
@@ -511,7 +515,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonAdd.Location = new System.Drawing.Point(6, 318);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(75, 23);
-            this.buttonAdd.TabIndex = 8;
+            this.buttonAdd.TabIndex = 9;
             this.buttonAdd.Text = "Add";
             this.toolTip4Mods.SetToolTip(this.buttonAdd, "Add a new item in the package.");
             this.buttonAdd.UseVisualStyleBackColor = true;
@@ -526,7 +530,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxAllUsers.Name = "checkBoxAllUsers";
             this.checkBoxAllUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxAllUsers.Size = new System.Drawing.Size(85, 17);
-            this.checkBoxAllUsers.TabIndex = 7;
+            this.checkBoxAllUsers.TabIndex = 8;
             this.checkBoxAllUsers.Text = "For All Users";
             this.toolTip4Mods.SetToolTip(this.checkBoxAllUsers, "If you select this item, all users defined on your NAS will have access to the it" +
         "em.\r\nIf you don\'t select this item, only the user who installed the package will" +
@@ -540,7 +544,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonEdit.Location = new System.Drawing.Point(168, 318);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(75, 23);
-            this.buttonEdit.TabIndex = 10;
+            this.buttonEdit.TabIndex = 11;
             this.buttonEdit.Text = "Edit";
             this.toolTip4Mods.SetToolTip(this.buttonEdit, "Edit the item currently selected in the list above.");
             this.buttonEdit.UseVisualStyleBackColor = true;
@@ -553,7 +557,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonDelete.Location = new System.Drawing.Point(87, 318);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(75, 23);
-            this.buttonDelete.TabIndex = 9;
+            this.buttonDelete.TabIndex = 10;
             this.buttonDelete.Text = "Delete";
             this.toolTip4Mods.SetToolTip(this.buttonDelete, "Delete the item currently selected in the list above.");
             this.buttonDelete.UseVisualStyleBackColor = true;
@@ -567,7 +571,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonCancel.Location = new System.Drawing.Point(249, 318);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 11;
+            this.buttonCancel.TabIndex = 12;
             this.buttonCancel.Text = "Cancel";
             this.toolTip4Mods.SetToolTip(this.buttonCancel, "Cancel all changes done on the item currently edited.");
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -580,7 +584,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonSave.Location = new System.Drawing.Point(330, 318);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(75, 23);
-            this.buttonSave.TabIndex = 12;
+            this.buttonSave.TabIndex = 13;
             this.buttonSave.Text = "Save";
             this.toolTip4Mods.SetToolTip(this.buttonSave, "Save all changes done on the item currently edited.\r\nNB.: This is not saving the " +
         "changes done in the \'Package Information\' pane.");
@@ -614,7 +618,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxMultiInstance.Name = "checkBoxMultiInstance";
             this.checkBoxMultiInstance.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxMultiInstance.Size = new System.Drawing.Size(92, 17);
-            this.checkBoxMultiInstance.TabIndex = 6;
+            this.checkBoxMultiInstance.TabIndex = 7;
             this.checkBoxMultiInstance.Text = "Multi Instance";
             this.toolTip4Mods.SetToolTip(this.checkBoxMultiInstance, "When you select this option, the item can be opened several times simulteanously " +
         "in DSM.\r\nIf you don\'t select this option, you will only ba able to run once inst" +
@@ -639,7 +643,7 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxTransparency.Location = new System.Drawing.Point(735, 318);
             this.comboBoxTransparency.Name = "comboBoxTransparency";
             this.comboBoxTransparency.Size = new System.Drawing.Size(48, 21);
-            this.comboBoxTransparency.TabIndex = 13;
+            this.comboBoxTransparency.TabIndex = 14;
             this.toolTip4Mods.SetToolTip(this.comboBoxTransparency, "When importing a new image, you will be asked if it must be made transparent. Ans" +
         "wering \'yes\', all colors equal to image\'s pixel (1,1) +/- this value will be set" +
         " as transparent.");
@@ -735,10 +739,10 @@ namespace BeatificaBytes.Synology.Mods
             "Url",
             "Script",
             "WebApp"});
-            this.comboBoxItemType.Location = new System.Drawing.Point(6, 217);
+            this.comboBoxItemType.Location = new System.Drawing.Point(6, 191);
             this.comboBoxItemType.Name = "comboBoxItemType";
-            this.comboBoxItemType.Size = new System.Drawing.Size(76, 21);
-            this.comboBoxItemType.TabIndex = 4;
+            this.comboBoxItemType.Size = new System.Drawing.Size(72, 21);
+            this.comboBoxItemType.TabIndex = 3;
             this.toolTip4Mods.SetToolTip(this.comboBoxItemType, "Select here the type of item to be added in the Package: a simple URL to open a w" +
         "ebsite in a new tab, a script to execute be executed by a shell, or a web app to" +
         " open windowed within DSM.");
@@ -769,6 +773,35 @@ namespace BeatificaBytes.Synology.Mods
         "n. This option is also enabled if you open a third party package.");
             this.checkBoxSingleApp.UseVisualStyleBackColor = true;
             this.checkBoxSingleApp.CheckedChanged += new System.EventHandler(this.checkBoxSingleApp_CheckedChanged);
+            // 
+            // comboBoxProtocol
+            // 
+            this.comboBoxProtocol.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBoxProtocol.FormattingEnabled = true;
+            this.comboBoxProtocol.Items.AddRange(new object[] {
+            "default",
+            "http",
+            "https"});
+            this.comboBoxProtocol.Location = new System.Drawing.Point(84, 191);
+            this.comboBoxProtocol.Name = "comboBoxProtocol";
+            this.comboBoxProtocol.Size = new System.Drawing.Size(61, 21);
+            this.comboBoxProtocol.TabIndex = 4;
+            this.toolTip4Mods.SetToolTip(this.comboBoxProtocol, "Select here the web protocol of this item. Keep \'default\' to use the protocol of " +
+        "your DSM.");
+            this.comboBoxProtocol.SelectedIndexChanged += new System.EventHandler(this.comboBoxProtocol_SelectedIndexChanged);
+            // 
+            // textBoxPort
+            // 
+            this.textBoxPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxPort.Location = new System.Drawing.Point(151, 191);
+            this.textBoxPort.Name = "textBoxPort";
+            this.textBoxPort.Size = new System.Drawing.Size(60, 20);
+            this.textBoxPort.TabIndex = 5;
+            this.toolTip4Mods.SetToolTip(this.textBoxPort, "Select here the web port of this item. Keep \'default\' to use the port of your DSM" +
+        ".");
+            this.textBoxPort.TextChanged += new System.EventHandler(this.textBoxPort_TextChanged);
+            this.textBoxPort.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPort_Validating);
+            this.textBoxPort.Validated += new System.EventHandler(this.textBoxPort_Validated);
             // 
             // openFileDialog4Mods
             // 
@@ -982,7 +1015,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.labelDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelDesc.AutoSize = true;
-            this.labelDesc.Location = new System.Drawing.Point(19, 149);
+            this.labelDesc.Location = new System.Drawing.Point(148, 149);
             this.labelDesc.Name = "labelDesc";
             this.labelDesc.Size = new System.Drawing.Size(63, 13);
             this.labelDesc.TabIndex = 5;
@@ -993,6 +1026,8 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxItem.Controls.Add(this.textBoxPort);
+            this.groupBoxItem.Controls.Add(this.comboBoxProtocol);
             this.groupBoxItem.Controls.Add(this.labelTransparency);
             this.groupBoxItem.Controls.Add(this.comboBoxTransparency);
             this.groupBoxItem.Controls.Add(this.pictureBox_256);
@@ -1018,7 +1053,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Controls.Add(this.labelTitle);
             this.groupBoxItem.Controls.Add(this.textBoxTitle);
             this.groupBoxItem.Controls.Add(this.listViewItems);
-            this.groupBoxItem.Controls.Add(this.textBoxItem);
+            this.groupBoxItem.Controls.Add(this.textBoxUrl);
             this.groupBoxItem.Location = new System.Drawing.Point(2, 318);
             this.groupBoxItem.Name = "groupBoxItem";
             this.groupBoxItem.Size = new System.Drawing.Size(801, 347);
@@ -1046,6 +1081,7 @@ namespace BeatificaBytes.Synology.Mods
             this.openToolStripMenuItem,
             this.openRecentToolStripMenuItem,
             this.importToolStripMenuItem,
+            this.closeToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.filesToolStripMenuItem.Name = "filesToolStripMenuItem";
@@ -1079,6 +1115,13 @@ namespace BeatificaBytes.Synology.Mods
             this.importToolStripMenuItem.Text = "Import";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
@@ -1096,8 +1139,8 @@ namespace BeatificaBytes.Synology.Mods
             // packageToolStripMenuItem
             // 
             this.packageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.closeToolStripMenuItem,
             this.resetToolStripMenuItem,
+            this.moveToolStripMenuItem,
             this.toolStripMenuItem1,
             this.addWizardToolStripMenuItem,
             this.toolStripSeparator3,
@@ -1107,19 +1150,19 @@ namespace BeatificaBytes.Synology.Mods
             this.packageToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.packageToolStripMenuItem.Text = "Package";
             // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
-            this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
             // resetToolStripMenuItem
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.resetToolStripMenuItem.Text = "Reset";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            // 
+            // moveToolStripMenuItem
+            // 
+            this.moveToolStripMenuItem.Name = "moveToolStripMenuItem";
+            this.moveToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.moveToolStripMenuItem.Text = "Move";
+            this.moveToolStripMenuItem.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
@@ -1297,19 +1340,24 @@ namespace BeatificaBytes.Synology.Mods
             this.supportToolStripMenuItem.Text = "Mods Support";
             this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
             // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
             // packeDevGuideToolStripMenuItem
             // 
             this.packeDevGuideToolStripMenuItem.Name = "packeDevGuideToolStripMenuItem";
             this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
             this.packeDevGuideToolStripMenuItem.Text = "Synology DevGuide";
             this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // groupBoxTip
             // 
@@ -1332,11 +1380,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(772, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
             // 
             // MainForm
             // 
@@ -1431,7 +1474,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.Label labelTitle;
         private System.Windows.Forms.TextBox textBoxTitle;
         private System.Windows.Forms.ListView listViewItems;
-        private System.Windows.Forms.TextBox textBoxItem;
+        private System.Windows.Forms.TextBox textBoxUrl;
         private System.Windows.Forms.Label labelTransparency;
         private System.Windows.Forms.ComboBox comboBoxTransparency;
         private System.Windows.Forms.Label labelPublisher;
@@ -1487,6 +1530,9 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem moveToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxPort;
+        private System.Windows.Forms.ComboBox comboBoxProtocol;
     }
 }
 

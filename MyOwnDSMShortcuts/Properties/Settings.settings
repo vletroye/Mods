@@ -2,15 +2,6 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BeatificaBytes.Synology.Mods.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Synology" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">&lt;Synology&gt;</Value>
-    </Setting>
-    <Setting Name="Protocol" Type="System.String" Scope="User">
-      <Value Profile="(Default)">http</Value>
-    </Setting>
-    <Setting Name="Port" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">80</Value>
-    </Setting>
     <Setting Name="Packages" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -19,9 +10,6 @@
     </Setting>
     <Setting Name="SourceImages" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="Version" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">CTP 6.1</Value>
     </Setting>
     <Setting Name="Ps_Exec" Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;script type="text/javascript"&gt;
@@ -91,6 +79,12 @@ echo "&lt;/script&gt;";
     </Setting>
     <Setting Name="UpgradeRequired" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Version" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">CTP 8.0</Value>
+    </Setting>
+    <Setting Name="PackageRepo" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -152,7 +152,9 @@ namespace BeatificaBytes.Synology.Mods
                     DirectoryInfo[] directories = dirInfo.GetDirectories();
                     foreach (DirectoryInfo tempdir in directories)
                     {
-                        CopyDirectory(Path.Combine(strSource, tempdir.Name), Path.Combine(strDestination, tempdir.Name));
+                        var subfolder = Path.Combine(strSource, tempdir.Name);
+                        if (strDestination != subfolder)
+                            CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name));
                     }
                 }
             }
@@ -246,6 +248,16 @@ namespace BeatificaBytes.Synology.Mods
                         && (outUri.Scheme == Uri.UriSchemeHttp || outUri.Scheme == Uri.UriSchemeHttps));
         }
 
+        public static Control FindFocusedControl(Control control)
+        {
+            var container = control as IContainerControl;
+            while (container != null)
+            {
+                control = container.ActiveControl;
+                container = control as IContainerControl;
+            }
+            return control;
+        }
 
         public static void EncryptAndSign(string sourcePath, string targetPath, string passPhrase, string publicKeyFileName, string privateKeyFileName)
         {
