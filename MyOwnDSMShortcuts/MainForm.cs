@@ -3653,5 +3653,34 @@ namespace BeatificaBytes.Synology.Mods
         {
             errorProvider.SetError(textBoxPort, "");
         }
+
+
+        private void textBoxArch_DoubleClick(object sender, EventArgs e)
+        {
+            var archForm = new ArchAndModels(textBoxArch.Text, null);
+            if (archForm.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxArch.Text = archForm.archs;
+            }
+        }
+
+        private void textBoxModel_DoubleClick(object sender, EventArgs e)
+        {
+            var archForm = new ArchAndModels(null, textBoxModel.Text);
+            if (archForm.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxModel.Text = archForm.models;
+            }
+        }
+
+        private void textBoxExcludeArch_DoubleClick(object sender, EventArgs e)
+        {
+            var archForm = new ArchAndModels(textBoxExcludeArch.Text, null);
+            archForm.ShowDialog(this);
+            if (archForm.ShowDialog(this) == DialogResult.OK)
+            {
+                textBoxExcludeArch.Text = archForm.archs;
+            }
+        }
     }
 }
