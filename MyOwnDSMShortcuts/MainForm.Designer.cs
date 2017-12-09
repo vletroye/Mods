@@ -78,6 +78,20 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSingleApp = new System.Windows.Forms.CheckBox();
             this.comboBoxProtocol = new System.Windows.Forms.ComboBox();
             this.textBoxPort = new System.Windows.Forms.TextBox();
+            this.checkBoxSilentReboot = new System.Windows.Forms.CheckBox();
+            this.checkBoxSilentUninstall = new System.Windows.Forms.CheckBox();
+            this.checkBoxSilentUpgrade = new System.Windows.Forms.CheckBox();
+            this.checkBoxSilentInstalll = new System.Windows.Forms.CheckBox();
+            this.textBoxArch = new System.Windows.Forms.TextBox();
+            this.textBoxExcludeArch = new System.Windows.Forms.TextBox();
+            this.textBoxModel = new System.Windows.Forms.TextBox();
+            this.checkBoxPrecheck = new System.Windows.Forms.CheckBox();
+            this.checkBoxStartable = new System.Windows.Forms.CheckBox();
+            this.checkBoxOfflineInstall = new System.Windows.Forms.CheckBox();
+            this.checkBoxConfigPrivilege = new System.Windows.Forms.CheckBox();
+            this.checkBoxAdvanceGrantPrivilege = new System.Windows.Forms.CheckBox();
+            this.ComboBoxGrantPrivilege = new System.Windows.Forms.ComboBox();
+            this.checkBoxLegacy = new System.Windows.Forms.CheckBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -89,10 +103,8 @@ namespace BeatificaBytes.Synology.Mods
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
-            this.checkBoxSilentReboot = new System.Windows.Forms.CheckBox();
-            this.checkBoxSilentUninstall = new System.Windows.Forms.CheckBox();
-            this.checkBoxSilentUpgrade = new System.Windows.Forms.CheckBox();
-            this.checkBoxSilentInstalll = new System.Windows.Forms.CheckBox();
+            this.labelModel = new System.Windows.Forms.Label();
+            this.labelExcludeArch = new System.Windows.Forms.Label();
             this.labelSupportUrl = new System.Windows.Forms.Label();
             this.labelFirmware = new System.Windows.Forms.Label();
             this.labelHelpUrl = new System.Windows.Forms.Label();
@@ -100,11 +112,11 @@ namespace BeatificaBytes.Synology.Mods
             this.labelPublisherUrl = new System.Windows.Forms.Label();
             this.labelPublisher = new System.Windows.Forms.Label();
             this.labelArch = new System.Windows.Forms.Label();
-            this.textBoxArch = new System.Windows.Forms.TextBox();
             this.listViewItems = new System.Windows.Forms.ListView();
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
+            this.labelGrantPrivilege = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -144,13 +156,6 @@ namespace BeatificaBytes.Synology.Mods
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.labelExcludeArch = new System.Windows.Forms.Label();
-            this.textBoxExcludeArch = new System.Windows.Forms.TextBox();
-            this.labelModel = new System.Windows.Forms.Label();
-            this.textBoxModel = new System.Windows.Forms.TextBox();
-            this.checkBoxPrecheck = new System.Windows.Forms.CheckBox();
-            this.checkBoxStartable = new System.Windows.Forms.CheckBox();
-            this.checkBoxOfflineInstall = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -178,7 +183,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainerUrl.Tag = "PKGmaintainer_url";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainerUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
-            this.textBoxMaintainerUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxMaintainerUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxMaintainerUrl_Validating);
             this.textBoxMaintainerUrl.Validated += new System.EventHandler(this.textBoxMaintainerUrl_Validated);
             // 
@@ -193,7 +197,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
         "ter.");
-            this.textBoxDescription.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDescription.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDescription_Validating);
             this.textBoxDescription.Validated += new System.EventHandler(this.textBoxDescription_Validated);
             // 
@@ -207,7 +210,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package. This name may not include any special character or" +
         " blanks.\r\nPackage Center will create a /var/packages/[package identity] folder t" +
         "o put package files.");
-            this.textBoxPackage.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPackage.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPackage_Validating);
             this.textBoxPackage.Validated += new System.EventHandler(this.textBoxPackage_Validated);
             // 
@@ -220,7 +222,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDisplay.Tag = "PKGdisplayname_enu;PKGdisplayname";
             this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t enter a Dis" +
         "play name, the Package name will be displayed.");
-            this.textBoxDisplay.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDisplay.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDisplay_Validating);
             this.textBoxDisplay.Validated += new System.EventHandler(this.textBoxDisplay_Validated);
             // 
@@ -233,7 +234,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainer.Tag = "PKGmaintainer";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainer, "Enter the name of the person who developped the items in your package.\r\nThis name" +
         " will be displayed in DSM\'s Package Center.");
-            this.textBoxMaintainer.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxMaintainer.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxMaintainer_Validating);
             this.textBoxMaintainer.Validated += new System.EventHandler(this.textBoxMaintainer_Validated);
             // 
@@ -245,7 +245,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxVersion.TabIndex = 2;
             this.textBoxVersion.Tag = "PKGversion";
             this.toolTip4Mods.SetToolTip(this.textBoxVersion, resources.GetString("textBoxVersion.ToolTip"));
-            this.textBoxVersion.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxVersion.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
             this.textBoxVersion.Validated += new System.EventHandler(this.textBoxVersion_Validated);
             // 
@@ -259,7 +258,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxDsmAppName, "Enter an application name for your package. Ex.: com.yourSite.yourPackageName\r\nTh" +
         "is name must be unique in the universe and will be used behind the scene when in" +
         "stalling your package on DSM.");
-            this.textBoxDsmAppName.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxDsmAppName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxDsmAppName_Validating);
             this.textBoxDsmAppName.Validated += new System.EventHandler(this.textBoxDsmAppName_Validated);
             // 
@@ -274,7 +272,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Select a Type first");
             this.textBoxUrl.TextChanged += new System.EventHandler(this.textBoxUrl_TextChanged);
             this.textBoxUrl.DoubleClick += new System.EventHandler(this.textBoxItem_DoubleClick);
-            this.textBoxUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxItem_Validating);
             this.textBoxUrl.Validated += new System.EventHandler(this.textBoxItem_Validated);
             // 
@@ -286,7 +283,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxTitle.Size = new System.Drawing.Size(120, 20);
             this.textBoxTitle.TabIndex = 0;
             this.toolTip4Mods.SetToolTip(this.textBoxTitle, "Enter the title of the Item. It will to be displayed on DSM.");
-            this.textBoxTitle.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxTitle.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxTitle_Validating);
             this.textBoxTitle.Validated += new System.EventHandler(this.textBoxTitle_Validated);
             // 
@@ -301,7 +297,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDesc.Size = new System.Drawing.Size(594, 59);
             this.textBoxDesc.TabIndex = 1;
             this.toolTip4Mods.SetToolTip(this.textBoxDesc, "Enter an optional description. This will not be displayed on DSM.");
-            this.textBoxDesc.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonPublish
             // 
@@ -315,7 +310,6 @@ namespace BeatificaBytes.Synology.Mods
         "pane will be saved.");
             this.buttonPublish.UseVisualStyleBackColor = true;
             this.buttonPublish.Click += new System.EventHandler(this.buttonPublish_Click);
-            this.buttonPublish.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonReset
             // 
@@ -329,7 +323,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values.");
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
-            this.buttonReset.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // labelTransparency
             // 
@@ -351,7 +344,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisher.Tag = "PKGdistributor";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisher, "Enter the name of the person who create the package.\r\nThis name will be displayed" +
         " in DSM\'s Package Center.");
-            this.textBoxPublisher.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPublisher.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisher_Validating);
             this.textBoxPublisher.Validated += new System.EventHandler(this.textBoxPublisher_Validated);
             // 
@@ -533,13 +525,12 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonAdd, "Add a new item in the package.");
             this.buttonAdd.UseVisualStyleBackColor = true;
             this.buttonAdd.Click += new System.EventHandler(this.buttonAddItem_Click);
-            this.buttonAdd.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxAllUsers
             // 
             this.checkBoxAllUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxAllUsers.AutoSize = true;
-            this.checkBoxAllUsers.Location = new System.Drawing.Point(20, 267);
+            this.checkBoxAllUsers.Location = new System.Drawing.Point(13, 220);
             this.checkBoxAllUsers.Name = "checkBoxAllUsers";
             this.checkBoxAllUsers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxAllUsers.Size = new System.Drawing.Size(85, 17);
@@ -549,7 +540,6 @@ namespace BeatificaBytes.Synology.Mods
         "em.\r\nIf you don\'t select this item, only the user who installed the package will" +
         " have access to the item.");
             this.checkBoxAllUsers.UseVisualStyleBackColor = true;
-            this.checkBoxAllUsers.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonEdit
             // 
@@ -562,7 +552,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonEdit, "Edit the item currently selected in the list above.");
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEditItem_Click);
-            this.buttonEdit.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonDelete
             // 
@@ -575,7 +564,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonDelete, "Delete the item currently selected in the list above.");
             this.buttonDelete.UseVisualStyleBackColor = true;
             this.buttonDelete.Click += new System.EventHandler(this.buttonDeleteItem_Click);
-            this.buttonDelete.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonCancel
             // 
@@ -589,7 +577,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonCancel, "Cancel all changes done on the item currently edited.");
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancelItem_Click);
-            this.buttonCancel.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // buttonSave
             // 
@@ -603,7 +590,6 @@ namespace BeatificaBytes.Synology.Mods
         "changes done in the \'Package Information\' pane.");
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSaveItem_Click);
-            this.buttonSave.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxSize
             // 
@@ -619,15 +605,12 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.checkBoxSize, resources.GetString("checkBoxSize.ToolTip"));
             this.checkBoxSize.UseVisualStyleBackColor = true;
             this.checkBoxSize.CheckedChanged += new System.EventHandler(this.checkBoxSize_CheckedChanged);
-            this.checkBoxSize.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxMultiInstance
             // 
             this.checkBoxMultiInstance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkBoxMultiInstance.AutoSize = true;
-            this.checkBoxMultiInstance.Checked = true;
-            this.checkBoxMultiInstance.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMultiInstance.Location = new System.Drawing.Point(13, 244);
+            this.checkBoxMultiInstance.Location = new System.Drawing.Point(6, 241);
             this.checkBoxMultiInstance.Name = "checkBoxMultiInstance";
             this.checkBoxMultiInstance.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.checkBoxMultiInstance.Size = new System.Drawing.Size(92, 17);
@@ -637,7 +620,6 @@ namespace BeatificaBytes.Synology.Mods
         "in DSM.\r\nIf you don\'t select this option, you will only ba able to run once inst" +
         "ance of the item.");
             this.checkBoxMultiInstance.UseVisualStyleBackColor = true;
-            this.checkBoxMultiInstance.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // comboBoxTransparency
             // 
@@ -660,7 +642,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.comboBoxTransparency, "When importing a new image, you will be asked if it must be made transparent. Ans" +
         "wering \'yes\', all colors equal to image\'s pixel (1,1) +/- this value will be set" +
         " as transparent.");
-            this.comboBoxTransparency.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // textBoxPublisherUrl
             // 
@@ -671,7 +652,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
-            this.textBoxPublisherUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxPublisherUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisherUrl_Validating);
             this.textBoxPublisherUrl.Validated += new System.EventHandler(this.textBoxPublisherUrl_Validated);
             // 
@@ -684,7 +664,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
-            this.textBoxHelpUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxHelpUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxHelpUrl_Validating);
             this.textBoxHelpUrl.Validated += new System.EventHandler(this.textBoxHelpUrl_Validated);
             // 
@@ -698,7 +677,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
             this.TextBoxReportUrl.Visible = false;
-            this.TextBoxReportUrl.Enter += new System.EventHandler(this.OnMouseEnter);
             this.TextBoxReportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.TextBoxReportUrl_Validating);
             this.TextBoxReportUrl.Validated += new System.EventHandler(this.TextBoxReportUrl_Validated);
             // 
@@ -711,7 +689,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxFirmware.Tag = "PKGfirmware";
             this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\nValue: X.Y" +
         "-Z DSM major number, DSM minor number, DSM build number");
-            this.textBoxFirmware.Enter += new System.EventHandler(this.OnMouseEnter);
             this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
             this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
@@ -726,7 +703,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields.");
             this.buttonAdvanced.UseVisualStyleBackColor = true;
             this.buttonAdvanced.Click += new System.EventHandler(this.buttonAdvanced_Click);
-            this.buttonAdvanced.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // checkBoxBeta
             // 
@@ -741,7 +717,6 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.checkBoxBeta, "Check this option if your package is still in a beta phase.");
             this.checkBoxBeta.UseVisualStyleBackColor = true;
             this.checkBoxBeta.CheckedChanged += new System.EventHandler(this.checkBoxBeta_CheckedChanged);
-            this.checkBoxBeta.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // comboBoxItemType
             // 
@@ -760,7 +735,6 @@ namespace BeatificaBytes.Synology.Mods
         "ebsite in a new tab, a script to execute be executed by a shell, or a web app to" +
         " open windowed within DSM.");
             this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
-            this.comboBoxItemType.Enter += new System.EventHandler(this.OnMouseEnter);
             // 
             // textBoxSupportUrl
             // 
@@ -815,6 +789,190 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPort.TextChanged += new System.EventHandler(this.textBoxPort_TextChanged);
             this.textBoxPort.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPort_Validating);
             this.textBoxPort.Validated += new System.EventHandler(this.textBoxPort_Validated);
+            // 
+            // checkBoxSilentReboot
+            // 
+            this.checkBoxSilentReboot.AutoSize = true;
+            this.checkBoxSilentReboot.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSilentReboot.Location = new System.Drawing.Point(718, 99);
+            this.checkBoxSilentReboot.Name = "checkBoxSilentReboot";
+            this.checkBoxSilentReboot.Size = new System.Drawing.Size(91, 17);
+            this.checkBoxSilentReboot.TabIndex = 68;
+            this.checkBoxSilentReboot.Tag = "PKGinstall_reboot";
+            this.checkBoxSilentReboot.Text = "Install Reboot";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSilentReboot, "Reboot DiskStation after installing or upgrading the package. Default Value: no");
+            this.checkBoxSilentReboot.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSilentUninstall
+            // 
+            this.checkBoxSilentUninstall.AutoSize = true;
+            this.checkBoxSilentUninstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSilentUninstall.Location = new System.Drawing.Point(559, 99);
+            this.checkBoxSilentUninstall.Name = "checkBoxSilentUninstall";
+            this.checkBoxSilentUninstall.Size = new System.Drawing.Size(95, 17);
+            this.checkBoxSilentUninstall.TabIndex = 68;
+            this.checkBoxSilentUninstall.Tag = "PKGsilent_uninstall";
+            this.checkBoxSilentUninstall.Text = "Silent Uninstall";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSilentUninstall, resources.GetString("checkBoxSilentUninstall.ToolTip"));
+            this.checkBoxSilentUninstall.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSilentUpgrade
+            // 
+            this.checkBoxSilentUpgrade.AutoSize = true;
+            this.checkBoxSilentUpgrade.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSilentUpgrade.Location = new System.Drawing.Point(560, 73);
+            this.checkBoxSilentUpgrade.Name = "checkBoxSilentUpgrade";
+            this.checkBoxSilentUpgrade.Size = new System.Drawing.Size(94, 17);
+            this.checkBoxSilentUpgrade.TabIndex = 68;
+            this.checkBoxSilentUpgrade.Tag = "PKGsilent_upgrade";
+            this.checkBoxSilentUpgrade.Text = "Silent upgrade";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSilentUpgrade, resources.GetString("checkBoxSilentUpgrade.ToolTip"));
+            this.checkBoxSilentUpgrade.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxSilentInstalll
+            // 
+            this.checkBoxSilentInstalll.AutoSize = true;
+            this.checkBoxSilentInstalll.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSilentInstalll.Location = new System.Drawing.Point(572, 47);
+            this.checkBoxSilentInstalll.Name = "checkBoxSilentInstalll";
+            this.checkBoxSilentInstalll.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxSilentInstalll.TabIndex = 68;
+            this.checkBoxSilentInstalll.Tag = "PKGsilent_install";
+            this.checkBoxSilentInstalll.Text = "Silent Install";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSilentInstalll, resources.GetString("checkBoxSilentInstalll.ToolTip"));
+            this.checkBoxSilentInstalll.UseVisualStyleBackColor = true;
+            // 
+            // textBoxArch
+            // 
+            this.textBoxArch.Location = new System.Drawing.Point(638, 124);
+            this.textBoxArch.Name = "textBoxArch";
+            this.textBoxArch.Size = new System.Drawing.Size(173, 20);
+            this.textBoxArch.TabIndex = 2;
+            this.textBoxArch.Tag = "PKGarch";
+            this.toolTip4Mods.SetToolTip(this.textBoxArch, "Double click to Edit this list of CPU architectures where the package can be used" +
+        " to install the package. Values are separated by a space.");
+            this.textBoxArch.DoubleClick += new System.EventHandler(this.textBoxArch_DoubleClick);
+            this.textBoxArch.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
+            this.textBoxArch.Validated += new System.EventHandler(this.textBoxVersion_Validated);
+            // 
+            // textBoxExcludeArch
+            // 
+            this.textBoxExcludeArch.Location = new System.Drawing.Point(638, 150);
+            this.textBoxExcludeArch.Name = "textBoxExcludeArch";
+            this.textBoxExcludeArch.Size = new System.Drawing.Size(173, 20);
+            this.textBoxExcludeArch.TabIndex = 69;
+            this.textBoxExcludeArch.Tag = "PKGexclude_arch";
+            this.toolTip4Mods.SetToolTip(this.textBoxExcludeArch, resources.GetString("textBoxExcludeArch.ToolTip"));
+            this.textBoxExcludeArch.DoubleClick += new System.EventHandler(this.textBoxExcludeArch_DoubleClick);
+            // 
+            // textBoxModel
+            // 
+            this.textBoxModel.Location = new System.Drawing.Point(638, 177);
+            this.textBoxModel.Name = "textBoxModel";
+            this.textBoxModel.Size = new System.Drawing.Size(173, 20);
+            this.textBoxModel.TabIndex = 71;
+            this.textBoxModel.Tag = "PKGmodel";
+            this.toolTip4Mods.SetToolTip(this.textBoxModel, "Double click to Edit the list of models on which packages can be installed. It is" +
+        " organized by Synology string, architecture\r\nand model name. Values are separate" +
+        "d with a space.");
+            this.textBoxModel.DoubleClick += new System.EventHandler(this.textBoxModel_DoubleClick);
+            // 
+            // checkBoxPrecheck
+            // 
+            this.checkBoxPrecheck.AutoSize = true;
+            this.checkBoxPrecheck.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxPrecheck.Location = new System.Drawing.Point(691, 73);
+            this.checkBoxPrecheck.Name = "checkBoxPrecheck";
+            this.checkBoxPrecheck.Size = new System.Drawing.Size(118, 17);
+            this.checkBoxPrecheck.TabIndex = 73;
+            this.checkBoxPrecheck.Tag = "PKGprecheckstartstop";
+            this.checkBoxPrecheck.Text = "Precheck start-stop";
+            this.toolTip4Mods.SetToolTip(this.checkBoxPrecheck, "If set to \"yes\", let start-stop-status with prestart or prestop argument run befo" +
+        "re start or stop the package. Please refer to start-stop-status in scripts for m" +
+        "ore information. Default Value: yes");
+            this.checkBoxPrecheck.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxStartable
+            // 
+            this.checkBoxStartable.AutoSize = true;
+            this.checkBoxStartable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxStartable.Location = new System.Drawing.Point(741, 47);
+            this.checkBoxStartable.Name = "checkBoxStartable";
+            this.checkBoxStartable.Size = new System.Drawing.Size(68, 17);
+            this.checkBoxStartable.TabIndex = 74;
+            this.checkBoxStartable.Tag = "PKGstartable";
+            this.checkBoxStartable.Text = "Startable";
+            this.toolTip4Mods.SetToolTip(this.checkBoxStartable, resources.GetString("checkBoxStartable.ToolTip"));
+            this.checkBoxStartable.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxOfflineInstall
+            // 
+            this.checkBoxOfflineInstall.AutoSize = true;
+            this.checkBoxOfflineInstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxOfflineInstall.Location = new System.Drawing.Point(568, 22);
+            this.checkBoxOfflineInstall.Name = "checkBoxOfflineInstall";
+            this.checkBoxOfflineInstall.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxOfflineInstall.TabIndex = 75;
+            this.checkBoxOfflineInstall.Tag = "PKGoffline_install";
+            this.checkBoxOfflineInstall.Text = "Offline Install";
+            this.toolTip4Mods.SetToolTip(this.checkBoxOfflineInstall, resources.GetString("checkBoxOfflineInstall.ToolTip"));
+            this.checkBoxOfflineInstall.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxConfigPrivilege
+            // 
+            this.checkBoxConfigPrivilege.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxConfigPrivilege.AutoSize = true;
+            this.checkBoxConfigPrivilege.Location = new System.Drawing.Point(103, 262);
+            this.checkBoxConfigPrivilege.Name = "checkBoxConfigPrivilege";
+            this.checkBoxConfigPrivilege.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxConfigPrivilege.Size = new System.Drawing.Size(128, 17);
+            this.checkBoxConfigPrivilege.TabIndex = 26;
+            this.checkBoxConfigPrivilege.Text = "Configurable Privilege";
+            this.toolTip4Mods.SetToolTip(this.checkBoxConfigPrivilege, "When you unselect this option, you disable the ability to set the permission, eve" +
+        "n though the Grant Privilege option is enabled.");
+            this.checkBoxConfigPrivilege.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxAdvanceGrantPrivilege
+            // 
+            this.checkBoxAdvanceGrantPrivilege.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxAdvanceGrantPrivilege.AutoSize = true;
+            this.checkBoxAdvanceGrantPrivilege.Location = new System.Drawing.Point(113, 241);
+            this.checkBoxAdvanceGrantPrivilege.Name = "checkBoxAdvanceGrantPrivilege";
+            this.checkBoxAdvanceGrantPrivilege.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxAdvanceGrantPrivilege.Size = new System.Drawing.Size(118, 17);
+            this.checkBoxAdvanceGrantPrivilege.TabIndex = 27;
+            this.checkBoxAdvanceGrantPrivilege.Text = "Advanced Privilege";
+            this.toolTip4Mods.SetToolTip(this.checkBoxAdvanceGrantPrivilege, "When you select this option, you will have the possibility to limit the users who" +
+        " are allowed to use this application.");
+            this.checkBoxAdvanceGrantPrivilege.UseVisualStyleBackColor = true;
+            // 
+            // ComboBoxGrantPrivilege
+            // 
+            this.ComboBoxGrantPrivilege.FormattingEnabled = true;
+            this.ComboBoxGrantPrivilege.Items.AddRange(new object[] {
+            "all",
+            "local",
+            "ldap",
+            "domain"});
+            this.ComboBoxGrantPrivilege.Location = new System.Drawing.Point(217, 216);
+            this.ComboBoxGrantPrivilege.Name = "ComboBoxGrantPrivilege";
+            this.ComboBoxGrantPrivilege.Size = new System.Drawing.Size(88, 21);
+            this.ComboBoxGrantPrivilege.TabIndex = 28;
+            this.toolTip4Mods.SetToolTip(this.ComboBoxGrantPrivilege, resources.GetString("ComboBoxGrantPrivilege.ToolTip"));
+            // 
+            // checkBoxLegacy
+            // 
+            this.checkBoxLegacy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxLegacy.AutoSize = true;
+            this.checkBoxLegacy.Location = new System.Drawing.Point(21, 262);
+            this.checkBoxLegacy.Name = "checkBoxLegacy";
+            this.checkBoxLegacy.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.checkBoxLegacy.Size = new System.Drawing.Size(77, 17);
+            this.checkBoxLegacy.TabIndex = 31;
+            this.checkBoxLegacy.Text = "Embedded";
+            this.toolTip4Mods.SetToolTip(this.checkBoxLegacy, resources.GetString("checkBoxLegacy.ToolTip"));
+            this.checkBoxLegacy.UseVisualStyleBackColor = true;
+            this.checkBoxLegacy.CheckedChanged += new System.EventHandler(this.checkBoxLegacy_CheckedChanged);
             // 
             // openFileDialog4Mods
             // 
@@ -956,57 +1114,23 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
-            // checkBoxSilentReboot
+            // labelModel
             // 
-            this.checkBoxSilentReboot.AutoSize = true;
-            this.checkBoxSilentReboot.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentReboot.Location = new System.Drawing.Point(718, 99);
-            this.checkBoxSilentReboot.Name = "checkBoxSilentReboot";
-            this.checkBoxSilentReboot.Size = new System.Drawing.Size(91, 17);
-            this.checkBoxSilentReboot.TabIndex = 68;
-            this.checkBoxSilentReboot.Tag = "PKGinstall_reboot";
-            this.checkBoxSilentReboot.Text = "Install Reboot";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSilentReboot, "Reboot DiskStation after installing or upgrading the package. Default Value: no");
-            this.checkBoxSilentReboot.UseVisualStyleBackColor = true;
+            this.labelModel.AutoSize = true;
+            this.labelModel.Location = new System.Drawing.Point(595, 180);
+            this.labelModel.Name = "labelModel";
+            this.labelModel.Size = new System.Drawing.Size(39, 13);
+            this.labelModel.TabIndex = 72;
+            this.labelModel.Text = "Model:";
             // 
-            // checkBoxSilentUninstall
+            // labelExcludeArch
             // 
-            this.checkBoxSilentUninstall.AutoSize = true;
-            this.checkBoxSilentUninstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentUninstall.Location = new System.Drawing.Point(559, 99);
-            this.checkBoxSilentUninstall.Name = "checkBoxSilentUninstall";
-            this.checkBoxSilentUninstall.Size = new System.Drawing.Size(95, 17);
-            this.checkBoxSilentUninstall.TabIndex = 68;
-            this.checkBoxSilentUninstall.Tag = "PKGsilent_uninstall";
-            this.checkBoxSilentUninstall.Text = "Silent Uninstall";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSilentUninstall, resources.GetString("checkBoxSilentUninstall.ToolTip"));
-            this.checkBoxSilentUninstall.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSilentUpgrade
-            // 
-            this.checkBoxSilentUpgrade.AutoSize = true;
-            this.checkBoxSilentUpgrade.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentUpgrade.Location = new System.Drawing.Point(560, 73);
-            this.checkBoxSilentUpgrade.Name = "checkBoxSilentUpgrade";
-            this.checkBoxSilentUpgrade.Size = new System.Drawing.Size(94, 17);
-            this.checkBoxSilentUpgrade.TabIndex = 68;
-            this.checkBoxSilentUpgrade.Tag = "PKGsilent_upgrade";
-            this.checkBoxSilentUpgrade.Text = "Silent upgrade";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSilentUpgrade, resources.GetString("checkBoxSilentUpgrade.ToolTip"));
-            this.checkBoxSilentUpgrade.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxSilentInstalll
-            // 
-            this.checkBoxSilentInstalll.AutoSize = true;
-            this.checkBoxSilentInstalll.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentInstalll.Location = new System.Drawing.Point(572, 47);
-            this.checkBoxSilentInstalll.Name = "checkBoxSilentInstalll";
-            this.checkBoxSilentInstalll.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxSilentInstalll.TabIndex = 68;
-            this.checkBoxSilentInstalll.Tag = "PKGsilent_install";
-            this.checkBoxSilentInstalll.Text = "Silent Install";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSilentInstalll, resources.GetString("checkBoxSilentInstalll.ToolTip"));
-            this.checkBoxSilentInstalll.UseVisualStyleBackColor = true;
+            this.labelExcludeArch.AutoSize = true;
+            this.labelExcludeArch.Location = new System.Drawing.Point(578, 153);
+            this.labelExcludeArch.Name = "labelExcludeArch";
+            this.labelExcludeArch.Size = new System.Drawing.Size(56, 13);
+            this.labelExcludeArch.TabIndex = 70;
+            this.labelExcludeArch.Text = "Exc. Arch:";
             // 
             // labelSupportUrl
             // 
@@ -1075,20 +1199,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelArch.TabIndex = 49;
             this.labelArch.Text = "Arch:";
             // 
-            // textBoxArch
-            // 
-            this.textBoxArch.Location = new System.Drawing.Point(638, 124);
-            this.textBoxArch.Name = "textBoxArch";
-            this.textBoxArch.Size = new System.Drawing.Size(173, 20);
-            this.textBoxArch.TabIndex = 2;
-            this.textBoxArch.Tag = "PKGarch";
-            this.toolTip4Mods.SetToolTip(this.textBoxArch, "Double click to Edit this list of CPU architectures where the package can be used" +
-        " to install the package. Values are separated by a space.");
-            this.textBoxArch.DoubleClick += new System.EventHandler(this.textBoxArch_DoubleClick);
-            this.textBoxArch.Enter += new System.EventHandler(this.OnMouseEnter);
-            this.textBoxArch.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
-            this.textBoxArch.Validated += new System.EventHandler(this.textBoxVersion_Validated);
-            // 
             // listViewItems
             // 
             this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1127,12 +1237,14 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxItem.Controls.Add(this.labelGrantPrivilege);
             this.groupBoxItem.Controls.Add(this.textBoxPort);
             this.groupBoxItem.Controls.Add(this.comboBoxProtocol);
             this.groupBoxItem.Controls.Add(this.labelTransparency);
             this.groupBoxItem.Controls.Add(this.comboBoxTransparency);
             this.groupBoxItem.Controls.Add(this.pictureBox_256);
             this.groupBoxItem.Controls.Add(this.checkBoxMultiInstance);
+            this.groupBoxItem.Controls.Add(this.checkBoxLegacy);
             this.groupBoxItem.Controls.Add(this.pictureBox_128);
             this.groupBoxItem.Controls.Add(this.comboBoxItemType);
             this.groupBoxItem.Controls.Add(this.pictureBox_96);
@@ -1155,12 +1267,24 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Controls.Add(this.textBoxTitle);
             this.groupBoxItem.Controls.Add(this.listViewItems);
             this.groupBoxItem.Controls.Add(this.textBoxUrl);
+            this.groupBoxItem.Controls.Add(this.ComboBoxGrantPrivilege);
+            this.groupBoxItem.Controls.Add(this.checkBoxAdvanceGrantPrivilege);
+            this.groupBoxItem.Controls.Add(this.checkBoxConfigPrivilege);
             this.groupBoxItem.Location = new System.Drawing.Point(2, 318);
             this.groupBoxItem.Name = "groupBoxItem";
             this.groupBoxItem.Size = new System.Drawing.Size(999, 347);
             this.groupBoxItem.TabIndex = 39;
             this.groupBoxItem.TabStop = false;
             this.groupBoxItem.Text = "ITEM INFORMATION";
+            // 
+            // labelGrantPrivilege
+            // 
+            this.labelGrantPrivilege.AutoSize = true;
+            this.labelGrantPrivilege.Location = new System.Drawing.Point(135, 220);
+            this.labelGrantPrivilege.Name = "labelGrantPrivilege";
+            this.labelGrantPrivilege.Size = new System.Drawing.Size(76, 13);
+            this.labelGrantPrivilege.TabIndex = 29;
+            this.labelGrantPrivilege.Text = "Grant Privilege";
             // 
             // menuStrip1
             // 
@@ -1482,87 +1606,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
-            // labelExcludeArch
-            // 
-            this.labelExcludeArch.AutoSize = true;
-            this.labelExcludeArch.Location = new System.Drawing.Point(578, 153);
-            this.labelExcludeArch.Name = "labelExcludeArch";
-            this.labelExcludeArch.Size = new System.Drawing.Size(56, 13);
-            this.labelExcludeArch.TabIndex = 70;
-            this.labelExcludeArch.Text = "Exc. Arch:";
-            // 
-            // textBoxExcludeArch
-            // 
-            this.textBoxExcludeArch.Location = new System.Drawing.Point(638, 150);
-            this.textBoxExcludeArch.Name = "textBoxExcludeArch";
-            this.textBoxExcludeArch.Size = new System.Drawing.Size(173, 20);
-            this.textBoxExcludeArch.TabIndex = 69;
-            this.textBoxExcludeArch.Tag = "PKGexclude_arch";
-            this.toolTip4Mods.SetToolTip(this.textBoxExcludeArch, resources.GetString("textBoxExcludeArch.ToolTip"));
-            this.textBoxExcludeArch.DoubleClick += new System.EventHandler(this.textBoxExcludeArch_DoubleClick);
-            // 
-            // labelModel
-            // 
-            this.labelModel.AutoSize = true;
-            this.labelModel.Location = new System.Drawing.Point(595, 180);
-            this.labelModel.Name = "labelModel";
-            this.labelModel.Size = new System.Drawing.Size(39, 13);
-            this.labelModel.TabIndex = 72;
-            this.labelModel.Text = "Model:";
-            // 
-            // textBoxModel
-            // 
-            this.textBoxModel.Location = new System.Drawing.Point(638, 177);
-            this.textBoxModel.Name = "textBoxModel";
-            this.textBoxModel.Size = new System.Drawing.Size(173, 20);
-            this.textBoxModel.TabIndex = 71;
-            this.textBoxModel.Tag = "PKGmodel";
-            this.toolTip4Mods.SetToolTip(this.textBoxModel, "Double click to Edit the list of models on which packages can be installed. It is" +
-        " organized by Synology string, architecture\r\nand model name. Values are separate" +
-        "d with a space.");
-            this.textBoxModel.DoubleClick += new System.EventHandler(this.textBoxModel_DoubleClick);
-            // 
-            // checkBoxPrecheck
-            // 
-            this.checkBoxPrecheck.AutoSize = true;
-            this.checkBoxPrecheck.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxPrecheck.Location = new System.Drawing.Point(691, 73);
-            this.checkBoxPrecheck.Name = "checkBoxPrecheck";
-            this.checkBoxPrecheck.Size = new System.Drawing.Size(118, 17);
-            this.checkBoxPrecheck.TabIndex = 73;
-            this.checkBoxPrecheck.Tag = "PKGprecheckstartstop";
-            this.checkBoxPrecheck.Text = "Precheck start-stop";
-            this.toolTip4Mods.SetToolTip(this.checkBoxPrecheck, "If set to \"yes\", let start-stop-status with prestart or prestop argument run befo" +
-        "re start or stop the package. Please refer to start-stop-status in scripts for m" +
-        "ore information. Default Value: yes");
-            this.checkBoxPrecheck.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxStartable
-            // 
-            this.checkBoxStartable.AutoSize = true;
-            this.checkBoxStartable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxStartable.Location = new System.Drawing.Point(741, 47);
-            this.checkBoxStartable.Name = "checkBoxStartable";
-            this.checkBoxStartable.Size = new System.Drawing.Size(68, 17);
-            this.checkBoxStartable.TabIndex = 74;
-            this.checkBoxStartable.Tag = "PKGstartable";
-            this.checkBoxStartable.Text = "Startable";
-            this.toolTip4Mods.SetToolTip(this.checkBoxStartable, resources.GetString("checkBoxStartable.ToolTip"));
-            this.checkBoxStartable.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxOfflineInstall
-            // 
-            this.checkBoxOfflineInstall.AutoSize = true;
-            this.checkBoxOfflineInstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxOfflineInstall.Location = new System.Drawing.Point(568, 22);
-            this.checkBoxOfflineInstall.Name = "checkBoxOfflineInstall";
-            this.checkBoxOfflineInstall.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxOfflineInstall.TabIndex = 75;
-            this.checkBoxOfflineInstall.Tag = "PKGoffline_install";
-            this.checkBoxOfflineInstall.Text = "Offline Install";
-            this.toolTip4Mods.SetToolTip(this.checkBoxOfflineInstall, resources.GetString("checkBoxOfflineInstall.ToolTip"));
-            this.checkBoxOfflineInstall.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1728,6 +1771,11 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.CheckBox checkBoxPrecheck;
         private System.Windows.Forms.CheckBox checkBoxStartable;
         private System.Windows.Forms.CheckBox checkBoxOfflineInstall;
+        private System.Windows.Forms.CheckBox checkBoxAdvanceGrantPrivilege;
+        private System.Windows.Forms.CheckBox checkBoxConfigPrivilege;
+        private System.Windows.Forms.Label labelGrantPrivilege;
+        private System.Windows.Forms.ComboBox ComboBoxGrantPrivilege;
+        private System.Windows.Forms.CheckBox checkBoxLegacy;
     }
 }
 

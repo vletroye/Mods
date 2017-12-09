@@ -114,6 +114,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (item != null)
                 {
                     item.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                    item.Enter += new System.EventHandler(this.OnMouseEnter);
                     item.MouseLeave += new System.EventHandler(this.OnMouseLeave);
 
                     if (item.Name.StartsWith("textBox") && Helper.IsSubscribed(item, "EventValidating"))
@@ -126,6 +127,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (item != null)
                 {
                     item.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                    item.Enter += new System.EventHandler(this.OnMouseEnter);
                     item.MouseLeave += new System.EventHandler(this.OnMouseLeave);
 
                     if (item.Name.StartsWith("textBox") && Helper.IsSubscribed(item, "EventValidating"))
@@ -1164,6 +1166,7 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     textBoxTitle.Focus();
                     comboBoxItemType.SelectedIndex = current.Value.itemType;
+                    checkBoxLegacy.Checked = (current.Value.type == "legacy");
                 }
                 else
                 {
@@ -1191,17 +1194,18 @@ namespace BeatificaBytes.Synology.Mods
                             textBoxUrl.ReadOnly = true;
 
                             EditScript(targetScriptPath, targetRunnerPath);
-                            if (!string.IsNullOrEmpty(scriptValue))
+                            if (string.IsNullOrEmpty(scriptValue))
+                            {
+                                selectedIndex = current.Value.itemType;
+                                comboBoxItemType.SelectedIndex = selectedIndex;
+                                checkBoxLegacy.Checked = (current.Value.type == "legacy");
+                            }
+                            else
                             {
                                 var url = "";
                                 GetDetailsScript(cleanedScriptName, ref url);
                                 current.Value.itemType = selectedIndex;
-                                textBoxUrl.Text = url;
-                            }
-                            else
-                            {
-                                selectedIndex = current.Value.itemType;
-                                comboBoxItemType.SelectedIndex = selectedIndex;
+                                textBoxUrl.Text = url; 
                             }
                             break;
                         case (int)UrlType.WebApp:
@@ -1217,6 +1221,7 @@ namespace BeatificaBytes.Synology.Mods
                                 {
                                     selectedIndex = current.Value.itemType;
                                     comboBoxItemType.SelectedIndex = selectedIndex;
+                                    checkBoxLegacy.Checked = (current.Value.type == "legacy");
                                 }
                                 else
                                 {
@@ -1516,6 +1521,9 @@ namespace BeatificaBytes.Synology.Mods
             var portText = show ? item.Value.port.ToString() : "0";
             var urlText = show ? item.Value.url : "";
             var users = show ? item.Value.allUsers : false;
+            var grantPrivilege = show ? item.Value.grantPrivilege : "";
+            var advanceGrantPrivilege = show ? item.Value.advanceGrantPrivilege : false;
+            var configablePrivilege = show ? item.Value.configablePrivilege : false;
 
             if (show)
             {
@@ -1574,6 +1582,11 @@ namespace BeatificaBytes.Synology.Mods
             textBoxPort.Text = portText;
             checkBoxAllUsers.Checked = users;
             checkBoxMultiInstance.Checked = show ? item.Value.allowMultiInstance : false;
+            checkBoxLegacy.Checked = show ? item.Value.type == "legacy" : false;
+
+            ComboBoxGrantPrivilege.SelectedIndex = string.IsNullOrEmpty(grantPrivilege) ? -1 : ComboBoxGrantPrivilege.FindString(grantPrivilege);
+            checkBoxConfigPrivilege.Checked = configablePrivilege;
+            checkBoxAdvanceGrantPrivilege.Checked = advanceGrantPrivilege;
 
             if (show)
             {
@@ -1605,7 +1618,7 @@ namespace BeatificaBytes.Synology.Mods
                 enabling = false;
                 packaging = false;
 
-                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling && list != null, enabling, enabling, enabling);
+                EnableItemFieldDetails(!enabling && list != null, enabling);
                 EnableItemButtonDetails(enabling, enabling, enabling, enabling, enabling, packaging);
 
                 EnableItemMenuDetails(false, false, false, false, true, true, true, false, false);
@@ -1618,7 +1631,7 @@ namespace BeatificaBytes.Synology.Mods
                 enabling = (state != State.View && state != State.None);
                 packaging = listViewItems.Items.Count > 0 && !enabling;
 
-                EnableItemFieldDetails(enabling, enabling, enabling, enabling, enabling, !enabling && list != null, enabling, enabling, enabling);
+                EnableItemFieldDetails(!enabling && list != null, enabling);
                 switch (state)
                 {
                     case State.View:
@@ -1671,17 +1684,22 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void EnableItemFieldDetails(bool bTextBoxDesc, bool bTextBoxTitle, bool btextBoxItem, bool bCheckBoxAllUsers, bool bCheckBoxMultiInstance, bool blistViewItems, bool bcomboBoxItemType, bool bcomboBoxProtocol, bool btextBoxPort)
+        private void EnableItemFieldDetails(bool blistViewItems, bool bItemDetails)
         {
-            textBoxDesc.Enabled = bTextBoxDesc;
-            textBoxTitle.Enabled = bTextBoxTitle;
-            textBoxUrl.Enabled = btextBoxItem;
-            checkBoxAllUsers.Enabled = bCheckBoxAllUsers;
-            checkBoxMultiInstance.Enabled = bCheckBoxMultiInstance;
             listViewItems.Enabled = blistViewItems;
-            comboBoxItemType.Enabled = bcomboBoxItemType;
-            comboBoxProtocol.Enabled = bcomboBoxProtocol;
-            textBoxPort.Enabled = btextBoxPort;
+
+            textBoxDesc.Enabled = bItemDetails;
+            textBoxTitle.Enabled = bItemDetails;
+            textBoxUrl.Enabled = bItemDetails;
+            checkBoxAllUsers.Enabled = bItemDetails;
+            checkBoxMultiInstance.Enabled = bItemDetails;
+            checkBoxLegacy.Enabled = bItemDetails;
+            comboBoxItemType.Enabled = bItemDetails;
+            comboBoxProtocol.Enabled = bItemDetails;
+            textBoxPort.Enabled = bItemDetails;
+            ComboBoxGrantPrivilege.Enabled = bItemDetails;
+            checkBoxAdvanceGrantPrivilege.Enabled = bItemDetails;
+            checkBoxConfigPrivilege.Enabled = bItemDetails;
         }
 
         private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bbuttonPublish)
@@ -1697,6 +1715,7 @@ namespace BeatificaBytes.Synology.Mods
         // Parse the data of the details zone
         private KeyValuePair<string, AppsData> GetItemDetails()
         {
+            bool legacy = checkBoxLegacy.Checked;
             bool multiInstance = checkBoxMultiInstance.Checked;
             var allUsers = checkBoxAllUsers.Checked;
             var title = textBoxTitle.Text.Trim();
@@ -1704,6 +1723,9 @@ namespace BeatificaBytes.Synology.Mods
             var desc = textBoxDesc.Text.Trim();
             string protocol = "";
             int port = 0;
+            string grantPrivilege = ComboBoxGrantPrivilege.SelectedItem == null ? "" : ComboBoxGrantPrivilege.SelectedItem.ToString();
+            bool advanceGrantPrivilege = checkBoxAdvanceGrantPrivilege.Checked;
+            bool configablePrivilege = checkBoxConfigPrivilege.Checked;
 
             var url = textBoxUrl.Text.Trim();
             var key = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(title));
@@ -1736,10 +1758,13 @@ namespace BeatificaBytes.Synology.Mods
                 protocol = protocol,
                 url = url,
                 port = port,
-                type = urlType == (int)UrlType.Url ? "url" : "legacy",
+                type = legacy ? "legacy" : "url",
                 itemType = urlType,
                 //appWindow = key,
-                allowMultiInstance = multiInstance
+                allowMultiInstance = multiInstance,
+                grantPrivilege = grantPrivilege,
+                advanceGrantPrivilege = advanceGrantPrivilege,
+                configablePrivilege = configablePrivilege
             };
 
             title = Helper.CleanUpText(title);
@@ -3680,6 +3705,17 @@ namespace BeatificaBytes.Synology.Mods
             if (archForm.ShowDialog(this) == DialogResult.OK)
             {
                 textBoxExcludeArch.Text = archForm.archs;
+            }
+        }
+
+        private void checkBoxLegacy_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxLegacy.Focused && comboBoxItemType.SelectedIndex == (int)UrlType.Url && checkBoxLegacy.Checked)
+            {
+                if (MessageBox.Show(this, "If you enable this option with an external URL, you will have to disable the option 'Improve security with HTTP Content Security Policy (CSP) header' in the Control Panel > Security !", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+                {
+                    checkBoxLegacy.Checked = false;
+                }
             }
         }
     }
