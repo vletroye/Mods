@@ -1,4 +1,4 @@
-![](http://i.imgur.com/AMGwFll.png) **MODS - Own DSM Shortcuts Packager for Synology**
+![](http://i.imgur.com/AMGwFll.png) **MODS - My Own DSM Shortcuts Packager for Synology**
 
 This project has been created as a workaround for the lack of “Custom Shortcut on Synology Desktop”.
 See the Feature Request here: http://forum.synology.com/enu/viewtopic.php?f=3&t=93823
