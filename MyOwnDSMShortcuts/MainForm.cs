@@ -2384,6 +2384,10 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxUrl, ref e))
             {
+                if (comboBoxItemType.SelectedIndex == (int)UrlType.Url)
+                {
+                    CheckUrl(textBoxUrl, ref e);
+                }
             }
         }
 
@@ -2416,7 +2420,7 @@ namespace BeatificaBytes.Synology.Mods
         }
         private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
         {
-            if (!Helper.IsValidUrl(textBox.Text))
+            if (!textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
             {
                 e.Cancel = true;
                 textBox.Select(0, textBox.Text.Length);
@@ -3303,7 +3307,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         private void buttonAdvanced_Click(object sender, EventArgs e)
-        {            
+        {
             SavePackageInfo(PackageRootPath);
             var infoName = Path.Combine(PackageRootPath, "INFO");
             var inputScript = File.ReadAllText(infoName);
@@ -3786,6 +3790,27 @@ namespace BeatificaBytes.Synology.Mods
             ComboBoxGrantPrivilege.Visible = advanced;
             checkBoxAdvanceGrantPrivilege.Visible = advanced;
             checkBoxConfigPrivilege.Visible = advanced;
+        }
+
+        private void ComboBoxGrantPrivilege_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkBoxConfigPrivilege.Checked = true;
+        }
+
+        private void checkBoxAdvanceGrantPrivilege_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxAdvanceGrantPrivilege.Checked && ComboBoxGrantPrivilege.SelectedIndex == -1 && ComboBoxGrantPrivilege.Enabled)
+            {
+                ComboBoxGrantPrivilege.SelectedIndex = ComboBoxGrantPrivilege.FindString("local");
+            }
+        }
+
+        private void checkBoxConfigPrivilege_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxConfigPrivilege.Checked && ComboBoxGrantPrivilege.SelectedIndex == -1 && ComboBoxGrantPrivilege.Enabled)
+            {
+                ComboBoxGrantPrivilege.SelectedIndex = ComboBoxGrantPrivilege.FindString("local");
+            }
         }
     }
 }

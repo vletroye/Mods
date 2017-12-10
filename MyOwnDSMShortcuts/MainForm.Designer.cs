@@ -180,7 +180,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxMaintainerUrl.Location = new System.Drawing.Point(330, 72);
             this.textBoxMaintainerUrl.Name = "textBoxMaintainerUrl";
-            this.textBoxMaintainerUrl.Size = new System.Drawing.Size(209, 20);
+            this.textBoxMaintainerUrl.Size = new System.Drawing.Size(223, 20);
             this.textBoxMaintainerUrl.TabIndex = 6;
             this.textBoxMaintainerUrl.Tag = "PKGmaintainer_url";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainerUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
@@ -194,7 +194,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxDescription.Size = new System.Drawing.Size(437, 73);
+            this.textBoxDescription.Size = new System.Drawing.Size(451, 73);
             this.textBoxDescription.TabIndex = 9;
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
@@ -254,7 +254,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxDsmAppName.Location = new System.Drawing.Point(330, 46);
             this.textBoxDsmAppName.Name = "textBoxDsmAppName";
-            this.textBoxDsmAppName.Size = new System.Drawing.Size(209, 20);
+            this.textBoxDsmAppName.Size = new System.Drawing.Size(223, 20);
             this.textBoxDsmAppName.TabIndex = 4;
             this.textBoxDsmAppName.Tag = "PKGdsmappname";
             this.toolTip4Mods.SetToolTip(this.textBoxDsmAppName, "Enter an application name for your package. Ex.: com.yourSite.yourPackageName\r\nTh" +
@@ -651,7 +651,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxPublisherUrl.Location = new System.Drawing.Point(330, 98);
             this.textBoxPublisherUrl.Name = "textBoxPublisherUrl";
-            this.textBoxPublisherUrl.Size = new System.Drawing.Size(209, 20);
+            this.textBoxPublisherUrl.Size = new System.Drawing.Size(223, 20);
             this.textBoxPublisherUrl.TabIndex = 8;
             this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
@@ -663,7 +663,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxHelpUrl.Location = new System.Drawing.Point(330, 206);
             this.textBoxHelpUrl.Name = "textBoxHelpUrl";
-            this.textBoxHelpUrl.Size = new System.Drawing.Size(209, 20);
+            this.textBoxHelpUrl.Size = new System.Drawing.Size(223, 20);
             this.textBoxHelpUrl.TabIndex = 11;
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
@@ -675,7 +675,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.TextBoxReportUrl.Location = new System.Drawing.Point(330, 257);
             this.TextBoxReportUrl.Name = "TextBoxReportUrl";
-            this.TextBoxReportUrl.Size = new System.Drawing.Size(209, 20);
+            this.TextBoxReportUrl.Size = new System.Drawing.Size(223, 20);
             this.TextBoxReportUrl.TabIndex = 13;
             this.TextBoxReportUrl.Tag = "PKGreport_url";
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
@@ -746,7 +746,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxSupportUrl.Location = new System.Drawing.Point(330, 231);
             this.textBoxSupportUrl.Name = "textBoxSupportUrl";
-            this.textBoxSupportUrl.Size = new System.Drawing.Size(209, 20);
+            this.textBoxSupportUrl.Size = new System.Drawing.Size(223, 20);
             this.textBoxSupportUrl.TabIndex = 65;
             this.textBoxSupportUrl.Tag = "PKGsupport_url";
             this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
@@ -934,9 +934,9 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxConfigPrivilege.Size = new System.Drawing.Size(128, 17);
             this.checkBoxConfigPrivilege.TabIndex = 26;
             this.checkBoxConfigPrivilege.Text = "Configurable Privilege";
-            this.toolTip4Mods.SetToolTip(this.checkBoxConfigPrivilege, "When you unselect this option, you disable the ability to set the permission, eve" +
-        "n though the Grant Privilege option is enabled.");
+            this.toolTip4Mods.SetToolTip(this.checkBoxConfigPrivilege, resources.GetString("checkBoxConfigPrivilege.ToolTip"));
             this.checkBoxConfigPrivilege.UseVisualStyleBackColor = true;
+            this.checkBoxConfigPrivilege.CheckedChanged += new System.EventHandler(this.checkBoxConfigPrivilege_CheckedChanged);
             // 
             // checkBoxAdvanceGrantPrivilege
             // 
@@ -951,6 +951,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.checkBoxAdvanceGrantPrivilege, "When you select this option, you will have the possibility to limit the users who" +
         " are allowed to use this application.");
             this.checkBoxAdvanceGrantPrivilege.UseVisualStyleBackColor = true;
+            this.checkBoxAdvanceGrantPrivilege.CheckedChanged += new System.EventHandler(this.checkBoxAdvanceGrantPrivilege_CheckedChanged);
             // 
             // ComboBoxGrantPrivilege
             // 
@@ -965,6 +966,7 @@ namespace BeatificaBytes.Synology.Mods
             this.ComboBoxGrantPrivilege.Size = new System.Drawing.Size(88, 21);
             this.ComboBoxGrantPrivilege.TabIndex = 28;
             this.toolTip4Mods.SetToolTip(this.ComboBoxGrantPrivilege, resources.GetString("ComboBoxGrantPrivilege.ToolTip"));
+            this.ComboBoxGrantPrivilege.SelectedIndexChanged += new System.EventHandler(this.ComboBoxGrantPrivilege_SelectedIndexChanged);
             // 
             // checkBoxLegacy
             // 
