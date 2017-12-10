@@ -16,6 +16,25 @@ namespace BeatificaBytes.Synology.Mods
     public class Helper
     {
         static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-]", RegexOptions.Compiled);
+        
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+
+        public static string ResourcesDirectory
+        {
+            get
+            {
+                return Path.Combine(Helper.AssemblyDirectory, "Resources");
+            }
+        }
 
         // Remove all characters that cannot be used in names stored in a package
         internal static string CleanUpText(string text)

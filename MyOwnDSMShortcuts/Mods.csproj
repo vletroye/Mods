@@ -75,6 +75,10 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.1.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>packages\Magick.NET-Q16-AnyCPU.7.1.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
       <Private>True</Private>
@@ -158,7 +162,7 @@
     <EmbeddedResource Include="ScriptForm.resx">
       <DependentUpon>ScriptForm.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="HelpSynoWizard.csv">
+    <Content Include="Resources\HelpSynoWizard.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
@@ -173,9 +177,7 @@
     </Compile>
     <Content Include="PackagingSyno.ico" />
     <Content Include="Resources\EditedScript.png" />
-    <Content Include="backwizard.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Resources\backwizard.png" />
     <Content Include="Resources\Mods.ico" />
     <Content Include="Resources\Pack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -185,9 +187,6 @@
     </Content>
     <Content Include="Resources\PackagingSyno.png" />
     <Content Include="Resources\PackagingSyno.ico" />
-    <Content Include="Resources\Ps_Exec.php">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Unpack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -205,15 +204,9 @@
     <Content Include="Resources\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\settings.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Crypto\BouncyCastle.csproj">
-      <Project>{4c235092-820c-4deb-9074-d356fb797d8b}</Project>
-      <Name>BouncyCastle</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Json Editor\Json Editor.csproj">
       <Project>{c0be5e35-87cc-40e0-92d8-1d42c60f016d}</Project>
       <Name>Json Editor</Name>

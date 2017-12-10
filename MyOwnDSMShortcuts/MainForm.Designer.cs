@@ -1327,7 +1327,7 @@ namespace BeatificaBytes.Synology.Mods
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.ToolTipText = "Select a folder and create a New Package in that one.";
+            this.newToolStripMenuItem.ToolTipText = "Select an empty folder where a new New empty Package can be created.";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem

@@ -1,5 +1,0 @@
-E:\Work\Development\Git\Mods\Mods\Crypto\bin\Debug\lib\net20\BouncyCastle.dll
-E:\Work\Development\Git\Mods\Mods\Crypto\bin\Debug\lib\net20\BouncyCastle.pdb
-E:\Work\Development\Git\Mods\Mods\Crypto\obj\Debug\lib\net20\BouncyCastle.csprojResolveAssemblyReference.cache
-E:\Work\Development\Git\Mods\Mods\Crypto\obj\Debug\lib\net20\BouncyCastle.dll
-E:\Work\Development\Git\Mods\Mods\Crypto\obj\Debug\lib\net20\BouncyCastle.pdb

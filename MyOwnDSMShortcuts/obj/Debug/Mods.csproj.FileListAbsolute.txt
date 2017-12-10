@@ -5,7 +5,6 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Syn
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Properties.Resources.resources
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.ScriptForm.resources
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.csproj.GenerateResource.Cache
-E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\HelpSynoWizard.csv
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\backwizard.png
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Pack.cmd
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Package.zip
@@ -33,3 +32,4 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Newtonsoft.Json.xm
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\YamlDotNet.xml
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\HelpSynoWizard.csv

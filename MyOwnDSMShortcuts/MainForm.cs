@@ -46,8 +46,6 @@ namespace BeatificaBytes.Synology.Mods
         static Regex getShortVersion = new Regex(@"^\d+\.\d+$", RegexOptions.Compiled);
         static Regex getVersion = new Regex(@"^\d+\.\d+-\d+$", RegexOptions.Compiled);
 
-        string defaultRunnerPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "default.runner");
-        string ResourcesRootPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources");
         string PackageRootPath = Properties.Settings.Default.PackageRoot;
         string PackageRepoPath = Properties.Settings.Default.PackageRepo;
 
@@ -80,8 +78,16 @@ namespace BeatificaBytes.Synology.Mods
         {
             InitializeComponent();
 
+            var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
             if (!File.Exists(defaultRunnerPath))
                 File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
+
+            var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
+            if (!File.Exists(backWizard))
+            {
+                var backWizardPng = new Bitmap(Properties.Resources.BackWizard);
+                backWizardPng.Save(backWizard);
+            }
 
             comboBoxTransparency.SelectedIndex = 0;
 
@@ -610,8 +616,8 @@ namespace BeatificaBytes.Synology.Mods
             using (new CWaitCursor())
             {
                 Process unzip = new Process();
-                unzip.StartInfo.FileName = Path.Combine(ResourcesRootPath, "7z.exe");
-                unzip.StartInfo.Arguments = string.Format("x \"{0}\" -o\"{1}\"", Path.Combine(ResourcesRootPath, "Package.zip"), path);
+                unzip.StartInfo.FileName = Path.Combine(Helper.ResourcesDirectory, "7z.exe");
+                unzip.StartInfo.Arguments = string.Format("x \"{0}\" -o\"{1}\"", Path.Combine(Helper.ResourcesDirectory, "Package.zip"), path);
                 unzip.StartInfo.UseShellExecute = false;
                 unzip.StartInfo.RedirectStandardOutput = true;
                 unzip.StartInfo.CreateNoWindow = true;
@@ -1273,7 +1279,7 @@ namespace BeatificaBytes.Synology.Mods
             if (File.Exists(runnerPath))
                 inputRunner = File.ReadAllText(runnerPath);
             else
-                inputRunner = File.ReadAllText(defaultRunnerPath);
+                inputRunner = File.ReadAllText(Path.Combine(Helper.ResourcesDirectory, "default.runner"));
 
             DialogResult result = Helper.ScriptEditor(inputScript, inputRunner, GetAllWizardVariables(), out outputScript, out outputRunner, new HelpInfo(new Uri("https://www.shellscript.sh/"), "Shell Scripting Tutorial"));
             if (result == DialogResult.OK)
@@ -2165,7 +2171,7 @@ namespace BeatificaBytes.Synology.Mods
                         File.Delete(path);
                     image.Save(path, ImageFormat.Png);
 
-                    path = Path.Combine(ResourcesRootPath, @"recovery", Path.GetFileName(path));
+                    path = Path.Combine(Helper.ResourcesDirectory, @"recovery", Path.GetFileName(path));
                     if (!Directory.Exists(Path.GetDirectoryName(path)))
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                     if (File.Exists(path))
@@ -2885,16 +2891,16 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (File.Exists(Path.Combine(path, "7z.exe")))
                 File.Delete(Path.Combine(path, "7z.exe"));
-            File.Copy(Path.Combine(ResourcesRootPath, "7z.exe"), Path.Combine(path, "7z.exe"));
+            File.Copy(Path.Combine(Helper.ResourcesDirectory, "7z.exe"), Path.Combine(path, "7z.exe"));
             if (File.Exists(Path.Combine(path, "7z.dll")))
                 File.Delete(Path.Combine(path, "7z.dll"));
-            File.Copy(Path.Combine(ResourcesRootPath, "7z.dll"), Path.Combine(path, "7z.dll"));
+            File.Copy(Path.Combine(Helper.ResourcesDirectory, "7z.dll"), Path.Combine(path, "7z.dll"));
             if (File.Exists(Path.Combine(path, "Pack.cmd")))
                 File.Delete(Path.Combine(path, "Pack.cmd"));
-            File.Copy(Path.Combine(ResourcesRootPath, "Pack.cmd"), Path.Combine(path, "Pack.cmd"));
+            File.Copy(Path.Combine(Helper.ResourcesDirectory, "Pack.cmd"), Path.Combine(path, "Pack.cmd"));
             if (File.Exists(Path.Combine(path, "Unpack.cmd")))
                 File.Delete(Path.Combine(path, "Unpack.cmd"));
-            File.Copy(Path.Combine(ResourcesRootPath, "Unpack.cmd"), Path.Combine(path, "Unpack.cmd"));
+            File.Copy(Path.Combine(Helper.ResourcesDirectory, "Unpack.cmd"), Path.Combine(path, "Unpack.cmd"));
             if (File.Exists(Path.Combine(path, "Mods.exe")))
                 File.Delete(Path.Combine(path, "Mods.exe"));
             File.Copy(Assembly.GetEntryAssembly().Location, Path.Combine(path, "Mods.exe"));
@@ -3083,6 +3089,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void scriptRunnerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
+
             var runner = File.ReadAllText(defaultRunnerPath);
             string outputRunner = string.Empty;
             DialogResult result = Helper.ScriptEditor(null, runner, null, out outputRunner, new HelpInfo(new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP"));

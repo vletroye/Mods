@@ -40,6 +40,14 @@ namespace ZTn.Json.Editor
             }
         }
 
+        public static string ResourcesDirectory
+        {
+            get
+            {
+                return Path.Combine(Helper.AssemblyDirectory, "Resources");                
+            }
+        }
+
         internal static string GetSubItemType(string type)
         {
             string subitemType = "";
@@ -62,6 +70,6 @@ namespace ZTn.Json.Editor
                     break;
             }
             return subitemType;
-        }      
+        }
     }
 }
