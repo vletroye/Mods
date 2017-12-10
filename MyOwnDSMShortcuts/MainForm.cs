@@ -563,7 +563,7 @@ namespace BeatificaBytes.Synology.Mods
                 unused.Remove("dsmuidir");
                 unused.Remove("checksum");
                 unused.Remove("adminport");//Not yet supported but ignored
-                unused.Remove("arch");//Not yet supported but ignored
+                unused.Remove("arch");
                 unused.Remove("reloadui");//Not yet supported but ignored
                 unused.Remove("startable");//Not yet supported but ignored
 
@@ -3366,10 +3366,12 @@ namespace BeatificaBytes.Synology.Mods
             info = null;
             list = null;
             picturePkg_256 = null;
+            picturePkg_120 = null;
             picturePkg_72 = null;
             FillInfoScreen(PackageRootPath);
             BindData(list, null);
             DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
+            labelToolTip.Text = "";
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
