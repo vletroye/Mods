@@ -135,9 +135,25 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
+            foreach (ToolStripItem control in menuStripMainBar.Items)
+            {
+                ToolStripDropDownItem mainMenu = control as ToolStripDropDownItem;
+                if (mainMenu != null)
+                {
+                    foreach (ToolStripItem menu in mainMenu.DropDownItems)
+                    {
+                        menu.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                        menu.MouseLeave += new System.EventHandler(this.OnMouseLeave);
+                    }
+                }
+            }
+
+
             textBoxPackage.Focus();
 
             CreateRecentsMenu();
+
+            ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
         }
 
         private void CreateRecentsMenu()
@@ -170,6 +186,12 @@ namespace BeatificaBytes.Synology.Mods
             if (zone != null)
             {
                 var text = toolTip4Mods.GetToolTip(zone);
+                labelToolTip.Text = text;
+            }
+            var menu = sender as ToolStripItem;
+            if (menu != null)
+            {
+                var text = menu.ToolTipText;
                 labelToolTip.Text = text;
             }
         }
@@ -1205,7 +1227,7 @@ namespace BeatificaBytes.Synology.Mods
                                 var url = "";
                                 GetDetailsScript(cleanedScriptName, ref url);
                                 current.Value.itemType = selectedIndex;
-                                textBoxUrl.Text = url; 
+                                textBoxUrl.Text = url;
                             }
                             break;
                         case (int)UrlType.WebApp:
@@ -3281,12 +3303,16 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         private void buttonAdvanced_Click(object sender, EventArgs e)
-        {
-            //MessageBox.Show(this, "Coming soon: Support for more optional Fields", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        {            
             SavePackageInfo(PackageRootPath);
             var infoName = Path.Combine(PackageRootPath, "INFO");
             var inputScript = File.ReadAllText(infoName);
             var outputScript = "";
+
+            Properties.Settings.Default.AdvancedEditor = true;
+            Properties.Settings.Default.Save();
+            ShowAdvancedEditor(true);
+
             DialogResult result = Helper.ScriptEditor(inputScript, null, null, out outputScript, new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings"));
             if (result == DialogResult.OK)
             {
@@ -3717,6 +3743,49 @@ namespace BeatificaBytes.Synology.Mods
                     checkBoxLegacy.Checked = false;
                 }
             }
+        }
+
+        private void advancedEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AdvancedEditor = !Properties.Settings.Default.AdvancedEditor;
+            Properties.Settings.Default.Save();
+            ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
+        }
+
+        private void ShowAdvancedEditor(bool advanced)
+        {
+            advancedEditorToolStripMenuItem.Checked = advanced;
+
+            labelVersion.Visible = advanced;
+            textBoxVersion.Visible = advanced;
+            labelDSMAppName.Visible = advanced;
+            textBoxDsmAppName.Visible = advanced;
+            labelFirmware.Visible = advanced;
+
+            textBoxFirmware.Visible = advanced;
+            checkBoxSingleApp.Visible = advanced;
+            checkBoxBeta.Visible = advanced;
+
+            checkBoxOfflineInstall.Visible = advanced;
+            checkBoxSilentInstalll.Visible = advanced;
+            checkBoxSilentUpgrade.Visible = advanced;
+            checkBoxSilentUninstall.Visible = advanced;
+            checkBoxStartable.Visible = advanced;
+            checkBoxPrecheck.Visible = advanced;
+            checkBoxSilentReboot.Visible = advanced;
+
+            labelArch.Visible = advanced;
+            textBoxArch.Visible = advanced;
+            labelExcludeArch.Visible = advanced;
+            textBoxExcludeArch.Visible = advanced;
+            labelModel.Visible = advanced;
+            textBoxModel.Visible = advanced;
+
+            checkBoxLegacy.Visible = advanced;
+            labelGrantPrivilege.Visible = advanced;
+            ComboBoxGrantPrivilege.Visible = advanced;
+            checkBoxAdvanceGrantPrivilege.Visible = advanced;
+            checkBoxConfigPrivilege.Visible = advanced;
         }
     }
 }

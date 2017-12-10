@@ -1,0 +1,3 @@
+E:\Work\Development\Git\Mods\Mods\Crypto\bin\Release\lib\net20\BouncyCastle.dll
+E:\Work\Development\Git\Mods\Mods\Crypto\bin\Release\lib\net20\BouncyCastle.xml
+E:\Work\Development\Git\Mods\Mods\Crypto\obj\Release\lib\net20\BouncyCastle.dll

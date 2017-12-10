@@ -81,10 +81,13 @@ echo "&lt;/script&gt;";
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="Version" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">CTP 8.0</Value>
+      <Value Profile="(Default)">CTP 10.0</Value>
     </Setting>
     <Setting Name="PackageRepo" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AdvancedEditor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

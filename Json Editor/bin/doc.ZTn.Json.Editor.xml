@@ -1,0 +1,898 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZTn.Json.Editor</name>
+    </assembly>
+    <members>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardCopy(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "copy" action
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardCut(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "cut" action
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardPasteAfter(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "paste after" action.
+            </summary>
+            <param name="node">Reference node for the paste.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardPasteBefore(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "paste before" action.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardPasteInto(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "paste into" action.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardPasteReplace(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "paste and replace" action.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.ClipboardPaste(ZTn.Json.Editor.Forms.JTokenTreeNode,System.Action{Newtonsoft.Json.Linq.JToken},System.Action{System.Windows.Forms.TreeNode})">
+            <summary>
+            Implementation of "paste" action using 2 delegates for the concrete action on JToken tree and TreeView.
+            </summary>
+            <param name="node"></param>
+            <param name="pasteJTokenImplementation">Implementation of paste action in the JToken tree.</param>
+            <param name="pasteTreeNodeImplementation">Implementation of paste action in the treeView.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Extensions.JTokenTreeNodeActions.EditDelete(ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Implementation of "delete" action.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.AboutBox.components">
+            <summary>
+            Variable nécessaire au concepteur.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.AboutBox.Dispose(System.Boolean)">
+            <summary>
+            Nettoyage des ressources utilisées.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.AboutBox.InitializeComponent">
+            <summary>
+            Méthode requise pour la prise en charge du concepteur - ne modifiez pas
+            le contenu de cette méthode avec l'éditeur de code.
+            </summary>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.SubitemDefinition.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.SubitemDefinition.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.SubitemDefinition.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertArray_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertValueToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertObject_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertValueToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertValue_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertValueToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayContextMenuStrip.InsertJToken(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Add a new <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance in current <see cref="T:ZTn.Json.Editor.Forms.JArrayTreeNode"/>
+            </summary>
+            <param name="newJToken"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JObjectContextMenuStrip"/> class.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertProperty_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertPropertyAsValueToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertPropertyAsArray_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertPropertyAsArrayToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertPropertyAsObject_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JObjectContextMenuStrip.InsertPropertyAsObjectToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JsonTreeNodeFactory">
+            <summary>
+            Factory allowing to create <see cref="T:System.Windows.Forms.TreeNode"/> encapsulating a given <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance.
+            </summary>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.UnlimitedDepth">
+            <summary>
+            This depth value allow recursive creation of <see cref="T:System.Windows.Forms.TreeNode"/> for each subnode, without any depth limit.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(System.Object,System.Int32)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance by dynamically dispatching to specialized overloads.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth">Depth of tree of TreeNode to create.
+                <list>
+                    <item>UnlimitedDepth: no limit.</item>
+                    <item>1: wrap only current object.</item>
+                    <item>other: desired depth.</item>
+                </list>
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(System.Object)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance by dynamically dispatching to specialized overloads.
+            Depth of the tree is unlimited.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(Newtonsoft.Json.Linq.JArray,System.Int32)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance beeing a <see cref="T:Newtonsoft.Json.Linq.JArray"/> instance.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(Newtonsoft.Json.Linq.JObject,System.Int32)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance beeing a <see cref="T:Newtonsoft.Json.Linq.JObject"/> instance.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(Newtonsoft.Json.Linq.JProperty,System.Int32)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance beeing a <see cref="T:Newtonsoft.Json.Linq.JProperty"/> instance.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(Newtonsoft.Json.Linq.JToken,System.Int32)">
+            <summary>
+            Throw a <see cref="T:ZTn.Json.Editor.Forms.UnattendedJTokenTypeException"/> for the <paramref name="obj"/> instance beeing a <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance.
+            This method exists only for safety in case of a new concrete <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance is implemented in the future.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth"></param>
+            <returns></returns>
+            <exception cref="T:ZTn.Json.Editor.Forms.UnattendedJTokenTypeException">Always thrown.</exception>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Create(Newtonsoft.Json.Linq.JValue,System.Int32)">
+            <summary>
+            Create a TreeNode and its subtrees for the <paramref name="obj"/> instance beeing a <see cref="T:Newtonsoft.Json.Linq.JValue"/> instance.
+            </summary>
+            <param name="obj"></param>
+            <param name="depth"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonTreeNodeFactory.Wrap(System.Object)">
+            <summary>
+            Create a TreeNode for the <paramref name="obj"/> instance by dynamically dispatching to specialized overloads.
+            No subtree is created.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.JTokenNode">
+            <summary>
+            Source <see cref="T:System.Windows.Forms.TreeNode"/> at the origin of this <see cref="T:System.Windows.Forms.ContextMenuStrip"/>
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JTokenContextMenuStrip"/> class.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.OnVisibleChanged(System.EventArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CollapseAll_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CollapseAllToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.InsertJToken(Newtonsoft.Json.Linq.JToken,System.Boolean)">
+            <summary>
+            Add a new <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance in current <see cref="T:ZTn.Json.Editor.Forms.JArrayTreeNode"/>
+            </summary>
+            <param name="newJToken"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CopyNode_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CopyNodeToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CutNode_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.CutNodeToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.DeleteNode_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.DeleteNodeToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.ExpandAll_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.ExpandAllToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeAfter_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeAfterToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeBefore_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeBeforeToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeReplace_Click(System.Object,System.EventArgs)">
+            <summary>
+            Click event handler for <see cref="F:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.PasteNodeReplaceToolStripItem"/>.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenContextMenuStrip.FindSourceTreeNode``1">
+            <summary>
+            Identify the Source <see cref="T:System.Windows.Forms.TreeNode"/> at the origin of this <see cref="T:System.Windows.Forms.ContextMenuStrip"/>.
+            </summary>
+            <typeparam name="T">Subtype of <see cref="T:System.Windows.Forms.TreeNode"/> to return.</typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JValueTreeNode">
+            <summary>
+            Specialized <see cref="T:System.Windows.Forms.TreeNode"/> for handling <see cref="T:Newtonsoft.Json.Linq.JValue"/> representation in a <see cref="T:System.Windows.Forms.TreeView"/>.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JValueTreeNode.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JValueTreeNode"/> class.
+            </summary>
+            <param name="jValue"></param>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.IJsonTreeNode">
+            <summary>
+            Interface to be implemented by TreeNode representing Json data.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.IJsonTreeNode.AfterCollapse">
+            <summary>
+            To be called whenever the node is collapsing
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.IJsonTreeNode.AfterExpand">
+            <summary>
+            To be called whenever the node is expanding
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.IJsonTreeNode.AfterJsonTextChange(System.String)">
+            <summary>
+            To be called whenever the value of the json text is changed
+            </summary>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JArrayTreeNode">
+            <summary>
+            Specialized <see cref="T:System.Windows.Forms.TreeNode"/> for handling <see cref="T:Newtonsoft.Json.Linq.JArray"/> representation in a <see cref="T:System.Windows.Forms.TreeView"/>.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayTreeNode.#ctor(Newtonsoft.Json.Linq.JArray)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JArrayTreeNode"/> class.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayTreeNode.AfterCollapse">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JArrayTreeNode.AfterExpand">
+            <inheritdoc />
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JObjectTreeNode">
+            <summary>
+            Specialized <see cref="T:System.Windows.Forms.TreeNode"/> for handling <see cref="T:Newtonsoft.Json.Linq.JObject"/> representation in a <see cref="T:System.Windows.Forms.TreeView"/>.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectTreeNode.#ctor(Newtonsoft.Json.Linq.JObject)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JObjectTreeNode"/> class.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectTreeNode.AfterCollapse">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JObjectTreeNode.AfterExpand">
+            <inheritdoc />
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JPropertyTreeNode">
+            <summary>
+            Specialized <see cref="T:System.Windows.Forms.TreeNode"/> for handling <see cref="T:Newtonsoft.Json.Linq.JProperty"/> representation in a <see cref="T:System.Windows.Forms.TreeView"/>.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JPropertyTreeNode.#ctor(Newtonsoft.Json.Linq.JProperty)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JPropertyTreeNode"/> class.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JPropertyTreeNode.AfterCollapse">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JPropertyTreeNode.AfterExpand">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JPropertyTreeNode.AfterJsonTextChange(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JPropertyTreeNode.UpdateTreeNodes(System.Collections.Generic.IEnumerable{ZTn.Json.Editor.Forms.JPropertyTreeNode})">
+            <summary>
+            Insert or replace a set of <paramref name="newNodes"/>s in current parent nodes.
+            </summary>
+            <param name="newNodes"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.JTokenTreeNode">
+            <summary>
+            Specialized <see cref="T:System.Windows.Forms.TreeNode"/> for handling <see cref="T:Newtonsoft.Json.Linq.JToken"/> representation in a <see cref="T:System.Windows.Forms.TreeView"/>.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ZTn.Json.Editor.Forms.JTokenTreeNode"/> class.
+            </summary>
+            <param name="jToken"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.AfterCollapse">
+            <inheritdoc />
+            <remarks>Default simple implementation to be overriden if needed.</remarks>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.AfterExpand">
+            <inheritdoc />
+            <remarks>Default simple implementation to be overriden if needed.</remarks>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.AfterJsonTextChange(System.String)">
+            <inheritdoc />
+            <remarks>Default simple implementation to be overriden if needed.</remarks>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.CheckEmptyJsonString(System.String)">
+            <summary>
+            Remove JTokenTag from its parent if <paramref name="jsonString"/> is empty or null.
+            </summary>
+            <param name="jsonString"></param>
+            <returns><value>true</value> if <paramref name="jsonString"/> is empty or null.</returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.CleanParentTreeNode">
+            <summary>
+            Remove <see cref="T:ZTn.Json.Editor.Forms.JTokenTreeNode"/>s from the parent of current <see cref="T:System.Windows.Forms.TreeNode"/> having a detached JTokenTag property.
+            </summary>
+            <returns>First available <see cref="T:System.Windows.Forms.TreeNode"/> or null if the parent has no children.</returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.CleanTreeNode">
+            <summary>
+            Remove <see cref="T:ZTn.Json.Editor.Forms.JTokenTreeNode"/>s from current <see cref="T:System.Windows.Forms.TreeNode"/> having a detached JTokenTag property.
+            </summary>
+            <returns>First available <see cref="T:System.Windows.Forms.TreeNode"/> or null if the parent has no children.</returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.InsertInParent(System.Windows.Forms.TreeNode,System.Boolean)">
+            <summary>
+            Insert a <paramref name="newNode"/> in current parent nodes.
+            </summary>
+            <param name="newNode"></param>
+            <param name="insertBefore">
+            Set to <c>true</c> to insert <paramref name="newNode"/> before current node.
+            Set to <c>false</c> to insert <paramref name="newNode"/> after current node.
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeNode.InsertInCurrent(System.Windows.Forms.TreeNode)">
+            <summary>
+            Insert a <paramref name="newNode"/> in current node.
+            </summary>
+            <param name="newNode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Forms.JTokenTreeView.CreateParams">
+            <inheritdoc />
+            <remarks>
+            Style change disabling automatic creation of tooltip on each node of the TreeView (no other C# way of doing this).
+            </remarks>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.ItemDragHandler(System.Object,System.Windows.Forms.ItemDragEventArgs)">
+            <summary>
+            Occurs when the user begins dragging a node.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DragDropHandler(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            Occurs when a drag-and-drop operation is completed.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropCopy(ZTn.Json.Editor.Forms.JTokenTreeNode,ZTn.Json.Editor.Forms.JTokenTreeNode)">
+            <summary>
+            Catches all unmanaged copies.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropCopy(ZTn.Json.Editor.Forms.JPropertyTreeNode,ZTn.Json.Editor.Forms.JObjectTreeNode)">
+            <summary>
+            Copies a JProperty into a JObject as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropCopy(ZTn.Json.Editor.Forms.JValueTreeNode,ZTn.Json.Editor.Forms.JArrayTreeNode)">
+            <summary>
+            Copies a JValue into a JArray as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropCopy(ZTn.Json.Editor.Forms.JObjectTreeNode,ZTn.Json.Editor.Forms.JArrayTreeNode)">
+            <summary>
+            Copies a JObject into a JArray as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropCopy(ZTn.Json.Editor.Forms.JArrayTreeNode,ZTn.Json.Editor.Forms.JArrayTreeNode)">
+            <summary>
+            Copies a JArray into a JArray as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropMove(ZTn.Json.Editor.Forms.JPropertyTreeNode,ZTn.Json.Editor.Forms.JObjectTreeNode)">
+            <summary>
+            Copies a JProperty into a JObject as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DoDragDropMove(ZTn.Json.Editor.Forms.JObjectTreeNode,ZTn.Json.Editor.Forms.JArrayTreeNode)">
+            <summary>
+            Copies a JObject into a JArray as first child.
+            </summary>
+            <param name="sourceNode"></param>
+            <param name="targetNode"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DragEnterHandler(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            Occurs when an object is dragged into the control's bounds.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.DragOverHandler(System.Object,System.Windows.Forms.DragEventArgs)">
+            <summary>
+            Occurs when an object is dragged over the control's bounds. 
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.JTokenTreeView.components">
+            <summary> 
+            Variable nécessaire au concepteur.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.Dispose(System.Boolean)">
+            <summary> 
+            Nettoyage des ressources utilisées.
+            </summary>
+            <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JTokenTreeView.InitializeComponent">
+            <summary> 
+            Méthode requise pour la prise en charge du concepteur - ne modifiez pas 
+            le contenu de cette méthode avec l'éditeur de code.
+            </summary>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.ItemDefinition.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.ItemDefinition.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.ItemDefinition.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.StepDefinition.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.StepDefinition.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.StepDefinition.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="T:ZTn.Json.Editor.Forms.UnattendedJTokenTypeException">
+            <summary>
+            Exception thrown when a <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance is of an unattended type.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.UnattendedJTokenTypeException.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Initializes a new instance of the class with the faulty <see cref="T:Newtonsoft.Json.Linq.JToken"/> instance.
+            </summary>
+            <param name="jToken"></param>
+        </member>
+        <member name="P:ZTn.Json.Editor.Forms.JsonEditorMainForm.OpenedFileName">
+            <summary>
+            Accessor to file name of opened file.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Forms.JsonEditorMainForm.CreateParams">
+            <inheritdoc />
+            <remarks>
+            Optimization aiming to reduce flickering on large documents (successfully).
+            Source: http://stackoverflow.com/a/89125/1774251
+            </remarks>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonEditorMainForm.jsonTreeView_NodeMouseClick(System.Object,System.Windows.Forms.TreeNodeMouseClickEventArgs)">
+            <summary>
+            For the clicked node to be selected.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonEditorMainForm.jsonTreeView_AfterSelect(System.Object,System.Windows.Forms.TreeViewEventArgs)">
+            <summary>
+            Main event handler dynamically dispatching the handling to specialized methods.
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonEditorMainForm.JsonTreeView_AfterSelectImplementation(System.Windows.Forms.TreeNode,System.Windows.Forms.TreeViewEventArgs)">
+            <summary>
+            Default catcher in case of a node of unattended type.
+            </summary>
+            <param name="node"></param>
+            <param name="e"></param>
+        </member>
+        <member name="F:ZTn.Json.Editor.Forms.JsonEditorMainForm.components">
+            <summary>
+            Variable nécessaire au concepteur.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonEditorMainForm.Dispose(System.Boolean)">
+            <summary>
+            Nettoyage des ressources utilisées.
+            </summary>
+            <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Forms.JsonEditorMainForm.InitializeComponent">
+            <summary>
+            Méthode requise pour la prise en charge du concepteur - ne modifiez pas
+            le contenu de cette méthode avec l'éditeur de code.
+            </summary>
+        </member>
+        <member name="T:ZTn.Json.Editor.Generic.EditorClipboard`1">
+            <summary>
+            Generic clipboard for <typeparamref name="T"/> based instance.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Clear">
+            <summary>
+            Clear all data stored in the clipboard.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Get">
+            <summary>
+            Get the data stored in the clipboard.
+            If data is set as not persistant then clipboard is automatically cleared.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Generic.EditorClipboard`1.IsEmpty">
+            <summary>
+            Indicates if a data is stored in the clipboard.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Set(`0)">
+            <summary>
+            Insert a persistent data in the clipboard.
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Set(`0,System.Boolean)">
+            <summary>
+            Insert a data in the clipboard by specifying the persistent state.
+            </summary>
+            <param name="data"></param>
+            <param name="persistentState">
+                <list>
+                    <item><c>true</c> means the data will not be removed from clipboard afert a <see cref="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Get"/>.</item>
+                    <item><c>false</c> means the data will be removed from clipboard afert a <see cref="M:ZTn.Json.Editor.Generic.EditorClipboard`1.Get"/>.</item>
+                </list>
+            </param>
+        </member>
+        <member name="T:ZTn.Json.Editor.Generic.SingleInstanceProvider`1">
+            <summary>
+            Simple singleton allowing unicity insurance of a generic type <typeparamref name="T"/> instance.
+            </summary>
+            <typeparam name="T">Type of the unique instance.</typeparam>
+        </member>
+        <member name="P:ZTn.Json.Editor.Generic.SingleInstanceProvider`1.Value">
+            <summary>
+            Get the <typeparamref name="T"/> instance stored in this singleton.
+            The instance is created on the first call.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.JTokenRoot.JTokenValue">
+            <summary>
+            Root <see cref="T:Newtonsoft.Json.Linq.JToken"/> node.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.#ctor(System.IO.Stream)">
+            <summary>
+            Constructor using an existing stream to populate the instance.
+            </summary>
+            <param name="jsonStream">Source stream.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.#ctor(System.String)">
+            <summary>
+            Constructor using an existing json string to populate the instance.
+            </summary>
+            <param name="jsonString">Source string.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.#ctor(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Constructor using an existing json string to populate the instance.
+            </summary>
+            <param name="jToken">Source <see cref="T:Newtonsoft.Json.Linq.JToken"/>.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.Load(System.IO.Stream)">
+            <summary>
+            Initialize using an existing stream to populate the instance.
+            </summary>
+            <param name="jsonStream">Source stream.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.Load(System.String)">
+            <summary>
+            Initialize using an existing json string to populate the instance.
+            </summary>
+            <param name="jsonString">Source string.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.Load(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Initialize using an existing json string to populate the instance.
+            </summary>
+            <param name="jToken">Source <see cref="T:Newtonsoft.Json.Linq.JToken"/>.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.JTokenRoot.Save(System.IO.Stream)">
+            <summary>
+            Save the enclosed <see cref="T:Newtonsoft.Json.Linq.JToken"/> in an existing stream.
+            </summary>
+            <param name="jsonStream">Target stream.</param>
+        </member>
+        <member name="M:ZTn.Json.Editor.Linq.ForEachExtension.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Immediatly execute the <paramref name="action"/> on each element of <paramref name="source"/>.
+            </summary>
+            <typeparam name="TSource"></typeparam>
+            <param name="source"></param>
+            <param name="action"></param>
+        </member>
+        <member name="T:ZTn.Json.Editor.Json.JPropertyEqualityComparer">
+            <summary>
+            Defines methods to support the comparison of <see cref="T:Newtonsoft.Json.Linq.JProperty"/> objects for equality.
+            </summary>
+        </member>
+        <member name="M:ZTn.Json.Editor.Json.JPropertyEqualityComparer.Equals(Newtonsoft.Json.Linq.JProperty,Newtonsoft.Json.Linq.JProperty)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Json.JPropertyEqualityComparer.GetHashCode(Newtonsoft.Json.Linq.JProperty)">
+            <inheritdoc />
+        </member>
+        <member name="M:ZTn.Json.Editor.Program.Main">
+            <summary>
+            Point d'entrée principal de l'application.
+            </summary>
+        </member>
+        <member name="T:ZTn.Json.Editor.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.CollapseAll">
+            <summary>
+              Looks up a localized string similar to Collapse All.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.Copy">
+            <summary>
+              Looks up a localized string similar to Copy.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.Cut">
+            <summary>
+              Looks up a localized string similar to Cut.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.DeleteNode">
+            <summary>
+              Looks up a localized string similar to Delete Node.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.DeletionActionFailed">
+            <summary>
+              Looks up a localized string similar to Deletion action failed.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.Edit">
+            <summary>
+              Looks up a localized string similar to Edit.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.ExpandAll">
+            <summary>
+              Looks up a localized string similar to Expand All.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertArray">
+            <summary>
+              Looks up a localized string similar to Insert Array.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertObject">
+            <summary>
+              Looks up a localized string similar to Insert Object.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertPropertyAsArray">
+            <summary>
+              Looks up a localized string similar to Insert Property as Array.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertPropertyAsObject">
+            <summary>
+              Looks up a localized string similar to Insert Property as Object.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertPropertyAsValue">
+            <summary>
+              Looks up a localized string similar to Insert Property as Value.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.InsertValue">
+            <summary>
+              Looks up a localized string similar to Insert Value.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.JsonArray">
+            <summary>
+              Looks up a localized string similar to Json Array.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.JsonObject">
+            <summary>
+              Looks up a localized string similar to Json Object.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.NewJsonObject">
+            <summary>
+              Looks up a localized string similar to New Json Object.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.PasteActionFailed">
+            <summary>
+              Looks up a localized string similar to Paste action failed.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.PasteNodeAfter">
+            <summary>
+              Looks up a localized string similar to Paste Node After.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.PasteNodeBefore">
+            <summary>
+              Looks up a localized string similar to Paste Node Before.
+            </summary>
+        </member>
+        <member name="P:ZTn.Json.Editor.Properties.Resources.Replace">
+            <summary>
+              Looks up a localized string similar to Replace.
+            </summary>
+        </member>
+    </members>
+</doc>

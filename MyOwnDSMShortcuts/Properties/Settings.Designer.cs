@@ -127,7 +127,7 @@ namespace BeatificaBytes.Synology.Mods.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CTP 8.0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("CTP 10.0")]
         public string Version {
             get {
                 return ((string)(this["Version"]));
@@ -143,6 +143,18 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["PackageRepo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AdvancedEditor {
+            get {
+                return ((bool)(this["AdvancedEditor"]));
+            }
+            set {
+                this["AdvancedEditor"] = value;
             }
         }
     }
