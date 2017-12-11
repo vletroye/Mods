@@ -1289,6 +1289,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // labelGrantPrivilege
             // 
+            this.labelGrantPrivilege.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelGrantPrivilege.AutoSize = true;
             this.labelGrantPrivilege.Location = new System.Drawing.Point(135, 220);
             this.labelGrantPrivilege.Name = "labelGrantPrivilege";
