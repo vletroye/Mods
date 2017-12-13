@@ -650,18 +650,21 @@ namespace BeatificaBytes.Synology.Mods
         // Click on Button Create Package
         private void buttonPublish_Click(object sender, EventArgs e)
         {
-            GeneratePackage(PackageRootPath);
-
-            SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
-            if (!string.IsNullOrEmpty(PackageRepoPath))
-                SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepoPath;
-            else
-                SpkRepoBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRepo;
-
-            if (SpkRepoBrowserDialog4Mods.ShowDialog())
+            if (ValidateChildren())
             {
-                PackageRepoPath = SpkRepoBrowserDialog4Mods.FileName;
-                PublishPackage(PackageRootPath, PackageRepoPath);
+                GeneratePackage(PackageRootPath);
+
+                SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
+                if (!string.IsNullOrEmpty(PackageRepoPath))
+                    SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepoPath;
+                else
+                    SpkRepoBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRepo;
+
+                if (SpkRepoBrowserDialog4Mods.ShowDialog())
+                {
+                    PackageRepoPath = SpkRepoBrowserDialog4Mods.FileName;
+                    PublishPackage(PackageRootPath, PackageRepoPath);
+                }
             }
         }
 
@@ -2337,7 +2340,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxDsmAppName, ref e))
             {
-                var name = textBoxDsmAppName.Text.Replace(".", "_");
+                var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__","_");
                 var cleaned = Helper.CleanUpText(textBoxDsmAppName.Text);
                 if (name != cleaned)
                 {
@@ -2756,14 +2759,14 @@ namespace BeatificaBytes.Synology.Mods
             try
             {
                 publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
-                publishFile(Path.Combine(PackagePath, "INFO"), Path.Combine(PackageRepo, packName + ".nfo"));
-                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_thumb_72.png"));
+                //publishFile(Path.Combine(PackagePath, "INFO"), Path.Combine(PackageRepo, packName + ".nfo"));
+                //publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_thumb_72.png"));
 
-                var pathImage = Path.Combine(PackageRepo, packName + "_thumb_120.png");
-                publishFile(Path.Combine(PackagePath, "PACKAGE_ICON_256.PNG"), pathImage);
+                //var pathImage = Path.Combine(PackageRepo, packName + "_thumb_120.png");
+                //publishFile(Path.Combine(PackagePath, "PACKAGE_ICON_256.PNG"), pathImage);
 
-                var image = LoadImage(pathImage, 0, 120);
-                image.Save(pathImage, ImageFormat.Png);
+                //var image = LoadImage(pathImage, 0, 120);
+                //image.Save(pathImage, ImageFormat.Png);
 
                 MessageBox.Show(this, "The package has been successfuly published", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -3887,7 +3890,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxLatestFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxLatestFirmware, ref e))
+            if (textBoxLatestFirmware.Text != "")
             {
                 if (getOldVersion.IsMatch(textBoxLatestFirmware.Text))
                 {
