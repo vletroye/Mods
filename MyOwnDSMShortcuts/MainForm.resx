@@ -140,9 +140,6 @@ If you don't select this option, you will have to provide an disctinct icon for 
   <data name="textBoxExcludeArch.ToolTip" xml:space="preserve">
     <value>Double click to Edit this list of CPU architectures where the package can't be used to install the package. Note: Be careful to use this exclude_arch field. If the package has different exclude_arch value in the different versions, the end user can install the package in the specific version without some arch values of exclude_arch. Values are separated by a space.</value>
   </data>
-  <data name="checkBoxStartable.ToolTip" xml:space="preserve">
-    <value>When no program in the package provides the end-user with the options to enable or disable its function. This key is set to "no" and the end-user cannot start or stop the package in Package Center. Note: If “startable” is set to “no”, start-stop-status script which runs in bootup or shotdown is still required. Default Value: yes</value>
-  </data>
   <data name="checkBoxOfflineInstall.ToolTip" xml:space="preserve">
     <value>If set to "yes", after the package is published in synology server, it won't be shown in the package list of Package
 Center from Synology server. However, the user can install the package manually. Default Value: no</value>
@@ -167,6 +164,10 @@ All: this app can be selected for all users.</value>
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>468, 17</value>
   </metadata>
+  <data name="checkBoxSupportCenter.ToolTip" xml:space="preserve">
+    <value>Check this option to let Package Center displays a link to make the end user launch Synology Support Center Application when your package is installed.
+The report_url link won’t show in Package Center. </value>
+  </data>
   <metadata name="menuStripMainBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

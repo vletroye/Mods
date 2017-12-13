@@ -507,6 +507,8 @@ namespace ZTn.Json.Editor.Forms
                 using (var writer = new HtmlTextWriter(stringWriter))
                 {
                     writer.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
+                    writer.AddStyleAttribute("background-color", "#0198F3");
+                    writer.RenderBeginTag(HtmlTextWriterTag.Body);
                     foreach (JToken step in JsonEditorItem.JTokenValue.Children())
                     {
                         var imgSrc = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
@@ -533,7 +535,7 @@ namespace ZTn.Json.Editor.Forms
                         writer.RenderBeginTag(HtmlTextWriterTag.Hr);
                         writer.RenderEndTag();
                     }
-
+                    writer.RenderEndTag();
                     preview = stringWriter.ToString();
                 }
             }

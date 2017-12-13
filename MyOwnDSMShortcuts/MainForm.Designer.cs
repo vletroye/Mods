@@ -158,6 +158,10 @@ namespace BeatificaBytes.Synology.Mods
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
+            this.checkBoxSupportCenter = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.labelLatestFirware = new System.Windows.Forms.Label();
+            this.textBoxLatestFirmware = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -181,7 +185,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainerUrl.Location = new System.Drawing.Point(330, 72);
             this.textBoxMaintainerUrl.Name = "textBoxMaintainerUrl";
             this.textBoxMaintainerUrl.Size = new System.Drawing.Size(223, 20);
-            this.textBoxMaintainerUrl.TabIndex = 6;
+            this.textBoxMaintainerUrl.TabIndex = 5;
             this.textBoxMaintainerUrl.Tag = "PKGmaintainer_url";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainerUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
@@ -195,7 +199,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.textBoxDescription.Size = new System.Drawing.Size(451, 73);
-            this.textBoxDescription.TabIndex = 9;
+            this.textBoxDescription.TabIndex = 8;
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
         "ter.");
@@ -207,7 +211,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPackage.Location = new System.Drawing.Point(102, 20);
             this.textBoxPackage.Name = "textBoxPackage";
             this.textBoxPackage.Size = new System.Drawing.Size(141, 20);
-            this.textBoxPackage.TabIndex = 1;
+            this.textBoxPackage.TabIndex = 0;
             this.textBoxPackage.Tag = "PKGpackage";
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package. This name may not include any special character or" +
         " blanks.\r\nPackage Center will create a /var/packages/[package identity] folder t" +
@@ -220,7 +224,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDisplay.Location = new System.Drawing.Point(102, 46);
             this.textBoxDisplay.Name = "textBoxDisplay";
             this.textBoxDisplay.Size = new System.Drawing.Size(141, 20);
-            this.textBoxDisplay.TabIndex = 3;
+            this.textBoxDisplay.TabIndex = 2;
             this.textBoxDisplay.Tag = "PKGdisplayname_enu;PKGdisplayname";
             this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t enter a Dis" +
         "play name, the Package name will be displayed.");
@@ -232,7 +236,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxMaintainer.Location = new System.Drawing.Point(102, 72);
             this.textBoxMaintainer.Name = "textBoxMaintainer";
             this.textBoxMaintainer.Size = new System.Drawing.Size(141, 20);
-            this.textBoxMaintainer.TabIndex = 5;
+            this.textBoxMaintainer.TabIndex = 4;
             this.textBoxMaintainer.Tag = "PKGmaintainer";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainer, "Enter the name of the person who developped the items in your package.\r\nThis name" +
         " will be displayed in DSM\'s Package Center.");
@@ -244,7 +248,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxVersion.Location = new System.Drawing.Point(330, 20);
             this.textBoxVersion.Name = "textBoxVersion";
             this.textBoxVersion.Size = new System.Drawing.Size(73, 20);
-            this.textBoxVersion.TabIndex = 2;
+            this.textBoxVersion.TabIndex = 1;
             this.textBoxVersion.Tag = "PKGversion";
             this.toolTip4Mods.SetToolTip(this.textBoxVersion, resources.GetString("textBoxVersion.ToolTip"));
             this.textBoxVersion.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
@@ -255,7 +259,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDsmAppName.Location = new System.Drawing.Point(330, 46);
             this.textBoxDsmAppName.Name = "textBoxDsmAppName";
             this.textBoxDsmAppName.Size = new System.Drawing.Size(223, 20);
-            this.textBoxDsmAppName.TabIndex = 4;
+            this.textBoxDsmAppName.TabIndex = 3;
             this.textBoxDsmAppName.Tag = "PKGdsmappname";
             this.toolTip4Mods.SetToolTip(this.textBoxDsmAppName, "Enter an application name for your package. Ex.: com.yourSite.yourPackageName\r\nTh" +
         "is name must be unique in the universe and will be used behind the scene when in" +
@@ -306,7 +310,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonPublish.Location = new System.Drawing.Point(913, 253);
             this.buttonPublish.Name = "buttonPublish";
             this.buttonPublish.Size = new System.Drawing.Size(72, 23);
-            this.buttonPublish.TabIndex = 16;
+            this.buttonPublish.TabIndex = 30;
             this.buttonPublish.Text = "Publish";
             this.toolTip4Mods.SetToolTip(this.buttonPublish, "Generate and Publish the Package.\r\nAll changes done in the \"Package Information\" " +
         "pane will be saved.");
@@ -320,7 +324,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonReset.Location = new System.Drawing.Point(913, 229);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(72, 23);
-            this.buttonReset.TabIndex = 15;
+            this.buttonReset.TabIndex = 29;
             this.buttonReset.Text = "Reset";
             this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values.");
             this.buttonReset.UseVisualStyleBackColor = true;
@@ -342,7 +346,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisher.Location = new System.Drawing.Point(102, 98);
             this.textBoxPublisher.Name = "textBoxPublisher";
             this.textBoxPublisher.Size = new System.Drawing.Size(141, 20);
-            this.textBoxPublisher.TabIndex = 7;
+            this.textBoxPublisher.TabIndex = 6;
             this.textBoxPublisher.Tag = "PKGdistributor";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisher, "Enter the name of the person who create the package.\r\nThis name will be displayed" +
         " in DSM\'s Package Center.");
@@ -652,7 +656,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisherUrl.Location = new System.Drawing.Point(330, 98);
             this.textBoxPublisherUrl.Name = "textBoxPublisherUrl";
             this.textBoxPublisherUrl.Size = new System.Drawing.Size(223, 20);
-            this.textBoxPublisherUrl.TabIndex = 8;
+            this.textBoxPublisherUrl.TabIndex = 7;
             this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
@@ -664,7 +668,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxHelpUrl.Location = new System.Drawing.Point(330, 206);
             this.textBoxHelpUrl.Name = "textBoxHelpUrl";
             this.textBoxHelpUrl.Size = new System.Drawing.Size(223, 20);
-            this.textBoxHelpUrl.TabIndex = 11;
+            this.textBoxHelpUrl.TabIndex = 10;
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
         "by clicking on publisher\'s name in DSM\'s Package Center.\r\n");
@@ -676,7 +680,7 @@ namespace BeatificaBytes.Synology.Mods
             this.TextBoxReportUrl.Location = new System.Drawing.Point(330, 257);
             this.TextBoxReportUrl.Name = "TextBoxReportUrl";
             this.TextBoxReportUrl.Size = new System.Drawing.Size(223, 20);
-            this.TextBoxReportUrl.TabIndex = 13;
+            this.TextBoxReportUrl.TabIndex = 14;
             this.TextBoxReportUrl.Tag = "PKGreport_url";
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
@@ -686,13 +690,13 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxFirmware
             // 
-            this.textBoxFirmware.Location = new System.Drawing.Point(102, 205);
+            this.textBoxFirmware.Location = new System.Drawing.Point(738, 206);
             this.textBoxFirmware.Name = "textBoxFirmware";
             this.textBoxFirmware.Size = new System.Drawing.Size(73, 20);
-            this.textBoxFirmware.TabIndex = 10;
-            this.textBoxFirmware.Tag = "PKGfirmware";
-            this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\nValue: X.Y" +
-        "-Z DSM major number, DSM minor number, DSM build number");
+            this.textBoxFirmware.TabIndex = 26;
+            this.textBoxFirmware.Tag = "PKGfirmware;PKGos_min_ver";
+            this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\n Value: X." +
+        "Y-Z DSM major number, DSM minor number, DSM build number");
             this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
             this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
@@ -702,7 +706,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonAdvanced.Location = new System.Drawing.Point(913, 206);
             this.buttonAdvanced.Name = "buttonAdvanced";
             this.buttonAdvanced.Size = new System.Drawing.Size(72, 23);
-            this.buttonAdvanced.TabIndex = 14;
+            this.buttonAdvanced.TabIndex = 28;
             this.buttonAdvanced.Text = "Advanced";
             this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields not yet supported via the interface. \r\nEx.: install" +
         "_dep_packages, startstop_restart_services, description_xxx (for other languages)" +
@@ -717,7 +721,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxBeta.Location = new System.Drawing.Point(30, 257);
             this.checkBoxBeta.Name = "checkBoxBeta";
             this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxBeta.TabIndex = 12;
+            this.checkBoxBeta.TabIndex = 13;
             this.checkBoxBeta.Tag = "PKGbeta";
             this.checkBoxBeta.Text = "Beta Version";
             this.toolTip4Mods.SetToolTip(this.checkBoxBeta, "Check this option if your package is still in a beta phase.");
@@ -747,19 +751,21 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxSupportUrl.Location = new System.Drawing.Point(330, 231);
             this.textBoxSupportUrl.Name = "textBoxSupportUrl";
             this.textBoxSupportUrl.Size = new System.Drawing.Size(223, 20);
-            this.textBoxSupportUrl.TabIndex = 65;
+            this.textBoxSupportUrl.TabIndex = 12;
             this.textBoxSupportUrl.Tag = "PKGsupport_url";
             this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
         ".");
+            this.textBoxSupportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxSupportUrl_Validating);
+            this.textBoxSupportUrl.Validated += new System.EventHandler(this.textBoxSupportUrl_Validated);
             // 
             // checkBoxSingleApp
             // 
             this.checkBoxSingleApp.AutoSize = true;
             this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSingleApp.Location = new System.Drawing.Point(39, 233);
+            this.checkBoxSingleApp.Location = new System.Drawing.Point(39, 209);
             this.checkBoxSingleApp.Name = "checkBoxSingleApp";
             this.checkBoxSingleApp.Size = new System.Drawing.Size(77, 17);
-            this.checkBoxSingleApp.TabIndex = 67;
+            this.checkBoxSingleApp.TabIndex = 9;
             this.checkBoxSingleApp.Tag = "PKGsingleApp";
             this.checkBoxSingleApp.Text = "Single App";
             this.toolTip4Mods.SetToolTip(this.checkBoxSingleApp, "Check this option if your package will only contain one url, script or applicatio" +
@@ -803,7 +809,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentReboot.Location = new System.Drawing.Point(718, 99);
             this.checkBoxSilentReboot.Name = "checkBoxSilentReboot";
             this.checkBoxSilentReboot.Size = new System.Drawing.Size(91, 17);
-            this.checkBoxSilentReboot.TabIndex = 68;
+            this.checkBoxSilentReboot.TabIndex = 22;
             this.checkBoxSilentReboot.Tag = "PKGinstall_reboot";
             this.checkBoxSilentReboot.Text = "Install Reboot";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentReboot, "Reboot DiskStation after installing or upgrading the package. Default Value: no");
@@ -816,7 +822,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentUninstall.Location = new System.Drawing.Point(559, 99);
             this.checkBoxSilentUninstall.Name = "checkBoxSilentUninstall";
             this.checkBoxSilentUninstall.Size = new System.Drawing.Size(95, 17);
-            this.checkBoxSilentUninstall.TabIndex = 68;
+            this.checkBoxSilentUninstall.TabIndex = 18;
             this.checkBoxSilentUninstall.Tag = "PKGsilent_uninstall";
             this.checkBoxSilentUninstall.Text = "Silent Uninstall";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentUninstall, resources.GetString("checkBoxSilentUninstall.ToolTip"));
@@ -829,7 +835,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentUpgrade.Location = new System.Drawing.Point(560, 73);
             this.checkBoxSilentUpgrade.Name = "checkBoxSilentUpgrade";
             this.checkBoxSilentUpgrade.Size = new System.Drawing.Size(94, 17);
-            this.checkBoxSilentUpgrade.TabIndex = 68;
+            this.checkBoxSilentUpgrade.TabIndex = 17;
             this.checkBoxSilentUpgrade.Tag = "PKGsilent_upgrade";
             this.checkBoxSilentUpgrade.Text = "Silent upgrade";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentUpgrade, resources.GetString("checkBoxSilentUpgrade.ToolTip"));
@@ -842,7 +848,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentInstalll.Location = new System.Drawing.Point(572, 47);
             this.checkBoxSilentInstalll.Name = "checkBoxSilentInstalll";
             this.checkBoxSilentInstalll.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxSilentInstalll.TabIndex = 68;
+            this.checkBoxSilentInstalll.TabIndex = 16;
             this.checkBoxSilentInstalll.Tag = "PKGsilent_install";
             this.checkBoxSilentInstalll.Text = "Silent Install";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentInstalll, resources.GetString("checkBoxSilentInstalll.ToolTip"));
@@ -853,7 +859,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxArch.Location = new System.Drawing.Point(638, 124);
             this.textBoxArch.Name = "textBoxArch";
             this.textBoxArch.Size = new System.Drawing.Size(173, 20);
-            this.textBoxArch.TabIndex = 2;
+            this.textBoxArch.TabIndex = 23;
             this.textBoxArch.Tag = "PKGarch";
             this.toolTip4Mods.SetToolTip(this.textBoxArch, "Double click to Edit this list of CPU architectures where the package can be used" +
         " to install the package. Values are separated by a space.");
@@ -866,7 +872,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxExcludeArch.Location = new System.Drawing.Point(638, 150);
             this.textBoxExcludeArch.Name = "textBoxExcludeArch";
             this.textBoxExcludeArch.Size = new System.Drawing.Size(173, 20);
-            this.textBoxExcludeArch.TabIndex = 69;
+            this.textBoxExcludeArch.TabIndex = 24;
             this.textBoxExcludeArch.Tag = "PKGexclude_arch";
             this.toolTip4Mods.SetToolTip(this.textBoxExcludeArch, resources.GetString("textBoxExcludeArch.ToolTip"));
             this.textBoxExcludeArch.DoubleClick += new System.EventHandler(this.textBoxExcludeArch_DoubleClick);
@@ -876,7 +882,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxModel.Location = new System.Drawing.Point(638, 177);
             this.textBoxModel.Name = "textBoxModel";
             this.textBoxModel.Size = new System.Drawing.Size(173, 20);
-            this.textBoxModel.TabIndex = 71;
+            this.textBoxModel.TabIndex = 25;
             this.textBoxModel.Tag = "PKGmodel";
             this.toolTip4Mods.SetToolTip(this.textBoxModel, "Double click to Edit the list of models on which packages can be installed. It is" +
         " organized by Synology string, architecture\r\nand model name. Values are separate" +
@@ -890,7 +896,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxPrecheck.Location = new System.Drawing.Point(691, 73);
             this.checkBoxPrecheck.Name = "checkBoxPrecheck";
             this.checkBoxPrecheck.Size = new System.Drawing.Size(118, 17);
-            this.checkBoxPrecheck.TabIndex = 73;
+            this.checkBoxPrecheck.TabIndex = 21;
             this.checkBoxPrecheck.Tag = "PKGprecheckstartstop";
             this.checkBoxPrecheck.Text = "Precheck start-stop";
             this.toolTip4Mods.SetToolTip(this.checkBoxPrecheck, "If set to \"yes\", let start-stop-status with prestart or prestop argument run befo" +
@@ -902,13 +908,17 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxStartable.AutoSize = true;
             this.checkBoxStartable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxStartable.Location = new System.Drawing.Point(741, 47);
+            this.checkBoxStartable.Checked = true;
+            this.checkBoxStartable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxStartable.Location = new System.Drawing.Point(741, 22);
             this.checkBoxStartable.Name = "checkBoxStartable";
             this.checkBoxStartable.Size = new System.Drawing.Size(68, 17);
-            this.checkBoxStartable.TabIndex = 74;
-            this.checkBoxStartable.Tag = "PKGstartable";
+            this.checkBoxStartable.TabIndex = 19;
+            this.checkBoxStartable.Tag = "PKGstartable;PKGctl_stop";
             this.checkBoxStartable.Text = "Startable";
-            this.toolTip4Mods.SetToolTip(this.checkBoxStartable, resources.GetString("checkBoxStartable.ToolTip"));
+            this.toolTip4Mods.SetToolTip(this.checkBoxStartable, "If this option is not selected, the end-user cannot start or stop the package in " +
+        "Package Center.\r\nNote: If not selected, start-stop-status script which runs in b" +
+        "ootup or shotdown is still required. ");
             this.checkBoxStartable.UseVisualStyleBackColor = true;
             // 
             // checkBoxOfflineInstall
@@ -918,7 +928,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxOfflineInstall.Location = new System.Drawing.Point(568, 22);
             this.checkBoxOfflineInstall.Name = "checkBoxOfflineInstall";
             this.checkBoxOfflineInstall.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxOfflineInstall.TabIndex = 75;
+            this.checkBoxOfflineInstall.TabIndex = 15;
             this.checkBoxOfflineInstall.Tag = "PKGoffline_install";
             this.checkBoxOfflineInstall.Text = "Offline Install";
             this.toolTip4Mods.SetToolTip(this.checkBoxOfflineInstall, resources.GetString("checkBoxOfflineInstall.ToolTip"));
@@ -1070,6 +1080,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPackage.Controls.Add(this.labelLatestFirware);
+            this.groupBoxPackage.Controls.Add(this.textBoxLatestFirmware);
+            this.groupBoxPackage.Controls.Add(this.checkBox1);
+            this.groupBoxPackage.Controls.Add(this.checkBoxSupportCenter);
             this.groupBoxPackage.Controls.Add(this.checkBoxOfflineInstall);
             this.groupBoxPackage.Controls.Add(this.checkBoxPrecheck);
             this.groupBoxPackage.Controls.Add(this.checkBoxStartable);
@@ -1120,7 +1134,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Location = new System.Drawing.Point(2, 26);
             this.groupBoxPackage.Name = "groupBoxPackage";
             this.groupBoxPackage.Size = new System.Drawing.Size(999, 290);
-            this.groupBoxPackage.TabIndex = 38;
+            this.groupBoxPackage.TabIndex = 0;
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
@@ -1150,11 +1164,12 @@ namespace BeatificaBytes.Synology.Mods
             this.labelSupportUrl.Size = new System.Drawing.Size(63, 13);
             this.labelSupportUrl.TabIndex = 66;
             this.labelSupportUrl.Text = "Support Url:";
+            this.labelSupportUrl.Click += new System.EventHandler(this.labelSupportUrl_Click);
             // 
             // labelFirmware
             // 
             this.labelFirmware.AutoSize = true;
-            this.labelFirmware.Location = new System.Drawing.Point(10, 209);
+            this.labelFirmware.Location = new System.Drawing.Point(646, 210);
             this.labelFirmware.Name = "labelFirmware";
             this.labelFirmware.Size = new System.Drawing.Size(89, 13);
             this.labelFirmware.TabIndex = 64;
@@ -1663,6 +1678,57 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
+            // checkBoxSupportCenter
+            // 
+            this.checkBoxSupportCenter.AutoSize = true;
+            this.checkBoxSupportCenter.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSupportCenter.Location = new System.Drawing.Point(19, 233);
+            this.checkBoxSupportCenter.Name = "checkBoxSupportCenter";
+            this.checkBoxSupportCenter.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxSupportCenter.TabIndex = 11;
+            this.checkBoxSupportCenter.Tag = "PKGSupport_center";
+            this.checkBoxSupportCenter.Text = "Support Center";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSupportCenter, resources.GetString("checkBoxSupportCenter.ToolTip"));
+            this.checkBoxSupportCenter.UseVisualStyleBackColor = true;
+            this.checkBoxSupportCenter.CheckedChanged += new System.EventHandler(this.checkBoxSupportCenter_CheckedChanged);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.Checked = true;
+            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox1.Location = new System.Drawing.Point(729, 48);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 20;
+            this.checkBox1.Tag = "PKGctl_uninstall";
+            this.checkBox1.Text = "Removable";
+            this.toolTip4Mods.SetToolTip(this.checkBox1, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
+        "e Center.");
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // labelLatestFirware
+            // 
+            this.labelLatestFirware.AutoSize = true;
+            this.labelLatestFirware.Location = new System.Drawing.Point(646, 235);
+            this.labelLatestFirware.Name = "labelLatestFirware";
+            this.labelLatestFirware.Size = new System.Drawing.Size(84, 13);
+            this.labelLatestFirware.TabIndex = 74;
+            this.labelLatestFirware.Text = "Latest Firmware:";
+            // 
+            // textBoxLatestFirmware
+            // 
+            this.textBoxLatestFirmware.Location = new System.Drawing.Point(738, 231);
+            this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
+            this.textBoxLatestFirmware.Size = new System.Drawing.Size(73, 20);
+            this.textBoxLatestFirmware.TabIndex = 27;
+            this.textBoxLatestFirmware.Tag = "PKGos_max_ver";
+            this.toolTip4Mods.SetToolTip(this.textBoxLatestFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
+        "M major number, DSM minor number, DSM build number");
+            this.textBoxLatestFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxLatestFirmware_Validating);
+            this.textBoxLatestFirmware.Validated += new System.EventHandler(this.textBoxLatestFirmware_Validated);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1835,6 +1901,10 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.CheckBox checkBoxLegacy;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem advancedEditorToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxSupportCenter;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label labelLatestFirware;
+        private System.Windows.Forms.TextBox textBoxLatestFirmware;
     }
 }
 
