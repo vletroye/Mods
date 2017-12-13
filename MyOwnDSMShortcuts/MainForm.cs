@@ -3788,8 +3788,10 @@ namespace BeatificaBytes.Synology.Mods
             textBoxVersion.Visible = advanced;
             labelDSMAppName.Visible = advanced;
             textBoxDsmAppName.Visible = advanced;
-            labelFirmware.Visible = advanced;
 
+            labelLatestFirmware.Visible = advanced;
+            textBoxLatestFirmware.Visible = advanced;
+            labelFirmware.Visible = advanced;
             textBoxFirmware.Visible = advanced;
             checkBoxSingleApp.Visible = advanced;
             checkBoxBeta.Visible = advanced;
@@ -3799,6 +3801,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxSilentUpgrade.Visible = advanced;
             checkBoxSilentUninstall.Visible = advanced;
             checkBoxStartable.Visible = advanced;
+            checkBoxRemovable.Visible = advanced;
             checkBoxPrecheck.Visible = advanced;
             checkBoxSilentReboot.Visible = advanced;
 
@@ -3809,6 +3812,7 @@ namespace BeatificaBytes.Synology.Mods
             labelModel.Visible = advanced;
             textBoxModel.Visible = advanced;
 
+            checkBoxSupportCenter.Visible = advanced;
             checkBoxLegacy.Visible = advanced;
             labelGrantPrivilege.Visible = advanced;
             ComboBoxGrantPrivilege.Visible = advanced;

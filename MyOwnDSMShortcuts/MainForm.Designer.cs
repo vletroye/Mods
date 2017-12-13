@@ -159,8 +159,8 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
             this.checkBoxSupportCenter = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.labelLatestFirware = new System.Windows.Forms.Label();
+            this.checkBoxRemovable = new System.Windows.Forms.CheckBox();
+            this.labelLatestFirmware = new System.Windows.Forms.Label();
             this.textBoxLatestFirmware = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
@@ -1080,9 +1080,9 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxPackage.Controls.Add(this.labelLatestFirware);
+            this.groupBoxPackage.Controls.Add(this.labelLatestFirmware);
             this.groupBoxPackage.Controls.Add(this.textBoxLatestFirmware);
-            this.groupBoxPackage.Controls.Add(this.checkBox1);
+            this.groupBoxPackage.Controls.Add(this.checkBoxRemovable);
             this.groupBoxPackage.Controls.Add(this.checkBoxSupportCenter);
             this.groupBoxPackage.Controls.Add(this.checkBoxOfflineInstall);
             this.groupBoxPackage.Controls.Add(this.checkBoxPrecheck);
@@ -1692,30 +1692,30 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSupportCenter.UseVisualStyleBackColor = true;
             this.checkBoxSupportCenter.CheckedChanged += new System.EventHandler(this.checkBoxSupportCenter_CheckedChanged);
             // 
-            // checkBox1
+            // checkBoxRemovable
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(729, 48);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(80, 17);
-            this.checkBox1.TabIndex = 20;
-            this.checkBox1.Tag = "PKGctl_uninstall";
-            this.checkBox1.Text = "Removable";
-            this.toolTip4Mods.SetToolTip(this.checkBox1, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
+            this.checkBoxRemovable.AutoSize = true;
+            this.checkBoxRemovable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxRemovable.Checked = true;
+            this.checkBoxRemovable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxRemovable.Location = new System.Drawing.Point(729, 48);
+            this.checkBoxRemovable.Name = "checkBoxRemovable";
+            this.checkBoxRemovable.Size = new System.Drawing.Size(80, 17);
+            this.checkBoxRemovable.TabIndex = 20;
+            this.checkBoxRemovable.Tag = "PKGctl_uninstall";
+            this.checkBoxRemovable.Text = "Removable";
+            this.toolTip4Mods.SetToolTip(this.checkBoxRemovable, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
         "e Center.");
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBoxRemovable.UseVisualStyleBackColor = true;
             // 
-            // labelLatestFirware
+            // labelLatestFirmware
             // 
-            this.labelLatestFirware.AutoSize = true;
-            this.labelLatestFirware.Location = new System.Drawing.Point(646, 235);
-            this.labelLatestFirware.Name = "labelLatestFirware";
-            this.labelLatestFirware.Size = new System.Drawing.Size(84, 13);
-            this.labelLatestFirware.TabIndex = 74;
-            this.labelLatestFirware.Text = "Latest Firmware:";
+            this.labelLatestFirmware.AutoSize = true;
+            this.labelLatestFirmware.Location = new System.Drawing.Point(646, 235);
+            this.labelLatestFirmware.Name = "labelLatestFirmware";
+            this.labelLatestFirmware.Size = new System.Drawing.Size(84, 13);
+            this.labelLatestFirmware.TabIndex = 74;
+            this.labelLatestFirmware.Text = "Latest Firmware:";
             // 
             // textBoxLatestFirmware
             // 
@@ -1902,8 +1902,8 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem advancedEditorToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxSupportCenter;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Label labelLatestFirware;
+        private System.Windows.Forms.CheckBox checkBoxRemovable;
+        private System.Windows.Forms.Label labelLatestFirmware;
         private System.Windows.Forms.TextBox textBoxLatestFirmware;
     }
 }
