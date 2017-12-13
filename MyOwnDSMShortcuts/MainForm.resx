@@ -158,16 +158,16 @@ All: this app can be selected for all users.</value>
   <data name="checkBoxLegacy.ToolTip" xml:space="preserve">
     <value>When you select this option, urls will be opened in a DSM window instead of being opened in a new tab. However, this only works if you have disabled DSM's security option 'Improve security with HTTP Content Security Policy (CSP) header'</value>
   </data>
+  <data name="checkBoxSupportCenter.ToolTip" xml:space="preserve">
+    <value>Check this option to let Package Center displays a link to make the end user launch Synology Support Center Application when your package is installed.
+The report_url link won’t show in Package Center. </value>
+  </data>
   <metadata name="openFileDialog4Mods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>297, 17</value>
   </metadata>
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>468, 17</value>
   </metadata>
-  <data name="checkBoxSupportCenter.ToolTip" xml:space="preserve">
-    <value>Check this option to let Package Center displays a link to make the end user launch Synology Support Center Application when your package is installed.
-The report_url link won’t show in Package Center. </value>
-  </data>
   <metadata name="menuStripMainBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

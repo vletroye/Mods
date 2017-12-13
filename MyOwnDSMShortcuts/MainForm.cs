@@ -515,6 +515,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (info != null)
             {
+                string subkey;
                 var unused = new List<string>(info.Keys);
                 foreach (var control in groupBoxPackage.Controls)
                 {
@@ -525,12 +526,15 @@ namespace BeatificaBytes.Synology.Mods
                         textBox.Text = "";
                         foreach (var key in keys)
                         {
-                            var subkey = key.Substring(3);
-                            if (info.Keys.Contains(subkey))
+                            if (key.StartsWith("PKG"))
                             {
-                                if (string.IsNullOrEmpty(textBox.Text))
-                                    textBox.Text = info[subkey];
-                                unused.Remove(subkey);
+                                subkey = key.Substring(3);
+                                if (info.Keys.Contains(subkey))
+                                {
+                                    if (string.IsNullOrEmpty(textBox.Text))
+                                        textBox.Text = info[subkey];
+                                    unused.Remove(subkey);
+                                }
                             }
                         }
                     }
@@ -541,14 +545,20 @@ namespace BeatificaBytes.Synology.Mods
                         var keys = checkBox.Tag.ToString().Split(';');
                         foreach (var key in keys)
                         {
-                            var val = key.Substring(3);
-                            if (info.Keys.Contains(val))
+                            subkey = key.Substring(3);
+                            if (key.StartsWith("PKG"))
                             {
-                                unused.Remove(val);
-                                tick = info[val] == "yes";
+                                if (info.Keys.Contains(subkey))
+                                {
+                                    unused.Remove(subkey);
+                                    tick = (info[subkey] == "yes");
+                                }
+                            }
+                            if (key.StartsWith("DEF"))
+                            {
+                                tick = (subkey == "yes");
                             }
                         }
-
                         checkBox.Checked = tick;
                     }
                 }
@@ -568,9 +578,7 @@ namespace BeatificaBytes.Synology.Mods
                 unused.Remove("dsmuidir");
                 unused.Remove("checksum");
                 unused.Remove("adminport");//Not yet supported but ignored
-                //unused.Remove("arch");
                 unused.Remove("reloadui");//Not yet supported but ignored
-                unused.Remove("startable");//Not yet supported but ignored
 
                 unused.Remove("thirdparty");//Not yet supported but ignored
                 unused.Remove("startstop_restart_services");//Not yet supported but ignored
@@ -684,11 +692,14 @@ namespace BeatificaBytes.Synology.Mods
                             var keys = textBox.Tag.ToString().Split(';');
                             foreach (var key in keys)
                             {
-                                var keyId = key.Substring(3);
-                                if (info.Keys.Contains(keyId))
-                                    info[keyId] = textBox.Text.Trim();
-                                else
-                                    info.Add(keyId, textBox.Text.Trim());
+                                if (key.StartsWith("PKG"))
+                                {
+                                    var keyId = key.Substring(3);
+                                    if (info.Keys.Contains(keyId))
+                                        info[keyId] = textBox.Text.Trim();
+                                    else
+                                        info.Add(keyId, textBox.Text.Trim());
+                                }
                             }
                         }
                         var checkBox = control as CheckBox;
@@ -697,12 +708,15 @@ namespace BeatificaBytes.Synology.Mods
                             var keys = checkBox.Tag.ToString().Split(';');
                             foreach (var key in keys)
                             {
-                                var keyId = key.Substring(3);
-                                var value = checkBox.Checked ? "yes" : "no";
-                                if (info.Keys.Contains(keyId))
-                                    info[keyId] = value;
-                                else
-                                    info.Add(keyId, value);
+                                if (key.StartsWith("PKG"))
+                                {
+                                    var keyId = key.Substring(3);
+                                    var value = checkBox.Checked ? "yes" : "no";
+                                    if (info.Keys.Contains(keyId))
+                                        info[keyId] = value;
+                                    else
+                                        info.Add(keyId, value);
+                                }
                             }
                         }
                     }
@@ -717,7 +731,10 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         foreach (var element in info)
                         {
-                            outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
+                            if (!string.IsNullOrEmpty(element.Value))
+                            {
+                                outputFile.WriteLine("{0}=\"{1}\"", element.Key, element.Value);
+                            }
                         }
                     }
 
@@ -2340,7 +2357,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!CheckEmpty(textBoxDsmAppName, ref e))
             {
-                var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__","_");
+                var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__", "_");
                 var cleaned = Helper.CleanUpText(textBoxDsmAppName.Text);
                 if (name != cleaned)
                 {
@@ -2640,11 +2657,25 @@ namespace BeatificaBytes.Synology.Mods
                     if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
                     {
                         var keys = textBox.Tag.ToString().Split(';');
-                        var key = keys[0].Substring(3);
+                        var key = keys[0].Substring(3); 
 
                         if (info.ContainsKey(key))
                         {
                             dirty = textBox.Text != info[key];
+
+                            if (dirty)
+                                break;
+                        }
+                    }
+                    var checkBox = control as CheckBox;
+                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                    {
+                        var keys = checkBox.Tag.ToString().Split(';');
+                        var key = keys[0].Substring(3);
+
+                        if (info.ContainsKey(key))
+                        {
+                            dirty = checkBox.Checked != (info[key] == "yes");
 
                             if (dirty)
                                 break;

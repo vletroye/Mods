@@ -92,6 +92,9 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxAdvanceGrantPrivilege = new System.Windows.Forms.CheckBox();
             this.ComboBoxGrantPrivilege = new System.Windows.Forms.ComboBox();
             this.checkBoxLegacy = new System.Windows.Forms.CheckBox();
+            this.checkBoxSupportCenter = new System.Windows.Forms.CheckBox();
+            this.checkBoxRemovable = new System.Windows.Forms.CheckBox();
+            this.textBoxLatestFirmware = new System.Windows.Forms.TextBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -103,6 +106,7 @@ namespace BeatificaBytes.Synology.Mods
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
+            this.labelLatestFirmware = new System.Windows.Forms.Label();
             this.labelModel = new System.Windows.Forms.Label();
             this.labelExcludeArch = new System.Windows.Forms.Label();
             this.labelSupportUrl = new System.Windows.Forms.Label();
@@ -158,10 +162,6 @@ namespace BeatificaBytes.Synology.Mods
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.checkBoxSupportCenter = new System.Windows.Forms.CheckBox();
-            this.checkBoxRemovable = new System.Windows.Forms.CheckBox();
-            this.labelLatestFirmware = new System.Windows.Forms.Label();
-            this.textBoxLatestFirmware = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -914,7 +914,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxStartable.Name = "checkBoxStartable";
             this.checkBoxStartable.Size = new System.Drawing.Size(68, 17);
             this.checkBoxStartable.TabIndex = 19;
-            this.checkBoxStartable.Tag = "PKGstartable;PKGctl_stop";
+            this.checkBoxStartable.Tag = "PKGstartable;PKGctl_stop;DEFyes";
             this.checkBoxStartable.Text = "Startable";
             this.toolTip4Mods.SetToolTip(this.checkBoxStartable, "If this option is not selected, the end-user cannot start or stop the package in " +
         "Package Center.\r\nNote: If not selected, start-stop-status script which runs in b" +
@@ -992,6 +992,48 @@ namespace BeatificaBytes.Synology.Mods
             this.toolTip4Mods.SetToolTip(this.checkBoxLegacy, resources.GetString("checkBoxLegacy.ToolTip"));
             this.checkBoxLegacy.UseVisualStyleBackColor = true;
             this.checkBoxLegacy.CheckedChanged += new System.EventHandler(this.checkBoxLegacy_CheckedChanged);
+            // 
+            // checkBoxSupportCenter
+            // 
+            this.checkBoxSupportCenter.AutoSize = true;
+            this.checkBoxSupportCenter.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxSupportCenter.Location = new System.Drawing.Point(19, 233);
+            this.checkBoxSupportCenter.Name = "checkBoxSupportCenter";
+            this.checkBoxSupportCenter.Size = new System.Drawing.Size(97, 17);
+            this.checkBoxSupportCenter.TabIndex = 11;
+            this.checkBoxSupportCenter.Tag = "PKGSupport_center";
+            this.checkBoxSupportCenter.Text = "Support Center";
+            this.toolTip4Mods.SetToolTip(this.checkBoxSupportCenter, resources.GetString("checkBoxSupportCenter.ToolTip"));
+            this.checkBoxSupportCenter.UseVisualStyleBackColor = true;
+            this.checkBoxSupportCenter.CheckedChanged += new System.EventHandler(this.checkBoxSupportCenter_CheckedChanged);
+            // 
+            // checkBoxRemovable
+            // 
+            this.checkBoxRemovable.AutoSize = true;
+            this.checkBoxRemovable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxRemovable.Checked = true;
+            this.checkBoxRemovable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxRemovable.Location = new System.Drawing.Point(729, 48);
+            this.checkBoxRemovable.Name = "checkBoxRemovable";
+            this.checkBoxRemovable.Size = new System.Drawing.Size(80, 17);
+            this.checkBoxRemovable.TabIndex = 20;
+            this.checkBoxRemovable.Tag = "PKGctl_uninstall;DEFyes";
+            this.checkBoxRemovable.Text = "Removable";
+            this.toolTip4Mods.SetToolTip(this.checkBoxRemovable, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
+        "e Center.");
+            this.checkBoxRemovable.UseVisualStyleBackColor = true;
+            // 
+            // textBoxLatestFirmware
+            // 
+            this.textBoxLatestFirmware.Location = new System.Drawing.Point(738, 231);
+            this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
+            this.textBoxLatestFirmware.Size = new System.Drawing.Size(73, 20);
+            this.textBoxLatestFirmware.TabIndex = 27;
+            this.textBoxLatestFirmware.Tag = "PKGos_max_ver";
+            this.toolTip4Mods.SetToolTip(this.textBoxLatestFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
+        "M major number, DSM minor number, DSM build number");
+            this.textBoxLatestFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxLatestFirmware_Validating);
+            this.textBoxLatestFirmware.Validated += new System.EventHandler(this.textBoxLatestFirmware_Validated);
             // 
             // openFileDialog4Mods
             // 
@@ -1137,6 +1179,15 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.TabIndex = 0;
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
+            // 
+            // labelLatestFirmware
+            // 
+            this.labelLatestFirmware.AutoSize = true;
+            this.labelLatestFirmware.Location = new System.Drawing.Point(646, 235);
+            this.labelLatestFirmware.Name = "labelLatestFirmware";
+            this.labelLatestFirmware.Size = new System.Drawing.Size(84, 13);
+            this.labelLatestFirmware.TabIndex = 74;
+            this.labelLatestFirmware.Text = "Latest Firmware:";
             // 
             // labelModel
             // 
@@ -1677,57 +1728,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(970, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
-            // 
-            // checkBoxSupportCenter
-            // 
-            this.checkBoxSupportCenter.AutoSize = true;
-            this.checkBoxSupportCenter.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSupportCenter.Location = new System.Drawing.Point(19, 233);
-            this.checkBoxSupportCenter.Name = "checkBoxSupportCenter";
-            this.checkBoxSupportCenter.Size = new System.Drawing.Size(97, 17);
-            this.checkBoxSupportCenter.TabIndex = 11;
-            this.checkBoxSupportCenter.Tag = "PKGSupport_center";
-            this.checkBoxSupportCenter.Text = "Support Center";
-            this.toolTip4Mods.SetToolTip(this.checkBoxSupportCenter, resources.GetString("checkBoxSupportCenter.ToolTip"));
-            this.checkBoxSupportCenter.UseVisualStyleBackColor = true;
-            this.checkBoxSupportCenter.CheckedChanged += new System.EventHandler(this.checkBoxSupportCenter_CheckedChanged);
-            // 
-            // checkBoxRemovable
-            // 
-            this.checkBoxRemovable.AutoSize = true;
-            this.checkBoxRemovable.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxRemovable.Checked = true;
-            this.checkBoxRemovable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxRemovable.Location = new System.Drawing.Point(729, 48);
-            this.checkBoxRemovable.Name = "checkBoxRemovable";
-            this.checkBoxRemovable.Size = new System.Drawing.Size(80, 17);
-            this.checkBoxRemovable.TabIndex = 20;
-            this.checkBoxRemovable.Tag = "PKGctl_uninstall";
-            this.checkBoxRemovable.Text = "Removable";
-            this.toolTip4Mods.SetToolTip(this.checkBoxRemovable, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
-        "e Center.");
-            this.checkBoxRemovable.UseVisualStyleBackColor = true;
-            // 
-            // labelLatestFirmware
-            // 
-            this.labelLatestFirmware.AutoSize = true;
-            this.labelLatestFirmware.Location = new System.Drawing.Point(646, 235);
-            this.labelLatestFirmware.Name = "labelLatestFirmware";
-            this.labelLatestFirmware.Size = new System.Drawing.Size(84, 13);
-            this.labelLatestFirmware.TabIndex = 74;
-            this.labelLatestFirmware.Text = "Latest Firmware:";
-            // 
-            // textBoxLatestFirmware
-            // 
-            this.textBoxLatestFirmware.Location = new System.Drawing.Point(738, 231);
-            this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
-            this.textBoxLatestFirmware.Size = new System.Drawing.Size(73, 20);
-            this.textBoxLatestFirmware.TabIndex = 27;
-            this.textBoxLatestFirmware.Tag = "PKGos_max_ver";
-            this.toolTip4Mods.SetToolTip(this.textBoxLatestFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
-        "M major number, DSM minor number, DSM build number");
-            this.textBoxLatestFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxLatestFirmware_Validating);
-            this.textBoxLatestFirmware.Validated += new System.EventHandler(this.textBoxLatestFirmware_Validated);
             // 
             // MainForm
             // 
