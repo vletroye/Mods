@@ -87,7 +87,7 @@ namespace ZTn.Json.Editor.Forms
 
             if (sourceNode == null)
             {
-                MessageBox.Show(@"Drag & Drop Canceled: Unknown Source");
+                MessageBox.Show(this, @"Drag & Drop Canceled: Unknown Source");
 
                 return;
             }
@@ -114,7 +114,7 @@ namespace ZTn.Json.Editor.Forms
         /// <param name="targetNode"></param>
         private void DoDragDropCopy(JTokenTreeNode sourceNode, JTokenTreeNode targetNode)
         {
-            MessageBox.Show(@"Drag & Drop: Unmanaged Copy");
+            MessageBox.Show(this, @"Drag & Drop: Unmanaged Copy");
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace ZTn.Json.Editor.Forms
         private void DoDragDropMove(JTokenTreeNode sourceNode, JTokenTreeNode targetNode)
         {
             // TODO: Move sourceNode to target
-            MessageBox.Show(@"Drag & Drop: Unmanaged Move");
+            MessageBox.Show(this, @"Drag & Drop: Unmanaged Move");
         }
 
         /// <summary>

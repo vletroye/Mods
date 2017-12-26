@@ -413,7 +413,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodeDeleteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.DeletionActionFailed);
             }
         }
 
@@ -425,7 +425,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodeDeleteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.DeletionActionFailed);
             }
         }
 
@@ -437,7 +437,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodeDeleteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.DeletionActionFailed);
             }
         }
 
@@ -526,7 +526,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodeDeleteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.DeletionActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.DeletionActionFailed);
             }
         }
 
@@ -560,7 +560,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodePasteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.PasteActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.PasteActionFailed);
             }
         }
 
@@ -577,7 +577,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodePasteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.PasteActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.PasteActionFailed);
             }
         }
 
@@ -594,7 +594,7 @@ namespace ZTn.Json.Editor.Forms
             }
             catch (JTokenTreeNodePasteException exception)
             {
-                MessageBox.Show(exception.InnerException.Message, Resources.PasteActionFailed);
+                MessageBox.Show(this, exception.InnerException.Message, Resources.PasteActionFailed);
             }
         }
 

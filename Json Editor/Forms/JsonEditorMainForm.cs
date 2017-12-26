@@ -53,7 +53,7 @@ namespace ZTn.Json.Editor.Forms
                 }
                 OpenJson(path);
             }
-            catch 
+            catch
             {
                 CreateEmptyJson(path);
                 OpenJson(path);
@@ -104,7 +104,6 @@ namespace ZTn.Json.Editor.Forms
             set
             {
                 internalOpenedFileName = value;
-                //Text = (internalOpenedFileName ?? "") + @" - Json Editor by ZTn";
             }
         }
 
@@ -215,6 +214,14 @@ namespace ZTn.Json.Editor.Forms
             }
         }
 
+        public string Title
+        {
+            set
+            {
+                Text = value + " - Powered by ZTn's Json Editor";
+            }
+        }
+
         #endregion
 
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
@@ -236,7 +243,7 @@ namespace ZTn.Json.Editor.Forms
 
         private void aboutJsonEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new AboutBox().ShowDialog();
+            new AboutBox().ShowDialog(Application.OpenForms[0]);
         }
 
         /// <summary>
@@ -459,7 +466,7 @@ namespace ZTn.Json.Editor.Forms
 
             DialogResult response = DialogResult.Yes;
             if (!validJSon)
-                response = MessageBox.Show("This wizard is incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                response = MessageBox.Show(this, "This wizard is incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 
             if (response == DialogResult.Yes)
             {

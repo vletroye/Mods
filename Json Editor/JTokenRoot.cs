@@ -105,7 +105,7 @@ namespace ZTn.Json.Editor
             var json = jTokenValue.ToString();
             DialogResult response = DialogResult.Yes;
             if (string.IsNullOrEmpty(json) || json == "[]")
-                response = MessageBox.Show("This wizard is empty, incomplete or incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                response = MessageBox.Show(Application.OpenForms[0], "This wizard is empty, incomplete or incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 
             if (response == DialogResult.Yes)
             {

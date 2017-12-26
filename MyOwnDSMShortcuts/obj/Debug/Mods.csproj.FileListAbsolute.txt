@@ -29,3 +29,4 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\HelpSynoWizard.csv
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\BouncyCastle.Crypto.dll
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.SnapshotManager.resources
