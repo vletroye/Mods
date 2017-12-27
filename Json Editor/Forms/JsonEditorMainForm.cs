@@ -22,6 +22,7 @@ namespace ZTn.Json.Editor.Forms
 
         private delegate void SetJsonStatusDelegate(string text, bool isError);
 
+        private int wizardpage = 1;
         #endregion
 
         #region >> Fields
@@ -147,18 +148,19 @@ namespace ZTn.Json.Editor.Forms
     #container {     
         display:table;
         border-collapse:collapse;
-        height:200px;
+        height:100%;
         width:100%;
-        border:1px solid #000; 
+        border:1px solid #000;
+        background-color: #0198F3;
     }
     #layout {
-        display:table-row;    
+        display:table-row;
     }
-    #content {     
-    display:table-cell;   
-        text-align:center;  
-        vertical-align:middle;     
-    }            
+    #content {
+    display:table-cell;
+        text-align:center;
+        vertical-align:middle;
+    }
 </style>      
 <div id='container'>
     <div id='layout'>
@@ -506,7 +508,7 @@ namespace ZTn.Json.Editor.Forms
             Process.Start(info);
         }
 
-        private string GenerateHtmlPreview()
+        private string GenerateHtmlPreview(int page)
         {
             var preview = "";
             using (var stringWriter = new StringWriter())
@@ -516,37 +518,44 @@ namespace ZTn.Json.Editor.Forms
                     writer.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
                     writer.AddStyleAttribute("background-color", "#0198F3");
                     writer.RenderBeginTag(HtmlTextWriterTag.Body);
+                    int count = 0;
                     foreach (JToken step in JsonEditorItem.JTokenValue.Children())
                     {
-                        var imgSrc = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
-                        var uri = new System.Uri(imgSrc).AbsoluteUri;
-                        writer.RenderBeginTag(HtmlTextWriterTag.Div);
-                        writer.AddAttribute(HtmlTextWriterAttribute.Style, "background-image: url('" + uri + "'); background-position: right; color:#FFFFFF; height:50px; display: flex; vertical-align: middle;");
+                        count++;
+                        if (count == page)
+                        {
+                            var imgSrc = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
+                            var uri = new System.Uri(imgSrc).AbsoluteUri;
+                            writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                            writer.AddAttribute(HtmlTextWriterAttribute.Style, "background-image: url('" + uri + "'); background-position: right; color:#FFFFFF; height:50px; display: flex; vertical-align: middle;");
 
-                        writer.RenderBeginTag(HtmlTextWriterTag.Div);
-                        writer.RenderBeginTag(HtmlTextWriterTag.H3);
-                        var property = GetNodeByKey(step.Children(), "step_title") as JProperty;
-                        if (property != null)
-                        {
-                            writer.Write(property.Value.ToString());
+                            writer.RenderBeginTag(HtmlTextWriterTag.Div);
+                            writer.RenderBeginTag(HtmlTextWriterTag.H3);
+                            var property = GetNodeByKey(step.Children(), "step_title") as JProperty;
+                            if (property != null)
+                            {
+                                writer.Write(property.Value.ToString());
+                            }
+                            else
+                            {
+                                writer.Write("Step title not found ?!");
+                            }
+                            writer.RenderEndTag();
+                            writer.RenderEndTag();
+                            var items = GetNodeByKey(step.Children(), "items");
+                            GenerateHtmlStep(writer, items);
+                            writer.RenderEndTag();
+                            writer.RenderBeginTag(HtmlTextWriterTag.Hr);
+                            writer.RenderEndTag();
                         }
-                        else
-                        {
-                            writer.Write("Step title not found ?!");
-                        }
-                        writer.RenderEndTag();
-                        writer.RenderEndTag();
-                        var items = GetNodeByKey(step.Children(), "items");
-                        GenerateHtmlStep(writer, items);
-                        writer.RenderEndTag();
-                        writer.RenderBeginTag(HtmlTextWriterTag.Hr);
-                        writer.RenderEndTag();
                     }
                     writer.RenderEndTag();
                     preview = stringWriter.ToString();
                 }
             }
 
+            webBrowserPreview.DocumentText = preview;
+            labelSteps.Text = string.Format("Step {0}/{1}", page, JsonEditorItem.JTokenValue.Children().Count());
             return preview;
         }
 
@@ -910,13 +919,6 @@ namespace ZTn.Json.Editor.Forms
             writer.RenderEndTag();
         }
 
-        private void buttonPreview_Click(object sender, EventArgs e)
-        {
-            var preview = GenerateHtmlPreview();
-
-            webBrowserPreview.DocumentText = preview;
-        }
-
         private JToken GetNodeByKey(JEnumerable<JToken> nodes, string key)
         {
             JToken found = null;
@@ -933,6 +935,42 @@ namespace ZTn.Json.Editor.Forms
                 }
             }
             return found;
+        }
+
+        private void buttonPreview_Click(object sender, EventArgs e)
+        {
+            int steps = JsonEditorItem.JTokenValue.Children().Count();
+            if (wizardpage > steps) wizardpage = 1;
+            buttonPrev.Visible = (wizardpage > 1);
+            buttonNext.Visible = (wizardpage < steps);
+
+            var preview = GenerateHtmlPreview(wizardpage);
+        }
+
+        private void buttonPrev_Click(object sender, EventArgs e)
+        {
+            int steps = JsonEditorItem.JTokenValue.Children().Count();
+            if (wizardpage > steps) wizardpage = 1;
+            if (wizardpage > 1)
+            {
+                wizardpage--;
+                var preview = GenerateHtmlPreview(wizardpage);
+                buttonPrev.Visible = (wizardpage > 1);
+                buttonNext.Visible = true;
+            }
+        }
+
+        private void buttonNext_Click(object sender, EventArgs e)
+        {
+            int steps = JsonEditorItem.JTokenValue.Children().Count();
+            if (wizardpage > steps) wizardpage = 1;
+            if (wizardpage < steps)
+            {
+                wizardpage++;
+                var preview = GenerateHtmlPreview(wizardpage);
+                buttonPrev.Visible = true;
+                buttonNext.Visible = (wizardpage < steps);
+            }
         }
     }
 }

@@ -1752,7 +1752,7 @@ namespace BeatificaBytes.Synology.Mods
             // wizardInstallUIToolStripMenuItem
             // 
             this.wizardInstallUIToolStripMenuItem.Name = "wizardInstallUIToolStripMenuItem";
-            this.wizardInstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
+            this.wizardInstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
             this.wizardInstallUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.wizardInstallUIToolStripMenuItem.Tag = "install_uifile";
             this.wizardInstallUIToolStripMenuItem.Text = "Wizard-Install UI";
@@ -1762,7 +1762,7 @@ namespace BeatificaBytes.Synology.Mods
             // wizardUninstallUIToolStripMenuItem
             // 
             this.wizardUninstallUIToolStripMenuItem.Name = "wizardUninstallUIToolStripMenuItem";
-            this.wizardUninstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
+            this.wizardUninstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
             this.wizardUninstallUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.wizardUninstallUIToolStripMenuItem.Tag = "uninstall_uifile";
             this.wizardUninstallUIToolStripMenuItem.Text = "Wizard-Uninstall UI";
@@ -1772,7 +1772,7 @@ namespace BeatificaBytes.Synology.Mods
             // wizardUpgradeUIToolStripMenuItem
             // 
             this.wizardUpgradeUIToolStripMenuItem.Name = "wizardUpgradeUIToolStripMenuItem";
-            this.wizardUpgradeUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
+            this.wizardUpgradeUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F11;
             this.wizardUpgradeUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
             this.wizardUpgradeUIToolStripMenuItem.Tag = "upgrade_uifile";
             this.wizardUpgradeUIToolStripMenuItem.Text = "Wizard-Upgrade UI";
