@@ -171,9 +171,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
-
-            textBoxPackage.Focus();
-
+            textBoxDisplay.Focus();
             CreateRecentsMenu();
 
             ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
@@ -184,17 +182,24 @@ namespace BeatificaBytes.Synology.Mods
             openRecentToolStripMenuItem.DropDownItems.Clear();
             if (Properties.Settings.Default.Recents != null)
             {
-                ToolStripMenuItem[] items = new ToolStripMenuItem[Properties.Settings.Default.Recents.Count];
-                for (int item = items.Length - 1; item >= 0; item--)
+                var items = new List<ToolStripMenuItem>();
+                for (int item = Properties.Settings.Default.Recents.Count - 1; item >= 0; item--)
                 {
-                    items[item] = new ToolStripMenuItem();
-                    items[item].Name = "recentItem" + item.ToString();
-                    items[item].Tag = Properties.Settings.Default.Recents[item];
-                    items[item].Text = Properties.Settings.Default.RecentsName[item];
-                    items[item].ToolTipText = Properties.Settings.Default.Recents[item];
-                    items[item].Click += new EventHandler(MenuItemOpenRecent_ClickHandler);
+                    try
+                    {
+                        var entry = new ToolStripMenuItem();
+                        entry.Name = "recentItem" + item.ToString();
+                        entry.Tag = Properties.Settings.Default.Recents[item];
+                        entry.Text = Properties.Settings.Default.RecentsName[item];
+                        entry.ToolTipText = Properties.Settings.Default.Recents[item];
+                        entry.Click += new EventHandler(MenuItemOpenRecent_ClickHandler);
+                        items.Add(entry);
+                    }
+                    catch
+                    {
+                    }
                 }
-                openRecentToolStripMenuItem.DropDownItems.AddRange(items);
+                openRecentToolStripMenuItem.DropDownItems.AddRange(items.ToArray());
             }
         }
 
@@ -340,15 +345,15 @@ namespace BeatificaBytes.Synology.Mods
 
                     if (list == null || list.items.Count == 0)
                     {
-                        json = Properties.Settings.Default.Packages;
-                        if (!string.IsNullOrEmpty(json))
-                        {
-                            list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-                        }
-                        else
-                        {
-                            list = new Package();
-                        }
+                        //json = Properties.Settings.Default.Packages;
+                        //if (!string.IsNullOrEmpty(json))
+                        //{
+                        //    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+                        //}
+                        //else
+                        //{
+                        list = new Package();
+                        //}
                     }
                 }
                 else
@@ -472,6 +477,8 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (info.ContainsKey("maintainer") && info["maintainer"] == "...")
                     info["maintainer"] = Environment.UserName;
+                if (info.ContainsKey("distributor") && info["distributor"] == "...")
+                    info["distributor"] = Environment.UserName;
 
                 groupBoxPackage.Enabled = false;
 
@@ -921,7 +928,7 @@ namespace BeatificaBytes.Synology.Mods
             if (state == State.Add)
                 current = new KeyValuePair<string, AppsData>(null, null);
 
-            ResetValidateChildren(); // Reset Error Validation on all controls
+            ResetValidateChildren(this); // Reset Error Validation on all controls
 
             DisplayItem(current);
         }
@@ -930,30 +937,39 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (ValidateChildren()) // Trigger Error Validation on all controls
             {
-                var candidate = GetItemDetails();
-                if (state == State.Edit)
-                    candidate.Value.guid = current.Value.guid;
-
-                bool succeed;
-                succeed = CleanupPreviousItem(current, candidate);
-                if (succeed)
-                    succeed = RenamePreviousItem(current, candidate);
-
-                if (succeed)
+                DialogResult answer = DialogResult.No;
+                if (!IsItemPicturesLoaded())
                 {
-                    SaveItemDetails(candidate);
-                    SaveItemsConfig();
-
-                    currentScript = null;
-                    currentRunner = null;
-                    webAppIndex = null;
-                    webAppFolder = null;
-
-                    listViewItems.Focus();
+                    answer = MessageBoxEx.Show(this, "This item has no icon. Do you want to add icons before saving ?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
                 }
-                else
+                if (answer == DialogResult.No)
                 {
-                    MessageBoxEx.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    var candidate = GetItemDetails();
+
+                    if (state == State.Edit)
+                        candidate.Value.guid = current.Value.guid;
+
+                    bool succeed;
+                    succeed = CleanupPreviousItem(current, candidate);
+                    if (succeed)
+                        succeed = RenamePreviousItem(current, candidate);
+
+                    if (succeed)
+                    {
+                        SaveItemDetails(candidate);
+                        SaveItemsConfig();
+
+                        currentScript = null;
+                        currentRunner = null;
+                        webAppIndex = null;
+                        webAppFolder = null;
+
+                        listViewItems.Focus();
+                    }
+                    else
+                    {
+                        MessageBoxEx.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                 }
             }
             else
@@ -1020,7 +1036,7 @@ namespace BeatificaBytes.Synology.Mods
                 e.Cancel = true;
             }
             else
-            if (SavePackage(PackageRootPath) == DialogResult.Cancel)
+            if (CheckChanges() && SavePackage(PackageRootPath) == DialogResult.Cancel)
                 e.Cancel = true;
             else
                 e.Cancel = false;
@@ -2234,12 +2250,33 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
         }
+
+        private bool IsItemPicturesLoaded()
+        {
+            bool hasIcon = false;
+            foreach (var pictureBox in pictureBoxes)
+            {
+                var picture = pictureBox.Value;
+                var image = picture.Image;
+
+                if (image != null)
+                {
+                    hasIcon = true;
+                    break;
+                }
+            }
+
+            return hasIcon;
+        }
         #endregion --------------------------------------------------------------------------------------------------------------------------------
 
         #region Validations -----------------------------------------------------------------------------------------------------------------------
         private void textBoxPackage_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxPackage, ref e))
+            if (string.IsNullOrEmpty(textBoxPackage.Text) && !string.IsNullOrEmpty(textBoxDisplay.Text))
+                textBoxPackage.Text = textBoxDisplay.Text.Replace(' ', '_');
+
+            if (!CheckEmpty(textBoxPackage, ref e, ""))
             {
                 textBoxPackage.Text = textBoxPackage.Text.Replace(' ', '_');
                 var name = textBoxPackage.Text;
@@ -2256,11 +2293,12 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxPackage_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxPackage, "");
+
             if (textBoxPackage.Enabled)
             {
                 var newName = textBoxPackage.Text;
-                var oldName = info.Count > 0 ? info["package"] : newName;
-                if (newName != oldName)
+                var oldName = info.Count > 0 && info.ContainsKey("package") ? info["package"] : newName;
+                if (newName != oldName && !string.IsNullOrEmpty(oldName))
                 {
                     var focused = Helper.FindFocusedControl(this);
 
@@ -2270,8 +2308,8 @@ namespace BeatificaBytes.Synology.Mods
                         copy.items.Add(item.Key.Replace(oldName, newName), item.Value);
                     }
                     list = copy;
-
-                    textBoxDsmAppName.Text = textBoxDsmAppName.Text.Replace(oldName, newName);
+                    if (!string.IsNullOrEmpty(textBoxDsmAppName.Text))
+                        textBoxDsmAppName.Text = textBoxDsmAppName.Text.Replace(oldName, newName);
 
                     //foreach (string oldSnapshot in Directory.GetFiles(PackageRootPath, "*_screen_*.png"))
                     //{
@@ -2302,8 +2340,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxDisplay_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxDisplay.Text))
-                textBoxDisplay.Text = textBoxPackage.Text.Replace(' ', '_');
+            if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
+                textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
             CheckDoubleQuotes(textBoxDisplay, ref e);
         }
 
@@ -2314,7 +2352,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxMaintainer_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxMaintainer, ref e))
+            if (!CheckEmpty(textBoxMaintainer, ref e, ""))
             {
                 CheckDoubleQuotes(textBoxMaintainer, ref e);
             }
@@ -2325,22 +2363,22 @@ namespace BeatificaBytes.Synology.Mods
             errorProvider.SetError(textBoxMaintainer, "");
         }
 
-        private void textBoxPublisher_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxPublisher, "");
-        }
+        //private void textBoxPublisher_Validated(object sender, EventArgs e)
+        //{
+        //    errorProvider.SetError(textBoxPublisher, "");
+        //}
 
-        private void textBoxPublisher_Validating(object sender, CancelEventArgs e)
-        {
-            if (!CheckEmpty(textBoxPublisher, ref e))
-            {
-                CheckDoubleQuotes(textBoxPublisher, ref e);
-            }
-        }
+        //private void textBoxPublisher_Validating(object sender, CancelEventArgs e)
+        //{
+        //    if (!CheckEmpty(textBoxPublisher, ref e))
+        //    {
+        //        CheckDoubleQuotes(textBoxPublisher, ref e);
+        //    }
+        //}
 
         private void textBoxDescription_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxPublisher, ref e))
+            if (!CheckEmpty(textBoxDescription, ref e, ""))
             {
                 CheckDoubleQuotes(textBoxDescription, ref e);
             }
@@ -2367,7 +2405,7 @@ namespace BeatificaBytes.Synology.Mods
         private void textBoxVersion_Validating(object sender, CancelEventArgs e)
         {
             textBoxVersion.Text = textBoxVersion.Text.Replace("_", "-").Replace("b", ".");
-            if (!CheckEmpty(textBoxVersion, ref e))
+            if (!CheckEmpty(textBoxVersion, ref e, ""))
             {
                 var match = getOldVersion.Match(textBoxVersion.Text);
                 if (match.Success)
@@ -2390,7 +2428,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxDsmAppName_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxDsmAppName.Text))
+            if (string.IsNullOrEmpty(textBoxDsmAppName.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
             {
                 textBoxDsmAppName.Text = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(textBoxPackage.Text));
             }
@@ -2411,7 +2449,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxTitle_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxTitle, ref e))
+            if (!CheckEmpty(textBoxTitle, ref e, ""))
             {
                 if (textBoxTitle.Text.Equals("images", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -2454,7 +2492,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxItem_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxUrl, ref e))
+            if (!CheckEmpty(textBoxUrl, ref e, ""))
             {
                 if (comboBoxItemType.SelectedIndex == (int)UrlType.Url)
                 {
@@ -2468,11 +2506,11 @@ namespace BeatificaBytes.Synology.Mods
             errorProvider.SetError(textBoxUrl, "");
         }
 
-        private bool CheckEmpty(TextBox textBox, ref CancelEventArgs e)
+        private bool CheckEmpty(TextBox textBox, ref CancelEventArgs e, string defaultValue)
         {
             if (textBox.Enabled && string.IsNullOrEmpty(textBox.Text))
             {
-                textBox.Text = "Enter_A_Value";
+                textBox.Text = defaultValue;
                 e.Cancel = true;
                 textBox.Select(0, textBox.Text.Length);
                 errorProvider.SetError(textBox, "This field may not be empty.");
@@ -2507,13 +2545,14 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         // Reset errors possibly displayed on any Control
-        private void ResetValidateChildren()
+        private void ResetValidateChildren(Control control)
         {
-            foreach (Control ctrl in this.Controls)
+            errorProvider.SetError(control, "");
+            foreach (Control ctrl in control.Controls)
             {
                 if (ctrl != null)
                 {
-                    errorProvider.SetError(ctrl, "");
+                    ResetValidateChildren(ctrl);
                 }
             }
         }
@@ -2601,16 +2640,16 @@ namespace BeatificaBytes.Synology.Mods
                 DialogResult response = DialogResult.Yes;
                 if (info != null)
                 {
-                    if (!dirty)
-                        dirty = CheckChanges();
-                    if (dirty)
+                    if (ValidateChildren())
                     {
-                        if (!force)
-                            response = MessageBoxEx.Show(this, "Do you want to save changes done in the current Package", "Warning", MessageBoxButtons.YesNoCancel);
-
-                        if (response == DialogResult.Yes)
+                        if (!dirty)
+                            dirty = CheckChanges();
+                        if (dirty)
                         {
-                            if (ValidateChildren())
+                            if (!force)
+                                response = MessageBoxEx.Show(this, "Do you want to save changes done in the current Package? This cannot be undone!!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                            if (response == DialogResult.Yes)
                             {
                                 if (info.ContainsKey("checksum"))
                                     info.Remove("checksum");
@@ -2624,15 +2663,17 @@ namespace BeatificaBytes.Synology.Mods
                                 ResetEditScriptMenuIcons();
                                 dirty = false;
                             }
-                            else
-                            {
-                                response = DialogResult.Cancel;
-                            }
+                        }
+                        else
+                        {
+                            ResetEditScriptMenuIcons();
+                            MessageBoxEx.Show(this, "There is no change to be saved in the current Package", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            response = DialogResult.Cancel;
                         }
                     }
                     else
                     {
-                        ResetEditScriptMenuIcons();
+                        response = DialogResult.Cancel;
                     }
                 }
                 else
@@ -2664,13 +2705,12 @@ namespace BeatificaBytes.Synology.Mods
 
             Properties.Settings.Default.Recents.Add(PackageRootPath);
             if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
-            {
                 Properties.Settings.Default.RecentsName.Add(info["displayname"]);
-            }
-            else
-            {
+            else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
                 Properties.Settings.Default.RecentsName.Add(info["package"]);
-            }
+            else
+                Properties.Settings.Default.RecentsName.Add(Path.GetFileName(PackageRootPath));
+
             Properties.Settings.Default.Save();
         }
 
@@ -2702,12 +2742,12 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
-                        {
                             dirty = textBox.Text != info[key];
+                        else
+                            dirty = !string.IsNullOrEmpty(textBox.Text);
 
-                            if (dirty)
-                                break;
-                        }
+                        if (dirty)
+                            break;
                     }
                     var checkBox = control as CheckBox;
                     if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
@@ -2716,12 +2756,10 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
-                        {
                             dirty = checkBox.Checked != (info[key] == "yes");
 
-                            if (dirty)
-                                break;
-                        }
+                        if (dirty)
+                            break;
                     }
                     var comboBox = control as ComboBox;
                     if (comboBox != null && comboBox.Tag != null && comboBox.Tag.ToString().StartsWith("PKG"))
@@ -2730,12 +2768,12 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
-                        {
                             dirty = comboBox.Text != info[key];
+                        else
+                            dirty = !string.IsNullOrEmpty(comboBox.Text);
 
-                            if (dirty)
-                                break;
-                        }
+                        if (dirty)
+                            break;
                     }
                 }
 
@@ -2748,7 +2786,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (info != null)
             {
-                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package to its defaults?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package? This cannot be undone!!!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
                 if (answer == DialogResult.Yes)
                 {
                     try
@@ -2762,7 +2800,7 @@ namespace BeatificaBytes.Synology.Mods
                                 var ex = Helper.DeleteDirectory(PackageRootPath);
                                 if (ex != null)
                                 {
-                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message));
+                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     succeed = false;
                                 }
                             }
@@ -2781,6 +2819,8 @@ namespace BeatificaBytes.Synology.Mods
             {
                 MessageBoxEx.Show(this, "There is no Package loaded.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
+
+            textBoxDisplay.Focus();
 
             return succeed; //TODO: Handle this return value;
         }
@@ -2812,7 +2852,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 PackageRootPath = path;
 
-                ResetValidateChildren(); // Reset Error Validation on all controls
+                ResetValidateChildren(this); // Reset Error Validation on all controls
 
                 InitialConfiguration(path);
                 LoadPackageInfo(path);
@@ -2971,7 +3011,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 PackageRootPath = path;
 
-                ResetValidateChildren(); // Reset Error Validation on all controls
+                ResetValidateChildren(this); // Reset Error Validation on all controls
 
                 if (result == DialogResult.Yes)
                 {
@@ -3334,7 +3374,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxFirmware, ref e))
+            if (!CheckEmpty(textBoxFirmware, ref e, ""))
             {
                 if (getOldFirmwareVersion.IsMatch(textBoxFirmware.Text))
                 {
@@ -3479,8 +3519,8 @@ namespace BeatificaBytes.Synology.Mods
         private void CloseCurrentPackage()
         {
             PackageRootPath = "";
-            textBoxPackage.Focus();
-            ResetValidateChildren(); // Reset Error Validation on all controls
+            textBoxDisplay.Focus();
+            ResetValidateChildren(this); // Reset Error Validation on all controls
 
             info = null;
             list = null;
@@ -3491,6 +3531,8 @@ namespace BeatificaBytes.Synology.Mods
             BindData(list, null);
             DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
             labelToolTip.Text = "";
+
+            textBoxDisplay.Focus();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -4053,6 +4095,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             var edit = new Dependencies(info);
             edit.ShowDialog(this);
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                ResetValidateChildren(this);
+                textBoxDisplay.Focus();
+            }
         }
     }
 }

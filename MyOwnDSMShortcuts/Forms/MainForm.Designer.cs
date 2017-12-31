@@ -211,10 +211,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxPackage
             // 
-            this.textBoxPackage.Location = new System.Drawing.Point(102, 20);
+            this.textBoxPackage.Location = new System.Drawing.Point(102, 46);
             this.textBoxPackage.Name = "textBoxPackage";
             this.textBoxPackage.Size = new System.Drawing.Size(141, 20);
-            this.textBoxPackage.TabIndex = 0;
+            this.textBoxPackage.TabIndex = 2;
             this.textBoxPackage.Tag = "PKGpackage";
             this.toolTip4Mods.SetToolTip(this.textBoxPackage, "Enter a name for your Package. This name may not include any special character or" +
         " blanks.\r\nPackage Center will create a /var/packages/[package identity] folder t" +
@@ -224,10 +224,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxDisplay
             // 
-            this.textBoxDisplay.Location = new System.Drawing.Point(102, 46);
+            this.textBoxDisplay.Location = new System.Drawing.Point(102, 20);
             this.textBoxDisplay.Name = "textBoxDisplay";
             this.textBoxDisplay.Size = new System.Drawing.Size(141, 20);
-            this.textBoxDisplay.TabIndex = 2;
+            this.textBoxDisplay.TabIndex = 0;
             this.textBoxDisplay.Tag = "PKGdisplayname_enu;PKGdisplayname";
             this.toolTip4Mods.SetToolTip(this.textBoxDisplay, "Enter the name to be displayed on DSM for your package.\r\nIf you don\'t enter a Dis" +
         "play name, the Package name will be displayed.");
@@ -353,8 +353,6 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisher.Tag = "PKGdistributor";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisher, "Enter the name of the person who create the package.\r\nThis name will be displayed" +
         " in DSM\'s Package Center.");
-            this.textBoxPublisher.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxPublisher_Validating);
-            this.textBoxPublisher.Validated += new System.EventHandler(this.textBoxPublisher_Validated);
             // 
             // buttonAdd
             // 
@@ -1088,7 +1086,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelPackage
             // 
             this.labelPackage.AutoSize = true;
-            this.labelPackage.Location = new System.Drawing.Point(15, 23);
+            this.labelPackage.Location = new System.Drawing.Point(15, 50);
             this.labelPackage.Name = "labelPackage";
             this.labelPackage.Size = new System.Drawing.Size(84, 13);
             this.labelPackage.TabIndex = 29;
@@ -1097,7 +1095,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelDisplay
             // 
             this.labelDisplay.AutoSize = true;
-            this.labelDisplay.Location = new System.Drawing.Point(24, 49);
+            this.labelDisplay.Location = new System.Drawing.Point(24, 23);
             this.labelDisplay.Name = "labelDisplay";
             this.labelDisplay.Size = new System.Drawing.Size(75, 13);
             this.labelDisplay.TabIndex = 35;
@@ -1800,11 +1798,13 @@ namespace BeatificaBytes.Synology.Mods
             this.Controls.Add(this.groupBoxPackage);
             this.Controls.Add(this.menuStripMainBar);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MainMenuStrip = this.menuStripMainBar;
             this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.Name = "MainForm";
             this.Text = "Mods Packager for Synology";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
