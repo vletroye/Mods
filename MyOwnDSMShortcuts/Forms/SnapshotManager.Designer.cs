@@ -123,7 +123,12 @@
             this.Controls.Add(this.flowLayoutPanelSnapshot);
             this.Controls.Add(this.buttonCancel);
             this.KeyPreview = true;
+            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(884, 608);
             this.Name = "SnapshotManager";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Snapshot Manager";
             this.Load += new System.EventHandler(this.SnapshotManager_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SnapshotManager_KeyDown);

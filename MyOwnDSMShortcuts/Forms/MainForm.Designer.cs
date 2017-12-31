@@ -71,9 +71,6 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentUninstall = new System.Windows.Forms.CheckBox();
             this.checkBoxSilentUpgrade = new System.Windows.Forms.CheckBox();
             this.checkBoxSilentInstalll = new System.Windows.Forms.CheckBox();
-            this.textBoxArch = new System.Windows.Forms.TextBox();
-            this.textBoxExcludeArch = new System.Windows.Forms.TextBox();
-            this.textBoxModel = new System.Windows.Forms.TextBox();
             this.checkBoxPrecheck = new System.Windows.Forms.CheckBox();
             this.checkBoxStartable = new System.Windows.Forms.CheckBox();
             this.checkBoxOfflineInstall = new System.Windows.Forms.CheckBox();
@@ -88,17 +85,6 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxAdminProtocol = new System.Windows.Forms.ComboBox();
             this.textBoxAdminUrl = new System.Windows.Forms.TextBox();
             this.checkBoxAdminUrl = new System.Windows.Forms.CheckBox();
-            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
-            this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
-            this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -110,17 +96,15 @@ namespace BeatificaBytes.Synology.Mods
             this.label1 = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
+            this.buttonDependencies = new System.Windows.Forms.Button();
             this.textBoxChangeBox = new System.Windows.Forms.TextBox();
             this.labelLatestFirmware = new System.Windows.Forms.Label();
-            this.labelModel = new System.Windows.Forms.Label();
-            this.labelExcludeArch = new System.Windows.Forms.Label();
             this.labelSupportUrl = new System.Windows.Forms.Label();
             this.labelHelpUrl = new System.Windows.Forms.Label();
             this.labelReportUrl = new System.Windows.Forms.Label();
             this.labelPublisherUrl = new System.Windows.Forms.Label();
             this.labelFirmware = new System.Windows.Forms.Label();
             this.labelPublisher = new System.Windows.Forms.Label();
-            this.labelArch = new System.Windows.Forms.Label();
             this.listViewItems = new System.Windows.Forms.ListView();
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
@@ -170,6 +154,22 @@ namespace BeatificaBytes.Synology.Mods
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
+            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            this.groupBoxPackage.SuspendLayout();
+            this.groupBoxItem.SuspendLayout();
+            this.menuStripMainBar.SuspendLayout();
+            this.groupBoxTip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -181,18 +181,13 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-            this.groupBoxPackage.SuspendLayout();
-            this.groupBoxItem.SuspendLayout();
-            this.menuStripMainBar.SuspendLayout();
-            this.groupBoxTip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxMaintainerUrl
             // 
             this.textBoxMaintainerUrl.Location = new System.Drawing.Point(330, 72);
             this.textBoxMaintainerUrl.Name = "textBoxMaintainerUrl";
-            this.textBoxMaintainerUrl.Size = new System.Drawing.Size(226, 20);
+            this.textBoxMaintainerUrl.Size = new System.Drawing.Size(240, 20);
             this.textBoxMaintainerUrl.TabIndex = 5;
             this.textBoxMaintainerUrl.Tag = "PKGmaintainer_url";
             this.toolTip4Mods.SetToolTip(this.textBoxMaintainerUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
@@ -206,7 +201,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxDescription.Size = new System.Drawing.Size(455, 73);
+            this.textBoxDescription.Size = new System.Drawing.Size(468, 73);
             this.textBoxDescription.TabIndex = 8;
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
@@ -266,7 +261,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxDsmAppName.Location = new System.Drawing.Point(330, 46);
             this.textBoxDsmAppName.Name = "textBoxDsmAppName";
-            this.textBoxDsmAppName.Size = new System.Drawing.Size(226, 20);
+            this.textBoxDsmAppName.Size = new System.Drawing.Size(240, 20);
             this.textBoxDsmAppName.TabIndex = 3;
             this.textBoxDsmAppName.Tag = "PKGdsmappname";
             this.toolTip4Mods.SetToolTip(this.textBoxDsmAppName, "Enter an application name for your package. Ex.: com.yourSite.yourPackageName\r\nTh" +
@@ -318,7 +313,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonPublish.Location = new System.Drawing.Point(913, 253);
             this.buttonPublish.Name = "buttonPublish";
             this.buttonPublish.Size = new System.Drawing.Size(72, 23);
-            this.buttonPublish.TabIndex = 34;
+            this.buttonPublish.TabIndex = 32;
             this.buttonPublish.Text = "Publish";
             this.toolTip4Mods.SetToolTip(this.buttonPublish, "Generate and Publish the Package.\r\nAll changes done in the \"Package Information\" " +
         "pane will be saved.");
@@ -332,7 +327,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonReset.Location = new System.Drawing.Point(913, 229);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(72, 23);
-            this.buttonReset.TabIndex = 33;
+            this.buttonReset.TabIndex = 31;
             this.buttonReset.Text = "Reset";
             this.toolTip4Mods.SetToolTip(this.buttonReset, "Reset the Package to Dummy values.");
             this.buttonReset.UseVisualStyleBackColor = true;
@@ -494,7 +489,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxPublisherUrl.Location = new System.Drawing.Point(330, 98);
             this.textBoxPublisherUrl.Name = "textBoxPublisherUrl";
-            this.textBoxPublisherUrl.Size = new System.Drawing.Size(226, 20);
+            this.textBoxPublisherUrl.Size = new System.Drawing.Size(240, 20);
             this.textBoxPublisherUrl.TabIndex = 7;
             this.textBoxPublisherUrl.Tag = "PKGdistributor_url";
             this.toolTip4Mods.SetToolTip(this.textBoxPublisherUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
@@ -506,7 +501,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxHelpUrl.Location = new System.Drawing.Point(102, 229);
             this.textBoxHelpUrl.Name = "textBoxHelpUrl";
-            this.textBoxHelpUrl.Size = new System.Drawing.Size(291, 20);
+            this.textBoxHelpUrl.Size = new System.Drawing.Size(362, 20);
             this.textBoxHelpUrl.TabIndex = 10;
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
@@ -519,7 +514,7 @@ namespace BeatificaBytes.Synology.Mods
             this.TextBoxReportUrl.Location = new System.Drawing.Point(556, 254);
             this.TextBoxReportUrl.Name = "TextBoxReportUrl";
             this.TextBoxReportUrl.Size = new System.Drawing.Size(254, 20);
-            this.TextBoxReportUrl.TabIndex = 18;
+            this.TextBoxReportUrl.TabIndex = 17;
             this.TextBoxReportUrl.Tag = "PKGreport_url";
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
         "by clicking on developer\'s name in DSM\'s Package Center.");
@@ -529,10 +524,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxFirmware
             // 
-            this.textBoxFirmware.Location = new System.Drawing.Point(738, 202);
+            this.textBoxFirmware.Location = new System.Drawing.Point(709, 124);
             this.textBoxFirmware.Name = "textBoxFirmware";
-            this.textBoxFirmware.Size = new System.Drawing.Size(73, 20);
-            this.textBoxFirmware.TabIndex = 30;
+            this.textBoxFirmware.Size = new System.Drawing.Size(100, 20);
+            this.textBoxFirmware.TabIndex = 26;
             this.textBoxFirmware.Tag = "PKGfirmware;PKGos_min_ver";
             this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\n Value: X." +
         "Y-Z DSM major number, DSM minor number, DSM build number");
@@ -545,7 +540,7 @@ namespace BeatificaBytes.Synology.Mods
             this.buttonAdvanced.Location = new System.Drawing.Point(913, 206);
             this.buttonAdvanced.Name = "buttonAdvanced";
             this.buttonAdvanced.Size = new System.Drawing.Size(72, 23);
-            this.buttonAdvanced.TabIndex = 32;
+            this.buttonAdvanced.TabIndex = 30;
             this.buttonAdvanced.Text = "Advanced";
             this.toolTip4Mods.SetToolTip(this.buttonAdvanced, "Edit Advanced Optional Fields not yet supported via the interface. \r\nEx.: install" +
         "_dep_packages, startstop_restart_services, description_xxx (for other languages)" +
@@ -557,10 +552,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxBeta.AutoSize = true;
             this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxBeta.Location = new System.Drawing.Point(409, 256);
+            this.checkBoxBeta.Location = new System.Drawing.Point(484, 230);
             this.checkBoxBeta.Name = "checkBoxBeta";
             this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxBeta.TabIndex = 17;
+            this.checkBoxBeta.TabIndex = 16;
             this.checkBoxBeta.Tag = "PKGbeta";
             this.checkBoxBeta.Text = "Beta Version";
             this.toolTip4Mods.SetToolTip(this.checkBoxBeta, "Check this option if your package is still in a beta phase.");
@@ -589,7 +584,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxSupportUrl.Location = new System.Drawing.Point(102, 203);
             this.textBoxSupportUrl.Name = "textBoxSupportUrl";
-            this.textBoxSupportUrl.Size = new System.Drawing.Size(291, 20);
+            this.textBoxSupportUrl.Size = new System.Drawing.Size(362, 20);
             this.textBoxSupportUrl.TabIndex = 9;
             this.textBoxSupportUrl.Tag = "PKGsupport_url";
             this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
@@ -601,10 +596,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSingleApp.AutoSize = true;
             this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSingleApp.Location = new System.Drawing.Point(415, 231);
+            this.checkBoxSingleApp.Location = new System.Drawing.Point(729, 229);
             this.checkBoxSingleApp.Name = "checkBoxSingleApp";
             this.checkBoxSingleApp.Size = new System.Drawing.Size(80, 17);
-            this.checkBoxSingleApp.TabIndex = 16;
+            this.checkBoxSingleApp.TabIndex = 29;
             this.checkBoxSingleApp.Tag = "PKGsingleApp";
             this.checkBoxSingleApp.Text = "Single App:";
             this.toolTip4Mods.SetToolTip(this.checkBoxSingleApp, "Check this option if your package will only contain one url, script or applicatio" +
@@ -648,7 +643,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxSilentReboot.Location = new System.Drawing.Point(718, 99);
             this.checkBoxSilentReboot.Name = "checkBoxSilentReboot";
             this.checkBoxSilentReboot.Size = new System.Drawing.Size(91, 17);
-            this.checkBoxSilentReboot.TabIndex = 26;
+            this.checkBoxSilentReboot.TabIndex = 25;
             this.checkBoxSilentReboot.Tag = "PKGinstall_reboot";
             this.checkBoxSilentReboot.Text = "Install Reboot";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentReboot, "Reboot DiskStation after installing or upgrading the package. Default Value: no");
@@ -658,10 +653,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSilentUninstall.AutoSize = true;
             this.checkBoxSilentUninstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentUninstall.Location = new System.Drawing.Point(566, 99);
+            this.checkBoxSilentUninstall.Location = new System.Drawing.Point(593, 99);
             this.checkBoxSilentUninstall.Name = "checkBoxSilentUninstall";
             this.checkBoxSilentUninstall.Size = new System.Drawing.Size(95, 17);
-            this.checkBoxSilentUninstall.TabIndex = 25;
+            this.checkBoxSilentUninstall.TabIndex = 21;
             this.checkBoxSilentUninstall.Tag = "PKGsilent_uninstall";
             this.checkBoxSilentUninstall.Text = "Silent Uninstall";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentUninstall, resources.GetString("checkBoxSilentUninstall.ToolTip"));
@@ -671,10 +666,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSilentUpgrade.AutoSize = true;
             this.checkBoxSilentUpgrade.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentUpgrade.Location = new System.Drawing.Point(567, 73);
+            this.checkBoxSilentUpgrade.Location = new System.Drawing.Point(594, 73);
             this.checkBoxSilentUpgrade.Name = "checkBoxSilentUpgrade";
             this.checkBoxSilentUpgrade.Size = new System.Drawing.Size(94, 17);
-            this.checkBoxSilentUpgrade.TabIndex = 23;
+            this.checkBoxSilentUpgrade.TabIndex = 20;
             this.checkBoxSilentUpgrade.Tag = "PKGsilent_upgrade";
             this.checkBoxSilentUpgrade.Text = "Silent upgrade";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentUpgrade, resources.GetString("checkBoxSilentUpgrade.ToolTip"));
@@ -684,49 +679,14 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSilentInstalll.AutoSize = true;
             this.checkBoxSilentInstalll.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSilentInstalll.Location = new System.Drawing.Point(579, 47);
+            this.checkBoxSilentInstalll.Location = new System.Drawing.Point(606, 47);
             this.checkBoxSilentInstalll.Name = "checkBoxSilentInstalll";
             this.checkBoxSilentInstalll.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxSilentInstalll.TabIndex = 21;
+            this.checkBoxSilentInstalll.TabIndex = 19;
             this.checkBoxSilentInstalll.Tag = "PKGsilent_install";
             this.checkBoxSilentInstalll.Text = "Silent Install";
             this.toolTip4Mods.SetToolTip(this.checkBoxSilentInstalll, resources.GetString("checkBoxSilentInstalll.ToolTip"));
             this.checkBoxSilentInstalll.UseVisualStyleBackColor = true;
-            // 
-            // textBoxArch
-            // 
-            this.textBoxArch.Location = new System.Drawing.Point(646, 124);
-            this.textBoxArch.Name = "textBoxArch";
-            this.textBoxArch.Size = new System.Drawing.Size(165, 20);
-            this.textBoxArch.TabIndex = 27;
-            this.textBoxArch.Tag = "PKGarch";
-            this.toolTip4Mods.SetToolTip(this.textBoxArch, "Double click to Edit this list of CPU architectures where the package can be used" +
-        " to install the package. Values are separated by a space.");
-            this.textBoxArch.DoubleClick += new System.EventHandler(this.textBoxArch_DoubleClick);
-            this.textBoxArch.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxVersion_Validating);
-            this.textBoxArch.Validated += new System.EventHandler(this.textBoxVersion_Validated);
-            // 
-            // textBoxExcludeArch
-            // 
-            this.textBoxExcludeArch.Location = new System.Drawing.Point(646, 150);
-            this.textBoxExcludeArch.Name = "textBoxExcludeArch";
-            this.textBoxExcludeArch.Size = new System.Drawing.Size(165, 20);
-            this.textBoxExcludeArch.TabIndex = 28;
-            this.textBoxExcludeArch.Tag = "PKGexclude_arch";
-            this.toolTip4Mods.SetToolTip(this.textBoxExcludeArch, resources.GetString("textBoxExcludeArch.ToolTip"));
-            this.textBoxExcludeArch.DoubleClick += new System.EventHandler(this.textBoxExcludeArch_DoubleClick);
-            // 
-            // textBoxModel
-            // 
-            this.textBoxModel.Location = new System.Drawing.Point(646, 177);
-            this.textBoxModel.Name = "textBoxModel";
-            this.textBoxModel.Size = new System.Drawing.Size(165, 20);
-            this.textBoxModel.TabIndex = 29;
-            this.textBoxModel.Tag = "PKGmodel";
-            this.toolTip4Mods.SetToolTip(this.textBoxModel, "Double click to Edit the list of models on which packages can be installed. It is" +
-        " organized by Synology string, architecture\r\nand model name. Values are separate" +
-        "d with a space.");
-            this.textBoxModel.DoubleClick += new System.EventHandler(this.textBoxModel_DoubleClick);
             // 
             // checkBoxPrecheck
             // 
@@ -752,7 +712,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxStartable.Location = new System.Drawing.Point(741, 22);
             this.checkBoxStartable.Name = "checkBoxStartable";
             this.checkBoxStartable.Size = new System.Drawing.Size(68, 17);
-            this.checkBoxStartable.TabIndex = 20;
+            this.checkBoxStartable.TabIndex = 22;
             this.checkBoxStartable.Tag = "PKGstartable;PKGctl_stop;DEFyes";
             this.checkBoxStartable.Text = "Startable";
             this.toolTip4Mods.SetToolTip(this.checkBoxStartable, "If this option is not selected, the end-user cannot start or stop the package in " +
@@ -764,10 +724,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxOfflineInstall.AutoSize = true;
             this.checkBoxOfflineInstall.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxOfflineInstall.Location = new System.Drawing.Point(575, 22);
+            this.checkBoxOfflineInstall.Location = new System.Drawing.Point(602, 22);
             this.checkBoxOfflineInstall.Name = "checkBoxOfflineInstall";
             this.checkBoxOfflineInstall.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxOfflineInstall.TabIndex = 19;
+            this.checkBoxOfflineInstall.TabIndex = 18;
             this.checkBoxOfflineInstall.Tag = "PKGoffline_install";
             this.checkBoxOfflineInstall.Text = "Offline Install";
             this.toolTip4Mods.SetToolTip(this.checkBoxOfflineInstall, resources.GetString("checkBoxOfflineInstall.ToolTip"));
@@ -836,7 +796,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSupportCenter.AutoSize = true;
             this.checkBoxSupportCenter.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSupportCenter.Location = new System.Drawing.Point(395, 205);
+            this.checkBoxSupportCenter.Location = new System.Drawing.Point(470, 205);
             this.checkBoxSupportCenter.Name = "checkBoxSupportCenter";
             this.checkBoxSupportCenter.Size = new System.Drawing.Size(100, 17);
             this.checkBoxSupportCenter.TabIndex = 15;
@@ -855,7 +815,7 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxRemovable.Location = new System.Drawing.Point(729, 48);
             this.checkBoxRemovable.Name = "checkBoxRemovable";
             this.checkBoxRemovable.Size = new System.Drawing.Size(80, 17);
-            this.checkBoxRemovable.TabIndex = 22;
+            this.checkBoxRemovable.TabIndex = 23;
             this.checkBoxRemovable.Tag = "PKGctl_uninstall;DEFyes";
             this.checkBoxRemovable.Text = "Removable";
             this.toolTip4Mods.SetToolTip(this.checkBoxRemovable, "If this option is deselected, the end-user cannot uninstall the package in Packag" +
@@ -864,10 +824,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxLatestFirmware
             // 
-            this.textBoxLatestFirmware.Location = new System.Drawing.Point(738, 226);
+            this.textBoxLatestFirmware.Location = new System.Drawing.Point(709, 148);
             this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
-            this.textBoxLatestFirmware.Size = new System.Drawing.Size(73, 20);
-            this.textBoxLatestFirmware.TabIndex = 31;
+            this.textBoxLatestFirmware.Size = new System.Drawing.Size(100, 20);
+            this.textBoxLatestFirmware.TabIndex = 27;
             this.textBoxLatestFirmware.Tag = "PKGos_max_ver";
             this.toolTip4Mods.SetToolTip(this.textBoxLatestFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
         "M major number, DSM minor number, DSM build number");
@@ -907,7 +867,7 @@ namespace BeatificaBytes.Synology.Mods
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxAdminUrl.Location = new System.Drawing.Point(219, 255);
             this.textBoxAdminUrl.Name = "textBoxAdminUrl";
-            this.textBoxAdminUrl.Size = new System.Drawing.Size(174, 20);
+            this.textBoxAdminUrl.Size = new System.Drawing.Size(245, 20);
             this.textBoxAdminUrl.TabIndex = 14;
             this.textBoxAdminUrl.Tag = "PKGadminurl";
             this.toolTip4Mods.SetToolTip(this.textBoxAdminUrl, resources.GetString("textBoxAdminUrl.ToolTip"));
@@ -927,175 +887,6 @@ namespace BeatificaBytes.Synology.Mods
         "n. This option is also enabled if you open a third party package.");
             this.checkBoxAdminUrl.UseVisualStyleBackColor = true;
             this.checkBoxAdminUrl.CheckedChanged += new System.EventHandler(this.checkBoxAdminUrl_CheckedChanged);
-            // 
-            // pictureBox_256
-            // 
-            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_256.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_256.Location = new System.Drawing.Point(817, 149);
-            this.pictureBox_256.Name = "pictureBox_256";
-            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
-            this.pictureBox_256.TabIndex = 22;
-            this.pictureBox_256.TabStop = false;
-            this.pictureBox_256.Tag = "ITEM;256;MAX";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_128
-            // 
-            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_128.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_128.Location = new System.Drawing.Point(683, 185);
-            this.pictureBox_128.Name = "pictureBox_128";
-            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
-            this.pictureBox_128.TabIndex = 21;
-            this.pictureBox_128.TabStop = false;
-            this.pictureBox_128.Tag = "ITEM;128";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_96
-            // 
-            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_96.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_96.Location = new System.Drawing.Point(581, 217);
-            this.pictureBox_96.Name = "pictureBox_96";
-            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
-            this.pictureBox_96.TabIndex = 20;
-            this.pictureBox_96.TabStop = false;
-            this.pictureBox_96.Tag = "ITEM;96";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_72
-            // 
-            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_72.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_72.Location = new System.Drawing.Point(503, 241);
-            this.pictureBox_72.Name = "pictureBox_72";
-            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
-            this.pictureBox_72.TabIndex = 19;
-            this.pictureBox_72.TabStop = false;
-            this.pictureBox_72.Tag = "ITEM;72";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x7200. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_64
-            // 
-            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_64.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_64.Location = new System.Drawing.Point(433, 249);
-            this.pictureBox_64.Name = "pictureBox_64";
-            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox_64.TabIndex = 18;
-            this.pictureBox_64.TabStop = false;
-            this.pictureBox_64.Tag = "ITEM;64";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_48
-            // 
-            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_48.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_48.Location = new System.Drawing.Point(379, 265);
-            this.pictureBox_48.Name = "pictureBox_48";
-            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
-            this.pictureBox_48.TabIndex = 17;
-            this.pictureBox_48.TabStop = false;
-            this.pictureBox_48.Tag = "ITEM;48";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_32
-            // 
-            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_32.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_32.Location = new System.Drawing.Point(341, 281);
-            this.pictureBox_32.Name = "pictureBox_32";
-            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_32.TabIndex = 16;
-            this.pictureBox_32.TabStop = false;
-            this.pictureBox_32.Tag = "ITEM;32";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_24
-            // 
-            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_24.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_24.Location = new System.Drawing.Point(311, 289);
-            this.pictureBox_24.Name = "pictureBox_24";
-            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox_24.TabIndex = 15;
-            this.pictureBox_24.TabStop = false;
-            this.pictureBox_24.Tag = "ITEM;24";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_16
-            // 
-            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_16.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_16.Location = new System.Drawing.Point(289, 297);
-            this.pictureBox_16.Name = "pictureBox_16";
-            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox_16.TabIndex = 14;
-            this.pictureBox_16.TabStop = false;
-            this.pictureBox_16.Tag = "ITEM;16";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBoxPkg_72
-            // 
-            this.pictureBoxPkg_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxPkg_72.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxPkg_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxPkg_72.Location = new System.Drawing.Point(821, 206);
-            this.pictureBoxPkg_72.Name = "pictureBoxPkg_72";
-            this.pictureBoxPkg_72.Size = new System.Drawing.Size(72, 72);
-            this.pictureBoxPkg_72.TabIndex = 26;
-            this.pictureBoxPkg_72.TabStop = false;
-            this.pictureBoxPkg_72.Tag = "Pkg;72";
-            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_72, "Drop here a logo 72x72 to be used for this package when listed by DMS\'s Package C" +
-        "enter.");
-            this.pictureBoxPkg_72.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
-            this.pictureBoxPkg_72.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
-            this.pictureBoxPkg_72.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
-            // 
-            // pictureBoxPkg_256
-            // 
-            this.pictureBoxPkg_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxPkg_256.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxPkg_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxPkg_256.Location = new System.Drawing.Point(821, 33);
-            this.pictureBoxPkg_256.Name = "pictureBoxPkg_256";
-            this.pictureBoxPkg_256.Size = new System.Drawing.Size(164, 164);
-            this.pictureBoxPkg_256.TabIndex = 27;
-            this.pictureBoxPkg_256.TabStop = false;
-            this.pictureBoxPkg_256.Tag = "Pkg;256";
-            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_256, "Drop here a logo 256x256 to be used for this package when DMS\'s Package Center di" +
-        "splays its details.");
-            this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
-            this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
-            this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
             // 
             // openFileDialog4Mods
             // 
@@ -1184,6 +975,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPackage.Controls.Add(this.buttonDependencies);
             this.groupBoxPackage.Controls.Add(this.textBoxChangeBox);
             this.groupBoxPackage.Controls.Add(this.checkBoxAdminUrl);
             this.groupBoxPackage.Controls.Add(this.textBoxAdminPort);
@@ -1196,10 +988,6 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Controls.Add(this.checkBoxPrecheck);
             this.groupBoxPackage.Controls.Add(this.checkBoxStartable);
             this.groupBoxPackage.Controls.Add(this.checkBoxSupportCenter);
-            this.groupBoxPackage.Controls.Add(this.labelModel);
-            this.groupBoxPackage.Controls.Add(this.textBoxModel);
-            this.groupBoxPackage.Controls.Add(this.labelExcludeArch);
-            this.groupBoxPackage.Controls.Add(this.textBoxExcludeArch);
             this.groupBoxPackage.Controls.Add(this.checkBoxSilentReboot);
             this.groupBoxPackage.Controls.Add(this.checkBoxSilentUninstall);
             this.groupBoxPackage.Controls.Add(this.checkBoxSilentUpgrade);
@@ -1223,9 +1011,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Controls.Add(this.label1);
             this.groupBoxPackage.Controls.Add(this.textBoxDsmAppName);
             this.groupBoxPackage.Controls.Add(this.buttonReset);
-            this.groupBoxPackage.Controls.Add(this.labelArch);
             this.groupBoxPackage.Controls.Add(this.labelVersion);
-            this.groupBoxPackage.Controls.Add(this.textBoxArch);
             this.groupBoxPackage.Controls.Add(this.buttonPublish);
             this.groupBoxPackage.Controls.Add(this.textBoxVersion);
             this.groupBoxPackage.Controls.Add(this.pictureBoxPkg_72);
@@ -1247,6 +1033,16 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.TabStop = false;
             this.groupBoxPackage.Text = "PACKAGE INFORMATION";
             // 
+            // buttonDependencies
+            // 
+            this.buttonDependencies.Location = new System.Drawing.Point(709, 174);
+            this.buttonDependencies.Name = "buttonDependencies";
+            this.buttonDependencies.Size = new System.Drawing.Size(100, 23);
+            this.buttonDependencies.TabIndex = 28;
+            this.buttonDependencies.Text = "Dependencies";
+            this.buttonDependencies.UseVisualStyleBackColor = true;
+            this.buttonDependencies.Click += new System.EventHandler(this.buttonDependencies_Click);
+            // 
             // textBoxChangeBox
             // 
             this.textBoxChangeBox.Location = new System.Drawing.Point(965, 33);
@@ -1259,29 +1055,11 @@ namespace BeatificaBytes.Synology.Mods
             // labelLatestFirmware
             // 
             this.labelLatestFirmware.AutoSize = true;
-            this.labelLatestFirmware.Location = new System.Drawing.Point(646, 230);
+            this.labelLatestFirmware.Location = new System.Drawing.Point(652, 152);
             this.labelLatestFirmware.Name = "labelLatestFirmware";
-            this.labelLatestFirmware.Size = new System.Drawing.Size(84, 13);
+            this.labelLatestFirmware.Size = new System.Drawing.Size(55, 13);
             this.labelLatestFirmware.TabIndex = 74;
-            this.labelLatestFirmware.Text = "Latest Firmware:";
-            // 
-            // labelModel
-            // 
-            this.labelModel.AutoSize = true;
-            this.labelModel.Location = new System.Drawing.Point(603, 180);
-            this.labelModel.Name = "labelModel";
-            this.labelModel.Size = new System.Drawing.Size(39, 13);
-            this.labelModel.TabIndex = 72;
-            this.labelModel.Text = "Model:";
-            // 
-            // labelExcludeArch
-            // 
-            this.labelExcludeArch.AutoSize = true;
-            this.labelExcludeArch.Location = new System.Drawing.Point(586, 153);
-            this.labelExcludeArch.Name = "labelExcludeArch";
-            this.labelExcludeArch.Size = new System.Drawing.Size(56, 13);
-            this.labelExcludeArch.TabIndex = 70;
-            this.labelExcludeArch.Text = "Exc. Arch:";
+            this.labelLatestFirmware.Text = "Max Firm.:";
             // 
             // labelSupportUrl
             // 
@@ -1306,7 +1084,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelReportUrl
             // 
             this.labelReportUrl.AutoSize = true;
-            this.labelReportUrl.Location = new System.Drawing.Point(496, 258);
+            this.labelReportUrl.Location = new System.Drawing.Point(492, 258);
             this.labelReportUrl.Name = "labelReportUrl";
             this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
             this.labelReportUrl.TabIndex = 59;
@@ -1327,11 +1105,11 @@ namespace BeatificaBytes.Synology.Mods
             // labelFirmware
             // 
             this.labelFirmware.AutoSize = true;
-            this.labelFirmware.Location = new System.Drawing.Point(646, 206);
+            this.labelFirmware.Location = new System.Drawing.Point(655, 128);
             this.labelFirmware.Name = "labelFirmware";
-            this.labelFirmware.Size = new System.Drawing.Size(89, 13);
+            this.labelFirmware.Size = new System.Drawing.Size(52, 13);
             this.labelFirmware.TabIndex = 64;
-            this.labelFirmware.Text = "Earliest Firmware:";
+            this.labelFirmware.Text = "Min Firm.:";
             // 
             // labelPublisher
             // 
@@ -1341,15 +1119,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelPublisher.Size = new System.Drawing.Size(91, 13);
             this.labelPublisher.TabIndex = 55;
             this.labelPublisher.Text = "Publisher\'s Name:";
-            // 
-            // labelArch
-            // 
-            this.labelArch.AutoSize = true;
-            this.labelArch.Location = new System.Drawing.Point(610, 127);
-            this.labelArch.Name = "labelArch";
-            this.labelArch.Size = new System.Drawing.Size(32, 13);
-            this.labelArch.TabIndex = 49;
-            this.labelArch.Text = "Arch:";
             // 
             // listViewItems
             // 
@@ -1851,6 +1620,175 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
+            // pictureBox_256
+            // 
+            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_256.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_256.Location = new System.Drawing.Point(817, 149);
+            this.pictureBox_256.Name = "pictureBox_256";
+            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
+            this.pictureBox_256.TabIndex = 22;
+            this.pictureBox_256.TabStop = false;
+            this.pictureBox_256.Tag = "ITEM;256;MAX";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_128
+            // 
+            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_128.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_128.Location = new System.Drawing.Point(683, 185);
+            this.pictureBox_128.Name = "pictureBox_128";
+            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
+            this.pictureBox_128.TabIndex = 21;
+            this.pictureBox_128.TabStop = false;
+            this.pictureBox_128.Tag = "ITEM;128";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_96
+            // 
+            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_96.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_96.Location = new System.Drawing.Point(581, 217);
+            this.pictureBox_96.Name = "pictureBox_96";
+            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
+            this.pictureBox_96.TabIndex = 20;
+            this.pictureBox_96.TabStop = false;
+            this.pictureBox_96.Tag = "ITEM;96";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_72
+            // 
+            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_72.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_72.Location = new System.Drawing.Point(503, 241);
+            this.pictureBox_72.Name = "pictureBox_72";
+            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
+            this.pictureBox_72.TabIndex = 19;
+            this.pictureBox_72.TabStop = false;
+            this.pictureBox_72.Tag = "ITEM;72";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x7200. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_64
+            // 
+            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_64.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_64.Location = new System.Drawing.Point(433, 249);
+            this.pictureBox_64.Name = "pictureBox_64";
+            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox_64.TabIndex = 18;
+            this.pictureBox_64.TabStop = false;
+            this.pictureBox_64.Tag = "ITEM;64";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_48
+            // 
+            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_48.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_48.Location = new System.Drawing.Point(379, 265);
+            this.pictureBox_48.Name = "pictureBox_48";
+            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
+            this.pictureBox_48.TabIndex = 17;
+            this.pictureBox_48.TabStop = false;
+            this.pictureBox_48.Tag = "ITEM;48";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_32
+            // 
+            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_32.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_32.Location = new System.Drawing.Point(341, 281);
+            this.pictureBox_32.Name = "pictureBox_32";
+            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_32.TabIndex = 16;
+            this.pictureBox_32.TabStop = false;
+            this.pictureBox_32.Tag = "ITEM;32";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_24
+            // 
+            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_24.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_24.Location = new System.Drawing.Point(311, 289);
+            this.pictureBox_24.Name = "pictureBox_24";
+            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox_24.TabIndex = 15;
+            this.pictureBox_24.TabStop = false;
+            this.pictureBox_24.Tag = "ITEM;24";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_16
+            // 
+            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_16.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_16.Location = new System.Drawing.Point(289, 297);
+            this.pictureBox_16.Name = "pictureBox_16";
+            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
+            this.pictureBox_16.TabIndex = 14;
+            this.pictureBox_16.TabStop = false;
+            this.pictureBox_16.Tag = "ITEM;16";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBoxPkg_72
+            // 
+            this.pictureBoxPkg_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxPkg_72.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxPkg_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxPkg_72.Location = new System.Drawing.Point(821, 206);
+            this.pictureBoxPkg_72.Name = "pictureBoxPkg_72";
+            this.pictureBoxPkg_72.Size = new System.Drawing.Size(72, 72);
+            this.pictureBoxPkg_72.TabIndex = 26;
+            this.pictureBoxPkg_72.TabStop = false;
+            this.pictureBoxPkg_72.Tag = "Pkg;72";
+            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_72, "Drop here a logo 72x72 to be used for this package when listed by DMS\'s Package C" +
+        "enter.");
+            this.pictureBoxPkg_72.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
+            this.pictureBoxPkg_72.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
+            this.pictureBoxPkg_72.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
+            // 
+            // pictureBoxPkg_256
+            // 
+            this.pictureBoxPkg_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxPkg_256.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxPkg_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxPkg_256.Location = new System.Drawing.Point(821, 33);
+            this.pictureBoxPkg_256.Name = "pictureBoxPkg_256";
+            this.pictureBoxPkg_256.Size = new System.Drawing.Size(164, 164);
+            this.pictureBoxPkg_256.TabIndex = 27;
+            this.pictureBoxPkg_256.TabStop = false;
+            this.pictureBoxPkg_256.Tag = "Pkg;256";
+            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_256, "Drop here a logo 256x256 to be used for this package when DMS\'s Package Center di" +
+        "splays its details.");
+            this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
+            this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
+            this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1867,6 +1805,14 @@ namespace BeatificaBytes.Synology.Mods
             this.Name = "MainForm";
             this.Text = "Mods Packager for Synology";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            this.groupBoxPackage.ResumeLayout(false);
+            this.groupBoxPackage.PerformLayout();
+            this.groupBoxItem.ResumeLayout(false);
+            this.groupBoxItem.PerformLayout();
+            this.menuStripMainBar.ResumeLayout(false);
+            this.menuStripMainBar.PerformLayout();
+            this.groupBoxTip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
@@ -1878,14 +1824,6 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-            this.groupBoxPackage.ResumeLayout(false);
-            this.groupBoxPackage.PerformLayout();
-            this.groupBoxItem.ResumeLayout(false);
-            this.groupBoxItem.PerformLayout();
-            this.menuStripMainBar.ResumeLayout(false);
-            this.menuStripMainBar.PerformLayout();
-            this.groupBoxTip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2007,12 +1945,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.CheckBox checkBoxSilentUninstall;
         private System.Windows.Forms.CheckBox checkBoxSilentUpgrade;
         private System.Windows.Forms.CheckBox checkBoxSilentInstalll;
-        private System.Windows.Forms.Label labelArch;
-        private System.Windows.Forms.TextBox textBoxArch;
-        private System.Windows.Forms.Label labelExcludeArch;
-        private System.Windows.Forms.TextBox textBoxExcludeArch;
-        private System.Windows.Forms.Label labelModel;
-        private System.Windows.Forms.TextBox textBoxModel;
         private System.Windows.Forms.CheckBox checkBoxPrecheck;
         private System.Windows.Forms.CheckBox checkBoxStartable;
         private System.Windows.Forms.CheckBox checkBoxOfflineInstall;
@@ -2035,6 +1967,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem manageScreenshotsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLog;
         private System.Windows.Forms.TextBox textBoxChangeBox;
+        private System.Windows.Forms.Button buttonDependencies;
     }
 }
 

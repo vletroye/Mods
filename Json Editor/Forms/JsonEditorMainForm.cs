@@ -972,5 +972,10 @@ namespace ZTn.Json.Editor.Forms
                 buttonNext.Visible = (wizardpage < steps);
             }
         }
+
+        private void JsonEditorMainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            buttonCancel_Click(sender, e);
+        }
     }
 }

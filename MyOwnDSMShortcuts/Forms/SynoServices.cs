@@ -14,7 +14,7 @@ using YamlDotNet.Serialization;
 
 namespace BeatificaBytes.Synology.Mods
 {
-    public partial class ArchAndModels : Form
+    public partial class SynoServices : Form
     {
         // constants used to hide a checkbox
         public const int TVIF_STATE = 0x8;
@@ -42,25 +42,15 @@ namespace BeatificaBytes.Synology.Mods
             public IntPtr lParam;
         }
 
-        private string[] selectedArchs;
-        private string[] selectedModels;
+        private string[] selectedServices;
 
-        public ArchAndModels(string archs, string models)
+        public SynoServices(string services)
         {
             InitializeComponent();
-            if (string.IsNullOrEmpty(archs)) archs = "";
-            this.selectedArchs = archs.Split(' ');
-            if (models != null)
-            {
-                var list = new List<String>();
-                foreach (string item in models.Split(' '))
-                {
-                    list.Add(item.Split('_').Last());
-                }
-                this.selectedModels = list.ToArray();
-            }
-            treeViewArch.DrawMode = TreeViewDrawMode.OwnerDrawText;
-            treeViewArch.DrawNode += new DrawTreeNodeEventHandler(tree_DrawNode);
+            if (services == null) services = "";
+            this.selectedServices = services.Split(' ');
+            treeViewServices.DrawMode = TreeViewDrawMode.OwnerDrawText;
+            treeViewServices.DrawNode += new DrawTreeNodeEventHandler(tree_DrawNode);
         }
         void tree_DrawNode(object sender, DrawTreeNodeEventArgs e)
         {
@@ -90,62 +80,35 @@ namespace BeatificaBytes.Synology.Mods
             SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, lparam);
         }
 
-        private void ArchAndModels_Load(object sender, EventArgs e)
+        private void SynoServices_Load(object sender, EventArgs e)
         {
-            string yaml = File.ReadAllText(@"Resources\synology_models.yaml");
+            string yaml = File.ReadAllText(@"Resources\synology_services.yaml");
             var deserializer = new Deserializer();
-            var result = deserializer.Deserialize<Dictionary<string, Dictionary<string, List<String>>>>(new StringReader(yaml));
+            var result = deserializer.Deserialize<Dictionary<string, List<String>>>(new StringReader(yaml));
             foreach (var item in result)
             {
-                var plateform = treeViewArch.Nodes.Add(item.Key);
-                foreach (var archItem in item.Value)
+                var firmware = treeViewServices.Nodes.Add(item.Key);
+                foreach (var service in item.Value)
                 {
-                    var arch = plateform.Nodes.Add(archItem.Key);
-                    if (selectedArchs.Contains(archItem.Key, StringComparer.InvariantCultureIgnoreCase))
-                        arch.Checked = true;
-                    if (archItem.Value != null && this.selectedModels != null)
-                    {
-                        foreach (var modelItem in archItem.Value)
-                        {
-                            var model = arch.Nodes.Add(modelItem);
-                            if (selectedModels.Contains(modelItem, StringComparer.InvariantCultureIgnoreCase))
-                                model.Checked = true;
-                        }
-                    }
+                    var srvc = firmware.Nodes.Add(service);
+                    if (selectedServices.Contains(service, StringComparer.InvariantCultureIgnoreCase))
+                        srvc.Checked = true;
                 }
-                plateform.ExpandAll();
+                firmware.ExpandAll();
             }
         }
-        public string archs
+
+        public string services
         {
             get
             {
                 var list = new List<string>();
-                foreach (TreeNode platform in treeViewArch.Nodes)
+                foreach (TreeNode platform in treeViewServices.Nodes)
                 {
-                    foreach (TreeNode arch in platform.Nodes)
+                    foreach (TreeNode srvc in platform.Nodes)
                     {
-                        if (arch.Checked)
-                            list.Add(arch.Text);
-                    }
-                }
-                return string.Join(" ", list);
-            }
-        }
-        public string models
-        {
-            get
-            {
-                var list = new List<string>();
-                foreach (TreeNode platform in treeViewArch.Nodes)
-                {
-                    foreach (TreeNode arch in platform.Nodes)
-                    {
-                        foreach (TreeNode model in arch.Nodes)
-                        {
-                            if (model.Checked || arch.Checked)
-                                list.Add(string.Format("synology_{0}_{1}", arch.Text, model.Text));
-                        }
+                        if (srvc.Checked && !list.Contains(srvc.Text))
+                            list.Add(srvc.Text);
                     }
                 }
                 return string.Join(" ", list);
@@ -164,7 +127,7 @@ namespace BeatificaBytes.Synology.Mods
             this.Hide();
         }
 
-        private void treeViewArch_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void treeViewServices_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Location.X >= e.Node.Bounds.Left) //clicking on the checkbox with tick it and trigger next the nodeclick :(
                 e.Node.Checked = !e.Node.Checked;

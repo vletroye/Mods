@@ -619,15 +619,16 @@ namespace BeatificaBytes.Synology.Mods
                 unused.Remove("checksum");
                 unused.Remove("reloadui");//Not yet supported but ignored
 
-                unused.Remove("thirdparty");//Not yet supported but ignored
-                unused.Remove("startstop_restart_services");//Not yet supported but ignored
-                unused.Remove("install_dep_packages");//Not yet supported but ignored
+                unused.Remove("thirdparty");//Not yet supported but ignored as not supported by DSM >= 5.0
 
                 unused.Remove("package_icon");//Not yet supported but ignored
                 unused.Remove("package_icon_120");//Not yet supported but ignored
                 unused.Remove("package_icon_256");//Not yet supported but ignored
                 unused.Remove("package_icon120");//Not yet supported but ignored
                 unused.Remove("package_icon256");//Not yet supported but ignored
+
+                var listDependencies = new Dependencies(null);
+                listDependencies.RemoveSupported(unused);
 
                 if (unused.Count > 0)
                 {
@@ -3840,34 +3841,6 @@ namespace BeatificaBytes.Synology.Mods
             errorProvider.SetError(textBoxPort, "");
         }
 
-
-        private void textBoxArch_DoubleClick(object sender, EventArgs e)
-        {
-            var archForm = new ArchAndModels(textBoxArch.Text, null);
-            if (archForm.ShowDialog(this) == DialogResult.OK)
-            {
-                textBoxArch.Text = archForm.archs;
-            }
-        }
-
-        private void textBoxModel_DoubleClick(object sender, EventArgs e)
-        {
-            var archForm = new ArchAndModels(null, textBoxModel.Text);
-            if (archForm.ShowDialog(this) == DialogResult.OK)
-            {
-                textBoxModel.Text = archForm.models;
-            }
-        }
-
-        private void textBoxExcludeArch_DoubleClick(object sender, EventArgs e)
-        {
-            var archForm = new ArchAndModels(textBoxExcludeArch.Text, null);
-            if (archForm.ShowDialog(this) == DialogResult.OK)
-            {
-                textBoxExcludeArch.Text = archForm.archs;
-            }
-        }
-
         private void checkBoxLegacy_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBoxLegacy.Focused && comboBoxItemType.SelectedIndex == (int)UrlType.Url && checkBoxLegacy.Checked)
@@ -3910,14 +3883,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxStartable.Visible = advanced;
             checkBoxRemovable.Visible = advanced;
             checkBoxPrecheck.Visible = advanced;
-            checkBoxSilentReboot.Visible = advanced;
-
-            labelArch.Visible = advanced;
-            textBoxArch.Visible = advanced;
-            labelExcludeArch.Visible = advanced;
-            textBoxExcludeArch.Visible = advanced;
-            labelModel.Visible = advanced;
-            textBoxModel.Visible = advanced;
+            checkBoxSilentReboot.Visible = advanced;            
 
             checkBoxSupportCenter.Visible = advanced;
             checkBoxLegacy.Visible = advanced;
@@ -3930,6 +3896,8 @@ namespace BeatificaBytes.Synology.Mods
             textBoxAdminPort.Visible = advanced && checkBoxAdminUrl.Checked;
             textBoxAdminUrl.Visible = advanced && checkBoxAdminUrl.Checked;
             comboBoxAdminProtocol.Visible = advanced && checkBoxAdminUrl.Checked;
+
+            buttonDependencies.Visible = advanced;
         }
 
         private void ComboBoxGrantPrivilege_SelectedIndexChanged(object sender, EventArgs e)
@@ -4056,6 +4024,12 @@ namespace BeatificaBytes.Synology.Mods
             {
                 textBoxChangeBox.Text = content.Code;
             }
+        }
+
+        private void buttonDependencies_Click(object sender, EventArgs e)
+        {
+            var edit = new Dependencies(info);
+            edit.ShowDialog(this);
         }
     }
 }

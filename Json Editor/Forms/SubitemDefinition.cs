@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,28 +17,53 @@ namespace ZTn.Json.Editor.Forms
     {
         private string subitemType = "";
 
+        //Subitems
         private string subitemKey = null;
         private string subitemDescription = null;
-        private string subitemDefaultValue = null;
-        private string subitemEmptyValue = null;
+        private object subitemDefaultValue = null;
+        private string subitemEmptyText = null;
+        //private ... validator
         private bool subitemDisabled = false;
-        private bool subitemHidden = false;
-        private bool subitemPreventMark = false;
-        private string subitemWidth = null;
         private string subitemHeight = null;
-        private string subitemInvalidValue = null;
-        private string subitemRoot = null;
+        private string subitemWidth = null;
+        private bool subitemHidden = false;
+        private string subitemInvalidText = null;
+        private bool subitemPreventMark = false;
+
+        //Validator
+        private bool subitemAllowBlank = true;
+        private string subitemMinLength = null;
+        private string subitemMaxLength = null;
+        private string subitemvType = null;
+        private string subitemRegex = null;
+        private string subitemFn = null;
+
+        //Others
+        private string subitemBlankText = null;
+        private bool subitemGrow = false;
+        private string subitemGrowMax = null;
+        private string subitemGrowMin = null;
+        private bool subitemHtmlEncode = false;
+        private string subitemMaxLengthText = null;
+        private string subitemMinLengthText = null;
+
+        //ComboBox
+        private bool subitemStaticCombo = false; //internal variable to fill a 'store' (static combo) or 'api_store' (dynamic combo)
         private string subitemApi = null;
-        private string subitemValueField = null;
-        private string subitemDisplayField = null;
-        private bool subitemValueFieldUnique = false;
-        private bool subitemDisplayFieldUnique = false;
-        private bool subitemStaticCombo = false;
-        private string helpPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "HelpSynoWizard.csv");
-
         private List<NameValue> subitemBaseParams = new List<NameValue>();
+        private string subitemRoot = null;
+        private bool subitemValueFieldUnique = false; //used for idProperty if the ValueField must be used
+        private bool subitemDisplayFieldUnique = false; //used for idProperty if the DisplayField must be used
+        private bool subitemAutoSelect = true;
+        private string subitemDisplayField = null;
+        private string subitemValueField = null;
+        private bool subitemEditable = true;
+        private bool subitemForceSelection = false;
+        //private string subitemlistEmptyText = 'to be filled with subitemEmptyText
 
-        private int comboDynamicIndex = -1;
+
+        private string helpPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "HelpSynoWizard.csv");
+        private int selectedItem = -1;
 
         public SubitemDefinition(string type)
         {
@@ -52,10 +78,28 @@ namespace ZTn.Json.Editor.Forms
                     comboBoxSelect.SelectedIndex = 1;
                     textBoxDefaultValue.Visible = false;
                     labelDefaultValue.Visible = true;
-                    textBoxEmptyValue.Visible = false;
-                    labelEmptyValue.Visible = false;
+                    textBoxEmptyText.Visible = false;
+                    labelEmptyText.Visible = false;
                     checkBoxStatic.Visible = false;
 
+                    labelMinLength.Visible = false;
+                    textBoxMinLength.Visible = false;
+                    textBoxMinLengthText.Visible = false;
+                    labelMaxLength.Visible = false;
+                    textBoxMaxLength.Visible = false;
+                    textBoxMaxLengthText.Visible = false;
+                    checkBoxAllowBlank.Visible = false;
+                    textBoxBlankText.Visible = false;
+                    checkBoxHtmlEncode.Visible = false;
+
+                    checkBoxGrow.Visible = false;
+
+                    labelWidth.Visible = false;
+                    textBoxWidth.Visible = false;
+                    labelHeight.Visible = false;
+                    textBoxHeight.Visible = false;
+
+                    tabControlDefinition.TabPages.RemoveAt(2);
                     tabControlDefinition.TabPages.RemoveAt(1);
                     break;
                 case "textfield":
@@ -63,9 +107,9 @@ namespace ZTn.Json.Editor.Forms
                     comboBoxSelect.Visible = false;
                     textBoxDefaultValue.Visible = true;
                     labelDefaultValue.Visible = true;
-                    textBoxEmptyValue.Visible = true;
-                    labelEmptyValue.Visible = true;
-                    textBoxEmptyValue.ReadOnly = false;
+                    textBoxEmptyText.Visible = true;
+                    labelEmptyText.Visible = true;
+                    textBoxEmptyText.ReadOnly = false;
                     checkBoxStatic.Visible = false;
 
                     tabControlDefinition.TabPages.RemoveAt(1);
@@ -74,14 +118,15 @@ namespace ZTn.Json.Editor.Forms
                     comboBoxSelect.Visible = false;
                     textBoxDefaultValue.Visible = false;
                     labelDefaultValue.Visible = false;
-                    textBoxEmptyValue.Visible = false;
-                    labelEmptyValue.Visible = false;
+                    textBoxEmptyText.Visible = false;
+                    labelEmptyText.Visible = false;
                     labelDefaultValue.Text = "Editable";
                     checkBoxStatic.Visible = true;
 
                     listBoxBaseParams.Enabled = true;
                     buttonAddParam.Enabled = true;
 
+                    tabControlDefinition.TabPages.RemoveAt(2); // It's not clear if there can be validation on comboBox as "validator" apply only on textfield and password...
                     break;
             }
 
@@ -109,27 +154,44 @@ namespace ZTn.Json.Editor.Forms
             dataGridViewHelp.ClearSelection();
         }
 
-        public string Key { get { return subitemKey; } }
-        public string Description { get { return subitemDescription; } }
-        public string DefaultValue { get { return subitemDefaultValue; } }
+        public string Key { get { return subitemKey; } set { subitemKey = value; } }
+        public string Description { get { return subitemDescription; } set { subitemDescription = value; } }
+        public object DefaultValue { get { return subitemDefaultValue; } set { subitemDefaultValue = value; } }
 
-        public string EmptyValue { get { return subitemKey; } }
-        public bool Disable { get { return subitemDisabled; } }
-        public bool Hidden { get { return subitemHidden; } }
-        public bool PreventMark { get { return subitemPreventMark; } }
-        public new string Width { get { return subitemWidth; } }
-        public new string Height { get { return subitemHeight; } }
-        public string InvalidValue { get { return subitemInvalidValue; } }
-        public List<NameValue> BaseParams { get { return subitemBaseParams; } }
+        public string EmptyText { get { return subitemEmptyText; } set { subitemEmptyText = value; } }
+        public bool Disable { get { return subitemDisabled; } set { subitemDisabled = value; } }
+        public bool Hidden { get { return subitemHidden; } set { subitemHidden = value; } }
+        public bool PreventMark { get { return subitemPreventMark; } set { subitemPreventMark = value; } }
+        public new string Width { get { return subitemWidth; } set { subitemWidth = value; } }
+        public new string Height { get { return subitemHeight; } set { subitemHeight = value; } }
+        public string InvalidText { get { return subitemInvalidText; } set { subitemInvalidText = value; } }
+        public List<NameValue> BaseParams { get { return subitemBaseParams; } set { subitemBaseParams = value; } }
 
-        public string Root { get { return subitemRoot; } }
-        public string Api { get { return subitemApi; } }
-        public string ValueField { get { return subitemValueField; } }
-        public string DisplayField { get { return subitemDisplayField; } }
-        public bool ValueFieldIsUnique { get { return subitemValueFieldUnique; } }
-        public bool DisplayFieldIsUnique { get { return subitemDisplayFieldUnique; } }
+        public string Root { get { return subitemRoot; } set { subitemRoot = value; } }
+        public string Api { get { return subitemApi; } set { subitemApi = value; } }
+        public string ValueField { get { return subitemValueField; } set { subitemValueField = value; } }
+        public string DisplayField { get { return subitemDisplayField; } set { subitemDisplayField = value; } }
+        public bool ValueFieldIsUnique { get { return subitemValueFieldUnique; } set { subitemValueFieldUnique = value; } }
+        public bool DisplayFieldIsUnique { get { return subitemDisplayFieldUnique; } set { subitemDisplayFieldUnique = value; } }
 
-        public bool StaticCombo { get { return subitemStaticCombo; } }
+        public bool StaticCombo { get { return subitemStaticCombo; } set { subitemStaticCombo = value; } }
+        public bool AutoSelect { get { return subitemAutoSelect; } set { subitemAutoSelect = value; } }
+        public bool ForceSelection { get { return subitemForceSelection; } set { subitemForceSelection = value; } }
+        public bool Editable { get { return subitemEditable; } set { subitemEditable = value; } }
+
+        public bool AllowBlank { get { return subitemAllowBlank; } set { subitemAllowBlank = value; } }
+        public string MinLength { get { return subitemMinLength; } set { subitemMinLength = value; } }
+        public string MaxLength { get { return subitemMaxLength; } set { subitemMaxLength = value; } }
+        public string vType { get { return subitemvType; } set { subitemvType = value; } }
+        public string Regex { get { return subitemRegex; } set { subitemRegex = value; } }
+        public string Fn { get { return subitemFn; } set { subitemFn = value; } }
+        public string BlankText { get { return subitemBlankText; } set { subitemBlankText = value; } }
+        public bool Grow { get { return subitemGrow; } set { subitemGrow = value; } }
+        public string GrowMax { get { return subitemGrowMax; } set { subitemGrowMax = value; } }
+        public string GrowMin { get { return subitemGrowMin; } set { subitemGrowMin = value; } }
+        public bool HtmlEncode { get { return subitemHtmlEncode; } set { subitemHtmlEncode = value; } }
+        public string MaxLengthText { get { return subitemMaxLengthText; } set { subitemMaxLengthText = value; } }
+        public string MinLengthText { get { return subitemMinLengthText; } set { subitemMinLengthText = value; } }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
@@ -145,7 +207,7 @@ namespace ZTn.Json.Editor.Forms
                 case "textfield":
                 case "password":
                     subitemDefaultValue = textBoxDefaultValue.Text;
-                    subitemEmptyValue = textBoxEmptyValue.Text;
+                    subitemEmptyText = textBoxEmptyText.Text;
                     break;
                 case "combobox":
                     break;
@@ -156,13 +218,18 @@ namespace ZTn.Json.Editor.Forms
             subitemPreventMark = checkBoxPreventMark.Checked;
             subitemWidth = textBoxWidth.Text;
             subitemHeight = textBoxHeight.Text;
-            subitemInvalidValue = textBoxInvalid.Text;
+            subitemInvalidText = textBoxInvalid.Text;
 
             subitemStaticCombo = checkBoxStatic.Checked;
 
-            foreach (var item in listBoxBaseParams.Items)
+            if (subitemBaseParams != null)
             {
-                subitemBaseParams.Add(item as NameValue);
+                subitemBaseParams.Clear();
+                foreach (NameValue item in listBoxBaseParams.Items)
+                {
+                    var clone = new NameValue(item.value, item.name);
+                    subitemBaseParams.Add(clone);
+                }
             }
             subitemRoot = textBoxRoot.Text;
             subitemApi = textBoxApiStore.Text;
@@ -170,6 +237,44 @@ namespace ZTn.Json.Editor.Forms
             subitemDisplayField = textBoxDynamicDisplayField.Text;
             subitemValueFieldUnique = radioButtonDynamicValueField.Checked;
             subitemDisplayFieldUnique = radioButtonDynamicDisplayField.Checked;
+
+            subitemEditable = checkBoxEditable.Checked;
+            subitemAutoSelect = checkBoxAutoSelect.Checked;
+            subitemForceSelection = CheckBoxForceSelection.Checked;
+
+            subitemAllowBlank = checkBoxAllowBlank.Checked;
+            subitemMinLength = textBoxMinLength.Text;
+            subitemMaxLength = textBoxMaxLength.Text;
+            subitemvType = comboBoxType.Text;
+            subitemRegex = textBoxRegEx.Text;
+            subitemFn = textBoxFn.Text;
+            subitemFn = subitemFn.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
+            if (!string.IsNullOrEmpty(subitemFn) && !(subitemFn.StartsWith("{") || subitemFn.EndsWith("}")))
+            {
+                subitemFn = string.Format("{{{0}}}", subitemFn);
+            }
+
+            subitemBlankText = textBoxBlankText.Text;
+            subitemGrow = checkBoxGrow.Checked;
+            if (subitemGrow)
+            {
+                subitemGrowMin = textBoxGrowMin.Text;
+                subitemGrowMax = textBoxGrowMax.Text;
+            }
+            else
+            {
+                subitemGrowMin = "";
+                subitemGrowMax = "";
+            }
+            subitemHtmlEncode = checkBoxHtmlEncode.Checked;
+            if (!string.IsNullOrEmpty(subitemMaxLength))
+                subitemMaxLengthText = textBoxMaxLengthText.Text;
+            else
+                subitemMaxLengthText = "";
+            if (!string.IsNullOrEmpty(subitemMinLength))
+                subitemMinLengthText = textBoxMinLengthText.Text;
+            else
+                subitemMinLengthText = "";
 
             this.Close();
         }
@@ -208,12 +313,12 @@ namespace ZTn.Json.Editor.Forms
 
         private void textBoxDefaultValue_TextChanged(object sender, EventArgs e)
         {
-            textBoxEmptyValue.ReadOnly = !string.IsNullOrEmpty(textBoxDefaultValue.Text);
+            textBoxEmptyText.ReadOnly = !string.IsNullOrEmpty(textBoxDefaultValue.Text);
         }
 
         private void buttonAddParam_Click(object sender, EventArgs e)
         {
-            var index = listBoxBaseParams.Items.Add(new NameValue("name", "value"));
+            var index = listBoxBaseParams.Items.Add(new NameValue("value", "name"));
             listBoxBaseParams.SelectedIndex = index;
         }
 
@@ -235,7 +340,7 @@ namespace ZTn.Json.Editor.Forms
         private void listBoxBaseParams_SelectedIndexChanged(object sender, EventArgs e)
         {
             var selected = listBoxBaseParams.SelectedItem as NameValue;
-            if (selected != null && comboDynamicIndex != listBoxBaseParams.SelectedIndex)
+            if (selected != null && selectedItem != listBoxBaseParams.SelectedIndex)
             {
                 textBoxParamName.Text = selected.name;
                 textBoxParamValue.Text = selected.value;
@@ -243,14 +348,14 @@ namespace ZTn.Json.Editor.Forms
                 textBoxParamValue.Enabled = true;
                 textBoxParamName.Focus();
             }
-            comboDynamicIndex = listBoxBaseParams.SelectedIndex;
-            buttonRemoveParam.Enabled = (comboDynamicIndex >= 0);
+            selectedItem = listBoxBaseParams.SelectedIndex;
+            buttonRemoveParam.Enabled = (selectedItem >= 0);
         }
 
         private void textBoxParamName_TextChanged(object sender, EventArgs e)
         {
             var selected = listBoxBaseParams.SelectedItem as NameValue;
-            if (selected != null)
+            if (selected != null && selected.name != textBoxParamName.Text)
             {
                 selected.name = textBoxParamName.Text;
                 listBoxBaseParams.DisplayMember = "";
@@ -261,7 +366,7 @@ namespace ZTn.Json.Editor.Forms
         private void textBoxParamValue_TextChanged(object sender, EventArgs e)
         {
             var selected = listBoxBaseParams.SelectedItem as NameValue;
-            if (selected != null)
+            if (selected != null && selected.value != textBoxParamValue.Text)
             {
                 selected.value = textBoxParamValue.Text;
                 listBoxBaseParams.DisplayMember = "";
@@ -291,13 +396,17 @@ namespace ZTn.Json.Editor.Forms
 
         private void textBoxParamName_Validating(object sender, CancelEventArgs e)
         {
-            foreach (NameValue item in listBoxBaseParams.Items)
+            var items = listBoxBaseParams.Items.Cast<Object>().ToArray();
+            var count = 0;
+            foreach (NameValue item in items)
             {
-                if (item.name == textBoxParamName.Text && listBoxBaseParams.SelectedItem != item)
-                {
-                    errorProvider.SetError(textBoxParamName, "This value must be unique.");
-                    e.Cancel = true;
-                }
+                if (item.name == textBoxParamName.Text)
+                    count++;
+            }
+            if (count > 1)
+            {
+                errorProvider.SetError(textBoxParamName, "This value must be unique.");
+                e.Cancel = true;
             }
         }
 
@@ -350,6 +459,171 @@ namespace ZTn.Json.Editor.Forms
         private void dataGridViewHelp_SelectionChanged(object sender, EventArgs e)
         {
             dataGridViewHelp.ClearSelection();
+        }
+
+        private void SubitemDefinition_Load(object sender, EventArgs e)
+        {
+            textBoxKey.Text = subitemKey;
+            buttonOk.Enabled = (!string.IsNullOrEmpty(subitemKey));
+            textBoxDescription.Text = subitemDescription;
+
+            switch (subitemType)
+            {
+                case "singleselect":
+                case "multiselect":
+                    if (subitemDefaultValue !=null)
+                        comboBoxSelect.SelectedIndex = comboBoxSelect.FindString(subitemDefaultValue.ToString());
+                    break;
+                case "textfield":
+                case "password":
+                    textBoxDefaultValue.Text = subitemDefaultValue as string;
+                    textBoxEmptyText.Text = subitemEmptyText;
+                    break;
+                case "combobox":
+                    break;
+            }
+
+            checkBoxDisabled.Checked = subitemDisabled;
+            checkBoxHidden.Checked = subitemHidden;
+            checkBoxPreventMark.Checked = subitemPreventMark;
+            textBoxWidth.Text = subitemWidth;
+            textBoxHeight.Text = subitemHeight;
+            textBoxInvalid.Text = subitemInvalidText;
+
+            checkBoxStatic.Checked = subitemStaticCombo;
+            checkBoxStatic.Enabled = (string.IsNullOrEmpty(subitemKey));
+            if (subitemBaseParams != null)
+            {
+                foreach (NameValue item in subitemBaseParams)
+                {
+                    var clone = new NameValue(item.value, item.name);
+                    listBoxBaseParams.Items.Add(clone);
+                }
+            }
+            textBoxRoot.Text = subitemRoot;
+            textBoxApiStore.Text = subitemApi;
+            textBoxDynamicValueField.Text = subitemValueField;
+            textBoxDynamicDisplayField.Text = subitemDisplayField;
+            radioButtonDynamicValueField.Checked = subitemValueFieldUnique;
+            radioButtonDynamicDisplayField.Checked = subitemDisplayFieldUnique;
+
+            checkBoxEditable.Checked = subitemEditable;
+            checkBoxAutoSelect.Checked = subitemAutoSelect;
+            CheckBoxForceSelection.Checked = subitemForceSelection;
+
+            checkBoxAllowBlank.Checked = subitemAllowBlank;
+            textBoxMinLength.Text = subitemMinLength;
+            textBoxMaxLength.Text = subitemMaxLength;
+            comboBoxType.SelectedIndex = comboBoxType.FindString(subitemvType);
+            textBoxRegEx.Text = subitemRegex;
+            textBoxFn.Text = subitemFn;
+
+            textBoxBlankText.Text = subitemBlankText;
+            checkBoxHtmlEncode.Checked = subitemHtmlEncode;
+            checkBoxGrow.Checked = subitemGrow;
+            textBoxGrowMin.Text = subitemGrowMin;
+            textBoxGrowMax.Text = subitemGrowMax;
+            textBoxMaxLengthText.Text = subitemMaxLengthText;
+            textBoxMinLengthText.Text = subitemMinLengthText;
+
+            foreach (var control in tabControlDefinition.Controls)
+            {
+                var tab = control as TabPage;
+                if (tab != null)
+                {
+                    foreach (var item in tab.Controls)
+                    {
+                        var field = item as Control;
+                        if (field != null)
+                        {
+                            field.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+                            field.Enter += new System.EventHandler(this.OnMouseEnter);
+                            field.MouseLeave += new System.EventHandler(this.OnMouseLeave);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            var zone = sender as Control;
+            if (zone != null)
+            {
+                var text = toolTipSubitemDefinition.GetToolTip(zone);
+                labelToolTip.Text = text;
+            }
+            var menu = sender as ToolStripItem;
+            if (menu != null)
+            {
+                var text = menu.ToolTipText;
+                labelToolTip.Text = text;
+            }
+        }
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            labelToolTip.Text = "";
+        }
+
+        private void textBoxLength_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBoxSize_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && (e.KeyChar != '.'))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBoxRegEx_Validating(object sender, CancelEventArgs e)
+        {
+            var pattern = textBoxRegEx.Text;
+            if (!string.IsNullOrEmpty(Key))
+            {
+                try
+                {
+                    var regEx = new Regex(pattern, RegexOptions.Compiled);
+                }
+                catch
+                {
+                    errorProvider.SetError(textBoxRegEx, "Invalid Regular Expression");
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void textBoxRegEx_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxRegEx, "");
+        }
+
+        private void textBoxMinLength_TextChanged(object sender, EventArgs e)
+        {
+            textBoxMinLengthText.Visible = !string.IsNullOrEmpty(textBoxMinLength.Text);
+        }
+
+        private void textBoxMaxLength_TextChanged(object sender, EventArgs e)
+        {
+            textBoxMaxLengthText.Visible = !string.IsNullOrEmpty(textBoxMaxLength.Text);
+        }
+
+        private void checkBoxAllowBlank_CheckedChanged(object sender, EventArgs e)
+        {
+            textBoxBlankText.Visible = !checkBoxAllowBlank.Checked;
+        }
+
+        private void checkBoxGrow_CheckedChanged(object sender, EventArgs e)
+        {
+            labelGrowMin.Visible = checkBoxGrow.Checked;
+            textBoxGrowMin.Visible = checkBoxGrow.Checked;
+            labelGrowMax.Visible = checkBoxGrow.Checked;
+            textBoxGrowMax.Visible = checkBoxGrow.Checked;
         }
     }
 }

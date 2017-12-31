@@ -22,10 +22,10 @@ namespace ZTn.Json.Editor.Forms
             InitializeComponent();
         }
 
-        public string Title { get { return stepTitle; } }
-        public bool Validation { get { return stepValidation; } }
-        public string Activation { get { return stepActivation; } }
-        public string Deactivation { get { return stepDeactivation; } }
+        public string Title { get { return stepTitle; } set { stepTitle = value; } }
+        public bool Validation { get { return stepValidation; } set { stepValidation = value; } }
+        public string Activation { get { return stepActivation; } set { stepActivation = value; } }
+        public string Deactivation { get { return stepDeactivation; } set { stepDeactivation = value; } }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
@@ -38,6 +38,36 @@ namespace ZTn.Json.Editor.Forms
         {
             stepTitle = null;
             this.Close();
+        }
+
+        private void StepDefinition_Load(object sender, EventArgs e)
+        {
+            textBoxName.Text = stepTitle;
+            buttonOk.Enabled = (!string.IsNullOrEmpty(stepTitle));
+
+            checkBoxValidate.Checked = stepValidation;
+            textBoxActivation.Text = stepActivation;
+            textBoxDeactivation.Text = stepDeactivation;
+        }
+
+        private void textBoxName_Validating(object sender, CancelEventArgs e)
+        {
+            buttonOk.Enabled = true;
+
+            var key = textBoxName.Text;
+            if (string.IsNullOrEmpty(key))
+            {
+                errorProvider.SetError(textBoxName, "You may not use an empty Key.");
+                textBoxName.Text = "Enter_A_Value";
+                e.Cancel = true;
+                buttonOk.Enabled = false;
+            }
+        }
+
+        private void textBoxName_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxName, "");
+            buttonOk.Enabled = true;
         }
     }
 }

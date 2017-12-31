@@ -38,9 +38,11 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBoxActivation = new System.Windows.Forms.TextBox();
+            this.textBoxDeactivation = new System.Windows.Forms.TextBox();
             this.toolTipStepDefinition = new System.Windows.Forms.ToolTip(this.components);
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // labelName
@@ -60,6 +62,8 @@
             this.textBoxName.TabIndex = 0;
             this.toolTipStepDefinition.SetToolTip(this.textBoxName, "Syno Property: step_title [Optional]\r\nDescribes the title of the current step per" +
         "formed in the wizard.");
+            this.textBoxName.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxName_Validating);
+            this.textBoxName.Validated += new System.EventHandler(this.textBoxName_Validated);
             // 
             // labelValidate
             // 
@@ -84,6 +88,7 @@
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonOk.Enabled = false;
             this.buttonOk.Location = new System.Drawing.Point(12, 150);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -122,27 +127,31 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Step Deactivation:";
             // 
-            // textBox1
+            // textBoxActivation
             // 
-            this.textBox1.Location = new System.Drawing.Point(111, 72);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(181, 20);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.Text = "Not Yet Supported";
-            this.toolTipStepDefinition.SetToolTip(this.textBox1, "Syno Property: activate\r\nJSON-style string to describe a function which is run af" +
+            this.textBoxActivation.Location = new System.Drawing.Point(111, 72);
+            this.textBoxActivation.Name = "textBoxActivation";
+            this.textBoxActivation.ReadOnly = true;
+            this.textBoxActivation.Size = new System.Drawing.Size(181, 20);
+            this.textBoxActivation.TabIndex = 2;
+            this.textBoxActivation.Text = "Not Yet Supported";
+            this.toolTipStepDefinition.SetToolTip(this.textBoxActivation, "Syno Property: activate\r\nJSON-style string to describe a function which is run af" +
         "ter the step of the wizard has been visually activated.");
             // 
-            // textBox2
+            // textBoxDeactivation
             // 
-            this.textBox2.Location = new System.Drawing.Point(111, 105);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(181, 20);
-            this.textBox2.TabIndex = 3;
-            this.textBox2.Text = "Not Yet Supported";
-            this.toolTipStepDefinition.SetToolTip(this.textBox2, "Syno Property: deactivate\r\nJSON-style string to describe a function which is run " +
+            this.textBoxDeactivation.Location = new System.Drawing.Point(111, 105);
+            this.textBoxDeactivation.Name = "textBoxDeactivation";
+            this.textBoxDeactivation.ReadOnly = true;
+            this.textBoxDeactivation.Size = new System.Drawing.Size(181, 20);
+            this.textBoxDeactivation.TabIndex = 3;
+            this.textBoxDeactivation.Text = "Not Yet Supported";
+            this.toolTipStepDefinition.SetToolTip(this.textBoxDeactivation, "Syno Property: deactivate\r\nJSON-style string to describe a function which is run " +
         "after the step of the wizard has been visually deactivated.");
+            // 
+            // errorProvider
+            // 
+            this.errorProvider.ContainerControl = this;
             // 
             // StepDefinition
             // 
@@ -150,10 +159,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(304, 185);
+            this.ClientSize = new System.Drawing.Size(300, 181);
             this.ControlBox = false;
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.textBoxDeactivation);
+            this.Controls.Add(this.textBoxActivation);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonCancel);
@@ -170,6 +179,8 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Step Definition";
+            this.Load += new System.EventHandler(this.StepDefinition_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -185,8 +196,9 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBoxActivation;
+        private System.Windows.Forms.TextBox textBoxDeactivation;
         private System.Windows.Forms.ToolTip toolTipStepDefinition;
+        private System.Windows.Forms.ErrorProvider errorProvider;
     }
 }

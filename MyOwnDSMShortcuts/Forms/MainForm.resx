@@ -137,9 +137,6 @@ If you don't select this option, you will have to provide an disctinct icon for 
   <data name="checkBoxSilentInstalll.ToolTip" xml:space="preserve">
     <value>If set to “yes”, your package is allowed to be installed without the package wizard in the background. This allows CMS (Central Management System) to distribute package installation to other NAS connected. Default Value: no</value>
   </data>
-  <data name="textBoxExcludeArch.ToolTip" xml:space="preserve">
-    <value>Double click to Edit this list of CPU architectures where the package can't be used to install the package. Note: Be careful to use this exclude_arch field. If the package has different exclude_arch value in the different versions, the end user can install the package in the specific version without some arch values of exclude_arch. Values are separated by a space.</value>
-  </data>
   <data name="checkBoxOfflineInstall.ToolTip" xml:space="preserve">
     <value>If set to "yes", after the package is published in synology server, it won't be shown in the package list of Package
 Center from Synology server. However, the user can install the package manually. Default Value: no</value>

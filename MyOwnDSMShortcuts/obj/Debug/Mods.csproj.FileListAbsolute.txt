@@ -30,3 +30,6 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\HelpSynoWizard.csv
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\BouncyCastle.Crypto.dll
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.SnapshotManager.resources
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Dependencies.resources
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.SynoServices.resources
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\synology_services.yaml
