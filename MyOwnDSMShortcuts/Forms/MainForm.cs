@@ -2273,29 +2273,34 @@ namespace BeatificaBytes.Synology.Mods
         #region Validations -----------------------------------------------------------------------------------------------------------------------
         private void textBoxPackage_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxPackage.Text) && !string.IsNullOrEmpty(textBoxDisplay.Text))
-                textBoxPackage.Text = textBoxDisplay.Text.Replace(' ', '_');
-
-            if (!CheckEmpty(textBoxPackage, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                textBoxPackage.Text = textBoxPackage.Text.Replace(' ', '_');
-                var name = textBoxPackage.Text;
-                var cleaned = Helper.CleanUpText(textBoxPackage.Text);
-                if (name != cleaned)
+                if (string.IsNullOrEmpty(textBoxPackage.Text) && !string.IsNullOrEmpty(textBoxDisplay.Text))
+                    textBoxPackage.Text = textBoxDisplay.Text.Replace(' ', '_');
+
+                if (!CheckEmpty(textBoxPackage, ref e, ""))
                 {
-                    e.Cancel = true;
-                    textBoxPackage.Select(0, textBoxPackage.Text.Length);
-                    errorProvider.SetError(textBoxPackage, "The name of the package may not contain blanks or special characters.");
+                    textBoxPackage.Text = textBoxPackage.Text.Replace(' ', '_');
+                    var name = textBoxPackage.Text;
+                    var cleaned = Helper.CleanUpText(textBoxPackage.Text);
+                    if (name != cleaned)
+                    {
+                        e.Cancel = true;
+                        textBoxPackage.Select(0, textBoxPackage.Text.Length);
+                        errorProvider.SetError(textBoxPackage, "The name of the package may not contain blanks or special characters.");
+                    }
                 }
             }
         }
-
         private void textBoxPackage_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxPackage, "");
 
             if (textBoxPackage.Enabled)
             {
+                if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
+                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
+
                 var newName = textBoxPackage.Text;
                 var oldName = info.Count > 0 && info.ContainsKey("package") ? info["package"] : newName;
                 if (newName != oldName && !string.IsNullOrEmpty(oldName))
@@ -2340,9 +2345,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxDisplay_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
-                textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
-            CheckDoubleQuotes(textBoxDisplay, ref e);
+            if (errorProvider.Tag == null)
+            {
+                if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
+                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
+                CheckDoubleQuotes(textBoxDisplay, ref e);
+            }
         }
 
         private void textBoxDisplay_Validated(object sender, EventArgs e)
@@ -2352,9 +2360,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxMaintainer_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxMaintainer, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                CheckDoubleQuotes(textBoxMaintainer, ref e);
+                if (!CheckEmpty(textBoxMaintainer, ref e, ""))
+                {
+                    CheckDoubleQuotes(textBoxMaintainer, ref e);
+                }
             }
         }
 
@@ -2378,9 +2389,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxDescription_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxDescription, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                CheckDoubleQuotes(textBoxDescription, ref e);
+                if (!CheckEmpty(textBoxDescription, ref e, ""))
+                {
+                    CheckDoubleQuotes(textBoxDescription, ref e);
+                }
             }
         }
 
@@ -2391,9 +2405,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxMaintainerUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxMaintainerUrl.Text))
+            if (errorProvider.Tag == null)
             {
-                CheckUrl(textBoxMaintainerUrl, ref e);
+                if (!string.IsNullOrEmpty(textBoxMaintainerUrl.Text))
+                {
+                    CheckUrl(textBoxMaintainerUrl, ref e);
+                }
             }
         }
 
@@ -2404,19 +2421,22 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxVersion_Validating(object sender, CancelEventArgs e)
         {
-            textBoxVersion.Text = textBoxVersion.Text.Replace("_", "-").Replace("b", ".");
-            if (!CheckEmpty(textBoxVersion, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                var match = getOldVersion.Match(textBoxVersion.Text);
-                if (match.Success)
+                textBoxVersion.Text = textBoxVersion.Text.Replace("_", "-").Replace("b", ".");
+                if (!CheckEmpty(textBoxVersion, ref e, ""))
                 {
-                    textBoxVersion.Text = string.Format("{0}-{1:D4}", match.Groups[1], int.Parse(match.Groups[3].ToString()));
-                }
-                if (!getVersion.IsMatch(textBoxVersion.Text))
-                {
-                    e.Cancel = true;
-                    textBoxVersion.Select(0, textBoxVersion.Text.Length);
-                    errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0-0000");
+                    var match = getOldVersion.Match(textBoxVersion.Text);
+                    if (match.Success)
+                    {
+                        textBoxVersion.Text = string.Format("{0}-{1:D4}", match.Groups[1], int.Parse(match.Groups[3].ToString()));
+                    }
+                    if (!getVersion.IsMatch(textBoxVersion.Text))
+                    {
+                        e.Cancel = true;
+                        textBoxVersion.Select(0, textBoxVersion.Text.Length);
+                        errorProvider.SetError(textBoxVersion, "The format of a version must be like 0.0-0000");
+                    }
                 }
             }
         }
@@ -2428,17 +2448,20 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxDsmAppName_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxDsmAppName.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
+            if (errorProvider.Tag == null)
             {
-                textBoxDsmAppName.Text = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(textBoxPackage.Text));
-            }
-            var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__", "_");
-            var cleaned = Helper.CleanUpText(textBoxDsmAppName.Text);
-            if (name != cleaned)
-            {
-                e.Cancel = true;
-                textBoxDsmAppName.Select(0, textBoxDsmAppName.Text.Length);
-                errorProvider.SetError(textBoxDsmAppName, "The name of the package may not contain blanks or special characters.");
+                if (string.IsNullOrEmpty(textBoxDsmAppName.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
+                {
+                    textBoxDsmAppName.Text = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(textBoxPackage.Text));
+                }
+                var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__", "_");
+                var cleaned = Helper.CleanUpText(textBoxDsmAppName.Text);
+                if (name != cleaned)
+                {
+                    e.Cancel = true;
+                    textBoxDsmAppName.Select(0, textBoxDsmAppName.Text.Length);
+                    errorProvider.SetError(textBoxDsmAppName, "The name of the package may not contain blanks or special characters.");
+                }
             }
         }
 
@@ -2449,24 +2472,29 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxTitle_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxTitle, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                if (textBoxTitle.Text.Equals("images", StringComparison.InvariantCultureIgnoreCase))
+                if (!CheckEmpty(textBoxTitle, ref e, ""))
                 {
-                    e.Cancel = true;
-                    textBoxTitle.Select(0, textBoxTitle.Text.Length);
-                    errorProvider.SetError(textBoxTitle, "'images' may not be used as a title");
-                }
-                else
-                {
-                    foreach (var url in list.items.Values)
+                    if (textBoxTitle.Text.Equals("images", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        if (url.title.Equals(textBoxTitle.Text, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                        e.Cancel = true;
+                        textBoxTitle.Select(0, textBoxTitle.Text.Length);
+                        errorProvider.SetError(textBoxTitle, "'images' may not be used as a title");
+                    }
+                    else
+                    {
+                        foreach (var url in list.items.Values)
                         {
-                            e.Cancel = true;
-                            textBoxTitle.Select(0, textBoxTitle.Text.Length);
-                            errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
-                            break;
+                            var existingTitle = Helper.CleanUpText(url.title);
+                            var newTitle = Helper.CleanUpText(textBoxTitle.Text);
+                            if (existingTitle.Equals(newTitle, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                            {
+                                e.Cancel = true;
+                                textBoxTitle.Select(0, textBoxTitle.Text.Length);
+                                errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
+                                break;
+                            }
                         }
                     }
                 }
@@ -2492,11 +2520,14 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxItem_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxUrl, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                if (comboBoxItemType.SelectedIndex == (int)UrlType.Url)
+                if (!CheckEmpty(textBoxUrl, ref e, ""))
                 {
-                    CheckUrl(textBoxUrl, ref e);
+                    if (comboBoxItemType.SelectedIndex == (int)UrlType.Url)
+                    {
+                        CheckUrl(textBoxUrl, ref e);
+                    }
                 }
             }
         }
@@ -3202,7 +3233,7 @@ namespace BeatificaBytes.Synology.Mods
             if (ValidateChildren())
             {
                 GeneratePackage(PackageRootPath);
-                var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
                 if (answer == DialogResult.Yes)
                 {
                     Process.Start(PackageRootPath);
@@ -3374,35 +3405,37 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (!CheckEmpty(textBoxFirmware, ref e, ""))
+            if (errorProvider.Tag == null)
             {
-                if (getOldFirmwareVersion.IsMatch(textBoxFirmware.Text))
+                if (!CheckEmpty(textBoxFirmware, ref e, ""))
                 {
-                    var parts = textBoxFirmware.Text.Split('.');
-                    textBoxFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                }
-                if (getShortFirmwareVersion.IsMatch(textBoxFirmware.Text))
-                {
-                    var parts = textBoxFirmware.Text.Split('.');
-                    textBoxFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
-                }
-                if (!getFirmwareVersion.IsMatch(textBoxFirmware.Text))
-                {
-                    e.Cancel = true;
-                    textBoxFirmware.Select(0, textBoxFirmware.Text.Length);
-                    errorProvider.SetError(textBoxFirmware, "The format of a firmware must be like 0.0-0000");
-                }
-                else
-                {
-                    var parts = textBoxFirmware.Text.Split(new char[] { '.', '-' });
-                    if (int.Parse(parts[2]) == 0)
-                        textBoxFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
-                    else
+                    if (getOldFirmwareVersion.IsMatch(textBoxFirmware.Text))
+                    {
+                        var parts = textBoxFirmware.Text.Split('.');
                         textBoxFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
+                    if (getShortFirmwareVersion.IsMatch(textBoxFirmware.Text))
+                    {
+                        var parts = textBoxFirmware.Text.Split('.');
+                        textBoxFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
+                    }
+                    if (!getFirmwareVersion.IsMatch(textBoxFirmware.Text))
+                    {
+                        e.Cancel = true;
+                        textBoxFirmware.Select(0, textBoxFirmware.Text.Length);
+                        errorProvider.SetError(textBoxFirmware, "The format of a firmware must be like 0.0-0000");
+                    }
+                    else
+                    {
+                        var parts = textBoxFirmware.Text.Split(new char[] { '.', '-' });
+                        if (int.Parse(parts[2]) == 0)
+                            textBoxFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
+                        else
+                            textBoxFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
                 }
             }
         }
-
         private void textBoxFirmware_Validated(object sender, EventArgs e)
         {
             errorProvider.SetError(textBoxFirmware, "");
@@ -3424,17 +3457,23 @@ namespace BeatificaBytes.Synology.Mods
 
         private void TextBoxReportUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(TextBoxReportUrl.Text))
+            if (errorProvider.Tag == null)
             {
-                CheckUrl(TextBoxReportUrl, ref e);
+                if (!string.IsNullOrEmpty(TextBoxReportUrl.Text))
+                {
+                    CheckUrl(TextBoxReportUrl, ref e);
+                }
             }
         }
 
         private void textBoxHelpUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxHelpUrl.Text))
+            if (errorProvider.Tag == null)
             {
-                CheckUrl(textBoxHelpUrl, ref e);
+                if (!string.IsNullOrEmpty(textBoxHelpUrl.Text))
+                {
+                    CheckUrl(textBoxHelpUrl, ref e);
+                }
             }
         }
 
@@ -3455,9 +3494,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxPublisherUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxPublisherUrl.Text))
+            if (errorProvider.Tag == null)
             {
-                CheckUrl(textBoxPublisherUrl, ref e);
+                if (!string.IsNullOrEmpty(textBoxPublisherUrl.Text))
+                {
+                    CheckUrl(textBoxPublisherUrl, ref e);
+                }
             }
         }
 
@@ -3889,14 +3931,17 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxPort_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxPort.Text))
-                textBoxPort.Text = "default";
-            else if (!textBoxPort.Text.Equals("default"))
+            if (errorProvider.Tag == null)
             {
-                if (!textBoxPort.Text.All(char.IsNumber))
+                if (string.IsNullOrEmpty(textBoxPort.Text))
+                    textBoxPort.Text = "default";
+                else if (!textBoxPort.Text.Equals("default"))
                 {
-                    e.Cancel = true;
-                    errorProvider.SetError(textBoxPort, "The port must be empty or numeric");
+                    if (!textBoxPort.Text.All(char.IsNumber))
+                    {
+                        e.Cancel = true;
+                        errorProvider.SetError(textBoxPort, "The port must be empty or numeric");
+                    }
                 }
             }
         }
@@ -4019,9 +4064,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxSupportUrl_Validating(object sender, CancelEventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBoxSupportUrl.Text))
+            if (errorProvider.Tag == null)
             {
-                CheckUrl(textBoxSupportUrl, ref e);
+                if (!string.IsNullOrEmpty(textBoxSupportUrl.Text))
+                {
+                    CheckUrl(textBoxSupportUrl, ref e);
+                }
             }
         }
 
@@ -4032,31 +4080,34 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxLatestFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (textBoxLatestFirmware.Text != "")
+            if (errorProvider.Tag == null)
             {
-                if (getOldFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+                if (textBoxLatestFirmware.Text != "")
                 {
-                    var parts = textBoxLatestFirmware.Text.Split('.');
-                    textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                }
-                if (getShortFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-                {
-                    var parts = textBoxLatestFirmware.Text.Split('.');
-                    textBoxLatestFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
-                }
-                if (!getFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-                {
-                    e.Cancel = true;
-                    textBoxLatestFirmware.Select(0, textBoxLatestFirmware.Text.Length);
-                    errorProvider.SetError(textBoxLatestFirmware, "The format of a firmware must be like 0.0-0000");
-                }
-                else
-                {
-                    var parts = textBoxLatestFirmware.Text.Split(new char[] { '.', '-' });
-                    if (int.Parse(parts[2]) == 0)
-                        textBoxLatestFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
-                    else
+                    if (getOldFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+                    {
+                        var parts = textBoxLatestFirmware.Text.Split('.');
                         textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
+                    if (getShortFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+                    {
+                        var parts = textBoxLatestFirmware.Text.Split('.');
+                        textBoxLatestFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
+                    }
+                    if (!getFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+                    {
+                        e.Cancel = true;
+                        textBoxLatestFirmware.Select(0, textBoxLatestFirmware.Text.Length);
+                        errorProvider.SetError(textBoxLatestFirmware, "The format of a firmware must be like 0.0-0000");
+                    }
+                    else
+                    {
+                        var parts = textBoxLatestFirmware.Text.Split(new char[] { '.', '-' });
+                        if (int.Parse(parts[2]) == 0)
+                            textBoxLatestFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
+                        else
+                            textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
                 }
             }
         }
@@ -4101,8 +4152,10 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (e.KeyCode == Keys.Escape)
             {
+                errorProvider.Tag = new object(); ;
                 ResetValidateChildren(this);
                 textBoxDisplay.Focus();
+                errorProvider.Tag = null;
             }
         }
     }
