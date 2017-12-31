@@ -85,6 +85,17 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxAdminProtocol = new System.Windows.Forms.ComboBox();
             this.textBoxAdminUrl = new System.Windows.Forms.TextBox();
             this.checkBoxAdminUrl = new System.Windows.Forms.CheckBox();
+            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
+            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -154,22 +165,6 @@ namespace BeatificaBytes.Synology.Mods
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.pictureBox_256 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_128 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_96 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_72 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_64 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_48 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_32 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_24 = new System.Windows.Forms.PictureBox();
-            this.pictureBox_16 = new System.Windows.Forms.PictureBox();
-            this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
-            this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-            this.groupBoxPackage.SuspendLayout();
-            this.groupBoxItem.SuspendLayout();
-            this.menuStripMainBar.SuspendLayout();
-            this.groupBoxTip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -181,6 +176,11 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            this.groupBoxPackage.SuspendLayout();
+            this.groupBoxItem.SuspendLayout();
+            this.menuStripMainBar.SuspendLayout();
+            this.groupBoxTip.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBoxMaintainerUrl
@@ -888,6 +888,175 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxAdminUrl.UseVisualStyleBackColor = true;
             this.checkBoxAdminUrl.CheckedChanged += new System.EventHandler(this.checkBoxAdminUrl_CheckedChanged);
             // 
+            // pictureBox_256
+            // 
+            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_256.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_256.Location = new System.Drawing.Point(817, 149);
+            this.pictureBox_256.Name = "pictureBox_256";
+            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
+            this.pictureBox_256.TabIndex = 22;
+            this.pictureBox_256.TabStop = false;
+            this.pictureBox_256.Tag = "ITEM;256;MAX";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_128
+            // 
+            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_128.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_128.Location = new System.Drawing.Point(683, 185);
+            this.pictureBox_128.Name = "pictureBox_128";
+            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
+            this.pictureBox_128.TabIndex = 21;
+            this.pictureBox_128.TabStop = false;
+            this.pictureBox_128.Tag = "ITEM;128";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_96
+            // 
+            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_96.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_96.Location = new System.Drawing.Point(581, 217);
+            this.pictureBox_96.Name = "pictureBox_96";
+            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
+            this.pictureBox_96.TabIndex = 20;
+            this.pictureBox_96.TabStop = false;
+            this.pictureBox_96.Tag = "ITEM;96";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_72
+            // 
+            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_72.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_72.Location = new System.Drawing.Point(503, 241);
+            this.pictureBox_72.Name = "pictureBox_72";
+            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
+            this.pictureBox_72.TabIndex = 19;
+            this.pictureBox_72.TabStop = false;
+            this.pictureBox_72.Tag = "ITEM;72";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x7200. If you drop a larger or small logo, it will be resized " +
+        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
+        " quality image.");
+            // 
+            // pictureBox_64
+            // 
+            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_64.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_64.Location = new System.Drawing.Point(433, 249);
+            this.pictureBox_64.Name = "pictureBox_64";
+            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
+            this.pictureBox_64.TabIndex = 18;
+            this.pictureBox_64.TabStop = false;
+            this.pictureBox_64.Tag = "ITEM;64";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_48
+            // 
+            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_48.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_48.Location = new System.Drawing.Point(379, 265);
+            this.pictureBox_48.Name = "pictureBox_48";
+            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
+            this.pictureBox_48.TabIndex = 17;
+            this.pictureBox_48.TabStop = false;
+            this.pictureBox_48.Tag = "ITEM;48";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_32
+            // 
+            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_32.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_32.Location = new System.Drawing.Point(341, 281);
+            this.pictureBox_32.Name = "pictureBox_32";
+            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
+            this.pictureBox_32.TabIndex = 16;
+            this.pictureBox_32.TabStop = false;
+            this.pictureBox_32.Tag = "ITEM;32";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_24
+            // 
+            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_24.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_24.Location = new System.Drawing.Point(311, 289);
+            this.pictureBox_24.Name = "pictureBox_24";
+            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox_24.TabIndex = 15;
+            this.pictureBox_24.TabStop = false;
+            this.pictureBox_24.Tag = "ITEM;24";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBox_16
+            // 
+            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_16.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox_16.Location = new System.Drawing.Point(289, 297);
+            this.pictureBox_16.Name = "pictureBox_16";
+            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
+            this.pictureBox_16.TabIndex = 14;
+            this.pictureBox_16.TabStop = false;
+            this.pictureBox_16.Tag = "ITEM;16";
+            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16. If you drop a larger or small logo, it will be resized au" +
+        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
+        "uality image.");
+            // 
+            // pictureBoxPkg_72
+            // 
+            this.pictureBoxPkg_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxPkg_72.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxPkg_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxPkg_72.Location = new System.Drawing.Point(821, 206);
+            this.pictureBoxPkg_72.Name = "pictureBoxPkg_72";
+            this.pictureBoxPkg_72.Size = new System.Drawing.Size(72, 72);
+            this.pictureBoxPkg_72.TabIndex = 26;
+            this.pictureBoxPkg_72.TabStop = false;
+            this.pictureBoxPkg_72.Tag = "Pkg;72";
+            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_72, "Drop here a logo 72x72 to be used for this package when listed by DMS\'s Package C" +
+        "enter.");
+            this.pictureBoxPkg_72.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
+            this.pictureBoxPkg_72.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
+            this.pictureBoxPkg_72.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
+            // 
+            // pictureBoxPkg_256
+            // 
+            this.pictureBoxPkg_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxPkg_256.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBoxPkg_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBoxPkg_256.Location = new System.Drawing.Point(821, 33);
+            this.pictureBoxPkg_256.Name = "pictureBoxPkg_256";
+            this.pictureBoxPkg_256.Size = new System.Drawing.Size(164, 164);
+            this.pictureBoxPkg_256.TabIndex = 27;
+            this.pictureBoxPkg_256.TabStop = false;
+            this.pictureBoxPkg_256.Tag = "Pkg;256";
+            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_256, "Drop here a logo 256x256 to be used for this package when DMS\'s Package Center di" +
+        "splays its details.");
+            this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
+            this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
+            this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -1380,7 +1549,7 @@ namespace BeatificaBytes.Synology.Mods
             // openFolderToolStripMenuItem
             // 
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
+            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
             this.openFolderToolStripMenuItem.Text = "Open Folder";
             this.openFolderToolStripMenuItem.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
@@ -1620,175 +1789,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
-            // pictureBox_256
-            // 
-            this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_256.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_256.Location = new System.Drawing.Point(817, 149);
-            this.pictureBox_256.Name = "pictureBox_256";
-            this.pictureBox_256.Size = new System.Drawing.Size(164, 164);
-            this.pictureBox_256.TabIndex = 22;
-            this.pictureBox_256.TabStop = false;
-            this.pictureBox_256.Tag = "ITEM;256;MAX";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_256, "Drop here a logo 256x256. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_128
-            // 
-            this.pictureBox_128.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_128.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_128.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_128.Location = new System.Drawing.Point(683, 185);
-            this.pictureBox_128.Name = "pictureBox_128";
-            this.pictureBox_128.Size = new System.Drawing.Size(128, 128);
-            this.pictureBox_128.TabIndex = 21;
-            this.pictureBox_128.TabStop = false;
-            this.pictureBox_128.Tag = "ITEM;128";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_128, "Drop here a logo 128x128. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_96
-            // 
-            this.pictureBox_96.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_96.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_96.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_96.Location = new System.Drawing.Point(581, 217);
-            this.pictureBox_96.Name = "pictureBox_96";
-            this.pictureBox_96.Size = new System.Drawing.Size(96, 96);
-            this.pictureBox_96.TabIndex = 20;
-            this.pictureBox_96.TabStop = false;
-            this.pictureBox_96.Tag = "ITEM;96";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_96, "Drop here a logo 96x96. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_72
-            // 
-            this.pictureBox_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_72.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_72.Location = new System.Drawing.Point(503, 241);
-            this.pictureBox_72.Name = "pictureBox_72";
-            this.pictureBox_72.Size = new System.Drawing.Size(72, 72);
-            this.pictureBox_72.TabIndex = 19;
-            this.pictureBox_72.TabStop = false;
-            this.pictureBox_72.Tag = "ITEM;72";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_72, "Drop here a logo 72x7200. If you drop a larger or small logo, it will be resized " +
-        "automatically. \r\nPay attention that dropping a smaller logo can result in a poor" +
-        " quality image.");
-            // 
-            // pictureBox_64
-            // 
-            this.pictureBox_64.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_64.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_64.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_64.Location = new System.Drawing.Point(433, 249);
-            this.pictureBox_64.Name = "pictureBox_64";
-            this.pictureBox_64.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox_64.TabIndex = 18;
-            this.pictureBox_64.TabStop = false;
-            this.pictureBox_64.Tag = "ITEM;64";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_64, "Drop here a logo 64x64. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_48
-            // 
-            this.pictureBox_48.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_48.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_48.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_48.Location = new System.Drawing.Point(379, 265);
-            this.pictureBox_48.Name = "pictureBox_48";
-            this.pictureBox_48.Size = new System.Drawing.Size(48, 48);
-            this.pictureBox_48.TabIndex = 17;
-            this.pictureBox_48.TabStop = false;
-            this.pictureBox_48.Tag = "ITEM;48";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_48, "Drop here a logo 48x48. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_32
-            // 
-            this.pictureBox_32.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_32.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_32.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_32.Location = new System.Drawing.Point(341, 281);
-            this.pictureBox_32.Name = "pictureBox_32";
-            this.pictureBox_32.Size = new System.Drawing.Size(32, 32);
-            this.pictureBox_32.TabIndex = 16;
-            this.pictureBox_32.TabStop = false;
-            this.pictureBox_32.Tag = "ITEM;32";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_32, "Drop here a logo 32x32. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_24
-            // 
-            this.pictureBox_24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_24.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_24.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_24.Location = new System.Drawing.Point(311, 289);
-            this.pictureBox_24.Name = "pictureBox_24";
-            this.pictureBox_24.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox_24.TabIndex = 15;
-            this.pictureBox_24.TabStop = false;
-            this.pictureBox_24.Tag = "ITEM;24";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_24, "Drop here a logo 24x24. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBox_16
-            // 
-            this.pictureBox_16.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_16.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_16.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox_16.Location = new System.Drawing.Point(289, 297);
-            this.pictureBox_16.Name = "pictureBox_16";
-            this.pictureBox_16.Size = new System.Drawing.Size(16, 16);
-            this.pictureBox_16.TabIndex = 14;
-            this.pictureBox_16.TabStop = false;
-            this.pictureBox_16.Tag = "ITEM;16";
-            this.toolTip4Mods.SetToolTip(this.pictureBox_16, "Drop here a logo 16x16. If you drop a larger or small logo, it will be resized au" +
-        "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
-        "uality image.");
-            // 
-            // pictureBoxPkg_72
-            // 
-            this.pictureBoxPkg_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxPkg_72.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxPkg_72.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxPkg_72.Location = new System.Drawing.Point(821, 206);
-            this.pictureBoxPkg_72.Name = "pictureBoxPkg_72";
-            this.pictureBoxPkg_72.Size = new System.Drawing.Size(72, 72);
-            this.pictureBoxPkg_72.TabIndex = 26;
-            this.pictureBoxPkg_72.TabStop = false;
-            this.pictureBoxPkg_72.Tag = "Pkg;72";
-            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_72, "Drop here a logo 72x72 to be used for this package when listed by DMS\'s Package C" +
-        "enter.");
-            this.pictureBoxPkg_72.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
-            this.pictureBoxPkg_72.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
-            this.pictureBoxPkg_72.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
-            // 
-            // pictureBoxPkg_256
-            // 
-            this.pictureBoxPkg_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBoxPkg_256.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBoxPkg_256.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxPkg_256.Location = new System.Drawing.Point(821, 33);
-            this.pictureBoxPkg_256.Name = "pictureBoxPkg_256";
-            this.pictureBoxPkg_256.Size = new System.Drawing.Size(164, 164);
-            this.pictureBoxPkg_256.TabIndex = 27;
-            this.pictureBoxPkg_256.TabStop = false;
-            this.pictureBoxPkg_256.Tag = "Pkg;256";
-            this.toolTip4Mods.SetToolTip(this.pictureBoxPkg_256, "Drop here a logo 256x256 to be used for this package when DMS\'s Package Center di" +
-        "splays its details.");
-            this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
-            this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
-            this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1805,14 +1805,6 @@ namespace BeatificaBytes.Synology.Mods
             this.Name = "MainForm";
             this.Text = "Mods Packager for Synology";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-            this.groupBoxPackage.ResumeLayout(false);
-            this.groupBoxPackage.PerformLayout();
-            this.groupBoxItem.ResumeLayout(false);
-            this.groupBoxItem.PerformLayout();
-            this.menuStripMainBar.ResumeLayout(false);
-            this.menuStripMainBar.PerformLayout();
-            this.groupBoxTip.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).EndInit();
@@ -1824,6 +1816,14 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            this.groupBoxPackage.ResumeLayout(false);
+            this.groupBoxPackage.PerformLayout();
+            this.groupBoxItem.ResumeLayout(false);
+            this.groupBoxItem.PerformLayout();
+            this.menuStripMainBar.ResumeLayout(false);
+            this.menuStripMainBar.PerformLayout();
+            this.groupBoxTip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

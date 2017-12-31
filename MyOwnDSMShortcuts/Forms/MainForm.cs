@@ -1577,6 +1577,8 @@ namespace BeatificaBytes.Synology.Mods
                 //remove default protocol
                 rgx = new Regex("\\s*\"protocol\": \"\"");
                 json = rgx.Replace(json, "");
+                rgx = new Regex("\\s*\"protocol\": null");
+                json = rgx.Replace(json, "");
                 rgx = new Regex(",,");
                 json = rgx.Replace(json, ",");
 
@@ -2496,7 +2498,7 @@ namespace BeatificaBytes.Synology.Mods
         }
         private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
         {
-            if (!textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
+            if (!string.IsNullOrEmpty(textBox.Text) && !textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
             {
                 e.Cancel = true;
                 textBox.Select(0, textBox.Text.Length);
@@ -3566,62 +3568,72 @@ namespace BeatificaBytes.Synology.Mods
                 else if (list.items.Count == 1)
                 {
                     var title = list.items.First().Value.title;
-
-                    var cleanTitle = Helper.CleanUpText(title);
-
-                    if (list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
+                    var type = list.items.First().Value.itemType;
+                    if (type == 0)
                     {
-                        if (MessageBoxEx.Show(this, string.Format("Do you want to tansform {0} into a single app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                        MessageBoxEx.Show(this, string.Format("You may not tansform the url '{0}' into a single app!", title), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        checkBoxSingleApp.Checked = false;
+                    }
+                    else
+                    {
+                        var cleanTitle = Helper.CleanUpText(title);
+
+                        if (list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
                         {
-                            var sourceWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], cleanTitle);
-                            var targetWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"]);
+                            if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                            {
+                                var sourceWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], cleanTitle);
+                                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"]);
 
-                            if (Directory.GetDirectories(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "images")))
-                            {
-                                MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a folder named 'images'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                checkBoxSingleApp.Checked = false;
-                            }
-                            else if (Directory.GetFiles(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "config")))
-                            {
-                                MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a file named 'config'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                checkBoxSingleApp.Checked = false;
-                            }
-
-                            if (checkBoxSingleApp.Checked)
-                            {
-                                try
+                                if (Directory.GetDirectories(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "images")))
                                 {
-                                    Helper.CopyDirectory(sourceWebAppFolder, targetWebAppFolder);
-                                    Helper.DeleteDirectory(sourceWebAppFolder);
-
-                                    var focused = Helper.FindFocusedControl(this);
-
-                                    var oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
-                                    var newName = string.Format("/webman/3rdparty/{0}/", info["package"]);
-
-                                    list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
-                                    dirty = true;
-
-                                    BindData(list, null);
-                                    DisplayItem();
-                                    focused.Focus();
-
-                                    info["singleApp"] = "yes";
+                                    MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a folder named 'images'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    checkBoxSingleApp.Checked = false;
                                 }
-                                catch (Exception ex)
+                                else if (Directory.GetFiles(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "config")))
                                 {
-                                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a file named 'config'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    checkBoxSingleApp.Checked = false;
                                 }
+
+                                if (checkBoxSingleApp.Checked)
+                                {
+                                    try
+                                    {
+                                        Helper.CopyDirectory(sourceWebAppFolder, targetWebAppFolder);
+                                        Helper.DeleteDirectory(sourceWebAppFolder);
+
+                                        var focused = Helper.FindFocusedControl(this);
+
+                                        var oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
+                                        var newName = string.Format("/webman/3rdparty/{0}/", info["package"]);
+
+                                        list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
+                                        dirty = true;
+
+                                        BindData(list, null);
+                                        DisplayItem();
+                                        focused.Focus();
+
+                                        info["singleApp"] = "yes";
+
+                                        SavePackage(PackageRootPath, true);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                checkBoxSingleApp.Checked = false;
                             }
                         }
                         else
-                        {
-                            checkBoxSingleApp.Checked = false;
-                        }
-                    }
-                    else
                         if (info != null)
-                        info["singleApp"] = "yes";
+                            info["singleApp"] = "yes";
+                    }
                 }
             }
             else
@@ -3629,53 +3641,64 @@ namespace BeatificaBytes.Synology.Mods
                 if (list != null && list.items.Count == 1)
                 {
                     var title = list.items.First().Value.title;
-                    var cleanTitle = Helper.CleanUpText(title);
+                    var type = list.items.First().Value.itemType;
+                    if (type != 0)
+                    {
+                        var cleanTitle = Helper.CleanUpText(title);
 
-                    if (!list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
-                        if (info != null)
-                        {
-                            if (MessageBoxEx.Show(this, string.Format("Do you want to tansform {0} into a side by side app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                        if (!list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
+                            if (info != null)
                             {
-                                var sourceWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"]);
-                                var targetWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], cleanTitle);
-
-                                try
+                                if (MessageBoxEx.Show(this, string.Format("Do you want to tansform {0} into a side by side app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                                 {
-                                    var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                                    var sourceWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"]);
+                                    var targetWebAppFolder = Path.Combine(PackageRootPath, @"package", info["dsmuidir"], cleanTitle);
 
-                                    Helper.CopyDirectory(sourceWebAppFolder, tempPath);
-                                    Helper.DeleteDirectory(sourceWebAppFolder);
-                                    Helper.CopyDirectory(tempPath, targetWebAppFolder);
-                                    Helper.DeleteDirectory(tempPath);
-                                    Directory.Move(Path.Combine(targetWebAppFolder, "images"), Path.Combine(sourceWebAppFolder, "images"));
-                                    File.Move(Path.Combine(targetWebAppFolder, "config"), Path.Combine(sourceWebAppFolder, "config"));
+                                    try
+                                    {
+                                        var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-                                    var focused = Helper.FindFocusedControl(this);
+                                        //Move all files into a the new (sub)folder
+                                        Helper.CopyDirectory(sourceWebAppFolder, tempPath);
+                                        Helper.DeleteDirectory(sourceWebAppFolder);
+                                        Helper.CopyDirectory(tempPath, targetWebAppFolder);
+                                        Helper.DeleteDirectory(tempPath);
 
-                                    var oldName = string.Format("/webman/3rdparty/{0}/", info["package"]);
-                                    var newName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
+                                        //Except the images and the config file.
+                                        if (Directory.Exists(Path.Combine(targetWebAppFolder, "images")))
+                                            Directory.Move(Path.Combine(targetWebAppFolder, "images"), Path.Combine(sourceWebAppFolder, "images"));
+                                        if (File.Exists(Path.Combine(targetWebAppFolder, "config")))
+                                            File.Move(Path.Combine(targetWebAppFolder, "config"), Path.Combine(sourceWebAppFolder, "config"));
 
-                                    list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
-                                    dirty = true;
+                                        var focused = Helper.FindFocusedControl(this);
 
-                                    BindData(list, null);
-                                    DisplayItem();
-                                    focused.Focus();
+                                        var oldName = string.Format("/webman/3rdparty/{0}/", info["package"]);
+                                        var newName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
 
-                                    info["singleApp"] = "no";
+                                        list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
+                                        dirty = true;
+
+                                        BindData(list, null);
+                                        DisplayItem();
+                                        focused.Focus();
+
+                                        info["singleApp"] = "no";
+
+                                        SavePackage(PackageRootPath, true);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBoxEx.Show(this, string.Format("An error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    }
                                 }
-                                catch (Exception ex)
+                                else
                                 {
-                                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                    info["singleApp"] = "no";
                                 }
                             }
                             else
-                            {
-                                info["singleApp"] = "no";
-                            }
-                        }
-                        else
-                            checkBoxSingleApp.Checked = true;
+                                checkBoxSingleApp.Checked = true;
+                    }
                 }
                 else
                     if (info != null)
@@ -3883,7 +3906,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxStartable.Visible = advanced;
             checkBoxRemovable.Visible = advanced;
             checkBoxPrecheck.Visible = advanced;
-            checkBoxSilentReboot.Visible = advanced;            
+            checkBoxSilentReboot.Visible = advanced;
 
             checkBoxSupportCenter.Visible = advanced;
             checkBoxLegacy.Visible = advanced;
