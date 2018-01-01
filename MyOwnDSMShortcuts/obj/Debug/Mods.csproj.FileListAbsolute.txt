@@ -33,3 +33,4 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Syn
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.csproj.GenerateResource.Cache
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Parameters.resources

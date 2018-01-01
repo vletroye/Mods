@@ -14,6 +14,8 @@ using ImageMagick;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -755,6 +757,62 @@ namespace BeatificaBytes.Synology.Mods
                         outputFile.WriteLine("checksum=\"{0}\"", hash);
                 }
             }
+        }
+
+        public static string JsonPrettify(string json)
+        {
+            using (var stringReader = new StringReader(json))
+            using (var stringWriter = new StringWriter())
+            {
+                var jsonReader = new JsonTextReader(stringReader);
+                var jsonWriter = new JsonTextWriter(stringWriter) { Formatting = Formatting.Indented };
+                jsonWriter.WriteToken(jsonReader);
+                return stringWriter.ToString();
+            }
+        }
+        public static int RunProcessAsAdmin(string command, string parameters)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.UseShellExecute = true; //Must be true to be used with verb = runas
+                startInfo.WorkingDirectory = Environment.SystemDirectory;
+                startInfo.FileName = command;
+                startInfo.Verb = "runas"; //runas is used to be run as administrator
+                startInfo.Arguments = parameters;
+                startInfo.ErrorDialog = true;
+                //startInfo.CreateNoWindow = true; //Require UseShellExecute = false
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                Process process = Process.Start(startInfo);
+                process.WaitForExit();
+                return process.ExitCode;
+            }
+            catch (Win32Exception ex)
+            {
+                switch (ex.NativeErrorCode)
+                {
+                    case 1223:
+                        return ex.NativeErrorCode;
+                    default:
+                        return -1;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Gets whether the specified path is a valid absolute file path.
+        /// </summary>
+        /// <param name="path">Any path. OK if null or empty.</param>
+        static public bool IsValidPath(string path)
+        {
+            Regex r = new Regex(@"^(([a-zA-Z]:)|(\))(\{1}|((\{1})[^\]([^/:*?<>""|]*))+)$");
+            return r.IsMatch(path);
         }
     }
 }

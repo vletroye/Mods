@@ -91,6 +91,10 @@ namespace ZTn.Json.Editor.Forms
                     checkBoxAllowBlank.Visible = false;
                     textBoxBlankText.Visible = false;
                     checkBoxHtmlEncode.Visible = false;
+                    comboBoxType.Visible = false;
+                    labelType.Visible = false;
+                    textBoxRegEx.Visible = false;
+                    labelRegEx.Visible = false;
 
                     checkBoxGrow.Visible = false;
 
@@ -99,7 +103,6 @@ namespace ZTn.Json.Editor.Forms
                     labelHeight.Visible = false;
                     textBoxHeight.Visible = false;
 
-                    tabControlDefinition.TabPages.RemoveAt(2);
                     tabControlDefinition.TabPages.RemoveAt(1);
                     break;
                 case "textfield":

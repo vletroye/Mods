@@ -171,7 +171,10 @@ namespace ZTn.Json.Editor.Forms
                         var node = GetNodeByTag(JTokenNode, "step_title");
                         if (node != null)
                         {
-                            RemoveWizardStepToolStripItem.Text = string.Format("Remove Step '{0}'", ((JValue)(((JValueTreeNode)node).JTokenTag)).Value);
+                            string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
+                            if (desc.Length > 10)
+                                desc = desc.Substring(0, 20) + "...";
+                            RemoveWizardStepToolStripItem.Text = string.Format("Remove Step '{0}'", desc);
                             wizard = true;
                         }
                     }
@@ -188,7 +191,10 @@ namespace ZTn.Json.Editor.Forms
                         var node = GetNodeByTag(JTokenNode, "step_title");
                         if (node != null)
                         {
-                            EditWizardStepToolStripItem.Text = string.Format("Edit Step '{0}'", ((JValue)(((JValueTreeNode)node).JTokenTag)).Value);
+                            string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
+                            if (desc.Length > 10)
+                                desc = desc.Substring(0, 20) + "...";
+                            EditWizardStepToolStripItem.Text = string.Format("Edit Step '{0}'", desc );
                             wizard = true;
                         }
                     }
@@ -206,7 +212,10 @@ namespace ZTn.Json.Editor.Forms
                         var node = GetNodeByTag(JTokenNode, "desc");
                         if (node != null)
                         {
-                            RemoveWizardItemToolStripItem.Text = string.Format("Remove items of '{0}'", node.Text);
+                            string desc = node.Text;
+                            if (desc.Length > 10)
+                                desc = desc.Substring(0, 20) + "...";
+                            RemoveWizardItemToolStripItem.Text = string.Format("Remove items of '{0}'", desc);
                             wizard = true;
                         }
                     }
@@ -223,7 +232,10 @@ namespace ZTn.Json.Editor.Forms
                         var node = GetNodeByTag(JTokenNode, "desc");
                         if (node != null)
                         {
-                            RemoveWizardSubitemToolStripItem.Text = string.Format("Remove '{0}'", ((JValue)(((JValueTreeNode)node).JTokenTag)).Value);
+                            string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
+                            if (desc.Length > 10)
+                                desc = desc.Substring(0, 20) + "...";
+                            RemoveWizardSubitemToolStripItem.Text = string.Format("Remove '{0}'", desc);
                             wizard = true;
                         }
                     }
@@ -240,7 +252,10 @@ namespace ZTn.Json.Editor.Forms
                         var node = GetNodeByTag(JTokenNode, "desc");
                         if (node != null)
                         {
-                            EditWizardSubitemToolStripItem.Text = string.Format("Edit '{0}'", ((JValue)(((JValueTreeNode)node).JTokenTag)).Value);
+                            var desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
+                            if (desc.Length > 10)
+                                desc = desc.Substring(0, 20) + "...";
+                            EditWizardSubitemToolStripItem.Text = string.Format("Edit '{0}'", desc);
                             wizard = true;
                         }
                     }

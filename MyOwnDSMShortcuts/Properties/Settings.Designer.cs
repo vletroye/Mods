@@ -157,5 +157,29 @@ namespace BeatificaBytes.Synology.Mods.Properties {
                 this["AdvancedEditor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DefaultPackageRepo {
+            get {
+                return ((bool)(this["DefaultPackageRepo"]));
+            }
+            set {
+                this["DefaultPackageRepo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenWith {
+            get {
+                return ((bool)(this["OpenWith"]));
+            }
+            set {
+                this["OpenWith"] = value;
+            }
+        }
     }
 }

@@ -146,7 +146,7 @@ Center from Synology server. However, the user can install the package manually.
 This option is by the way automatically set if you change the value of the combo 'Grant Privilege'.</value>
   </data>
   <data name="ComboBoxGrantPrivilege.ToolTip" xml:space="preserve">
-    <value>With this setting, the authorization to start the application can be regulated. If this option is enabled, the application will appear under "Control Panel &gt; Users &gt; Applications" or "Control Panel &gt; Permissions". Important: To make this work for 3rdparty apps, google on ' HowTo: 3rdparty Apps Application Authorization and SynoToken'. 
+    <value>With this setting, the authorization to start the application can be regulated. If this option is enabled, the application will appear under "Control Panel &gt; Users &gt; Applications" or "Control Panel &gt; Privileges". Important: To make this work for 3rdparty apps, google on ' HowTo: 3rdparty Apps Application Authorization and SynoToken'. 
 local: this app can be selected only for local users.
 domain: this app can be selected only for domain users.
 ldap: this app can be selected only for LDAP users .

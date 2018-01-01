@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Diagnostics;
 
 static class Win32
 {
@@ -39,16 +40,24 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                if (Properties.Settings.Default.UpgradeRequired)
+                Debugger.Launch();
+
+                string open = null;
+                var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
+                if (!string.IsNullOrEmpty(edit))
+                {
+                    open = edit.Replace("edit:", "");
+                }
+                else if (Properties.Settings.Default.UpgradeRequired)
                 {
                     Properties.Settings.Default.Upgrade();
                     Properties.Settings.Default.UpgradeRequired = false;
                     Properties.Settings.Default.Save();
                 }
-
+                                
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
+                Application.Run(new MainForm(open));
             }
         }
     }

@@ -15,6 +15,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Forms;
 
@@ -76,6 +77,8 @@ namespace BeatificaBytes.Synology.Mods
         string imageDragDropPath;
         protected bool validData;
 
+        protected List<String> warnings = new List<string>();
+
         public string CurrentScript
         {
             get
@@ -91,14 +94,16 @@ namespace BeatificaBytes.Synology.Mods
         #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
         #region Initialize -------------------------------------------------------------------------------------------------------------------------
-        public MainForm()
+        public MainForm(string package)
         {
             InitializeComponent();
 
+            // Load the default runner script or create one if it does not exist
             var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
             if (!File.Exists(defaultRunnerPath))
                 File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
 
+            // Extract the WizardUI background image if it does not exist
             var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
             if (!File.Exists(backWizard))
             {
@@ -106,14 +111,44 @@ namespace BeatificaBytes.Synology.Mods
                 backWizardPng.Save(backWizard);
             }
 
-            comboBoxTransparency.SelectedIndex = 0;
-
-            InitListView();
-
-            GetItemPictureBoxes();
-
             groupBoxItem.Enabled = false;
             groupBoxPackage.Enabled = false;
+            comboBoxTransparency.SelectedIndex = 0;
+
+            // Prepare the PictureBox for drag&drop, etc...
+            PrepareItemPictureBoxes();
+
+            package = @"E:\Downloads\New folder\Mods.spk";
+            if (!string.IsNullOrEmpty(package))
+            {
+                // Override the path of the last package;
+                PackageRootPath = null;
+
+                if (File.Exists(package))
+                {
+                    var packageDirectory = Path.GetDirectoryName(package);
+                    var spkList = Directory.GetFiles(packageDirectory, "*.spk");
+                    if (spkList.Length > 1)
+                    {
+                        //several SPK in the folder => Import the requested one
+                        packageDirectory = ExpandSpkInTempFolder(package);
+                    }
+                    //Check if the SPK is in a valid Package folder
+                    var getPackage = IsPackageFolderEmpty(packageDirectory, true);
+                    if (getPackage == DialogResult.No)
+                    {
+                        PackageRootPath = packageDirectory;
+                    }
+                }
+                else if (Directory.Exists(package))
+                {
+                    var getPackage = IsPackageFolderEmpty(package);
+                    if (getPackage == DialogResult.No)
+                    {
+                        PackageRootPath = package;
+                    }
+                }
+            }
 
             if (string.IsNullOrEmpty(PackageRootPath) || !Directory.Exists(PackageRootPath))
             {
@@ -171,10 +206,9 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
-            textBoxDisplay.Focus();
-            CreateRecentsMenu();
-
             ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
+            CreateRecentsMenu();
+            textBoxDisplay.Focus();
         }
 
         private void CreateRecentsMenu()
@@ -185,19 +219,28 @@ namespace BeatificaBytes.Synology.Mods
                 var items = new List<ToolStripMenuItem>();
                 for (int item = Properties.Settings.Default.Recents.Count - 1; item >= 0; item--)
                 {
+                    string path = null;
+                    bool exist = true;
                     try
                     {
-                        var entry = new ToolStripMenuItem();
-                        entry.Name = "recentItem" + item.ToString();
-                        entry.Tag = Properties.Settings.Default.Recents[item];
-                        entry.Text = Properties.Settings.Default.RecentsName[item];
-                        entry.ToolTipText = Properties.Settings.Default.Recents[item];
-                        entry.Click += new EventHandler(MenuItemOpenRecent_ClickHandler);
-                        items.Add(entry);
+                        path = Properties.Settings.Default.Recents[item];
+                        exist = Directory.Exists(path);
+                        if (exist)
+                        {
+                            var entry = new ToolStripMenuItem();
+                            entry.Name = "recentItem" + item.ToString();
+                            entry.Tag = path;
+                            entry.Text = Properties.Settings.Default.RecentsName[item];
+                            entry.ToolTipText = path;
+                            entry.Click += new EventHandler(MenuItemOpenRecent_ClickHandler);
+                            items.Add(entry);
+                        }
                     }
                     catch
                     {
+                        exist = false;
                     }
+                    if (!exist) RemoveRecentPath(path);
                 }
                 openRecentToolStripMenuItem.DropDownItems.AddRange(items.ToArray());
             }
@@ -229,17 +272,7 @@ namespace BeatificaBytes.Synology.Mods
             labelToolTip.Text = "";
         }
 
-        private void InitListView()
-        {
-            listViewItems.View = View.Details;
-            listViewItems.GridLines = true;
-            listViewItems.FullRowSelect = true;
-            listViewItems.Columns.Add("Name", 200);
-            listViewItems.Columns.Add("Uri", 568);
-            listViewItems.Sorting = SortOrder.Ascending;
-        }
-
-        private void GetItemPictureBoxes()
+        private void PrepareItemPictureBoxes()
         {
             pictureBoxes = new Dictionary<string, PictureBox>();
 
@@ -486,14 +519,7 @@ namespace BeatificaBytes.Synology.Mods
                 CreateRecentsMenu();
 
                 var wizard = Path.Combine(path, "WIZARD_UIFILES");
-                if (Directory.Exists(wizard))
-                {
-                    wizardExist = true;
-                }
-                else
-                {
-                    wizardExist = false;
-                }
+                wizardExist = Directory.Exists(wizard);
             }
             else
             {
@@ -502,7 +528,7 @@ namespace BeatificaBytes.Synology.Mods
 
             LoadPackageConfig(path);
 
-            FillInfoScreen(path);
+            FillInfoScreen();
         }
 
         private string GetUIDir(string path)
@@ -535,10 +561,26 @@ namespace BeatificaBytes.Synology.Mods
             return value;
         }
 
-        private void FillInfoScreen(string path)
+        private void FillInfoScreen()
         {
             if (info != null)
             {
+                var parent = Path.GetFileName(PackageRootPath);
+                Guid tmp;
+                bool isTempFolder = Guid.TryParse(parent, out tmp);
+                if (isTempFolder)
+                {
+                    if (groupBoxPackage.BackColor != Color.Salmon)
+                    {
+                        groupBoxPackage.BackColor = Color.Salmon;
+                        warnings.Add("This package has has been opened from a temporary folder. Possibly move it into a traget folder using the menu Package > Move.");
+                    }
+                }
+                else
+                {
+                    groupBoxPackage.BackColor = SystemColors.Control;
+                }
+
                 string subkey;
                 var unused = new List<string>(info.Keys);
                 foreach (var control in groupBoxPackage.Controls)
@@ -639,8 +681,7 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (unused.Count > 0)
                 {
-                    var msg = "There are a few unsupported info in this package. You can edit those via the 'Advanced' button." + Environment.NewLine + Environment.NewLine + unused.Aggregate((i, j) => i + Environment.NewLine + j + ": " + info[j]);
-                    MessageBoxEx.Show(this, msg, "Warning");
+                    warnings.Add("There are a few unsupported info in this package. You can edit those via the 'Advanced' button." + Environment.NewLine + Environment.NewLine + unused.Aggregate((i, j) => i + Environment.NewLine + j + ": " + info[j]));
                 }
             }
             else
@@ -675,6 +716,23 @@ namespace BeatificaBytes.Synology.Mods
 
             LoadPictureBox(pictureBoxPkg_256, picturePkg_256);
             LoadPictureBox(pictureBoxPkg_72, picturePkg_72);
+
+            Blink();
+        }
+        private async void Blink()
+        {
+            pictureBoxWarning.Visible = true;
+            var image = pictureBoxWarning.BackgroundImage;
+            while (warnings.Count > 0)
+            {
+                await Task.Delay(500);
+                if (pictureBoxWarning.BackgroundImage == null)
+                    pictureBoxWarning.BackgroundImage = image;
+                else
+                    pictureBoxWarning.BackgroundImage = null;
+            }
+            pictureBoxWarning.BackgroundImage = image;
+            pictureBoxWarning.Visible = false;
         }
 
         private void InitialConfiguration(string path)
@@ -720,17 +778,29 @@ namespace BeatificaBytes.Synology.Mods
             {
                 GeneratePackage(PackageRootPath);
 
-                SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
-                if (!string.IsNullOrEmpty(PackageRepoPath))
-                    SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepoPath;
-                else
-                    SpkRepoBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRepo;
-
-                if (SpkRepoBrowserDialog4Mods.ShowDialog())
+                var PackageRepo = Properties.Settings.Default.PackageRepo;
+                var DefaultPackageRepo = Properties.Settings.Default.DefaultPackageRepo;
+                if (string.IsNullOrEmpty(PackageRepo) || !Directory.Exists(PackageRepo) || !DefaultPackageRepo)
                 {
-                    PackageRepoPath = SpkRepoBrowserDialog4Mods.FileName;
-                    PublishPackage(PackageRootPath, PackageRepoPath);
+
+                    SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
+                    if (!string.IsNullOrEmpty(PackageRepoPath))
+                        SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepoPath;
+                    else if (string.IsNullOrEmpty(PackageRepo) || !Directory.Exists(PackageRepo))
+                        SpkRepoBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    else
+                        SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepo;
+
+                    if (SpkRepoBrowserDialog4Mods.ShowDialog())
+                        PackageRepoPath = SpkRepoBrowserDialog4Mods.FileName;
+                    else
+                        PackageRepoPath = null;
                 }
+                else
+                    PackageRepoPath = PackageRepo;
+
+                if (!string.IsNullOrEmpty(PackageRepoPath))
+                    PublishPackage(PackageRootPath, PackageRepoPath);
             }
         }
 
@@ -2678,7 +2748,7 @@ namespace BeatificaBytes.Synology.Mods
                         if (dirty)
                         {
                             if (!force)
-                                response = MessageBoxEx.Show(this, "Do you want to save changes done in the current Package? This cannot be undone!!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                                response = MessageBoxEx.Show(this, "Do you want to save pending changes done in the current Package?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
                             if (response == DialogResult.Yes)
                             {
@@ -2926,7 +2996,7 @@ namespace BeatificaBytes.Synology.Mods
                 //var image = LoadImage(pathImage, 0, 120);
                 //image.Save(pathImage, ImageFormat.Png);
 
-                MessageBoxEx.Show(this, "The package has been successfuly published", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "The package has been successfuly published.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -2957,7 +3027,8 @@ namespace BeatificaBytes.Synology.Mods
                     unpack.StartInfo.WorkingDirectory = path;
                     unpack.StartInfo.UseShellExecute = true; // required to run as admin
                     unpack.StartInfo.RedirectStandardOutput = false; // may not read from standard output when run as admin
-                    unpack.StartInfo.CreateNoWindow = true;
+                    unpack.StartInfo.CreateNoWindow = true; // Does not work if UseShellExecute = true
+                    unpack.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     unpack.StartInfo.Verb = "runas"; //Required to run as admin as some packages have "symlink" resulting in "ERROR: Can not create symbolic link : Access is denied."
                     unpack.Start();
                     unpack.WaitForExit(30000);
@@ -3108,7 +3179,7 @@ namespace BeatificaBytes.Synology.Mods
             if (Directory.Exists(path))
             {
                 var spkList = Directory.GetFiles(path, "*.spk");
-                if (spkList.Length > 0) // Folder already contains spk.
+                if (spkList.Length == 1) // Folder already contains spk.
                 {
                     var info = Path.Combine(path, "INFO");
                     if (!File.Exists(info))
@@ -3127,6 +3198,11 @@ namespace BeatificaBytes.Synology.Mods
                             createNewPackage = DialogResult.Abort;
                         }
                     }
+                }
+                else if (spkList.Length > 1)
+                {
+                    MessageBoxEx.Show(this, "This folder contains several packages. Operation will abort.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    createNewPackage = DialogResult.Abort;
                 }
 
                 if (createNewPackage != DialogResult.Abort)
@@ -3189,17 +3265,9 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             if (info.Exists)
                             {
-                                var msg = "This Package contains unknown elements. Do you want to proceed anyway ?" + Environment.NewLine + Environment.NewLine + content.Aggregate((i, j) => i + Environment.NewLine + j);
-                                if (MessageBoxEx.Show(this, msg, "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.No)
-                                {
-                                    // Folder contains unknow elements
-                                    createNewPackage = DialogResult.Abort;
-                                }
-                                else
-                                {
-                                    // Folder contains an existing "extracted" Package (not a single spk file)
-                                    createNewPackage = DialogResult.No;
-                                }
+                                // Folder contains an existing "extracted" Package (not a single spk file) with some unknow files
+                                warnings.Add("This Package contains unknown elements:" + Environment.NewLine + content.Aggregate((i, j) => i.Replace(path, "") + Environment.NewLine + j.Replace(path, "")));
+                                createNewPackage = DialogResult.No;
                             }
                             else
                             {
@@ -3518,9 +3586,13 @@ namespace BeatificaBytes.Synology.Mods
 
             var configName = Path.Combine(PackageRootPath, string.Format(CONFIGFILE, info["dsmuidir"]));
             if (File.Exists(configName))
+            {
                 content = File.ReadAllText(configName);
+                content = Helper.JsonPrettify(content);
+            }
             else
                 content = null;
+
 
             var config = new ScriptDetails(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
 
@@ -3569,7 +3641,7 @@ namespace BeatificaBytes.Synology.Mods
             picturePkg_256 = null;
             picturePkg_120 = null;
             picturePkg_72 = null;
-            FillInfoScreen(PackageRootPath);
+            FillInfoScreen();
             BindData(list, null);
             DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
             labelToolTip.Text = "";
@@ -3794,10 +3866,10 @@ namespace BeatificaBytes.Synology.Mods
 
         private void importToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImportPackage();
+            PromptToImportPackage();
         }
 
-        private void ImportPackage()
+        private void PromptToImportPackage()
         {
             openFileDialog4Mods.Title = "Select a package file";
             openFileDialog4Mods.Filter = "spk (*.spk)|*.spk";
@@ -3806,20 +3878,32 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = openFileDialog4Mods.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                var spk = new FileInfo(openFileDialog4Mods.FileName);
-                var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-                Directory.CreateDirectory(path);
-                spk.CopyTo(Path.Combine(path, spk.Name));
-                OpenPackage(path, true);
+                PackageRootPath = ImportPackage(openFileDialog4Mods.FileName);
             }
+        }
+
+        private string ImportPackage(string spk)
+        {
+            string path = ExpandSpkInTempFolder(spk);
+            OpenPackage(path, true);
+            return path;
+        }
+
+        private static string ExpandSpkInTempFolder(string spk)
+        {
+            var spkInfo = new FileInfo(spk);
+            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(path);
+            spkInfo.CopyTo(Path.Combine(path, spkInfo.Name));
+            return path;
         }
 
         private void moveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MovePackage();
+            PromptToMovePackage();
         }
 
-        private bool MovePackage(string path = null)
+        private bool PromptToMovePackage(string path = null)
         {
             bool succeed = true;
 
@@ -4157,6 +4241,19 @@ namespace BeatificaBytes.Synology.Mods
                 textBoxDisplay.Focus();
                 errorProvider.Tag = null;
             }
+        }
+
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var param = new Parameters();
+            param.ShowDialog();
+        }
+
+        private void pictureBoxWarning_Click(object sender, EventArgs e)
+        {
+            var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
+            warnings.Clear();
+            MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

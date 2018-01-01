@@ -96,7 +96,7 @@ namespace ZTn.Json.Editor.Forms
             this.labelMinLength = new System.Windows.Forms.Label();
             this.checkBoxAllowBlank = new System.Windows.Forms.CheckBox();
             this.textBoxRegEx = new System.Windows.Forms.TextBox();
-            this.labelValidator = new System.Windows.Forms.Label();
+            this.labelRegEx = new System.Windows.Forms.Label();
             this.tabPageHelp = new System.Windows.Forms.TabPage();
             this.dataGridViewHelp = new System.Windows.Forms.DataGridView();
             this.GridProperty = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -677,7 +677,7 @@ namespace ZTn.Json.Editor.Forms
             this.tabPageValidator.Controls.Add(this.labelMinLength);
             this.tabPageValidator.Controls.Add(this.checkBoxAllowBlank);
             this.tabPageValidator.Controls.Add(this.textBoxRegEx);
-            this.tabPageValidator.Controls.Add(this.labelValidator);
+            this.tabPageValidator.Controls.Add(this.labelRegEx);
             this.tabPageValidator.Location = new System.Drawing.Point(4, 22);
             this.tabPageValidator.Name = "tabPageValidator";
             this.tabPageValidator.Padding = new System.Windows.Forms.Padding(3);
@@ -843,14 +843,14 @@ namespace ZTn.Json.Editor.Forms
             this.textBoxRegEx.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxRegEx_Validating);
             this.textBoxRegEx.Validated += new System.EventHandler(this.textBoxRegEx_Validated);
             // 
-            // labelValidator
+            // labelRegEx
             // 
-            this.labelValidator.AutoSize = true;
-            this.labelValidator.Location = new System.Drawing.Point(33, 37);
-            this.labelValidator.Name = "labelValidator";
-            this.labelValidator.Size = new System.Drawing.Size(48, 13);
-            this.labelValidator.TabIndex = 25;
-            this.labelValidator.Text = "Reg Ex.:";
+            this.labelRegEx.AutoSize = true;
+            this.labelRegEx.Location = new System.Drawing.Point(33, 37);
+            this.labelRegEx.Name = "labelRegEx";
+            this.labelRegEx.Size = new System.Drawing.Size(48, 13);
+            this.labelRegEx.TabIndex = 25;
+            this.labelRegEx.Text = "Reg Ex.:";
             // 
             // tabPageHelp
             // 
@@ -1027,7 +1027,7 @@ namespace ZTn.Json.Editor.Forms
         private Label labelMinLength;
         private CheckBox checkBoxAllowBlank;
         private TextBox textBoxRegEx;
-        private Label labelValidator;
+        private Label labelRegEx;
         private Label labelToolTip;
         private Panel panelToolTip;
         private TextBox textBoxInvalid;

@@ -94,6 +94,7 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBox_32 = new System.Windows.Forms.PictureBox();
             this.pictureBox_24 = new System.Windows.Forms.PictureBox();
             this.pictureBox_16 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxWarning = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
@@ -117,6 +118,8 @@ namespace BeatificaBytes.Synology.Mods
             this.labelFirmware = new System.Windows.Forms.Label();
             this.labelPublisher = new System.Windows.Forms.Label();
             this.listViewItems = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelTitle = new System.Windows.Forms.Label();
             this.labelDesc = new System.Windows.Forms.Label();
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
@@ -130,6 +133,8 @@ namespace BeatificaBytes.Synology.Mods
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -174,6 +179,7 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarning)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -250,7 +256,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.textBoxVersion.Location = new System.Drawing.Point(330, 20);
             this.textBoxVersion.Name = "textBoxVersion";
-            this.textBoxVersion.Size = new System.Drawing.Size(73, 20);
+            this.textBoxVersion.Size = new System.Drawing.Size(134, 20);
             this.textBoxVersion.TabIndex = 1;
             this.textBoxVersion.Tag = "PKGversion";
             this.toolTip4Mods.SetToolTip(this.textBoxVersion, resources.GetString("textBoxVersion.ToolTip"));
@@ -763,8 +769,10 @@ namespace BeatificaBytes.Synology.Mods
             // ComboBoxGrantPrivilege
             // 
             this.ComboBoxGrantPrivilege.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ComboBoxGrantPrivilege.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxGrantPrivilege.FormattingEnabled = true;
             this.ComboBoxGrantPrivilege.Items.AddRange(new object[] {
+            "",
             "all",
             "local",
             "ldap",
@@ -1021,6 +1029,22 @@ namespace BeatificaBytes.Synology.Mods
         "tomatically. \r\nPay attention that dropping a smaller logo can result in a poor q" +
         "uality image.");
             // 
+            // pictureBoxWarning
+            // 
+            this.pictureBoxWarning.BackgroundImage = global::BeatificaBytes.Synology.Mods.Properties.Resources.warning;
+            this.pictureBoxWarning.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBoxWarning.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pictureBoxWarning.ErrorImage = null;
+            this.pictureBoxWarning.InitialImage = null;
+            this.pictureBoxWarning.Location = new System.Drawing.Point(576, 154);
+            this.pictureBoxWarning.Name = "pictureBoxWarning";
+            this.pictureBoxWarning.Size = new System.Drawing.Size(44, 43);
+            this.pictureBoxWarning.TabIndex = 81;
+            this.pictureBoxWarning.TabStop = false;
+            this.toolTip4Mods.SetToolTip(this.pictureBoxWarning, "Click here to see some important messages.");
+            this.pictureBoxWarning.Visible = false;
+            this.pictureBoxWarning.Click += new System.EventHandler(this.pictureBoxWarning_Click);
+            // 
             // pictureBoxPkg_72
             // 
             this.pictureBoxPkg_72.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -1076,6 +1100,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelMaintainerUrl
             // 
             this.labelMaintainerUrl.AutoSize = true;
+            this.labelMaintainerUrl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelMaintainerUrl.Location = new System.Drawing.Point(245, 75);
             this.labelMaintainerUrl.Name = "labelMaintainerUrl";
             this.labelMaintainerUrl.Size = new System.Drawing.Size(82, 13);
@@ -1142,6 +1167,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPackage.Controls.Add(this.pictureBoxWarning);
             this.groupBoxPackage.Controls.Add(this.buttonDependencies);
             this.groupBoxPackage.Controls.Add(this.textBoxChangeBox);
             this.groupBoxPackage.Controls.Add(this.checkBoxAdminUrl);
@@ -1231,6 +1257,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelSupportUrl
             // 
             this.labelSupportUrl.AutoSize = true;
+            this.labelSupportUrl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelSupportUrl.Location = new System.Drawing.Point(37, 207);
             this.labelSupportUrl.Name = "labelSupportUrl";
             this.labelSupportUrl.Size = new System.Drawing.Size(63, 13);
@@ -1241,6 +1268,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelHelpUrl
             // 
             this.labelHelpUrl.AutoSize = true;
+            this.labelHelpUrl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelHelpUrl.Location = new System.Drawing.Point(52, 233);
             this.labelHelpUrl.Name = "labelHelpUrl";
             this.labelHelpUrl.Size = new System.Drawing.Size(48, 13);
@@ -1251,6 +1279,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelReportUrl
             // 
             this.labelReportUrl.AutoSize = true;
+            this.labelReportUrl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelReportUrl.Location = new System.Drawing.Point(492, 258);
             this.labelReportUrl.Name = "labelReportUrl";
             this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
@@ -1262,6 +1291,7 @@ namespace BeatificaBytes.Synology.Mods
             // labelPublisherUrl
             // 
             this.labelPublisherUrl.AutoSize = true;
+            this.labelPublisherUrl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.labelPublisherUrl.Location = new System.Drawing.Point(251, 101);
             this.labelPublisherUrl.Name = "labelPublisherUrl";
             this.labelPublisherUrl.Size = new System.Drawing.Size(76, 13);
@@ -1292,13 +1322,30 @@ namespace BeatificaBytes.Synology.Mods
             this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewItems.FullRowSelect = true;
+            this.listViewItems.GridLines = true;
             this.listViewItems.Location = new System.Drawing.Point(6, 19);
             this.listViewItems.Name = "listViewItems";
             this.listViewItems.Size = new System.Drawing.Size(979, 98);
+            this.listViewItems.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewItems.TabIndex = 0;
             this.listViewItems.UseCompatibleStateImageBehavior = false;
+            this.listViewItems.View = System.Windows.Forms.View.Details;
             this.listViewItems.SelectedIndexChanged += new System.EventHandler(this.listViewItems_SelectedIndexChanged);
             this.listViewItems.DoubleClick += new System.EventHandler(this.listViewItems_DoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Name";
+            this.columnHeader1.Width = 200;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Uri";
+            this.columnHeader2.Width = 568;
             // 
             // labelTitle
             // 
@@ -1397,7 +1444,9 @@ namespace BeatificaBytes.Synology.Mods
             this.importToolStripMenuItem,
             this.closeToolStripMenuItem,
             this.saveToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.exitToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.propertiesToolStripMenuItem});
             this.filesToolStripMenuItem.Name = "filesToolStripMenuItem";
             this.filesToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.filesToolStripMenuItem.Text = "Files";
@@ -1406,8 +1455,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.ToolTipText = "Select an empty folder where a new New empty Package can be created.";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -1415,24 +1464,24 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.ToolTipText = "Select a folder containing an existing Package to open it.";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // openRecentToolStripMenuItem
             // 
             this.openRecentToolStripMenuItem.Name = "openRecentToolStripMenuItem";
-            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.openRecentToolStripMenuItem.Text = "Open Recent";
+            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.openRecentToolStripMenuItem.Text = "Open &Recent";
             this.openRecentToolStripMenuItem.ToolTipText = "Open a Package recently accessed.";
             // 
             // importToolStripMenuItem
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
             this.importToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.importToolStripMenuItem.Text = "Import";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.importToolStripMenuItem.Text = "&Import";
             this.importToolStripMenuItem.ToolTipText = "Select a SPK file to be edited. It will be expanded in a temporary folder. You ma" +
     "y move it later into a target folder.";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
@@ -1441,8 +1490,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.closeToolStripMenuItem.Text = "&Close";
             this.closeToolStripMenuItem.ToolTipText = "Close the current Package.";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
@@ -1450,8 +1499,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.ToolTipText = "Save the current Package.";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -1459,10 +1508,23 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.ToolTipText = "Quit Mods.";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(167, 6);
+            // 
+            // propertiesToolStripMenuItem
+            // 
+            this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
+            this.propertiesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
+            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
+            this.propertiesToolStripMenuItem.Text = "&Parameters";
+            this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
             // packageToolStripMenuItem
             // 
@@ -1487,7 +1549,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
             this.resetToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Text = "&Reset";
             this.resetToolStripMenuItem.ToolTipText = "Reset all fields of the currently opened Package.";
             this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
@@ -1495,7 +1557,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.moveToolStripMenuItem.Name = "moveToolStripMenuItem";
             this.moveToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.moveToolStripMenuItem.Text = "Move";
+            this.moveToolStripMenuItem.Text = "&Move";
             this.moveToolStripMenuItem.ToolTipText = "Move the currently opened Package into a new folder.";
             this.moveToolStripMenuItem.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
             // 
@@ -1503,7 +1565,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItem1.Text = "Delete";
+            this.toolStripMenuItem1.Text = "&Delete";
             this.toolStripMenuItem1.ToolTipText = "Delete the folder containing the currently opened Package.";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -1511,7 +1573,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.addWizardToolStripMenuItem.Name = "addWizardToolStripMenuItem";
             this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.addWizardToolStripMenuItem.Text = "Create Wizard";
+            this.addWizardToolStripMenuItem.Text = "Create &Wizard";
             this.addWizardToolStripMenuItem.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
             this.addWizardToolStripMenuItem.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
             // 
@@ -1519,7 +1581,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.toolStripMenuItemChangeLog.Name = "toolStripMenuItemChangeLog";
             this.toolStripMenuItemChangeLog.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItemChangeLog.Text = "Edit ChangeLog";
+            this.toolStripMenuItemChangeLog.Text = "Edit Change&Log";
             this.toolStripMenuItemChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
             // 
             // toolStripSeparator3
@@ -1532,7 +1594,7 @@ namespace BeatificaBytes.Synology.Mods
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
             this.generateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
             this.generateToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.generateToolStripMenuItem.Text = "Generate";
+            this.generateToolStripMenuItem.Text = "&Generate";
             this.generateToolStripMenuItem.ToolTipText = "Generate the SPK file for the currently opened Package.";
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
@@ -1541,7 +1603,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolStripMenuItemPublish.Name = "toolStripMenuItemPublish";
             this.toolStripMenuItemPublish.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.toolStripMenuItemPublish.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItemPublish.Text = "Publish";
+            this.toolStripMenuItemPublish.Text = "&Publish";
             this.toolStripMenuItemPublish.Click += new System.EventHandler(this.toolStripMenuItemPublish_Click);
             // 
             // openFolderToolStripMenuItem
@@ -1549,7 +1611,7 @@ namespace BeatificaBytes.Synology.Mods
             this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
             this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.openFolderToolStripMenuItem.Text = "Open Folder";
+            this.openFolderToolStripMenuItem.Text = "&Open Folder";
             this.openFolderToolStripMenuItem.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
             this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
@@ -1563,7 +1625,7 @@ namespace BeatificaBytes.Synology.Mods
             this.advancedEditorToolStripMenuItem.Name = "advancedEditorToolStripMenuItem";
             this.advancedEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
             this.advancedEditorToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.advancedEditorToolStripMenuItem.Text = "Advanced Editor";
+            this.advancedEditorToolStripMenuItem.Text = "&Advanced Editor";
             this.advancedEditorToolStripMenuItem.ToolTipText = "Show Package\'s advanced parameters.";
             this.advancedEditorToolStripMenuItem.Click += new System.EventHandler(this.advancedEditorToolStripMenuItem_Click);
             // 
@@ -1572,7 +1634,7 @@ namespace BeatificaBytes.Synology.Mods
             this.manageScreenshotsToolStripMenuItem.Name = "manageScreenshotsToolStripMenuItem";
             this.manageScreenshotsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
             this.manageScreenshotsToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.manageScreenshotsToolStripMenuItem.Text = "Manage Screenshots";
+            this.manageScreenshotsToolStripMenuItem.Text = "Manage &Screenshots";
             this.manageScreenshotsToolStripMenuItem.Click += new System.EventHandler(this.manageScreenshotsToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
@@ -1732,7 +1794,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
             this.documentationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.documentationToolStripMenuItem.Text = "Mods Wiki";
+            this.documentationToolStripMenuItem.Text = "&Wiki";
             this.documentationToolStripMenuItem.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
             this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
@@ -1740,7 +1802,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
             this.supportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.supportToolStripMenuItem.Text = "Mods Support";
+            this.supportToolStripMenuItem.Text = "&Support";
             this.supportToolStripMenuItem.ToolTipText = "Open Mods Packager\'s Support page in a browser.";
             this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
             // 
@@ -1748,7 +1810,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.packeDevGuideToolStripMenuItem.Name = "packeDevGuideToolStripMenuItem";
             this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.packeDevGuideToolStripMenuItem.Text = "Synology DevGuide";
+            this.packeDevGuideToolStripMenuItem.Text = "Synology Dev&Guide";
             this.packeDevGuideToolStripMenuItem.ToolTipText = "Open Synology\'s SPK developper guide in a browser.";
             this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
             // 
@@ -1761,7 +1823,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.ToolTipText = "Display information about Mods Packager.";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -1814,6 +1876,7 @@ namespace BeatificaBytes.Synology.Mods
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_32)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_24)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_16)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarning)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_72)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPkg_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
@@ -1968,6 +2031,11 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLog;
         private System.Windows.Forms.TextBox textBoxChangeBox;
         private System.Windows.Forms.Button buttonDependencies;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.PictureBox pictureBoxWarning;
     }
 }
 
