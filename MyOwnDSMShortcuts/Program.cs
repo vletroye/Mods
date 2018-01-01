@@ -39,9 +39,7 @@ namespace BeatificaBytes.Synology.Mods
                 Helper.ComputeMD5Hash(path);
             }
             else
-            {
-                Debugger.Launch();
-
+            {                
                 string open = null;
                 var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
                 if (!string.IsNullOrEmpty(edit))

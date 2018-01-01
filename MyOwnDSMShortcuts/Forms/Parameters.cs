@@ -16,7 +16,7 @@ namespace BeatificaBytes.Synology.Mods
 {
     public partial class Parameters : Form
     {
-        private OpenFolderDialog SpkRepoBrowserDialog4Mods = new OpenFolderDialog();
+        private OpenFolderDialog BrowserDialog4Mods = new OpenFolderDialog();
         public Parameters()
         {
             InitializeComponent();
@@ -58,9 +58,14 @@ namespace BeatificaBytes.Synology.Mods
 
             checkBoxPublishFolder.Checked = Properties.Settings.Default.DefaultPackageRepo;
             checkBoxOpenWith.Checked = Properties.Settings.Default.OpenWith;
+
             labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
             labelDefaultPublishFolder.Enabled = checkBoxPublishFolder.Checked;
             buttonDefaultPackageRepo.Visible = checkBoxPublishFolder.Checked;
+
+            buttonDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
+            labelDefaultPackageRoot.Enabled = checkBoxDefaultPackageRoot.Checked;
+            labelDefaultPackageRoot.Text = Properties.Settings.Default.PackageRoot;
         }
 
         private void OnMouseEnter(object sender, EventArgs e)
@@ -98,15 +103,30 @@ namespace BeatificaBytes.Synology.Mods
         private void PickPackageRepo()
         {
             var path = Properties.Settings.Default.PackageRepo;
-            SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
+            BrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
             if (!string.IsNullOrEmpty(path))
-                SpkRepoBrowserDialog4Mods.InitialDirectory = path;
+                BrowserDialog4Mods.InitialDirectory = path;
             else
-                SpkRepoBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                BrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-            if (SpkRepoBrowserDialog4Mods.ShowDialog())
+            if (BrowserDialog4Mods.ShowDialog())
             {
-                Properties.Settings.Default.PackageRepo = SpkRepoBrowserDialog4Mods.FileName;
+                Properties.Settings.Default.PackageRepo = BrowserDialog4Mods.FileName;
+            }
+        }
+
+        private void PickPackageRoot()
+        {
+            var path = Properties.Settings.Default.PackageRoot;
+            BrowserDialog4Mods.Title = "Pick a folder to store all your Packages under creation.";
+            if (!string.IsNullOrEmpty(path))
+                BrowserDialog4Mods.InitialDirectory = path;
+            else
+                BrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (BrowserDialog4Mods.ShowDialog())
+            {
+                Properties.Settings.Default.PackageRoot = BrowserDialog4Mods.FileName;
             }
         }
 
@@ -117,6 +137,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
+            if (!Properties.Settings.Default.DefaultPackageRepo)
+                Properties.Settings.Default.PackageRepo = "";
+
+            if (!Properties.Settings.Default.DefaultPackageRoot)
+                Properties.Settings.Default.PackageRoot = "";
+
             Properties.Settings.Default.Save();
             this.Hide();
         }
@@ -133,7 +159,6 @@ namespace BeatificaBytes.Synology.Mods
                 Process.Start(path);
             else
                 MessageBoxEx.Show(this, "This folder does not exist anymore or cannot be accessed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
         }
 
         private void checkBoxOpenWith_CheckedChanged(object sender, EventArgs e)
@@ -142,6 +167,8 @@ namespace BeatificaBytes.Synology.Mods
                 AddOpenWith();
             else if (!checkBoxOpenWith.Checked && Properties.Settings.Default.OpenWith)
                 RemoveOpenWith();
+
+            ShowParameters();
         }
 
         private void RemoveOpenWith()
@@ -160,10 +187,6 @@ namespace BeatificaBytes.Synology.Mods
 
             }
             catch { }
-            finally
-            {
-                ShowParameters();
-            }
         }
 
         private void AddOpenWith()
@@ -192,10 +215,28 @@ namespace BeatificaBytes.Synology.Mods
 
             }
             catch { }
-            finally
-            {
-                ShowParameters();
-            }
+        }
+
+        private void buttonDefaultPackageRoot_Click(object sender, EventArgs e)
+        {
+            PickPackageRoot();
+        }
+
+        private void checkBoxDefaultPackageRoot_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.DefaultPackageRoot = checkBoxDefaultPackageRoot.Checked;
+
+            ShowParameters();
+        }
+
+        private void labelDefaultPackageRoot_Click(object sender, EventArgs e)
+        {
+            var path = Properties.Settings.Default.PackageRoot;
+            if (Directory.Exists(path))
+                Process.Start(path);
+            else
+                MessageBoxEx.Show(this, "This folder does not exist anymore or cannot be accessed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
         }
     }
 }

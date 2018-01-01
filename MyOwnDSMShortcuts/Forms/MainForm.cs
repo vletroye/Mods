@@ -51,7 +51,7 @@ namespace BeatificaBytes.Synology.Mods
         static Regex getVersion = new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
 
 
-        string PackageRootPath = Properties.Settings.Default.PackageRoot;
+        string PackageRootPath = Properties.Settings.Default.LastPackage;
         string PackageRepoPath = Properties.Settings.Default.PackageRepo;
 
         //4 next vars are a Dirty Hack - move these 4 vars into a class. Replace AppsData with that class, ...
@@ -118,7 +118,6 @@ namespace BeatificaBytes.Synology.Mods
             // Prepare the PictureBox for drag&drop, etc...
             PrepareItemPictureBoxes();
 
-            package = @"E:\Downloads\New folder\Mods.spk";
             if (!string.IsNullOrEmpty(package))
             {
                 // Override the path of the last package;
@@ -156,7 +155,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else if (!File.Exists(Path.Combine(PackageRootPath, "INFO")))
             {
-                MessageBoxEx.Show(this, "The INFO file for your package does not exist anymore. Reset your package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, "The INFO file of your package does not exist anymore. Reset your package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 PackageRootPath = "";
             }
             else
@@ -686,6 +685,8 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
+                groupBoxPackage.BackColor = SystemColors.Control;
+
                 foreach (var control in groupBoxPackage.Controls)
                 {
                     var textBox = control as TextBox;
@@ -755,10 +756,6 @@ namespace BeatificaBytes.Synology.Mods
         #endregion --------------------------------------------------------------------------------------------------------------------------------
 
         #region Manage Package --------------------------------------------------------------------------------------------------------------------
-        private void pictureBoxSettings_Click(object sender, EventArgs e)
-        {
-
-        }
 
         // Click on Button Reset Package
         private void buttonReset_Click(object sender, EventArgs e)
@@ -875,10 +872,9 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         foreach (var element in info)
                         {
-                            if (!string.IsNullOrEmpty(element.Value))
+                            if (!string.IsNullOrEmpty(element.Value) && element.Value != "path")
                             {
-                                var value = element.Value.Replace("\r\n", "<br>");
-                                value = value.Replace("\n", "<br>");
+                                var value = element.Value.Replace("\r\n", "<br>").Replace("\n", "<br>");
                                 outputFile.WriteLine("{0}=\"{1}\"", element.Key, value);
                             }
                         }
@@ -1098,18 +1094,28 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        /// <summary>
+        /// Handle a request to close the Main Form of the application.
+        /// This will not be possible if the user is editing the config file or if pending changes couldn't be saved or discarded.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (state == State.Add || state == State.Edit)
             {
+                // User is currenlty editing a config. He must complete this action first.
                 MessageBoxEx.Show(this, "Please, Cancel or Save first the current edition.");
                 e.Cancel = true;
             }
             else
-            if (CheckChanges() && SavePackage(PackageRootPath) == DialogResult.Cancel)
-                e.Cancel = true;
-            else
-                e.Cancel = false;
+            {
+                // Close the current Package. This is going to prompt the user to save changes if any. 
+                var saved = CloseCurrentPackage(true);
+
+                // Do not close the application if saving failed or was cancelled
+                e.Cancel = !(saved == DialogResult.Yes || saved == DialogResult.No);
+            }
         }
 
         private bool RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
@@ -2727,68 +2733,81 @@ namespace BeatificaBytes.Synology.Mods
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SavePackage(PackageRootPath) != DialogResult.Cancel)
+            // Close the current Package. This is going to prompt the user to save changes if any. 
+            var saved = CloseCurrentPackage();
+
+            // Create a new Package if the user saved/discarded explicitly possible changes
+            if (saved == DialogResult.Yes || saved == DialogResult.No)
             {
-                NewPackage(null);
+                NewPackage();
             }
         }
 
+        /// <summary>
+        /// Prompt the user to save the Package if flagged as dirty or if there are any pending changes.
+        /// </summary>
+        /// <param name="path">Target save location.</param>
+        /// <param name="force">Pending changes are saved without prompting the user if this parameter is true.</param>
+        /// <returns>
+        /// Yes if the package is successfuly saved.
+        /// No if the user discarded the pending changes or if there was no pending changes.
+        /// Cancel if the user asked to cancel the operation.
+        /// Abort if something went wrong or if the user might not save the package due to invalid data.
+        /// </returns>
         private DialogResult SavePackage(string path, bool force = false)
         {
             using (new CWaitCursor())
             {
-
-                DialogResult response = DialogResult.Yes;
-                if (info != null)
+                DialogResult saved = DialogResult.Yes;
+                if (info == null)
                 {
-                    if (ValidateChildren())
-                    {
-                        if (!dirty)
-                            dirty = CheckChanges();
-                        if (dirty)
-                        {
-                            if (!force)
-                                response = MessageBoxEx.Show(this, "Do you want to save pending changes done in the current Package?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                            if (response == DialogResult.Yes)
-                            {
-                                if (info.ContainsKey("checksum"))
-                                    info.Remove("checksum");
-
-                                SaveItemsConfig();
-                                SavePackageInfo(path);
-
-                                SavePackageSettings();
-                                CreateRecentsMenu();
-
-                                ResetEditScriptMenuIcons();
-                                dirty = false;
-                            }
-                        }
-                        else
-                        {
-                            ResetEditScriptMenuIcons();
-                            MessageBoxEx.Show(this, "There is no change to be saved in the current Package", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            response = DialogResult.Cancel;
-                        }
-                    }
-                    else
-                    {
-                        response = DialogResult.Cancel;
-                    }
+                    // No package to be saved
+                    saved = DialogResult.No;
                 }
                 else
                 {
-                    response = DialogResult.No;
+                    try
+                    {
+                        if (!ValidateChildren())
+                        {
+                            // User may not save changes with Invalid data
+                            saved = DialogResult.Abort;
+                        }
+                        else
+                        {
+                            if (dirty || CheckChanges())
+                            {
+                                // Prompt the user to save pending changes. He may answer Yes, No or Cancel
+                                if (!force) saved = MessageBoxEx.Show(this, "Do you want to save pending changes in your package?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                                if (saved == DialogResult.Yes)
+                                {
+                                    if (info.ContainsKey("checksum")) info.Remove("checksum");
+                                    SaveItemsConfig();
+                                    SavePackageInfo(path);
+                                    SavePackageSettings();
+                                    CreateRecentsMenu();
+                                    dirty = false;
+                                }
+                            }
+                            else
+                            {
+                                // Nothing needs to be saved
+                                saved = DialogResult.No;
+                            }
+
+                            // Pending Changes successfuly saved or discarded
+                            if (saved != DialogResult.Cancel) ResetEditScriptMenuIcons();
+                        }
+                    }
+                    catch { saved = DialogResult.Abort; }
                 }
-                return response;
+                return saved;
             }
         }
 
         private void SavePackageSettings()
         {
-            Properties.Settings.Default.PackageRepo = PackageRepoPath;
-            Properties.Settings.Default.PackageRoot = PackageRootPath;
             if (Properties.Settings.Default.Recents != null)
             {
                 RemoveRecentPath(PackageRootPath);
@@ -2812,6 +2831,7 @@ namespace BeatificaBytes.Synology.Mods
             else
                 Properties.Settings.Default.RecentsName.Add(Path.GetFileName(PackageRootPath));
 
+            Properties.Settings.Default.LastPackage = PackageRootPath;
             Properties.Settings.Default.Save();
         }
 
@@ -2887,18 +2907,25 @@ namespace BeatificaBytes.Synology.Mods
 
             if (info != null)
             {
-                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package? This cannot be undone!!!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                var resetPackage = PackageRootPath;
+                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
                 if (answer == DialogResult.Yes)
                 {
+                    string packageName = "";
+                    if (info.ContainsKey("package"))
+                        packageName = info["package"];
                     try
                     {
-                        if (string.IsNullOrEmpty(PackageRootPath))
+                        if (string.IsNullOrEmpty(resetPackage))
                             MessageBoxEx.Show(this, "The path of the Package is not defined. Create a new package instead.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                         else
                         {
-                            if (Directory.Exists(PackageRootPath))
+                            if (Directory.Exists(resetPackage))
                             {
-                                var ex = Helper.DeleteDirectory(PackageRootPath);
+                                // Close without trying to save any pending changes.
+                                CloseCurrentPackage(false);
+
+                                var ex = Helper.DeleteDirectory(resetPackage);
                                 if (ex != null)
                                 {
                                     MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -2907,7 +2934,10 @@ namespace BeatificaBytes.Synology.Mods
                             }
 
                             if (succeed)
-                                NewPackage(PackageRootPath);
+                            {
+                                NewPackage(resetPackage);
+                                textBoxPackage.Text = packageName;
+                            }
                         }
                     }
                     catch
@@ -2929,10 +2959,19 @@ namespace BeatificaBytes.Synology.Mods
         private void NewPackage(string path = null)
         {
             DialogResult result = DialogResult.Cancel;
+            warnings.Clear();
 
             if (path == null)
             {
-                result = GetPackagePath(ref path);
+                if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
+                {
+                    path = Path.Combine(Properties.Settings.Default.PackageRoot, Guid.NewGuid().ToString());
+                    result = DialogResult.Yes;
+                }
+                else
+                {
+                    result = GetPackagePath(ref path);
+                }
             }
             else
             {
@@ -2969,10 +3008,10 @@ namespace BeatificaBytes.Synology.Mods
             // This is required to insure that changes (mainly icons) are correctly applied when installing the package in DSM
             textBoxVersion.Text = Helper.IncrementVersion(textBoxVersion.Text);
 
-            SavePackageInfo(path);
-
-            using (new CWaitCursor())
+            using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE GENERATING YOUR PACKAGE..."))
             {
+                SavePackageInfo(path);
+
                 // Create the SPK
                 CreatePackage(path);
             }
@@ -2987,15 +3026,6 @@ namespace BeatificaBytes.Synology.Mods
             try
             {
                 publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
-                //publishFile(Path.Combine(PackagePath, "INFO"), Path.Combine(PackageRepo, packName + ".nfo"));
-                //publishFile(Path.Combine(PackagePath, "PACKAGE_ICON.PNG"), Path.Combine(PackageRepo, packName + "_thumb_72.png"));
-
-                //var pathImage = Path.Combine(PackageRepo, packName + "_thumb_120.png");
-                //publishFile(Path.Combine(PackagePath, "PACKAGE_ICON_256.PNG"), pathImage);
-
-                //var image = LoadImage(pathImage, 0, 120);
-                //image.Save(pathImage, ImageFormat.Png);
-
                 MessageBoxEx.Show(this, "The package has been successfuly published.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -3069,8 +3099,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CloseCurrentPackage();
-            OpenPackage();
+            // Close the current Package. This is going to prompt the user to save changes if any. 
+            var saved = CloseCurrentPackage();
+
+            // Open another Package if the user saved/discarded explicitly pending changes.
+            if (saved == DialogResult.Yes || saved == DialogResult.No)
+                OpenPackage();
         }
 
         private bool OpenPackage(string path = null, bool import = false)
@@ -3083,10 +3117,10 @@ namespace BeatificaBytes.Synology.Mods
             if (path == null)
             {
                 folderBrowserDialog4Mods.Title = "Pick a folder to store the new Package or a folder containing an existing Package.";
-                if (!string.IsNullOrEmpty(PackageRootPath))
-                    folderBrowserDialog4Mods.InitialDirectory = PackageRootPath;
-                else
+                if (Properties.Settings.Default.DefaultPackageRoot)
                     folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
+                else
+                    folderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
                 result = GetPackagePath(ref path);
             }
@@ -3112,6 +3146,8 @@ namespace BeatificaBytes.Synology.Mods
             if (result != DialogResult.Cancel && result != DialogResult.Abort)
             {
                 PackageRootPath = path;
+                Properties.Settings.Default.LastPackage = PackageRootPath;
+                Properties.Settings.Default.Save();
 
                 ResetValidateChildren(this); // Reset Error Validation on all controls
 
@@ -3301,7 +3337,7 @@ namespace BeatificaBytes.Synology.Mods
             if (ValidateChildren())
             {
                 GeneratePackage(PackageRootPath);
-                var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Done", MessageBoxButtons.YesNo, MessageBoxIcon.Information, MessageBoxDefaultButton.Button2);
+                var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], PackageRootPath), "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                 if (answer == DialogResult.Yes)
                 {
                     Process.Start(PackageRootPath);
@@ -3311,20 +3347,30 @@ namespace BeatificaBytes.Synology.Mods
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (SavePackage(PackageRootPath) == DialogResult.Yes)
+            if (!dirty && !CheckChanges())
+                MessageBoxEx.Show(this, "There is no pending changes to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            // Prompt the user to save changes if any. 
+            var saved = SavePackage(PackageRootPath);
+
+            // Some Changes have been saved.
+            if (saved == DialogResult.Yes)
                 MessageBoxEx.Show(this, "Package saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void MenuItemOpenRecent_ClickHandler(object sender, EventArgs e)
         {
-            ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
-            String path = clickedItem.Tag.ToString();
-            if (SavePackage(PackageRootPath) != DialogResult.Cancel)
+            // Close the current Package. This is going to prompt the user to save changes if any. 
+            var saved = CloseCurrentPackage();
+
+            // Open the requested Package if the user saved/discarded explicitly pending changes.
+            if (saved == DialogResult.Yes || saved == DialogResult.No)
             {
-                CloseCurrentPackage();
-                var succeed = OpenPackage(path);
-                if (!succeed)
+                ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
+                String path = clickedItem.Tag.ToString();
+                if (!OpenPackage(path))
                 {
+                    // if the package cannot be opened, remove it from the menu 'Open Recent'
                     RemoveRecentPath(path);
                     Properties.Settings.Default.Save();
                     CreateRecentsMenu();
@@ -3369,6 +3415,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Trigger the Close event on the Main Form. (See MainForm_FormClosing)
             this.Close();
         }
 
@@ -3616,7 +3663,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(PackageRootPath) && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package ? This operation cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (!string.IsNullOrEmpty(PackageRootPath) && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 RemoveRecentPath(PackageRootPath);
                 Properties.Settings.Default.Save();
@@ -3626,32 +3673,115 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to delete {0}: {1}", PackageRootPath, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
-                CloseCurrentPackage();
+
+                // Close the current Package without trying to save pending changes. 
+                CloseCurrentPackage(false);
             }
         }
 
-        private void CloseCurrentPackage()
+        /// <summary>
+        /// Prompt the user to save pending changes if any and close the current package.
+        /// </summary>
+        /// <param name="trySavingPendingChange">Do not try to save any pending changes if this parameter is false.</param>
+        /// <param name="forceSavingPendingChange">Pending changes are saved without prompting the user if this parameters is true.</param>
+        /// <returns>
+        /// Yes if the pending changes were succesfuly saved.
+        /// No if the user discarded the pending changes, if there was no pending changes or if the user was not prompted.
+        /// Cancel if the user cancelled the saving.
+        /// Abort if anything went wrong or if pending changes were not valid and couldn't be saved.
+        /// </returns>
+        private DialogResult CloseCurrentPackage(bool trySavingPendingChange = true, bool forceSavingPendingChange = false)
         {
-            PackageRootPath = "";
-            textBoxDisplay.Focus();
-            ResetValidateChildren(this); // Reset Error Validation on all controls
+            DialogResult closed = DialogResult.No;
+            if (info != null) try
+                {
+                    // Prompt the user to save changes if required
+                    if (trySavingPendingChange) closed = SavePackage(PackageRootPath, forceSavingPendingChange);
 
-            info = null;
-            list = null;
-            picturePkg_256 = null;
-            picturePkg_120 = null;
-            picturePkg_72 = null;
-            FillInfoScreen();
-            BindData(list, null);
-            DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
-            labelToolTip.Text = "";
+                    // Couldn't save some pending changes
+                    if (closed == DialogResult.Abort)
+                    {
+                        closed = MessageBoxEx.Show(this, "Pending changes couldn't be saved!\r\n\r\nDo you want to close your package anyway?\r\nChanges will be lost!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
+                        if (closed != DialogResult.Yes)
+                            // User doens't want to close without saving remaining changes
+                            closed = DialogResult.Cancel;
+                        else
+                            // User discards remaining changes
+                            closed = DialogResult.No;
+                    }
 
-            textBoxDisplay.Focus();
+                    // No need to save or user saved/discared explicitly possible changes
+                    if (closed == DialogResult.Yes || closed == DialogResult.No)
+                    {
+                        // Rename the parent folder with the package display name (or the package name)
+                        RenamePackageFolder();
+
+                        PackageRootPath = "";
+                        textBoxDisplay.Focus();
+                        ResetValidateChildren(this); // Reset Error Validation on all controls
+
+                        info = null;
+                        list = null;
+                        picturePkg_256 = null;
+                        picturePkg_120 = null;
+                        picturePkg_72 = null;
+                        FillInfoScreen();
+                        BindData(list, null);
+                        DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
+                        labelToolTip.Text = "";
+
+                        warnings.Clear();
+                        textBoxDisplay.Focus();
+                        closed = DialogResult.Yes;
+                    }
+                }
+                catch { closed = DialogResult.Abort; }
+
+            return closed;
+        }
+
+        /// <summary>
+        /// Rename the Package folder into its display name or package name if it's not a temporary folder.
+        /// </summary>
+        /// <remarks>This doesn't rethow any exception if the renaming failed.</remarks>
+        private void RenamePackageFolder()
+        {
+            try
+            {
+                var parent = Path.GetFileName(PackageRootPath);
+                Guid tmp;
+                bool isTempFolder = Guid.TryParse(parent, out tmp);
+                if (!isTempFolder)
+                {
+                    string newName = null;
+                    if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
+                        newName = (info["displayname"]);
+                    else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
+                        newName = info["package"];
+
+                    if (!string.IsNullOrEmpty(newName) && newName != parent)
+                    {
+                        var RenamedPackageRootPath = PackageRootPath.Replace(parent, newName);
+                        var increment = 0;
+                        while (Directory.Exists(RenamedPackageRootPath))
+                        {
+                            increment++;
+                            RenamedPackageRootPath = string.Format("PackageRootPath.Replace(parent, newName) ({0})", increment);
+                        }
+                        Directory.Move(PackageRootPath, RenamedPackageRootPath);
+                        PackageRootPath = RenamedPackageRootPath;
+                        SavePackageSettings();
+                        CreateRecentsMenu();
+                    }
+                }
+            }
+            catch { }
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CloseCurrentPackage();
+            // Close the current Package. This is going to prompt the user to save changes if any. 
+            CloseCurrentPackage(true);
         }
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3773,6 +3903,7 @@ namespace BeatificaBytes.Synology.Mods
 
                                         info["singleApp"] = "yes";
 
+                                        // Force saving changes without prompting the user. This is required has changes have been done in the config file.
                                         SavePackage(PackageRootPath, true);
                                     }
                                     catch (Exception ex)
@@ -3840,6 +3971,7 @@ namespace BeatificaBytes.Synology.Mods
 
                                         info["singleApp"] = "no";
 
+                                        // Force saving changes without prompting the user. This is required has changes have been done in the config file.
                                         SavePackage(PackageRootPath, true);
                                     }
                                     catch (Exception ex)
@@ -3910,11 +4042,11 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = DialogResult.Cancel;
             if (path == null)
             {
-                folderBrowserDialog4Mods.Title = "Pick a target folder to move the Package currently opened.";
-                if (!string.IsNullOrEmpty(PackageRootPath))
-                    folderBrowserDialog4Mods.InitialDirectory = PackageRootPath;
-                else
+                folderBrowserDialog4Mods.Title = "Pick a target root folder to move the Package currently opened.";
+                if (Properties.Settings.Default.DefaultPackageRoot)
                     folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
+                else
+                    folderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
                 var selection = folderBrowserDialog4Mods.ShowDialog();
                 if (selection)

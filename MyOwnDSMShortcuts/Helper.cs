@@ -799,7 +799,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
 
             }
-            catch (Exception ex)
+            catch
             {
                 return -1;
             }

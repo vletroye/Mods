@@ -980,7 +980,7 @@ namespace ZTn.Json.Editor.Forms
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(this, "Do you really want to delete this wizard? This cannot be undone!!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (MessageBox.Show(this, "Do you really want to delete this wizard?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
                 File.Delete(OpenedFileName);
                 this.DialogResult = DialogResult.OK;

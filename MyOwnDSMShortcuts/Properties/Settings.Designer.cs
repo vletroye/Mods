@@ -181,5 +181,29 @@ namespace BeatificaBytes.Synology.Mods.Properties {
                 this["OpenWith"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DefaultPackageRoot {
+            get {
+                return ((bool)(this["DefaultPackageRoot"]));
+            }
+            set {
+                this["DefaultPackageRoot"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastPackage {
+            get {
+                return ((string)(this["LastPackage"]));
+            }
+            set {
+                this["LastPackage"] = value;
+            }
+        }
     }
 }

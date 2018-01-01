@@ -38,8 +38,12 @@
             this.toolTipProperties = new System.Windows.Forms.ToolTip(this.components);
             this.labelDefaultPublishFolder = new System.Windows.Forms.Label();
             this.checkBoxOpenWith = new System.Windows.Forms.CheckBox();
+            this.labelDefaultPackageRoot = new System.Windows.Forms.Label();
+            this.checkBoxDefaultPackageRoot = new System.Windows.Forms.CheckBox();
             this.buttonDefaultPackageRepo = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.buttonDefaultPackageRoot = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -99,14 +103,14 @@
             // 
             // labelDefaultPublishFolder
             // 
-            this.labelDefaultPublishFolder.AutoSize = true;
-            this.labelDefaultPublishFolder.Location = new System.Drawing.Point(12, 32);
+            this.labelDefaultPublishFolder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelDefaultPublishFolder.Location = new System.Drawing.Point(93, 35);
             this.labelDefaultPublishFolder.Name = "labelDefaultPublishFolder";
-            this.labelDefaultPublishFolder.Size = new System.Drawing.Size(16, 13);
+            this.labelDefaultPublishFolder.Size = new System.Drawing.Size(411, 19);
             this.labelDefaultPublishFolder.TabIndex = 24;
             this.labelDefaultPublishFolder.Text = "...";
-            this.toolTipProperties.SetToolTip(this.labelDefaultPublishFolder, "Path of the repository where all pacakges can be published. Double Click here to " +
-        "open that folder.");
+            this.toolTipProperties.SetToolTip(this.labelDefaultPublishFolder, "Path of the repository where packages will be published. Click here to open that " +
+        "folder.");
             this.labelDefaultPublishFolder.Click += new System.EventHandler(this.labelDefaultPublishFolder_Click);
             // 
             // checkBoxOpenWith
@@ -122,9 +126,35 @@
             this.checkBoxOpenWith.UseVisualStyleBackColor = true;
             this.checkBoxOpenWith.CheckedChanged += new System.EventHandler(this.checkBoxOpenWith_CheckedChanged);
             // 
+            // labelDefaultPackageRoot
+            // 
+            this.labelDefaultPackageRoot.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.labelDefaultPackageRoot.Location = new System.Drawing.Point(93, 130);
+            this.labelDefaultPackageRoot.Name = "labelDefaultPackageRoot";
+            this.labelDefaultPackageRoot.Size = new System.Drawing.Size(411, 19);
+            this.labelDefaultPackageRoot.TabIndex = 31;
+            this.labelDefaultPackageRoot.Text = "...";
+            this.toolTipProperties.SetToolTip(this.labelDefaultPackageRoot, "Path of the repository where new packages will be created before being published." +
+        " Click here to open that folder.");
+            this.labelDefaultPackageRoot.Click += new System.EventHandler(this.labelDefaultPackageRoot_Click);
+            // 
+            // checkBoxDefaultPackageRoot
+            // 
+            this.checkBoxDefaultPackageRoot.AutoSize = true;
+            this.checkBoxDefaultPackageRoot.Location = new System.Drawing.Point(12, 107);
+            this.checkBoxDefaultPackageRoot.Name = "checkBoxDefaultPackageRoot";
+            this.checkBoxDefaultPackageRoot.Size = new System.Drawing.Size(169, 17);
+            this.checkBoxDefaultPackageRoot.TabIndex = 32;
+            this.checkBoxDefaultPackageRoot.Text = "Use a Default Package Folder";
+            this.toolTipProperties.SetToolTip(this.checkBoxDefaultPackageRoot, "If you select this option, you will have to provide the path of a folder where al" +
+        "l your packages will be created before being published. Each Package will be loc" +
+        "ated in its own subfolder.");
+            this.checkBoxDefaultPackageRoot.UseVisualStyleBackColor = true;
+            this.checkBoxDefaultPackageRoot.CheckedChanged += new System.EventHandler(this.checkBoxDefaultPackageRoot_CheckedChanged);
+            // 
             // buttonDefaultPackageRepo
             // 
-            this.buttonDefaultPackageRepo.Location = new System.Drawing.Point(178, 10);
+            this.buttonDefaultPackageRepo.Location = new System.Drawing.Point(12, 35);
             this.buttonDefaultPackageRepo.Name = "buttonDefaultPackageRepo";
             this.buttonDefaultPackageRepo.Size = new System.Drawing.Size(75, 19);
             this.buttonDefaultPackageRepo.TabIndex = 25;
@@ -143,6 +173,27 @@
             this.label1.Size = new System.Drawing.Size(492, 2);
             this.label1.TabIndex = 27;
             // 
+            // label2
+            // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label2.Location = new System.Drawing.Point(12, 97);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(492, 2);
+            this.label2.TabIndex = 30;
+            // 
+            // buttonDefaultPackageRoot
+            // 
+            this.buttonDefaultPackageRoot.Location = new System.Drawing.Point(12, 130);
+            this.buttonDefaultPackageRoot.Name = "buttonDefaultPackageRoot";
+            this.buttonDefaultPackageRoot.Size = new System.Drawing.Size(75, 19);
+            this.buttonDefaultPackageRoot.TabIndex = 29;
+            this.buttonDefaultPackageRoot.Text = "Select";
+            this.buttonDefaultPackageRoot.UseVisualStyleBackColor = true;
+            this.buttonDefaultPackageRoot.Visible = false;
+            this.buttonDefaultPackageRoot.Click += new System.EventHandler(this.buttonDefaultPackageRoot_Click);
+            // 
             // Parameters
             // 
             this.AcceptButton = this.buttonOk;
@@ -151,6 +202,10 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(516, 419);
             this.ControlBox = false;
+            this.Controls.Add(this.checkBoxDefaultPackageRoot);
+            this.Controls.Add(this.labelDefaultPackageRoot);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.buttonDefaultPackageRoot);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkBoxOpenWith);
             this.Controls.Add(this.buttonDefaultPackageRepo);
@@ -182,5 +237,9 @@
         private System.Windows.Forms.Button buttonDefaultPackageRepo;
         private System.Windows.Forms.CheckBox checkBoxOpenWith;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button buttonDefaultPackageRoot;
+        private System.Windows.Forms.Label labelDefaultPackageRoot;
+        private System.Windows.Forms.CheckBox checkBoxDefaultPackageRoot;
     }
 }
