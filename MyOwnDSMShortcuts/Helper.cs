@@ -600,11 +600,15 @@ namespace BeatificaBytes.Synology.Mods
             return succeed;
         }
 
-        internal static void CopyDirectory(string strSource, string strDestination)
+        internal static bool CopyDirectory(string strSource, string strDestination)
         {
+            var copied = false;
+
             using (new CWaitCursor())
             {
 
+                strDestination += "\\";
+                strSource += "\\";
                 if (strDestination.StartsWith(strSource))
                 {
                     MessageBoxEx.Show(Application.OpenForms[0], string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -630,8 +634,12 @@ namespace BeatificaBytes.Synology.Mods
                         if (strDestination != subfolder)
                             CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name));
                     }
+
+                    copied = true;
                 }
             }
+
+            return copied;
         }
 
         internal static string FindFileIndex(string[] files, string filename)

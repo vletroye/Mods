@@ -113,7 +113,6 @@
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(616, 112);
             this.labelToolTip.TabIndex = 20;
-            this.labelToolTip.Text = "Help";
             // 
             // panelToolTip
             // 
@@ -131,7 +130,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(654, 475);
+            this.ClientSize = new System.Drawing.Size(654, 498);
             this.ControlBox = false;
             this.Controls.Add(this.labelToolTip);
             this.Controls.Add(this.panelToolTip);

@@ -171,6 +171,69 @@ Note: adminprotocol, adminport and adminurl keys are combined into adminprotocol
     <value>If a package is installed and has a webpage, a link will be opened when the package is started.
 Note: adminprotocol, adminport and adminurl are combined into adminprotocol://ip:adminport/adminurl link</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBoxWarning.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
   <metadata name="openFileDialog4Mods.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>297, 17</value>
   </metadata>
@@ -180,7 +243,6 @@ Note: adminprotocol, adminport and adminurl are combined into adminprotocol://ip
   <metadata name="menuStripMainBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAYAEBAAAAAAIABoBAAAZgAAACAgAAAAACAAqBAAAM4EAAAwMAAAAAAgAKglAAB2FQAAQEAAAAAA

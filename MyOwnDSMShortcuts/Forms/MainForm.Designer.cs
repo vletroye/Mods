@@ -105,7 +105,7 @@ namespace BeatificaBytes.Synology.Mods
             this.labelDisplay = new System.Windows.Forms.Label();
             this.labelMaintainer = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelPackageIcons = new System.Windows.Forms.Label();
             this.labelDSMAppName = new System.Windows.Forms.Label();
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
             this.buttonDependencies = new System.Windows.Forms.Button();
@@ -125,51 +125,52 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem = new System.Windows.Forms.GroupBox();
             this.labelGrantPrivilege = new System.Windows.Forms.Label();
             this.menuStripMainBar = new System.Windows.Forms.MenuStrip();
-            this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openRecentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.packageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.addWizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemChangeLog = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuNewPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpenPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpenRecentPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuImportPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuClosePackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSavePackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuParameters = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuResetPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuMovePackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDeletePackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAddWizard = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemPublish = new System.Windows.Forms.ToolStripMenuItem();
-            this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuBuildPackage = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPublish = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOpenPackageFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.advancedEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.manageScreenshotsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptRunnerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAdvancedEditor = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuManageScreenshots = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuScriptRunner = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.startScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.postInstallScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.preUninstallScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.postUninstallScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.preUpgradeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.postUpgradeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStartScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStopScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPostInstall = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPreUninstall = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPostUninstall = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPreUpgrade = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuPostUpgrade = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.wizardInstallUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wizardUninstallUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wizardUpgradeUIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.supportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.packeDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizardInstallUI = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizardUninstallUI = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizardUpgradeUI = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDocumentation = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSupport = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDevGuide = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
+            this.menuReviewPendingChanges = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -278,7 +279,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxUrl
             // 
-            this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxUrl.Location = new System.Drawing.Point(217, 191);
             this.textBoxUrl.Name = "textBoxUrl";
@@ -303,7 +304,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxDesc
             // 
-            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxDesc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxDesc.Location = new System.Drawing.Point(217, 123);
             this.textBoxDesc.Multiline = true;
@@ -869,7 +870,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxAdminUrl
             // 
-            this.textBoxAdminUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.textBoxAdminUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxAdminUrl.Location = new System.Drawing.Point(219, 255);
             this.textBoxAdminUrl.Name = "textBoxAdminUrl";
@@ -1031,7 +1032,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // pictureBoxWarning
             // 
-            this.pictureBoxWarning.BackgroundImage = global::BeatificaBytes.Synology.Mods.Properties.Resources.warning;
+            this.pictureBoxWarning.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBoxWarning.BackgroundImage")));
             this.pictureBoxWarning.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBoxWarning.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBoxWarning.ErrorImage = null;
@@ -1144,15 +1145,15 @@ namespace BeatificaBytes.Synology.Mods
             this.labelVersion.TabIndex = 49;
             this.labelVersion.Text = "Version:";
             // 
-            // label1
+            // labelPackageIcons
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(869, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 13);
-            this.label1.TabIndex = 52;
-            this.label1.Text = "Package Icons";
+            this.labelPackageIcons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPackageIcons.AutoSize = true;
+            this.labelPackageIcons.Location = new System.Drawing.Point(869, 13);
+            this.labelPackageIcons.Name = "labelPackageIcons";
+            this.labelPackageIcons.Size = new System.Drawing.Size(79, 13);
+            this.labelPackageIcons.TabIndex = 52;
+            this.labelPackageIcons.Text = "Package Icons";
             // 
             // labelDSMAppName
             // 
@@ -1165,7 +1166,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxPackage
             // 
-            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxPackage.Controls.Add(this.pictureBoxWarning);
             this.groupBoxPackage.Controls.Add(this.buttonDependencies);
@@ -1201,7 +1202,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Controls.Add(this.textBoxPublisher);
             this.groupBoxPackage.Controls.Add(this.textBoxFirmware);
             this.groupBoxPackage.Controls.Add(this.labelDSMAppName);
-            this.groupBoxPackage.Controls.Add(this.label1);
+            this.groupBoxPackage.Controls.Add(this.labelPackageIcons);
             this.groupBoxPackage.Controls.Add(this.textBoxDsmAppName);
             this.groupBoxPackage.Controls.Add(this.buttonReset);
             this.groupBoxPackage.Controls.Add(this.labelVersion);
@@ -1319,8 +1320,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // listViewItems
             // 
-            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.listViewItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
@@ -1369,8 +1370,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // groupBoxItem
             // 
-            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxItem.Controls.Add(this.labelGrantPrivilege);
             this.groupBoxItem.Controls.Add(this.textBoxPort);
@@ -1425,411 +1426,412 @@ namespace BeatificaBytes.Synology.Mods
             // menuStripMainBar
             // 
             this.menuStripMainBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.filesToolStripMenuItem,
-            this.packageToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.menuFiles,
+            this.menuPackage,
+            this.menuEdit,
+            this.menuHelp});
             this.menuStripMainBar.Location = new System.Drawing.Point(0, 0);
             this.menuStripMainBar.Name = "menuStripMainBar";
             this.menuStripMainBar.Size = new System.Drawing.Size(1008, 24);
             this.menuStripMainBar.TabIndex = 40;
             this.menuStripMainBar.Text = "menuStrip1";
             // 
-            // filesToolStripMenuItem
+            // menuFiles
             // 
-            this.filesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.openToolStripMenuItem,
-            this.openRecentToolStripMenuItem,
-            this.importToolStripMenuItem,
-            this.closeToolStripMenuItem,
-            this.saveToolStripMenuItem,
-            this.exitToolStripMenuItem,
-            this.toolStripMenuItem2,
-            this.propertiesToolStripMenuItem});
-            this.filesToolStripMenuItem.Name = "filesToolStripMenuItem";
-            this.filesToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
-            this.filesToolStripMenuItem.Text = "Files";
+            this.menuFiles.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuNewPackage,
+            this.menuOpenPackage,
+            this.menuOpenRecentPackage,
+            this.menuImportPackage,
+            this.menuClosePackage,
+            this.menuSavePackage,
+            this.menuExit,
+            this.toolStripSeparator6,
+            this.menuParameters});
+            this.menuFiles.Name = "menuFiles";
+            this.menuFiles.Size = new System.Drawing.Size(42, 20);
+            this.menuFiles.Text = "Files";
             // 
-            // newToolStripMenuItem
+            // menuNew
             // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.newToolStripMenuItem.Text = "&New";
-            this.newToolStripMenuItem.ToolTipText = "Select an empty folder where a new New empty Package can be created.";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            this.menuNewPackage.Name = "menuNew";
+            this.menuNewPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.menuNewPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuNewPackage.Text = "&New";
+            this.menuNewPackage.ToolTipText = "Select an empty folder where a new New empty Package can be created.";
+            this.menuNewPackage.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
-            // openToolStripMenuItem
+            // menuOpen
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.openToolStripMenuItem.Text = "&Open";
-            this.openToolStripMenuItem.ToolTipText = "Select a folder containing an existing Package to open it.";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.menuOpenPackage.Name = "menuOpen";
+            this.menuOpenPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.menuOpenPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuOpenPackage.Text = "&Open";
+            this.menuOpenPackage.ToolTipText = "Select a folder containing an existing Package to open it.";
+            this.menuOpenPackage.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
-            // openRecentToolStripMenuItem
+            // menuOpenRecent
             // 
-            this.openRecentToolStripMenuItem.Name = "openRecentToolStripMenuItem";
-            this.openRecentToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.openRecentToolStripMenuItem.Text = "Open &Recent";
-            this.openRecentToolStripMenuItem.ToolTipText = "Open a Package recently accessed.";
+            this.menuOpenRecentPackage.Name = "menuOpenRecent";
+            this.menuOpenRecentPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuOpenRecentPackage.Text = "Open &Recent";
+            this.menuOpenRecentPackage.ToolTipText = "Open a Package recently accessed.";
             // 
-            // importToolStripMenuItem
+            // menuImport
             // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.importToolStripMenuItem.Text = "&Import";
-            this.importToolStripMenuItem.ToolTipText = "Select a SPK file to be edited. It will be expanded in a temporary folder. You ma" +
+            this.menuImportPackage.Name = "menuImport";
+            this.menuImportPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.menuImportPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuImportPackage.Text = "&Import";
+            this.menuImportPackage.ToolTipText = "Select a SPK file to be edited. It will be expanded in a temporary folder. You ma" +
     "y move it later into a target folder.";
-            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
+            this.menuImportPackage.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
-            // closeToolStripMenuItem
+            // menuClose
             // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.closeToolStripMenuItem.Text = "&Close";
-            this.closeToolStripMenuItem.ToolTipText = "Close the current Package.";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            this.menuClosePackage.Name = "menuClose";
+            this.menuClosePackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+            this.menuClosePackage.Size = new System.Drawing.Size(170, 22);
+            this.menuClosePackage.Text = "&Close";
+            this.menuClosePackage.ToolTipText = "Close the current Package.";
+            this.menuClosePackage.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
-            // saveToolStripMenuItem
+            // menuSave
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.saveToolStripMenuItem.Text = "&Save";
-            this.saveToolStripMenuItem.ToolTipText = "Save the current Package.";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            this.menuSavePackage.Name = "menuSave";
+            this.menuSavePackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.menuSavePackage.Size = new System.Drawing.Size(170, 22);
+            this.menuSavePackage.Text = "&Save";
+            this.menuSavePackage.ToolTipText = "Save the current Package.";
+            this.menuSavePackage.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
-            // exitToolStripMenuItem
+            // menuExit
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.exitToolStripMenuItem.Text = "&Exit";
-            this.exitToolStripMenuItem.ToolTipText = "Quit Mods.";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.menuExit.Name = "menuExit";
+            this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.menuExit.Size = new System.Drawing.Size(170, 22);
+            this.menuExit.Text = "&Exit";
+            this.menuExit.ToolTipText = "Quit Mods.";
+            this.menuExit.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem2
+            // toolStripSeparator6
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(167, 6);
+            this.toolStripSeparator6.Name = "toolStripMenuItem6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(167, 6);
             // 
-            // propertiesToolStripMenuItem
+            // menuProperties
             // 
-            this.propertiesToolStripMenuItem.Name = "propertiesToolStripMenuItem";
-            this.propertiesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
-            this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
-            this.propertiesToolStripMenuItem.Text = "&Parameters";
-            this.propertiesToolStripMenuItem.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
+            this.menuParameters.Name = "menuProperties";
+            this.menuParameters.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
+            this.menuParameters.Size = new System.Drawing.Size(170, 22);
+            this.menuParameters.Text = "&Parameters";
+            this.menuParameters.Click += new System.EventHandler(this.propertiesToolStripMenuItem_Click);
             // 
-            // packageToolStripMenuItem
+            // menuPackage
             // 
-            this.packageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.resetToolStripMenuItem,
-            this.moveToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.addWizardToolStripMenuItem,
-            this.toolStripMenuItemChangeLog,
+            this.menuPackage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuResetPackage,
+            this.menuMovePackage,
+            this.menuDeletePackage,
+            this.menuAddWizard,
+            this.menuChangeLog,
             this.toolStripSeparator3,
-            this.generateToolStripMenuItem,
-            this.toolStripMenuItemPublish,
-            this.openFolderToolStripMenuItem,
+            this.menuBuildPackage,
+            this.menuPublish,
+            this.menuOpenPackageFolder,
             this.toolStripSeparator5,
-            this.advancedEditorToolStripMenuItem,
-            this.manageScreenshotsToolStripMenuItem});
-            this.packageToolStripMenuItem.Name = "packageToolStripMenuItem";
-            this.packageToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-            this.packageToolStripMenuItem.Text = "Package";
+            this.menuAdvancedEditor,
+            this.menuManageScreenshots,
+            this.menuReviewPendingChanges});
+            this.menuPackage.Name = "menuPackage";
+            this.menuPackage.Size = new System.Drawing.Size(63, 20);
+            this.menuPackage.Text = "Package";
             // 
-            // resetToolStripMenuItem
+            // menuReset
             // 
-            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.resetToolStripMenuItem.Text = "&Reset";
-            this.resetToolStripMenuItem.ToolTipText = "Reset all fields of the currently opened Package.";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            this.menuResetPackage.Name = "menuReset";
+            this.menuResetPackage.Size = new System.Drawing.Size(224, 22);
+            this.menuResetPackage.Text = "&Reset";
+            this.menuResetPackage.ToolTipText = "Reset all fields of the currently opened Package.";
+            this.menuResetPackage.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
-            // moveToolStripMenuItem
+            // menuMove
             // 
-            this.moveToolStripMenuItem.Name = "moveToolStripMenuItem";
-            this.moveToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.moveToolStripMenuItem.Text = "&Move";
-            this.moveToolStripMenuItem.ToolTipText = "Move the currently opened Package into a new folder.";
-            this.moveToolStripMenuItem.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
+            this.menuMovePackage.Name = "menuMove";
+            this.menuMovePackage.Size = new System.Drawing.Size(224, 22);
+            this.menuMovePackage.Text = "&Move";
+            this.menuMovePackage.ToolTipText = "Move the currently opened Package into a new folder.";
+            this.menuMovePackage.Click += new System.EventHandler(this.moveToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItem1.Text = "&Delete";
-            this.toolStripMenuItem1.ToolTipText = "Delete the folder containing the currently opened Package.";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            this.menuDeletePackage.Name = "toolStripMenuItem1";
+            this.menuDeletePackage.Size = new System.Drawing.Size(224, 22);
+            this.menuDeletePackage.Text = "&Delete";
+            this.menuDeletePackage.ToolTipText = "Delete the folder containing the currently opened Package.";
+            this.menuDeletePackage.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
-            // addWizardToolStripMenuItem
+            // menuAddWizard
             // 
-            this.addWizardToolStripMenuItem.Name = "addWizardToolStripMenuItem";
-            this.addWizardToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.addWizardToolStripMenuItem.Text = "Create &Wizard";
-            this.addWizardToolStripMenuItem.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
-            this.addWizardToolStripMenuItem.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
+            this.menuAddWizard.Name = "menuAddWizard";
+            this.menuAddWizard.Size = new System.Drawing.Size(224, 22);
+            this.menuAddWizard.Text = "Create &Wizard";
+            this.menuAddWizard.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
+            this.menuAddWizard.Click += new System.EventHandler(this.addWizardToolStripMenuItem_Click);
             // 
             // toolStripMenuItemChangeLog
             // 
-            this.toolStripMenuItemChangeLog.Name = "toolStripMenuItemChangeLog";
-            this.toolStripMenuItemChangeLog.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItemChangeLog.Text = "Edit Change&Log";
-            this.toolStripMenuItemChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
+            this.menuChangeLog.Name = "toolStripMenuItemChangeLog";
+            this.menuChangeLog.Size = new System.Drawing.Size(224, 22);
+            this.menuChangeLog.Text = "Edit Change&Log";
+            this.menuChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(221, 6);
             // 
-            // generateToolStripMenuItem
+            // menuGenerate
             // 
-            this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
-            this.generateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.generateToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.generateToolStripMenuItem.Text = "&Generate";
-            this.generateToolStripMenuItem.ToolTipText = "Generate the SPK file for the currently opened Package.";
-            this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
+            this.menuBuildPackage.Name = "menuGenerate";
+            this.menuBuildPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
+            this.menuBuildPackage.Size = new System.Drawing.Size(224, 22);
+            this.menuBuildPackage.Text = "&Generate";
+            this.menuBuildPackage.ToolTipText = "Generate the SPK file for the currently opened Package.";
+            this.menuBuildPackage.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
             // 
             // toolStripMenuItemPublish
             // 
-            this.toolStripMenuItemPublish.Name = "toolStripMenuItemPublish";
-            this.toolStripMenuItemPublish.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.toolStripMenuItemPublish.Size = new System.Drawing.Size(224, 22);
-            this.toolStripMenuItemPublish.Text = "&Publish";
-            this.toolStripMenuItemPublish.Click += new System.EventHandler(this.toolStripMenuItemPublish_Click);
+            this.menuPublish.Name = "toolStripMenuItemPublish";
+            this.menuPublish.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.menuPublish.Size = new System.Drawing.Size(224, 22);
+            this.menuPublish.Text = "&Publish";
+            this.menuPublish.Click += new System.EventHandler(this.toolStripMenuItemPublish_Click);
             // 
-            // openFolderToolStripMenuItem
+            // menuOpenFolder
             // 
-            this.openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            this.openFolderToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.openFolderToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.openFolderToolStripMenuItem.Text = "&Open Folder";
-            this.openFolderToolStripMenuItem.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
-            this.openFolderToolStripMenuItem.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
+            this.menuOpenPackageFolder.Name = "menuOpenFolder";
+            this.menuOpenPackageFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+            this.menuOpenPackageFolder.Size = new System.Drawing.Size(224, 22);
+            this.menuOpenPackageFolder.Text = "&Open Folder";
+            this.menuOpenPackageFolder.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
+            this.menuOpenPackageFolder.Click += new System.EventHandler(this.openFolderToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(221, 6);
             // 
-            // advancedEditorToolStripMenuItem
+            // menuAdvancedEditor
             // 
-            this.advancedEditorToolStripMenuItem.Name = "advancedEditorToolStripMenuItem";
-            this.advancedEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.advancedEditorToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.advancedEditorToolStripMenuItem.Text = "&Advanced Editor";
-            this.advancedEditorToolStripMenuItem.ToolTipText = "Show Package\'s advanced parameters.";
-            this.advancedEditorToolStripMenuItem.Click += new System.EventHandler(this.advancedEditorToolStripMenuItem_Click);
+            this.menuAdvancedEditor.Name = "menuAdvancedEditor";
+            this.menuAdvancedEditor.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
+            this.menuAdvancedEditor.Size = new System.Drawing.Size(224, 22);
+            this.menuAdvancedEditor.Text = "&Advanced Editor";
+            this.menuAdvancedEditor.ToolTipText = "Show Package\'s advanced parameters.";
+            this.menuAdvancedEditor.Click += new System.EventHandler(this.advancedEditorToolStripMenuItem_Click);
             // 
-            // manageScreenshotsToolStripMenuItem
+            // menuManageScreenshots
             // 
-            this.manageScreenshotsToolStripMenuItem.Name = "manageScreenshotsToolStripMenuItem";
-            this.manageScreenshotsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.manageScreenshotsToolStripMenuItem.Size = new System.Drawing.Size(224, 22);
-            this.manageScreenshotsToolStripMenuItem.Text = "Manage &Screenshots";
-            this.manageScreenshotsToolStripMenuItem.Click += new System.EventHandler(this.manageScreenshotsToolStripMenuItem_Click);
+            this.menuManageScreenshots.Name = "menuManageScreenshots";
+            this.menuManageScreenshots.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+            this.menuManageScreenshots.Size = new System.Drawing.Size(224, 22);
+            this.menuManageScreenshots.Text = "Manage &Screenshots";
+            this.menuManageScreenshots.Click += new System.EventHandler(this.manageScreenshotsToolStripMenuItem_Click);
             // 
-            // editToolStripMenuItem
+            // menuEdit
             // 
-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.scriptRunnerToolStripMenuItem,
+            this.menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuScriptRunner,
             this.toolStripSeparator1,
-            this.startScriptToolStripMenuItem,
-            this.stopScriptToolStripMenuItem,
-            this.postInstallScriptToolStripMenuItem,
-            this.preUninstallScriptToolStripMenuItem,
-            this.postUninstallScriptToolStripMenuItem,
-            this.preUpgradeScriptToolStripMenuItem,
-            this.postUpgradeScriptToolStripMenuItem,
+            this.menuStartScript,
+            this.menuStopScript,
+            this.menuPostInstall,
+            this.menuPreUninstall,
+            this.menuPostUninstall,
+            this.menuPreUpgrade,
+            this.menuPostUpgrade,
             this.toolStripSeparator2,
-            this.wizardInstallUIToolStripMenuItem,
-            this.wizardUninstallUIToolStripMenuItem,
-            this.wizardUpgradeUIToolStripMenuItem});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.editToolStripMenuItem.Text = "Edit";
+            this.menuWizardInstallUI,
+            this.menuWizardUninstallUI,
+            this.menuWizardUpgradeUI});
+            this.menuEdit.Name = "menuEdit";
+            this.menuEdit.Size = new System.Drawing.Size(39, 20);
+            this.menuEdit.Text = "Edit";
             // 
-            // scriptRunnerToolStripMenuItem
+            // menuScriptRunner
             // 
-            this.scriptRunnerToolStripMenuItem.Name = "scriptRunnerToolStripMenuItem";
-            this.scriptRunnerToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.scriptRunnerToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.scriptRunnerToolStripMenuItem.Text = "Default Runner";
-            this.scriptRunnerToolStripMenuItem.ToolTipText = "Edit the default Runner. This is the script used to execute your own scripts and " +
+            this.menuScriptRunner.Name = "menuScriptRunner";
+            this.menuScriptRunner.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuScriptRunner.Size = new System.Drawing.Size(200, 22);
+            this.menuScriptRunner.Text = "Default Runner";
+            this.menuScriptRunner.ToolTipText = "Edit the default Runner. This is the script used to execute your own scripts and " +
     "displayed its output in realtime.";
-            this.scriptRunnerToolStripMenuItem.Click += new System.EventHandler(this.scriptRunnerToolStripMenuItem_Click);
+            this.menuScriptRunner.Click += new System.EventHandler(this.scriptRunnerToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
             // 
-            // startScriptToolStripMenuItem
+            // menuStartScript
             // 
-            this.startScriptToolStripMenuItem.Name = "startScriptToolStripMenuItem";
-            this.startScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.startScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.startScriptToolStripMenuItem.Tag = "start-stop-status";
-            this.startScriptToolStripMenuItem.Text = "Start-Stop Script";
-            this.startScriptToolStripMenuItem.ToolTipText = "Edit the script used to start/stop the currently opened Package.";
-            this.startScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuStartScript.Name = "menuStartScript";
+            this.menuStartScript.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.menuStartScript.Size = new System.Drawing.Size(200, 22);
+            this.menuStartScript.Tag = "start-stop-status";
+            this.menuStartScript.Text = "Start-Stop Script";
+            this.menuStartScript.ToolTipText = "Edit the script used to start/stop the currently opened Package.";
+            this.menuStartScript.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // stopScriptToolStripMenuItem
+            // menuStopScript
             // 
-            this.stopScriptToolStripMenuItem.Name = "stopScriptToolStripMenuItem";
-            this.stopScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.stopScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.stopScriptToolStripMenuItem.Tag = "preinst";
-            this.stopScriptToolStripMenuItem.Text = "Pre-Install Script";
-            this.stopScriptToolStripMenuItem.ToolTipText = "Edit the script to be run before installing the currently opened Package.";
-            this.stopScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuStopScript.Name = "menuStopScript";
+            this.menuStopScript.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.menuStopScript.Size = new System.Drawing.Size(200, 22);
+            this.menuStopScript.Tag = "preinst";
+            this.menuStopScript.Text = "Pre-Install Script";
+            this.menuStopScript.ToolTipText = "Edit the script to be run before installing the currently opened Package.";
+            this.menuStopScript.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // postInstallScriptToolStripMenuItem
+            // menuPostInstallScript
             // 
-            this.postInstallScriptToolStripMenuItem.Name = "postInstallScriptToolStripMenuItem";
-            this.postInstallScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.postInstallScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.postInstallScriptToolStripMenuItem.Tag = "postinst";
-            this.postInstallScriptToolStripMenuItem.Text = "Post-Install Script";
-            this.postInstallScriptToolStripMenuItem.ToolTipText = "Edit the script to be run after installing the currently opened Package.";
-            this.postInstallScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuPostInstall.Name = "menuPostInstallScript";
+            this.menuPostInstall.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.menuPostInstall.Size = new System.Drawing.Size(200, 22);
+            this.menuPostInstall.Tag = "postinst";
+            this.menuPostInstall.Text = "Post-Install Script";
+            this.menuPostInstall.ToolTipText = "Edit the script to be run after installing the currently opened Package.";
+            this.menuPostInstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // preUninstallScriptToolStripMenuItem
+            // menuPreUninstallScript
             // 
-            this.preUninstallScriptToolStripMenuItem.Name = "preUninstallScriptToolStripMenuItem";
-            this.preUninstallScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.preUninstallScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.preUninstallScriptToolStripMenuItem.Tag = "preuninst";
-            this.preUninstallScriptToolStripMenuItem.Text = "Pre-Uninstall Script";
-            this.preUninstallScriptToolStripMenuItem.ToolTipText = "Edit the script to be run before uninstalling the currently opened Package.";
-            this.preUninstallScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuPreUninstall.Name = "menuPreUninstallScript";
+            this.menuPreUninstall.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.menuPreUninstall.Size = new System.Drawing.Size(200, 22);
+            this.menuPreUninstall.Tag = "preuninst";
+            this.menuPreUninstall.Text = "Pre-Uninstall Script";
+            this.menuPreUninstall.ToolTipText = "Edit the script to be run before uninstalling the currently opened Package.";
+            this.menuPreUninstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // postUninstallScriptToolStripMenuItem
+            // menuPostUninstallScript
             // 
-            this.postUninstallScriptToolStripMenuItem.Name = "postUninstallScriptToolStripMenuItem";
-            this.postUninstallScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.postUninstallScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.postUninstallScriptToolStripMenuItem.Tag = "postuninst";
-            this.postUninstallScriptToolStripMenuItem.Text = "Post-Uninstall Script";
-            this.postUninstallScriptToolStripMenuItem.ToolTipText = "Edit the script to be run after uninstalling the currently opened Package.";
-            this.postUninstallScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuPostUninstall.Name = "menuPostUninstallScript";
+            this.menuPostUninstall.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.menuPostUninstall.Size = new System.Drawing.Size(200, 22);
+            this.menuPostUninstall.Tag = "postuninst";
+            this.menuPostUninstall.Text = "Post-Uninstall Script";
+            this.menuPostUninstall.ToolTipText = "Edit the script to be run after uninstalling the currently opened Package.";
+            this.menuPostUninstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // preUpgradeScriptToolStripMenuItem
+            // menuPreUpgradeScript
             // 
-            this.preUpgradeScriptToolStripMenuItem.Name = "preUpgradeScriptToolStripMenuItem";
-            this.preUpgradeScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.preUpgradeScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.preUpgradeScriptToolStripMenuItem.Tag = "preupgrade";
-            this.preUpgradeScriptToolStripMenuItem.Text = "Pre-Upgrade Script";
-            this.preUpgradeScriptToolStripMenuItem.ToolTipText = "Edit the script to be run before upgrading the currently opened Package.";
-            this.preUpgradeScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuPreUpgrade.Name = "menuPreUpgradeScript";
+            this.menuPreUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.menuPreUpgrade.Size = new System.Drawing.Size(200, 22);
+            this.menuPreUpgrade.Tag = "preupgrade";
+            this.menuPreUpgrade.Text = "Pre-Upgrade Script";
+            this.menuPreUpgrade.ToolTipText = "Edit the script to be run before upgrading the currently opened Package.";
+            this.menuPreUpgrade.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // postUpgradeScriptToolStripMenuItem
+            // menuPostUpgradeScript
             // 
-            this.postUpgradeScriptToolStripMenuItem.Name = "postUpgradeScriptToolStripMenuItem";
-            this.postUpgradeScriptToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.postUpgradeScriptToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.postUpgradeScriptToolStripMenuItem.Tag = "postupgrade";
-            this.postUpgradeScriptToolStripMenuItem.Text = "Post-Upgrade Script";
-            this.postUpgradeScriptToolStripMenuItem.ToolTipText = "Edit the script to be run after upgrading the currently opened Package.";
-            this.postUpgradeScriptToolStripMenuItem.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            this.menuPostUpgrade.Name = "menuPostUpgradeScript";
+            this.menuPostUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.menuPostUpgrade.Size = new System.Drawing.Size(200, 22);
+            this.menuPostUpgrade.Tag = "postupgrade";
+            this.menuPostUpgrade.Text = "Post-Upgrade Script";
+            this.menuPostUpgrade.ToolTipText = "Edit the script to be run after upgrading the currently opened Package.";
+            this.menuPostUpgrade.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(197, 6);
             // 
-            // wizardInstallUIToolStripMenuItem
+            // menuWizardInstallUI
             // 
-            this.wizardInstallUIToolStripMenuItem.Name = "wizardInstallUIToolStripMenuItem";
-            this.wizardInstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
-            this.wizardInstallUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.wizardInstallUIToolStripMenuItem.Tag = "install_uifile";
-            this.wizardInstallUIToolStripMenuItem.Text = "Wizard-Install UI";
-            this.wizardInstallUIToolStripMenuItem.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
-            this.wizardInstallUIToolStripMenuItem.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
+            this.menuWizardInstallUI.Name = "menuWizardInstallUI";
+            this.menuWizardInstallUI.ShortcutKeys = System.Windows.Forms.Keys.F9;
+            this.menuWizardInstallUI.Size = new System.Drawing.Size(200, 22);
+            this.menuWizardInstallUI.Tag = "install_uifile";
+            this.menuWizardInstallUI.Text = "Wizard-Install UI";
+            this.menuWizardInstallUI.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
+            this.menuWizardInstallUI.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
             // 
-            // wizardUninstallUIToolStripMenuItem
+            // menuWizardUninstallUI
             // 
-            this.wizardUninstallUIToolStripMenuItem.Name = "wizardUninstallUIToolStripMenuItem";
-            this.wizardUninstallUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F10;
-            this.wizardUninstallUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.wizardUninstallUIToolStripMenuItem.Tag = "uninstall_uifile";
-            this.wizardUninstallUIToolStripMenuItem.Text = "Wizard-Uninstall UI";
-            this.wizardUninstallUIToolStripMenuItem.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
-            this.wizardUninstallUIToolStripMenuItem.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
+            this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
+            this.menuWizardUninstallUI.ShortcutKeys = System.Windows.Forms.Keys.F10;
+            this.menuWizardUninstallUI.Size = new System.Drawing.Size(200, 22);
+            this.menuWizardUninstallUI.Tag = "uninstall_uifile";
+            this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
+            this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
+            this.menuWizardUninstallUI.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
             // 
-            // wizardUpgradeUIToolStripMenuItem
+            // menuWizardUpgradeUI
             // 
-            this.wizardUpgradeUIToolStripMenuItem.Name = "wizardUpgradeUIToolStripMenuItem";
-            this.wizardUpgradeUIToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F11;
-            this.wizardUpgradeUIToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.wizardUpgradeUIToolStripMenuItem.Tag = "upgrade_uifile";
-            this.wizardUpgradeUIToolStripMenuItem.Text = "Wizard-Upgrade UI";
-            this.wizardUpgradeUIToolStripMenuItem.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
-            this.wizardUpgradeUIToolStripMenuItem.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
+            this.menuWizardUpgradeUI.Name = "menuWizardUpgradeUI";
+            this.menuWizardUpgradeUI.ShortcutKeys = System.Windows.Forms.Keys.F11;
+            this.menuWizardUpgradeUI.Size = new System.Drawing.Size(200, 22);
+            this.menuWizardUpgradeUI.Tag = "upgrade_uifile";
+            this.menuWizardUpgradeUI.Text = "Wizard-Upgrade UI";
+            this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
+            this.menuWizardUpgradeUI.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
             // 
-            // helpToolStripMenuItem
+            // menuHelp
             // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.documentationToolStripMenuItem,
-            this.supportToolStripMenuItem,
-            this.packeDevGuideToolStripMenuItem,
+            this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuDocumentation,
+            this.menuSupport,
+            this.menuDevGuide,
             this.toolStripSeparator4,
-            this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            this.helpToolStripMenuItem.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
+            this.menuAbout});
+            this.menuHelp.Name = "menuHelp";
+            this.menuHelp.Size = new System.Drawing.Size(44, 20);
+            this.menuHelp.Text = "Help";
+            this.menuHelp.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
             // 
-            // documentationToolStripMenuItem
+            // menuDocumentation
             // 
-            this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.documentationToolStripMenuItem.Text = "&Wiki";
-            this.documentationToolStripMenuItem.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
-            this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
+            this.menuDocumentation.Name = "menuDocumentation";
+            this.menuDocumentation.Size = new System.Drawing.Size(177, 22);
+            this.menuDocumentation.Text = "&Wiki";
+            this.menuDocumentation.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
+            this.menuDocumentation.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
-            // supportToolStripMenuItem
+            // menuSupport
             // 
-            this.supportToolStripMenuItem.Name = "supportToolStripMenuItem";
-            this.supportToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.supportToolStripMenuItem.Text = "&Support";
-            this.supportToolStripMenuItem.ToolTipText = "Open Mods Packager\'s Support page in a browser.";
-            this.supportToolStripMenuItem.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
+            this.menuSupport.Name = "menuSupport";
+            this.menuSupport.Size = new System.Drawing.Size(177, 22);
+            this.menuSupport.Text = "&Support";
+            this.menuSupport.ToolTipText = "Open Mods Packager\'s Support page in a browser.";
+            this.menuSupport.Click += new System.EventHandler(this.supportToolStripMenuItem_Click);
             // 
-            // packeDevGuideToolStripMenuItem
+            // menuPackeDevGuide
             // 
-            this.packeDevGuideToolStripMenuItem.Name = "packeDevGuideToolStripMenuItem";
-            this.packeDevGuideToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.packeDevGuideToolStripMenuItem.Text = "Synology Dev&Guide";
-            this.packeDevGuideToolStripMenuItem.ToolTipText = "Open Synology\'s SPK developper guide in a browser.";
-            this.packeDevGuideToolStripMenuItem.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
+            this.menuDevGuide.Name = "menuPackeDevGuide";
+            this.menuDevGuide.Size = new System.Drawing.Size(177, 22);
+            this.menuDevGuide.Text = "Synology Dev&Guide";
+            this.menuDevGuide.ToolTipText = "Open Synology\'s SPK developper guide in a browser.";
+            this.menuDevGuide.Click += new System.EventHandler(this.packeDevGuideToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
             // 
-            // aboutToolStripMenuItem
+            // menuAbout
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.aboutToolStripMenuItem.Text = "&About";
-            this.aboutToolStripMenuItem.ToolTipText = "Display information about Mods Packager.";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.menuAbout.Name = "menuAbout";
+            this.menuAbout.Size = new System.Drawing.Size(177, 22);
+            this.menuAbout.Text = "&About";
+            this.menuAbout.ToolTipText = "Display information about Mods Packager.";
+            this.menuAbout.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // groupBoxTip
             // 
-            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBoxTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxTip.Controls.Add(this.labelToolTip);
             this.groupBoxTip.Location = new System.Drawing.Point(3, 671);
@@ -1841,13 +1843,21 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // labelToolTip
             // 
-            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelToolTip.Location = new System.Drawing.Point(10, 18);
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(970, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
+            // 
+            // menuReviewPendingChanges
+            // 
+            this.menuReviewPendingChanges.Name = "menuReviewPendingChanges";
+            this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.menuReviewPendingChanges.Size = new System.Drawing.Size(224, 22);
+            this.menuReviewPendingChanges.Text = "Pending Changes";
+            this.menuReviewPendingChanges.Click += new System.EventHandler(this.reviewPendingChangesToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -1866,6 +1876,8 @@ namespace BeatificaBytes.Synology.Mods
             this.Name = "MainForm";
             this.Text = "Mods Packager for Synology";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).EndInit();
@@ -1903,7 +1915,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.GroupBox groupBoxPackage;
         private System.Windows.Forms.Label labelDSMAppName;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelPackageIcons;
         private System.Windows.Forms.TextBox textBoxDsmAppName;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.Label labelVersion;
@@ -1951,33 +1963,33 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.Label labelPublisher;
         private System.Windows.Forms.TextBox textBoxPublisher;
         private System.Windows.Forms.MenuStrip menuStripMainBar;
-        private System.Windows.Forms.ToolStripMenuItem filesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openRecentToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem documentationToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem supportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem packageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem scriptRunnerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem startScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stopScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem postInstallScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem preUninstallScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem postUninstallScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem preUpgradeScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem postUpgradeScriptToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem packeDevGuideToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem addWizardToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem wizardInstallUIToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem wizardUninstallUIToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem wizardUpgradeUIToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuFiles;
+        private System.Windows.Forms.ToolStripMenuItem menuNewPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuOpenPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuOpenRecentPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuSavePackage;
+        private System.Windows.Forms.ToolStripMenuItem menuHelp;
+        private System.Windows.Forms.ToolStripMenuItem menuDocumentation;
+        private System.Windows.Forms.ToolStripMenuItem menuSupport;
+        private System.Windows.Forms.ToolStripMenuItem menuEdit;
+        private System.Windows.Forms.ToolStripMenuItem menuPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuResetPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuBuildPackage;
+        private System.Windows.Forms.ToolStripMenuItem menuScriptRunner;
+        private System.Windows.Forms.ToolStripMenuItem menuStartScript;
+        private System.Windows.Forms.ToolStripMenuItem menuStopScript;
+        private System.Windows.Forms.ToolStripMenuItem menuPostInstall;
+        private System.Windows.Forms.ToolStripMenuItem menuPreUninstall;
+        private System.Windows.Forms.ToolStripMenuItem menuPostUninstall;
+        private System.Windows.Forms.ToolStripMenuItem menuPreUpgrade;
+        private System.Windows.Forms.ToolStripMenuItem menuPostUpgrade;
+        private System.Windows.Forms.ToolStripMenuItem menuExit;
+        private System.Windows.Forms.ToolStripMenuItem menuAbout;
+        private System.Windows.Forms.ToolStripMenuItem menuDevGuide;
+        private System.Windows.Forms.ToolStripMenuItem menuAddWizard;
+        private System.Windows.Forms.ToolStripMenuItem menuWizardInstallUI;
+        private System.Windows.Forms.ToolStripMenuItem menuWizardUninstallUI;
+        private System.Windows.Forms.ToolStripMenuItem menuWizardUpgradeUI;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.GroupBox groupBoxTip;
@@ -1992,16 +2004,16 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.TextBox textBoxFirmware;
         private System.Windows.Forms.CheckBox checkBoxBeta;
         private System.Windows.Forms.Button buttonAdvanced;
-        private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuOpenPackageFolder;
+        private System.Windows.Forms.ToolStripMenuItem menuDeletePackage;
+        private System.Windows.Forms.ToolStripMenuItem menuClosePackage;
         private System.Windows.Forms.Label labelSupportUrl;
         private System.Windows.Forms.TextBox textBoxSupportUrl;
         private System.Windows.Forms.CheckBox checkBoxSingleApp;
-        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuImportPackage;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem moveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuMovePackage;
         private System.Windows.Forms.TextBox textBoxPort;
         private System.Windows.Forms.ComboBox comboBoxProtocol;
         private System.Windows.Forms.CheckBox checkBoxSilentReboot;
@@ -2017,7 +2029,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ComboBox ComboBoxGrantPrivilege;
         private System.Windows.Forms.CheckBox checkBoxLegacy;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripMenuItem advancedEditorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuAdvancedEditor;
         private System.Windows.Forms.CheckBox checkBoxSupportCenter;
         private System.Windows.Forms.CheckBox checkBoxRemovable;
         private System.Windows.Forms.Label labelLatestFirmware;
@@ -2026,16 +2038,16 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.TextBox textBoxAdminPort;
         private System.Windows.Forms.ComboBox comboBoxAdminProtocol;
         private System.Windows.Forms.TextBox textBoxAdminUrl;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemPublish;
-        private System.Windows.Forms.ToolStripMenuItem manageScreenshotsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemChangeLog;
+        private System.Windows.Forms.ToolStripMenuItem menuPublish;
+        private System.Windows.Forms.ToolStripMenuItem menuManageScreenshots;
+        private System.Windows.Forms.ToolStripMenuItem menuChangeLog;
         private System.Windows.Forms.TextBox textBoxChangeBox;
         private System.Windows.Forms.Button buttonDependencies;
-        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem menuParameters;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.PictureBox pictureBoxWarning;
+        private System.Windows.Forms.ToolStripMenuItem menuReviewPendingChanges;
     }
 }
-

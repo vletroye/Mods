@@ -89,7 +89,6 @@
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(482, 82);
             this.labelToolTip.TabIndex = 22;
-            this.labelToolTip.Text = "Help";
             // 
             // panelToolTip
             // 

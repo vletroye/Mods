@@ -75,7 +75,8 @@ namespace BeatificaBytes.Synology.Mods
 
         string previousReportUrl;
         string imageDragDropPath;
-        protected bool validData;
+        protected bool validImage4DragDrop;
+        protected string validPackage4DragDrop = null;
 
         protected List<String> warnings = new List<string>();
 
@@ -212,7 +213,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void CreateRecentsMenu()
         {
-            openRecentToolStripMenuItem.DropDownItems.Clear();
+            menuOpenRecentPackage.DropDownItems.Clear();
             if (Properties.Settings.Default.Recents != null)
             {
                 var items = new List<ToolStripMenuItem>();
@@ -241,7 +242,7 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     if (!exist) RemoveRecentPath(path);
                 }
-                openRecentToolStripMenuItem.DropDownItems.AddRange(items.ToArray());
+                menuOpenPackage.DropDownItems.AddRange(items.ToArray());
             }
         }
 
@@ -771,6 +772,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void PublishPackage()
         {
+            warnings.Clear();
+
             if (ValidateChildren())
             {
                 GeneratePackage(PackageRootPath);
@@ -1877,31 +1880,31 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             if (wizardExist)
-                addWizardToolStripMenuItem.Text = "Remove Wizard";
+                menuAddWizard.Text = "Remove Wizard";
             else
-                addWizardToolStripMenuItem.Text = "Create Wizard";
+                menuAddWizard.Text = "Create Wizard";
 
 
-            wizardInstallUIToolStripMenuItem.Enabled = wizardExist;
-            wizardUninstallUIToolStripMenuItem.Enabled = wizardExist;
-            wizardUpgradeUIToolStripMenuItem.Enabled = wizardExist;
+            menuWizardInstallUI.Enabled = wizardExist;
+            menuWizardUninstallUI.Enabled = wizardExist;
+            menuWizardUpgradeUI.Enabled = wizardExist;
         }
 
         private void EnableItemMenuDetails(bool packageArea, bool itemsArea, bool menuPackage, bool menuSave, bool menuNew, bool menuOpen, bool menuRecent, bool menuEdit, bool menuClose)
         {
             groupBoxPackage.Enabled = packageArea;
             groupBoxItem.Enabled = itemsArea;
-            foreach (ToolStripItem menu in packageToolStripMenuItem.DropDownItems)
+            foreach (ToolStripItem menu in this.menuPackage.DropDownItems)
             {
                 menu.Enabled = menuPackage;
             }
-            saveToolStripMenuItem.Enabled = menuSave;
-            newToolStripMenuItem.Enabled = menuNew;
-            openToolStripMenuItem.Enabled = menuOpen;
-            importToolStripMenuItem.Enabled = menuOpen;
-            openRecentToolStripMenuItem.Enabled = menuRecent;
-            closeToolStripMenuItem.Enabled = menuClose;
-            foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
+            this.menuSavePackage.Enabled = menuSave;
+            this.menuNewPackage.Enabled = menuNew;
+            this.menuOpenPackage.Enabled = menuOpen;
+            menuImportPackage.Enabled = menuOpen;
+            menuOpenRecentPackage.Enabled = menuRecent;
+            this.menuClosePackage.Enabled = menuClose;
+            foreach (ToolStripItem menu in this.menuEdit.DropDownItems)
             {
                 menu.Enabled = menuEdit;
             }
@@ -2072,8 +2075,8 @@ namespace BeatificaBytes.Synology.Mods
         private void pictureBoxPkg_DragEnter(object sender, DragEventArgs e)
         {
             string filename;
-            validData = Helper.GetDragDropFilename(out filename, e);
-            if (validData)
+            validImage4DragDrop = Helper.GetDragDropFilename(out filename, e);
+            if (validImage4DragDrop)
             {
                 imageDragDropPath = filename;
                 e.Effect = DragDropEffects.Copy;
@@ -2084,7 +2087,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void pictureBoxPkg_DragDrop(object sender, DragEventArgs e)
         {
-            if (validData)
+            if (validImage4DragDrop)
             {
                 var pictureBox = sender as PictureBox;
                 dirty = ChangePicturePkg(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
@@ -2096,8 +2099,8 @@ namespace BeatificaBytes.Synology.Mods
             if (state == State.Add || state == State.Edit)
             {
                 string filename;
-                validData = Helper.GetDragDropFilename(out filename, e);
-                if (validData)
+                validImage4DragDrop = Helper.GetDragDropFilename(out filename, e);
+                if (validImage4DragDrop)
                 {
                     imageDragDropPath = filename;
                     e.Effect = DragDropEffects.Copy;
@@ -2107,14 +2110,14 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                validData = false;
+                validImage4DragDrop = false;
                 e.Effect = DragDropEffects.None;
             }
         }
 
         private void pictureBoxItem_DragDrop(object sender, DragEventArgs e)
         {
-            if (validData)
+            if (validImage4DragDrop)
             {
                 var pictureBox = sender as PictureBox;
                 ChangePictureItem(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
@@ -2756,7 +2759,7 @@ namespace BeatificaBytes.Synology.Mods
         /// </returns>
         private DialogResult SavePackage(string path, bool force = false)
         {
-            using (new CWaitCursor())
+            using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE SAVING YOUR PACKAGE..."))
             {
                 DialogResult saved = DialogResult.Yes;
                 if (info == null)
@@ -2775,7 +2778,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         else
                         {
-                            if (dirty || CheckChanges())
+                            if (dirty || CheckChanges(null))
                             {
                                 // Prompt the user to save pending changes. He may answer Yes, No or Cancel
                                 if (!force) saved = MessageBoxEx.Show(this, "Do you want to save pending changes in your package?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -2849,7 +2852,7 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private bool CheckChanges()
+        private bool CheckChanges(List<Tuple<string, string, string>> changes)
         {
             bool dirty = false;
 
@@ -2863,9 +2866,17 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
+                        {
                             dirty = textBox.Text != info[key];
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], textBox.Text));
+                        }
                         else
+                        {
                             dirty = !string.IsNullOrEmpty(textBox.Text);
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", textBox.Text));
+                        }
+
+                        if (changes != null) dirty = false;
 
                         if (dirty)
                             break;
@@ -2877,7 +2888,12 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
+                        {
                             dirty = checkBox.Checked != (info[key] == "yes");
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], checkBox.Checked ? "yes" : "no"));
+                        }
+
+                        if (changes != null) dirty = false;
 
                         if (dirty)
                             break;
@@ -2889,14 +2905,24 @@ namespace BeatificaBytes.Synology.Mods
                         var key = keys[0].Substring(3);
 
                         if (info.ContainsKey(key))
+                        {
                             dirty = comboBox.Text != info[key];
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], comboBox.Text));
+                        }
                         else
+                        {
                             dirty = !string.IsNullOrEmpty(comboBox.Text);
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", comboBox.Text));
+                        }
+
+                        if (changes != null) dirty = false;
 
                         if (dirty)
                             break;
                     }
                 }
+
+            if (changes != null) dirty = changes.Count > 0;
 
             return dirty;
         }
@@ -2904,6 +2930,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool ResetPackage()
         {
             bool succeed = true;
+            warnings.Clear();
 
             if (info != null)
             {
@@ -3005,6 +3032,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void GeneratePackage(string path)
         {
+            warnings.Clear();
+
             // This is required to insure that changes (mainly icons) are correctly applied when installing the package in DSM
             textBoxVersion.Text = Helper.IncrementVersion(textBoxVersion.Text);
 
@@ -3048,7 +3077,7 @@ namespace BeatificaBytes.Synology.Mods
             var unpackCmd = Path.Combine(path, "Unpack.cmd");
             if (File.Exists(unpackCmd))
             {
-                using (new CWaitCursor())
+                using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE DEFLATING YOUR PACKAGE..."))
                 {
                     // Execute the script to generate the SPK
                     Process unpack = new Process();
@@ -3091,7 +3120,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void ResetEditScriptMenuIcons()
         {
-            foreach (ToolStripItem menu in editToolStripMenuItem.DropDownItems)
+            foreach (ToolStripItem menu in menuEdit.DropDownItems)
             {
                 menu.Image = null;
             }
@@ -3131,12 +3160,9 @@ namespace BeatificaBytes.Synology.Mods
 
             if (result == DialogResult.Yes)
             {
-                result = MessageBoxEx.Show(this, "The Folder does not contain any package. Do you want to create a new one ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                if (result != DialogResult.Yes)
-                {
-                    result = DialogResult.Cancel;
-                    succeed = false;
-                }
+                result = MessageBoxEx.Show(this, "The Folder does not contain any valid package.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                result = DialogResult.Cancel;
+                succeed = false;
             }
             else if (result == DialogResult.Abort)
             {
@@ -3347,11 +3373,11 @@ namespace BeatificaBytes.Synology.Mods
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!dirty && !CheckChanges())
+            if (!dirty && !CheckChanges(null))
                 MessageBoxEx.Show(this, "There is no pending changes to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            // Prompt the user to save changes if any. 
-            var saved = SavePackage(PackageRootPath);
+            // Do not prompt the user to save changes and just do it! 
+            var saved = SavePackage(PackageRootPath, true);
 
             // Some Changes have been saved.
             if (saved == DialogResult.Yes)
@@ -3388,7 +3414,7 @@ namespace BeatificaBytes.Synology.Mods
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(defaultRunnerPath, runner.Code);
-                scriptRunnerToolStripMenuItem.Image = new Bitmap(Properties.Resources.EditedScript);
+                menuScriptRunner.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
 
@@ -3692,6 +3718,8 @@ namespace BeatificaBytes.Synology.Mods
         /// </returns>
         private DialogResult CloseCurrentPackage(bool trySavingPendingChange = true, bool forceSavingPendingChange = false)
         {
+            warnings.Clear();
+
             DialogResult closed = DialogResult.No;
             if (info != null) try
                 {
@@ -3730,7 +3758,6 @@ namespace BeatificaBytes.Synology.Mods
                         DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
                         labelToolTip.Text = "";
 
-                        warnings.Clear();
                         textBoxDisplay.Focus();
                         closed = DialogResult.Yes;
                     }
@@ -3759,19 +3786,34 @@ namespace BeatificaBytes.Synology.Mods
                     else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
                         newName = info["package"];
 
-                    if (!string.IsNullOrEmpty(newName) && newName != parent)
+                    if (!string.IsNullOrEmpty(newName) && !newName.Equals(parent, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var RenamedPackageRootPath = PackageRootPath.Replace(parent, newName);
                         var increment = 0;
                         while (Directory.Exists(RenamedPackageRootPath))
                         {
                             increment++;
-                            RenamedPackageRootPath = string.Format("PackageRootPath.Replace(parent, newName) ({0})", increment);
+                            RenamedPackageRootPath = string.Format("{0} ({1})", PackageRootPath.Replace(parent, newName), increment);
                         }
-                        Directory.Move(PackageRootPath, RenamedPackageRootPath);
-                        PackageRootPath = RenamedPackageRootPath;
-                        SavePackageSettings();
-                        CreateRecentsMenu();
+                        RemoveRecentPath(PackageRootPath);
+                        // Moving Package results in Windows Explorer locking them => copy into a new folder and delete the old one
+                        //Directory.Move(PackageRootPath, RenamedPackageRootPath);
+                        var oldPackageRootPath = PackageRootPath;
+                        if (Helper.CopyDirectory(PackageRootPath, RenamedPackageRootPath))
+                        {
+                            PackageRootPath = RenamedPackageRootPath;
+                            SavePackageSettings();
+                            CreateRecentsMenu();
+                            if (Directory.Exists(RenamedPackageRootPath) && RenamedPackageRootPath != oldPackageRootPath)
+                                Helper.DeleteDirectory(oldPackageRootPath);
+                            else
+                            {
+                                // Something went wrong while copying the old folder into a renamed one ?! Reuse therefore the old one :(
+                                PackageRootPath = oldPackageRootPath;
+                                SavePackageSettings();
+                                CreateRecentsMenu();
+                            }
+                        }
                     }
                 }
             }
@@ -4038,6 +4080,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool PromptToMovePackage(string path = null)
         {
             bool succeed = true;
+            warnings.Clear();
 
             DialogResult result = DialogResult.Cancel;
             if (path == null)
@@ -4072,6 +4115,10 @@ namespace BeatificaBytes.Synology.Mods
                                 higher++;
                                 name = string.Format("{0} ({1})", name, higher);
                             } while (Directory.Exists(Path.Combine(path, name)));
+                        }
+                        else
+                        {
+                            name = string.Format("{0} ({1})", name, 1);
                         }
                         path = Path.Combine(path, name);
                         result = DialogResult.OK;
@@ -4187,7 +4234,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void ShowAdvancedEditor(bool advanced)
         {
-            advancedEditorToolStripMenuItem.Checked = advanced;
+            menuAdvancedEditor.Checked = advanced;
 
             labelVersion.Visible = advanced;
             textBoxVersion.Visible = advanced;
@@ -4386,6 +4433,51 @@ namespace BeatificaBytes.Synology.Mods
             var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
             warnings.Clear();
             MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            DragDropEffects effects = DragDropEffects.None;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                validPackage4DragDrop = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+                if (Directory.Exists(validPackage4DragDrop))
+                    effects = DragDropEffects.Copy;
+                else
+                    validPackage4DragDrop = null;
+            }
+
+            e.Effect = effects;
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            if (validPackage4DragDrop != null)
+            {
+                // Close the current Package. This is going to prompt the user to save changes if any. 
+                var saved = CloseCurrentPackage();
+
+                // Open another Package if the user saved/discarded explicitly pending changes.
+                if (saved == DialogResult.Yes || saved == DialogResult.No)
+                    OpenPackage(validPackage4DragDrop);
+
+                validPackage4DragDrop = null;
+            }
+        }
+
+        private void reviewPendingChangesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ValidateChildren();
+
+            var changes = new List<Tuple<string, string, string>>();
+            var exist = CheckChanges(changes);
+            StringBuilder message = new StringBuilder();
+            foreach(var item in changes)
+            {
+                message.AppendFormat("{0}: {1} => {2}\r\n", item.Item1, item.Item2, item.Item3);
+            }
+
+            MessageBoxEx.Show(this, message.ToString(), "Pending Changes", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
