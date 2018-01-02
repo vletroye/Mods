@@ -7,6 +7,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mods", "MyOwnDSMShortcuts\M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json Editor", "Json Editor\Json Editor.csproj", "{C0BE5E35-87CC-40E0-92D8-1D42C60F016D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Various Samples", "Various Samples", "{5B91A41F-5619-4125-AAE6-8C8B5DD4807C}"
+	ProjectSection(SolutionItems) = preProject
+		Various Samples\Mods_BasicTestUrl.spk = Various Samples\Mods_BasicTestUrl.spk
+		Various Samples\MODS_GateOne.spk = Various Samples\MODS_GateOne.spk
+		Various Samples\MODS_PackageManager.spk = Various Samples\MODS_PackageManager.spk
+		Various Samples\MODS_Samples.spk = Various Samples\MODS_Samples.spk
+		Various Samples\MODS_ServerMonitor.spk = Various Samples\MODS_ServerMonitor.spk
+		Various Samples\MODS_SimpleChat.spk = Various Samples\MODS_SimpleChat.spk
+		Various Samples\MODS_SPKTracer.spk = Various Samples\MODS_SPKTracer.spk
+		Various Samples\MODS_SSPKS.spk = Various Samples\MODS_SSPKS.spk
+		Various Samples\MODS_WebConsole.spk = Various Samples\MODS_WebConsole.spk
+		Various Samples\phpMyAdmin.spk = Various Samples\phpMyAdmin.spk
+		Various Samples\SPKTracer.spk = Various Samples\SPKTracer.spk
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
