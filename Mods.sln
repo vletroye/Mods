@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Various Samples", "Various 
 		Various Samples\MODS_SSPKS.spk = Various Samples\MODS_SSPKS.spk
 		Various Samples\MODS_WebConsole.spk = Various Samples\MODS_WebConsole.spk
 		Various Samples\phpMyAdmin.spk = Various Samples\phpMyAdmin.spk
-		Various Samples\SPKTracer.spk = Various Samples\SPKTracer.spk
 	EndProjectSection
 EndProject
 Global

@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -283,7 +284,10 @@ namespace BeatificaBytes.Synology.Mods
 
         private void OnMouseLeave(object sender, EventArgs e)
         {
-            labelToolTip.Text = "";
+            if (!string.IsNullOrEmpty(CurrentPackageFolder) && Directory.Exists(CurrentPackageFolder))
+                labelToolTip.Text = string.Format("Package loaded from {0}", CurrentPackageFolder);
+            else
+                labelToolTip.Text = "";
         }
 
         private void PrepareItemPictureBoxes()
@@ -371,7 +375,7 @@ namespace BeatificaBytes.Synology.Mods
                 ui = info["dsmuidir"];
             else
             {
-                var fileList = new DirectoryInfo(Path.Combine(path, "package")).GetFiles("config", SearchOption.AllDirectories);
+                var fileList = new DirectoryInfo(Path.Combine(path, "package")).GetFiles("config", System.IO.SearchOption.AllDirectories);
                 if (fileList.Length > 0)
                 {
                     ui = fileList[0].FullName.Replace(Path.Combine(path, "package"), "").Replace("config", "").Trim(new char[] { '\\' });
@@ -894,10 +898,10 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
 
-                    // Delete existing INFO file
+                    // Delete existing INFO file (try to send it to the RecycleBin
                     var infoName = Path.Combine(path, "INFO");
                     if (File.Exists(infoName))
-                        File.Delete(infoName);
+                        Helper.DeleteFile(infoName);
 
                     // Write the new INFO file
                     using (StreamWriter outputFile = new StreamWriter(infoName))
@@ -929,7 +933,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             var image = pictureBox.Image;
             if (File.Exists(path))
-                File.Delete(path);
+                Helper.DeleteFile(path);
+
             if (image != null) image.Save(path, ImageFormat.Png);
 
             // TODO: check that PKG images are saved when closing Mods
@@ -2250,7 +2255,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var path = GetIconFullPath(item, size);
                 if (File.Exists(path))
-                    File.Delete(path);
+                    Helper.DeleteFile(path);
             }
         }
 
@@ -2309,14 +2314,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (!Directory.Exists(Path.GetDirectoryName(path)))
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
                     if (File.Exists(path))
-                        File.Delete(path);
-                    image.Save(path, ImageFormat.Png);
-
-                    path = Path.Combine(Helper.ResourcesDirectory, @"recovery", Path.GetFileName(path));
-                    if (!Directory.Exists(Path.GetDirectoryName(path)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    if (File.Exists(path))
-                        File.Delete(path);
+                        Helper.DeleteFile(path);
                     image.Save(path, ImageFormat.Png);
                 }
             }
@@ -3055,7 +3053,7 @@ namespace BeatificaBytes.Synology.Mods
                     var dir = new DirectoryInfo(path);
                     foreach (var file in dir.EnumerateFiles("*.spk"))
                     {
-                        file.Delete();
+                        Helper.DeleteFile(file.FullName);
                     }
 
                     // Execute the script to generate the SPK
@@ -3101,7 +3099,10 @@ namespace BeatificaBytes.Synology.Mods
         private void publishFile(string src, string dest)
         {
             if (File.Exists(dest))
-                File.Delete(dest);
+            {
+                // try to send the existing SPK to the RecycleBin
+                Helper.DeleteFile(dest);
+            }
 
             File.Copy(src, dest);
         }

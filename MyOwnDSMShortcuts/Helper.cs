@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using Microsoft.VisualBasic.FileIO;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -557,6 +558,23 @@ namespace BeatificaBytes.Synology.Mods
         {
             Exception succeed = null;
 
+            try
+            {
+                // Try first a VB.Net delete
+                FileSystem.DeleteDirectory(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+            }
+            catch (Exception ex)
+            {
+                succeed = DeleteDirectoryRecursive(path);
+            }
+
+            return succeed;
+        }
+
+        internal static Exception DeleteDirectoryRecursive(string path)
+        {
+            Exception succeed = null;
+
             if (path == null) path = "";
 
             if (!Directory.Exists(path))
@@ -565,6 +583,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
+
                 foreach (string directory in Directory.GetDirectories(path))
                 {
                     succeed = DeleteDirectory(directory);
@@ -821,6 +840,20 @@ namespace BeatificaBytes.Synology.Mods
         {
             Regex r = new Regex(@"^(([a-zA-Z]:)|(\))(\{1}|((\{1})[^\]([^/:*?<>""|]*))+)$");
             return r.IsMatch(path);
+        }
+
+        internal static void DeleteFile(string fullName)
+        {
+            try
+            {
+                if (File.Exists(fullName))
+                // Try to send deleted SPK to RecycleBin 
+                FileSystem.DeleteFile(fullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+            }
+            catch
+            {
+                File.Delete(fullName);
+            }
         }
     }
 }
