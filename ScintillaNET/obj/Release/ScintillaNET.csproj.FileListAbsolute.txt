@@ -1,6 +1,0 @@
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\bin\Release\ScintillaNET.xml
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\bin\Release\ScintillaNET.dll
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\bin\Release\ScintillaNET.pdb
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\obj\Release\ScintillaNET.dll
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\obj\Release\ScintillaNET.pdb
-E:\Work\Development\Git\Mods\Mods\ScintillaNET\obj\Release\ScintillaNET.csprojResolveAssemblyReference.cache
