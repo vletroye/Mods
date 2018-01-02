@@ -165,11 +165,7 @@
     <Compile Include="Forms\ScriptForm.Designer.cs">
       <DependentUpon>ScriptForm.cs</DependentUpon>
     </Compile>
-    <None Include="Resources\warning2.png" />
-    <None Include="Resources\Warning1.png" />
-    <None Include="Resources\Untitled.png" />
     <None Include="Resources\Warning.png" />
-    <None Include="Resources\warning.bmp" />
     <EmbeddedResource Include="Forms\Parameters.resx">
       <DependentUpon>Parameters.cs</DependentUpon>
     </EmbeddedResource>

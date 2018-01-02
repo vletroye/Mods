@@ -44,6 +44,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonDefaultPackageRoot = new System.Windows.Forms.Button();
+            this.buttonReset = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -193,6 +194,17 @@
             this.buttonDefaultPackageRoot.Visible = false;
             this.buttonDefaultPackageRoot.Click += new System.EventHandler(this.buttonDefaultPackageRoot_Click);
             // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(429, 263);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(75, 23);
+            this.buttonReset.TabIndex = 33;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
             // Parameters
             // 
             this.AcceptButton = this.buttonOk;
@@ -201,6 +213,7 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(516, 419);
             this.ControlBox = false;
+            this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.checkBoxDefaultPackageRoot);
             this.Controls.Add(this.labelDefaultPackageRoot);
             this.Controls.Add(this.label2);
@@ -240,5 +253,6 @@
         private System.Windows.Forms.Button buttonDefaultPackageRoot;
         private System.Windows.Forms.Label labelDefaultPackageRoot;
         private System.Windows.Forms.CheckBox checkBoxDefaultPackageRoot;
+        private System.Windows.Forms.Button buttonReset;
     }
 }

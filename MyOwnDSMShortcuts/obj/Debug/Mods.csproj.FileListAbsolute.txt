@@ -1,3 +1,4 @@
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe.config
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\HelpSynoWizard.csv
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Pack.cmd
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\Package.zip
@@ -6,7 +7,6 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\synology
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\synology_services.yaml
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\7z.dll
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Resources\7z.exe
-E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe.config
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.pdb
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\BouncyCastle.Crypto.dll
@@ -22,6 +22,7 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Magick.NET-Q16-Any
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Newtonsoft.Json.xml
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\YamlDotNet.xml
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.csprojResolveAssemblyReference.cache
+E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Parameters.resources
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.SynoServices.resources
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Dependencies.resources
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.AboutBox.resources
@@ -33,4 +34,3 @@ E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Syn
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.csproj.GenerateResource.Cache
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.exe
 E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\Mods.pdb
-E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\obj\Debug\BeatificaBytes.Synology.Mods.Parameters.resources

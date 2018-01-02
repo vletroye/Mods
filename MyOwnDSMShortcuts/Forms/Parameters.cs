@@ -59,12 +59,12 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxPublishFolder.Checked = Properties.Settings.Default.DefaultPackageRepo;
             checkBoxOpenWith.Checked = Properties.Settings.Default.OpenWith;
 
-            labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
-            labelDefaultPublishFolder.Enabled = checkBoxPublishFolder.Checked;
             buttonDefaultPackageRepo.Visible = checkBoxPublishFolder.Checked;
+            labelDefaultPublishFolder.Visible = checkBoxPublishFolder.Checked;
+            labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
 
             buttonDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
-            labelDefaultPackageRoot.Enabled = checkBoxDefaultPackageRoot.Checked;
+            labelDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
             labelDefaultPackageRoot.Text = Properties.Settings.Default.PackageRoot;
         }
 
@@ -113,6 +113,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Properties.Settings.Default.PackageRepo = BrowserDialog4Mods.FileName;
             }
+            ShowParameters();
         }
 
         private void PickPackageRoot()
@@ -128,6 +129,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Properties.Settings.Default.PackageRoot = BrowserDialog4Mods.FileName;
             }
+            ShowParameters();
         }
 
         private void buttonDefaultPackageRepo_Click(object sender, EventArgs e)
@@ -237,6 +239,25 @@ namespace BeatificaBytes.Synology.Mods
             else
                 MessageBoxEx.Show(this, "This folder does not exist anymore or cannot be accessed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
+        }
+
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            if (MessageBoxEx.Show(this, "Are you sure that you want to reset all user settings?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3) == DialogResult.Yes)
+            {
+                Properties.Settings.Default.DefaultPackageRoot = false;
+                Properties.Settings.Default.PackageRoot = "";
+                Properties.Settings.Default.DefaultPackageRepo = false;
+                Properties.Settings.Default.PackageRepo = "";
+                Properties.Settings.Default.Recents = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.RecentsName = new System.Collections.Specialized.StringCollection();
+                Properties.Settings.Default.AdvancedEditor = false;
+                Properties.Settings.Default.LastPackage = null;
+                RemoveOpenWith();
+                Properties.Settings.Default.Save();
+
+                ShowParameters();
+            }
         }
     }
 }
