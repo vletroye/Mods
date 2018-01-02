@@ -79,13 +79,17 @@
       <HintPath>packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.1.0.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
-      <HintPath>packages\Magick.NET-Q16-AnyCPU.7.1.0\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
+    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
+      <HintPath>packages\Magick.NET-Q16-AnyCPU.7.2.1\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -99,8 +103,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet, Version=4.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\YamlDotNet.4.2.2\lib\net35\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=4.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\YamlDotNet.4.2.3\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -252,10 +256,6 @@
     <ProjectReference Include="..\Json Editor\Json Editor.csproj">
       <Project>{c0be5e35-87cc-40e0-92d8-1d42c60f016d}</Project>
       <Name>Json Editor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ScintillaNET\ScintillaNET.csproj">
-      <Project>{22ae2386-60f1-476e-9303-61cdb0aac4cf}</Project>
-      <Name>ScintillaNET</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

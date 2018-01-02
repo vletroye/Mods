@@ -853,6 +853,12 @@
             Long lines are indicated with a background color.
             </summary>
         </member>
+        <member name="F:ScintillaNET.EdgeMode.MultiLine">
+            <summary>
+            Similar to <see cref="F:ScintillaNET.EdgeMode.Line" /> except allows for multiple vertical lines to be visible using the <see cref="M:ScintillaNET.Scintilla.MultiEdgeAddLine(System.Int32,System.Drawing.Color)" /> method.
+            </summary>
+            <remarks><see cref="F:ScintillaNET.EdgeMode.Line" /> and <see cref="P:ScintillaNET.Scintilla.EdgeColumn" /> are completely independant of this mode.</remarks>
+        </member>
         <member name="T:ScintillaNET.Eol">
             <summary>
             End-of-line format.
@@ -891,6 +897,26 @@
         <member name="F:ScintillaNET.FoldAction.Toggle">
             <summary>
             Toggle between contracted and expanded.
+            </summary>
+        </member>
+        <member name="T:ScintillaNET.FoldDisplayText">
+            <summary>
+            Display options for fold text tags.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.FoldDisplayText.Hidden">
+            <summary>
+            Do not display the text tags. This is the default.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.FoldDisplayText.Standard">
+            <summary>
+            Display the text tags.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.FoldDisplayText.Boxed">
+            <summary>
+            Display the text tags with a box drawn around them.
             </summary>
         </member>
         <member name="T:ScintillaNET.FoldFlags">
@@ -1410,6 +1436,16 @@
             An indicator that will change the foreground color of text to the foreground color of the indicator.
             </summary>
         </member>
+        <member name="F:ScintillaNET.IndicatorStyle.Point">
+            <summary>
+            A triangle below the start of the indicator range.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.IndicatorStyle.PointCharacter">
+            <summary>
+            A triangle below the center of the first character of the indicator range.
+            </summary>
+        </member>
         <member name="T:ScintillaNET.InsertCheckEventArgs">
             <summary>
             Provides data for the <see cref="E:ScintillaNET.Scintilla.InsertCheck" /> event.
@@ -1680,6 +1716,15 @@
             Toggles the folding state of the line; expanding or contracting all child lines.
             </summary>
             <remarks>The line must be set as a <see cref="F:ScintillaNET.FoldLevelFlags.Header" />.</remarks>
+            <seealso cref="M:ScintillaNET.Line.ToggleFoldShowText(System.String)"/>
+        </member>
+        <member name="M:ScintillaNET.Line.ToggleFoldShowText(System.String)">
+            <summary>
+            Toggles the folding state of the line; expanding or contracting all child lines, and specifies the text tag to display to the right of the fold.
+            </summary>
+            <param name="text">The text tag to show to the right of the folded text.</param>
+            <remarks>The display of fold text tags are determined by the <see cref="M:ScintillaNET.Scintilla.FoldDisplayTextSetStyle(ScintillaNET.FoldDisplayText)" /> method.</remarks>
+            <seealso cref="M:ScintillaNET.Scintilla.FoldDisplayTextSetStyle(ScintillaNET.FoldDisplayText)" />
         </member>
         <member name="P:ScintillaNET.Line.AnnotationLines">
             <summary>
@@ -1884,18 +1929,6 @@
             Returns the CHARACTER offset where the line begins.
             </summary>
         </member>
-        <member name="M:ScintillaNET.LineCollection.Dump">
-            <summary>
-            Dumps the line buffer to a string.
-            </summary>
-            <returns>A string representing the line buffer.</returns>
-        </member>
-        <member name="M:ScintillaNET.LineCollection.Dump(System.IO.TextWriter)">
-            <summary>
-            Dumps the line buffer to the specified TextWriter.
-            </summary>
-            <param name="writer">The writer to use for dumping the line buffer.</param>
-        </member>
         <member name="M:ScintillaNET.LineCollection.GetCharCount(System.Int32,System.Int32)">
             <summary>
             Gets the number of CHARACTERS int a BYTE range.
@@ -2022,6 +2055,13 @@
             Represents a margin displayed on the left edge of a <see cref="T:ScintillaNET.Scintilla" /> control.
             </summary>
         </member>
+        <member name="P:ScintillaNET.Margin.BackColor">
+            <summary>
+            Gets or sets the background color of the margin when the <see cref="P:ScintillaNET.Margin.Type" /> property is set to <see cref="F:ScintillaNET.MarginType.Color" />.
+            </summary>
+            <returns>A Color object representing the margin background color. The default is Black.</returns>
+            <remarks>Alpha color values are ignored.</remarks>
+        </member>
         <member name="P:ScintillaNET.Margin.Cursor">
             <summary>
             Gets or sets the mouse cursor style when over the margin.
@@ -2122,11 +2162,19 @@
             </summary>
             <returns>An object that contains all <see cref="T:ScintillaNET.Margin" /> objects within the <see cref="T:ScintillaNET.MarginCollection" />.</returns>
         </member>
+        <member name="P:ScintillaNET.MarginCollection.Capacity">
+            <summary>
+            Gets or sets the number of margins in the <see cref="T:ScintillaNET.MarginCollection" />.
+            </summary>
+            <returns>The number of margins in the collection. The default is 5.</returns>
+        </member>
         <member name="P:ScintillaNET.MarginCollection.Count">
             <summary>
             Gets the number of margins in the <see cref="T:ScintillaNET.MarginCollection" />.
             </summary>
-            <returns>This property always returns 5.</returns>
+            <returns>The number of margins in the collection.</returns>
+            <remarks>This property is kept for convenience. The return value will always be equal to <see cref="P:ScintillaNET.MarginCollection.Capacity" />.</remarks>
+            <seealso cref="P:ScintillaNET.MarginCollection.Capacity" />
         </member>
         <member name="P:ScintillaNET.MarginCollection.Left">
             <summary>
@@ -2202,12 +2250,12 @@
         </member>
         <member name="F:ScintillaNET.MarginType.BackColor">
             <summary>
-            Margin can display symbols and has a background color equivalent to the default style background color.
+            Margin can display symbols and has a background color equivalent to <see cref="F:ScintillaNET.Style.Default" /> background color.
             </summary>
         </member>
         <member name="F:ScintillaNET.MarginType.ForeColor">
             <summary>
-            Margin can display symbols and has a background color equivalent to the default style foreground color.
+            Margin can display symbols and has a background color equivalent to <see cref="F:ScintillaNET.Style.Default"/> foreground color.
             </summary>
         </member>
         <member name="F:ScintillaNET.MarginType.Text">
@@ -2218,6 +2266,11 @@
         <member name="F:ScintillaNET.MarginType.RightText">
             <summary>
             Margin can display application defined text right-justified.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.MarginType.Color">
+            <summary>
+            Margin can display symbols and has a background color specified using the <see cref="P:ScintillaNET.Margin.BackColor" /> property.
             </summary>
         </member>
         <member name="T:ScintillaNET.Marker">
@@ -2699,6 +2752,29 @@
             extreme ascenders and descenders to overflow into adjacent lines.
             </summary>
         </member>
+        <member name="T:ScintillaNET.PopupMode">
+            <summary>
+            Behavior of the standard edit control context menu.
+            </summary>
+            <seealso cref="M:ScintillaNET.Scintilla.UsePopup(ScintillaNET.PopupMode)" />
+        </member>
+        <member name="F:ScintillaNET.PopupMode.Never">
+            <summary>
+            Never show the default editing menu.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.PopupMode.All">
+            <summary>
+            Show default editing menu if clicking on the control.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.PopupMode.Text">
+            <summary>
+            Show default editing menu only if clicking on text area.
+            </summary>
+            <remarks>To receive the <see cref="E:ScintillaNET.Scintilla.MarginRightClick" /> event, this value must be used.</remarks>
+            <seealso cref="E:ScintillaNET.Scintilla.MarginRightClick" />
+        </member>
         <member name="T:ScintillaNET.ProjectionEqualityComparer">
             <summary>
             Non-generic class to produce instances of the generic class,
@@ -2802,6 +2878,102 @@
         <member name="F:ScintillaNET.PropertyType.String">
             <summary>
             A string property.
+            </summary>
+        </member>
+        <member name="T:ScintillaNET.ScintillaReader">
+            <summary>
+            Implements a TextReader that reads from a Scintilla control.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.ScintillaReader.DefaultBufferSize">
+            <summary>
+            Arbitrarily chosen default buffer size
+            </summary>
+        </member>
+        <member name="P:ScintillaNET.ScintillaReader.BufferRemaining">
+            <summary>
+            Returns the number of buffered characters left to be read.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET.ScintillaReader.UnbufferedRemaining">
+            <summary>
+            Returns the number of unbuffered characters left to be read.
+            </summary>
+        </member>
+        <member name="P:ScintillaNET.ScintillaReader.TotalRemaining">
+            <summary>
+            Returns the total number of characters left to be read.
+            </summary>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.#ctor(ScintillaNET.Scintilla)">
+            <summary>
+            Initializes a new instance of the ScintillaReader class that reads all text from the specified Scintilla control.
+            </summary>
+            <param name="scintilla">The Scintilla control from which to read.</param>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.#ctor(ScintillaNET.Scintilla,System.Int32)">
+            <summary>
+            Initializes a new instance of the ScintillaReader class that reads all text from the specified Scintilla control.
+            </summary>
+            <param name="scintilla">The Scintilla control from which to read.</param>
+            <param name="bufferSize">The number of characters to buffer at a time.</param>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.#ctor(ScintillaNET.Scintilla,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the ScintillaReader class that reads a subsection from the specified Scintilla control.
+            </summary>
+            <param name="scintilla">The Scintilla control from which to read.</param>
+            <param name="start">The index of the first character to read.</param>
+            <param name="end">The index just past the last character to read.</param>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.#ctor(ScintillaNET.Scintilla,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the ScintillaReader class that reads a subsection from the specified Scintilla control.
+            </summary>
+            <param name="scintilla">The Scintilla control from which to read.</param>
+            <param name="start">The index of the first character to read.</param>
+            <param name="end">The index just past the last character to read.</param>
+            <param name="bufferSize">The number of characters to buffer at a time.</param>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.Peek">
+            <summary>
+            Returns the next character to be read from the reader without actually removing it from the stream. Returns -1 if no characters are available.
+            </summary>
+            <returns>The next character from the input stream, or -1 if no more characters are available.</returns>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.Read">
+            <summary>
+            Removes a character from the stream and returns it. Returns -1 if no characters are available.
+            </summary>
+            <returns>The next character from the input stream, or -1 if no more characters are available.</returns>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.Read(System.Char[],System.Int32,System.Int32)">
+            <summary>
+             Reads a maximum of count characters from the current stream and writes the data to buffer, beginning at index.
+            </summary>
+            <param name="buffer">The buffer to receive the characters.</param>
+            <param name="index">The position in buffer at which to begin writing.</param>
+            <param name="count">The maximum number of characters to read.</param>
+            <returns>The actual number of characters that have been read. The number will be less than or equal to count.</returns>
+            <exception cref="T:System.ArgumentNullException">buffer is null.</exception>
+            <exception cref="T:System.ArgumentException">The buffer length minus index is less than count.</exception>
+            <exception cref="T:System.ArgumentException">index or count is negative.</exception>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.ReadBlock(System.Char[],System.Int32,System.Int32)">
+            <summary>
+             Reads a maximum of count characters from the current stream and writes the data to buffer, beginning at index.
+            </summary>
+            <param name="buffer">The buffer to receive the characters.</param>
+            <param name="index">The position in buffer at which to begin writing.</param>
+            <param name="count">The maximum number of characters to read.</param>
+            <returns>The actual number of characters that have been read. The number will be less than or equal to count.</returns>
+            <exception cref="T:System.ArgumentNullException">buffer is null.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">The buffer length minus index is less than count.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">index or count is negative.</exception>
+        </member>
+        <member name="M:ScintillaNET.ScintillaReader.BufferNextRegion">
+            <summary>
+            Fills the buffer with the next section of text.
             </summary>
         </member>
         <member name="T:ScintillaNET.Scintilla">
@@ -3210,6 +3382,14 @@
             <param name="action">One of the <see cref="T:ScintillaNET.FoldAction" /> enumeration values.</param>
             <remarks>When using <see cref="F:ScintillaNET.FoldAction.Toggle" /> the first fold header in the document is examined to decide whether to expand or contract.</remarks>
         </member>
+        <member name="M:ScintillaNET.Scintilla.FoldDisplayTextSetStyle(ScintillaNET.FoldDisplayText)">
+            <summary>
+            Changes the appearance of fold text tags.
+            </summary>
+            <param name="style">One of the <see cref="T:ScintillaNET.FoldDisplayText" /> enumeration values.</param>
+            <remarks>The text tag to display on a folded line can be set using <see cref="M:ScintillaNET.Line.ToggleFoldShowText(System.String)" />.</remarks>
+            <seealso cref="M:ScintillaNET.Line.ToggleFoldShowText(System.String)" />.
+        </member>
         <member name="M:ScintillaNET.Scintilla.GetCharAt(System.Int32)">
             <summary>
             Returns the character as the specified document position.
@@ -3422,6 +3602,21 @@
             <param name="markerHandle">The <see cref="T:ScintillaNET.MarkerHandle" /> created by a previous call to <see cref="M:ScintillaNET.Line.MarkerAdd(System.Int32)" /> of the marker to search for.</param>
             <returns>If found, the zero-based line index containing the marker; otherwise, -1.</returns>
         </member>
+        <member name="M:ScintillaNET.Scintilla.MultiEdgeAddLine(System.Int32,System.Drawing.Color)">
+            <summary>
+            Specifies the long line indicator column number and color when <see cref="P:ScintillaNET.Scintilla.EdgeMode" /> is <see cref="F:ScintillaNET.EdgeMode.MultiLine" />.
+            </summary>
+            <param name="column">The zero-based column number to indicate.</param>
+            <param name="edgeColor">The color of the vertical long line indicator.</param>
+            <remarks>A column is defined as the width of a space character in the <see cref="F:ScintillaNET.Style.Default" /> style.</remarks>
+            <seealso cref="M:ScintillaNET.Scintilla.MultiEdgeClearAll" />
+        </member>
+        <member name="M:ScintillaNET.Scintilla.MultiEdgeClearAll">
+            <summary>
+            Removes all the long line column indicators specified using <seealso cref="M:ScintillaNET.Scintilla.MultiEdgeAddLine(System.Int32,System.Drawing.Color)" />.
+            </summary>
+            <seealso cref="M:ScintillaNET.Scintilla.MultiEdgeAddLine(System.Int32,System.Drawing.Color)" />
+        </member>
         <member name="M:ScintillaNET.Scintilla.MultipleSelectAddEach">
             <summary>
             Searches for all instances of the main selection within the <see cref="P:ScintillaNET.Scintilla.TargetStart" /> and <see cref="P:ScintillaNET.Scintilla.TargetEnd" />
@@ -3573,6 +3768,12 @@
         <member name="M:ScintillaNET.Scintilla.OnMarginClick(ScintillaNET.MarginClickEventArgs)">
             <summary>
             Raises the <see cref="E:ScintillaNET.Scintilla.MarginClick" /> event.
+            </summary>
+            <param name="e">A <see cref="T:ScintillaNET.MarginClickEventArgs" /> that contains the event data.</param>
+        </member>
+        <member name="M:ScintillaNET.Scintilla.OnMarginRightClick(ScintillaNET.MarginClickEventArgs)">
+            <summary>
+            Raises the <see cref="E:ScintillaNET.Scintilla.MarginRightClick" /> event.
             </summary>
             <param name="e">A <see cref="T:ScintillaNET.MarginClickEventArgs" /> that contains the event data.</param>
         </member>
@@ -4003,6 +4204,13 @@
             Determines whether to show the right-click context menu.
             </summary>
             <param name="enablePopup">true to enable the popup window; otherwise, false.</param>
+            <seealso cref="M:ScintillaNET.Scintilla.UsePopup(ScintillaNET.PopupMode)" />
+        </member>
+        <member name="M:ScintillaNET.Scintilla.UsePopup(ScintillaNET.PopupMode)">
+            <summary>
+            Determines the conditions for displaying the standard right-click context menu.
+            </summary>
+            <param name="popupMode">One of the <seealso cref="T:ScintillaNET.PopupMode" /> enumeration values.</param>
         </member>
         <member name="M:ScintillaNET.Scintilla.WndProc(System.Windows.Forms.Message@)">
             <summary>
@@ -4739,6 +4947,16 @@
             </summary>
             <returns>A collection of style definitions.</returns>
         </member>
+        <member name="P:ScintillaNET.Scintilla.TabDrawMode">
+            <summary>
+            Gets or sets how tab characters are represented when whitespace is visible.
+            </summary>
+            <returns>
+            One of the <see cref="T:ScintillaNET.TabDrawMode" /> enumeration values.
+            The default is <see cref="F:ScintillaNET.TabDrawMode.LongArrow" />.
+            </returns>
+            <seealso cref="P:ScintillaNET.Scintilla.ViewWhitespace" />
+        </member>
         <member name="P:ScintillaNET.Scintilla.TabWidth">
             <summary>
             Gets or sets the width of a tab as a multiple of a space character.
@@ -5046,6 +5264,13 @@
             </summary>
             <remarks>The <see cref="P:ScintillaNET.Margin.Sensitive" /> property must be set for a margin to raise this event.</remarks>
         </member>
+        <member name="E:ScintillaNET.Scintilla.MarginRightClick">
+            <summary>
+            Occurs when the mouse was right-clicked inside a margin that was marked as sensitive.
+            </summary>
+            <remarks>The <see cref="P:ScintillaNET.Margin.Sensitive" /> property and <see cref="F:ScintillaNET.PopupMode.Text" /> must be set for a margin to raise this event.</remarks>
+            <seealso cref="M:ScintillaNET.Scintilla.UsePopup(ScintillaNET.PopupMode)" />
+        </member>
         <member name="E:ScintillaNET.Scintilla.ModifyAttempt">
             <summary>
             Occurs when a user attempts to change text while the document is in read-only mode.
@@ -5306,6 +5531,12 @@
         <member name="F:ScintillaNET.Style.BraceBad">
             <summary>
             Bad brace style index. This style is used on an unmatched brace character when set with the <see cref="M:ScintillaNET.Scintilla.BraceBadLight(System.Int32)" /> method.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.Style.FoldDisplayText">
+            <summary>
+            Fold text tag style index. This is the style used for drawing text tags attached to folded text when
+            <see cref="M:ScintillaNET.Scintilla.FoldDisplayTextSetStyle(ScintillaNET.FoldDisplayText)" /> and <see cref="M:ScintillaNET.Line.ToggleFoldShowText(System.String)" /> are used.
             </summary>
         </member>
         <member name="M:ScintillaNET.Style.CopyTo(ScintillaNET.Style)">
@@ -7002,7 +7233,7 @@
             Here string style index.
             </summary>
         </member>
-        <member name="F:ScintillaNET.Style.PowerShell.HereCharcter">
+        <member name="F:ScintillaNET.Style.PowerShell.HereCharacter">
             <summary>
             Here character style index.
             </summary>
@@ -7492,9 +7723,9 @@
             Special style index.
             </summary>
         </member>
-        <member name="F:ScintillaNET.Style.Smalltalk.KwSend">
+        <member name="F:ScintillaNET.Style.Smalltalk.KwsEnd">
             <summary>
-            KW send style index.
+            KWS End style index.
             </summary>
         </member>
         <member name="F:ScintillaNET.Style.Smalltalk.Assign">
@@ -8337,6 +8568,21 @@
             <param name="scintilla">The <see cref="T:ScintillaNET.Scintilla" /> control that generated this event.</param>
             <param name="bytePosition">The zero-based byte position within the document to stop styling.</param>
         </member>
+        <member name="T:ScintillaNET.TabDrawMode">
+            <summary>
+            Specifies how tab characters are drawn when whitespace is visible.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.TabDrawMode.LongArrow">
+            <summary>
+            The default mode of an arrow stretching until the tabstop.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.TabDrawMode.Strikeout">
+            <summary>
+            A horizontal line stretching until the tabstop.
+            </summary>
+        </member>
         <member name="T:ScintillaNET.Technology">
             <summary>
             The rendering technology used in a <see cref="T:ScintillaNET.Scintilla" /> control.
@@ -8415,6 +8661,11 @@
         <member name="F:ScintillaNET.VirtualSpace.UserAccessible">
             <summary>
             Virtual space is user accessible.
+            </summary>
+        </member>
+        <member name="F:ScintillaNET.VirtualSpace.NoWrapLineStart">
+            <summary>
+            Prevents left arrow movement and selection from wrapping to the previous line.
             </summary>
         </member>
         <member name="T:ScintillaNET.WhitespaceMode">

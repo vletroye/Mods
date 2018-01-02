@@ -1695,9 +1695,9 @@
             Gets or sets the composition operator to be used when composition is implicitly used (such as for image flattening).
             </summary>
         </member>
-        <member name="P:ImageMagick.IMagickImage.CompressionMethod">
+        <member name="P:ImageMagick.IMagickImage.Compression">
             <summary>
-            Gets or sets the compression method to use.
+            Gets the compression method of the image.
             </summary>
         </member>
         <member name="P:ImageMagick.IMagickImage.Density">
@@ -5688,6 +5688,15 @@
             <param name="readSettings">The settings to use when reading the image.</param>
             <exception cref="T:ImageMagick.MagickException">Thrown when an error is raised by ImageMagick.</exception>
         </member>
+        <member name="M:ImageMagick.IMagickImageCollection.Polynomial(System.Double[])">
+            <summary>
+            Returns a new image where each pixel is the sum of the pixels in the image sequence after applying its
+            corresponding terms (coefficient and degree pairs).
+            </summary>
+            <param name="terms">The list of polynomial coefficients and degree pairs and a constant.</param>
+            <returns>A new image where each pixel is the sum of the pixels in the image sequence after applying its
+            corresponding terms (coefficient and degree pairs).</returns>
+        </member>
         <member name="M:ImageMagick.IMagickImageCollection.Quantize">
             <summary>
             Quantize images (reduce number of colors).
@@ -6547,9 +6556,9 @@
             Gets or sets the composition operator to be used when composition is implicitly used (such as for image flattening).
             </summary>
         </member>
-        <member name="P:ImageMagick.MagickImage.CompressionMethod">
+        <member name="P:ImageMagick.MagickImage.Compression">
             <summary>
-            Gets or sets the compression method to use.
+            Gets the compression method of the image.
             </summary>
         </member>
         <member name="P:ImageMagick.MagickImage.Density">
@@ -10788,6 +10797,15 @@
             <param name="readSettings">The settings to use when reading the image.</param>
             <exception cref="T:ImageMagick.MagickException">Thrown when an error is raised by ImageMagick.</exception>
         </member>
+        <member name="M:ImageMagick.MagickImageCollection.Polynomial(System.Double[])">
+            <summary>
+            Returns a new image where each pixel is the sum of the pixels in the image sequence after applying its
+            corresponding terms (coefficient and degree pairs).
+            </summary>
+            <param name="terms">The list of polynomial coefficients and degree pairs and a constant.</param>
+            <returns>A new image where each pixel is the sum of the pixels in the image sequence after applying its
+            corresponding terms (coefficient and degree pairs).</returns>
+        </member>
         <member name="M:ImageMagick.MagickImageCollection.Quantize">
             <summary>
             Quantize images (reduce number of colors).
@@ -11949,7 +11967,7 @@
             Gets or sets the color type of the image.
             </summary>
         </member>
-        <member name="P:ImageMagick.MagickSettings.CompressionMethod">
+        <member name="P:ImageMagick.MagickSettings.Compression">
             <summary>
             Gets or sets the compression method to use.
             </summary>
@@ -17967,117 +17985,122 @@
             Xor
             </summary>
         </member>
-        <member name="T:ImageMagick.CompressionMethod">
+        <member name="F:ImageMagick.CompositeOperator.Stereo">
+            <summary>
+            Stereo
+            </summary>
+        </member>
+        <member name="T:ImageMagick.Compression">
             <summary>
             Specifies compression methods.
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Undefined">
+        <member name="F:ImageMagick.Compression.Undefined">
             <summary>
             Undefined
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.B44A">
+        <member name="F:ImageMagick.Compression.B44A">
             <summary>
             B44A
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.B44">
+        <member name="F:ImageMagick.Compression.B44">
             <summary>
             B44
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.BZip">
+        <member name="F:ImageMagick.Compression.BZip">
             <summary>
             BZip
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.DXT1">
+        <member name="F:ImageMagick.Compression.DXT1">
             <summary>
             DXT1
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.DXT3">
+        <member name="F:ImageMagick.Compression.DXT3">
             <summary>
             DXT3
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.DXT5">
+        <member name="F:ImageMagick.Compression.DXT5">
             <summary>
             DXT5
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Fax">
+        <member name="F:ImageMagick.Compression.Fax">
             <summary>
             Fax
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Group4">
+        <member name="F:ImageMagick.Compression.Group4">
             <summary>
             Group4
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.JBIG1">
+        <member name="F:ImageMagick.Compression.JBIG1">
             <summary>
             JBIG1
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.JBIG2">
+        <member name="F:ImageMagick.Compression.JBIG2">
             <summary>
             JBIG2
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.JPEG2000">
+        <member name="F:ImageMagick.Compression.JPEG2000">
             <summary>
             JPEG2000
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.JPEG">
+        <member name="F:ImageMagick.Compression.JPEG">
             <summary>
             JPEG
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.LosslessJPEG">
+        <member name="F:ImageMagick.Compression.LosslessJPEG">
             <summary>
             LosslessJPEG
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.LZMA">
+        <member name="F:ImageMagick.Compression.LZMA">
             <summary>
             LZMA
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.LZW">
+        <member name="F:ImageMagick.Compression.LZW">
             <summary>
             LZW
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.NoCompression">
+        <member name="F:ImageMagick.Compression.NoCompression">
             <summary>
             NoCompression
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Piz">
+        <member name="F:ImageMagick.Compression.Piz">
             <summary>
             Piz
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Pxr24">
+        <member name="F:ImageMagick.Compression.Pxr24">
             <summary>
             Pxr24
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.RLE">
+        <member name="F:ImageMagick.Compression.RLE">
             <summary>
             RLE
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.Zip">
+        <member name="F:ImageMagick.Compression.Zip">
             <summary>
             Zip
             </summary>
         </member>
-        <member name="F:ImageMagick.CompressionMethod.ZipS">
+        <member name="F:ImageMagick.Compression.ZipS">
             <summary>
             ZipS
             </summary>
@@ -21845,7 +21868,7 @@
             Gets the color space of the image.
             </summary>
         </member>
-        <member name="P:ImageMagick.IMagickImageInfo.CompressionMethod">
+        <member name="P:ImageMagick.IMagickImageInfo.Compression">
             <summary>
             Gets the compression method of the image.
             </summary>
@@ -22020,7 +22043,7 @@
             Gets the color space of the image.
             </summary>
         </member>
-        <member name="P:ImageMagick.MagickImageInfo.CompressionMethod">
+        <member name="P:ImageMagick.MagickImageInfo.Compression">
             <summary>
             Gets the compression method of the image.
             </summary>

@@ -50,6 +50,10 @@
       <HintPath>..\MyOwnDSMShortcuts\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\MyOwnDSMShortcuts\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -176,12 +180,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="json-editor.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ScintillaNET\ScintillaNET.csproj">
-      <Project>{22ae2386-60f1-476e-9303-61cdb0aac4cf}</Project>
-      <Name>ScintillaNET</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

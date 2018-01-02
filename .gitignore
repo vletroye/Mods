@@ -3,3 +3,9 @@
 ################################################################################
 
 /MyOwnDSMShortcuts/bin/Debug/Resources/recovery
+*.suo
+*.user
+_ReSharper.*
+bin
+obj
+packages
