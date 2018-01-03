@@ -15,12 +15,12 @@ namespace BeatificaBytes.Synology.Mods
         private Scintilla scintillaScriptTab2 = null;
 
         private List<Tuple<string, string>> variables = null;
-        private ScriptDetails scriptTab1 = null;
-        private ScriptDetails scriptTab2 = null;
+        private ScriptInfo scriptTab1 = null;
+        private ScriptInfo scriptTab2 = null;
         private HelpInfo helpVarDefault = new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/script_env_var.html"), "Details about environment variables");
         private HelpInfo help = null;
 
-        public ScriptForm(ScriptDetails script1, ScriptDetails script2, List<Tuple<string, string>> variables)
+        public ScriptForm(ScriptInfo script1, ScriptInfo script2, List<Tuple<string, string>> variables)
         {
             InitializeComponent();
             this.scriptTab1 = script1;

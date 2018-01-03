@@ -31,6 +31,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 AddPicture(snapshot);
             }
+            EnableButtons();
         }
 
         private void AddPicture(string snapshot)
@@ -42,25 +43,15 @@ namespace BeatificaBytes.Synology.Mods
         private void AddPicture(Image image)
         {
             var pb = new PictureBox();
+            pb.Size = new Size(250, 250);
             pb.BackColor = Color.Transparent;
-            pb.Image = image;
-            if (pb.Image != null)
+            if (image != null)
             {
-                pb.Size = new Size(250, 250);
-                pb.SizeMode = PictureBoxSizeMode.StretchImage;
+                Helper.SetSizedImage(pb, image);
                 flowLayoutPanelSnapshot.Controls.Add(pb);
+                pb.DoubleClick += new EventHandler(picture_doubleClick);
                 pb.Click += new EventHandler(picture_click);
             }
-        }
-
-        private void picture_click(object sender, EventArgs e)
-        {
-            if (selectedPicture != null)
-                selectedPicture.BorderStyle = BorderStyle.None;
-            selectedPicture = (PictureBox)sender;
-            selectedPicture.BorderStyle = BorderStyle.FixedSingle;
-
-            EnableButtons();
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
@@ -96,22 +87,29 @@ namespace BeatificaBytes.Synology.Mods
         private void EnableButtons()
         {
             buttonDelete.Enabled = (selectedPicture != null);
+            buttonEdit.Enabled = (selectedPicture != null);
             buttonMoveLeft.Enabled = (selectedPicture != null) && flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture) > 0;
             buttonMoveRight.Enabled = (selectedPicture != null) && flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture) < flowLayoutPanelSnapshot.Controls.Count - 1;
         }
 
         private void buttonMoveLeft_Click(object sender, EventArgs e)
         {
-            var index = flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture);
-            flowLayoutPanelSnapshot.Controls.SetChildIndex(selectedPicture, index - 1);
-            EnableButtons();
+            if (selectedPicture != null)
+            {
+                var index = flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture);
+                flowLayoutPanelSnapshot.Controls.SetChildIndex(selectedPicture, index - 1);
+                EnableButtons();
+            }
         }
 
         private void buttonMoveRight_Click(object sender, EventArgs e)
         {
-            var index = flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture);
-            flowLayoutPanelSnapshot.Controls.SetChildIndex(selectedPicture, index + 1);
-            EnableButtons();
+            if (selectedPicture != null)
+            {
+                var index = flowLayoutPanelSnapshot.Controls.IndexOf(selectedPicture);
+                flowLayoutPanelSnapshot.Controls.SetChildIndex(selectedPicture, index + 1);
+                EnableButtons();
+            }
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -150,6 +148,50 @@ namespace BeatificaBytes.Synology.Mods
                     AddPicture(image);
                 }
             }
+        }
+
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            if (selectedPicture != null)
+            {
+                EditImage(selectedPicture.Tag as Image);
+            }
+        }
+
+        private void EditImage(Image image)
+        {
+            var editor = new SnapshotEditor(image);
+            var changed = editor.ShowDialog(this);
+            if (changed == DialogResult.OK)
+            {
+                image = editor.GetImage();
+                Helper.SetSizedImage(selectedPicture, image);
+            }
+        }
+
+        private void picture_doubleClick(object sender, EventArgs e)
+        {
+            var previous = selectedPicture;
+            selectedPicture = (PictureBox)sender;
+            Highlight(selectedPicture, previous); // Changing the BorderStyle prevent other events to occur
+
+            EditImage(selectedPicture.Tag as Image);
+        }
+
+        private void picture_click(object sender, EventArgs e)
+        {
+            var previous = selectedPicture;
+            selectedPicture = (PictureBox)sender;
+            Highlight(selectedPicture, previous); // Changing the BorderStyle prevent other events to occur (Ex.: DoubleClick)
+
+            EnableButtons();
+        }
+
+        private async void Highlight(PictureBox newSelection, PictureBox previousSelection)
+        {
+            await Task.Delay(100);
+            if (previousSelection != null) previousSelection.BorderStyle = BorderStyle.None;
+            if (newSelection != null) newSelection.BorderStyle = BorderStyle.FixedSingle;
         }
     }
 }

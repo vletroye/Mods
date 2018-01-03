@@ -1470,8 +1470,8 @@ namespace BeatificaBytes.Synology.Mods
             else
                 inputRunner = File.ReadAllText(Path.Combine(Helper.ResourcesDirectory, "default.runner"));
 
-            var script = new ScriptDetails(inputScript, "Script Editor", new Uri("https://www.shellscript.sh/"), "Shell Scripting Tutorial");
-            var runner = new ScriptDetails(inputRunner, "Runner Editor", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
+            var script = new ScriptInfo(inputScript, "Script Editor", new Uri("https://www.shellscript.sh/"), "Shell Scripting Tutorial");
+            var runner = new ScriptInfo(inputRunner, "Runner Editor", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
 
             DialogResult result = Helper.ScriptEditor(script, runner, GetAllWizardVariables());
             if (result == DialogResult.OK)
@@ -2277,24 +2277,11 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var size = int.Parse(pictureBox.Tag.ToString().Split(';')[1]);
 
-                Bitmap copy = ResizeImage(image, size);
+                var copy = Helper.ResizeImage(image, size, size);
 
                 pictureBox.Image = copy;
                 pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
             }
-        }
-
-        private static Bitmap ResizeImage(Image image, int size)
-        {
-            var copy = new Bitmap(size, size);
-            using (Graphics g = Graphics.FromImage(copy))
-            {
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(image, 0, 0, size, size);
-            }
-
-            return copy;
         }
 
         // Save all the pictures of the current Item
@@ -3548,7 +3535,7 @@ namespace BeatificaBytes.Synology.Mods
             var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
 
             var content = File.ReadAllText(defaultRunnerPath);
-            var runner = new ScriptDetails(content, "Default Runner", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
+            var runner = new ScriptInfo(content, "Default Runner", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
             DialogResult result = Helper.ScriptEditor(null, runner, null);
             if (result == DialogResult.OK)
             {
@@ -3568,7 +3555,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 var content = File.ReadAllText(scriptPath);
-                var script = new ScriptDetails(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
+                var script = new ScriptInfo(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
                 DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
                 if (result == DialogResult.OK)
                 {
@@ -3650,7 +3637,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (Path.GetExtension(jsonPath) == ".sh")
                 {
                     var content = File.ReadAllText(jsonPath);
-                    var wizard = new ScriptDetails(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html"), "Details about Wizard File");
+                    var wizard = new ScriptInfo(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html"), "Details about Wizard File");
 
                     string outputRunner = string.Empty;
                     result = Helper.ScriptEditor(wizard, null, null);
@@ -3790,7 +3777,7 @@ namespace BeatificaBytes.Synology.Mods
             SavePackageInfo(CurrentPackageFolder);
             var infoName = Path.Combine(CurrentPackageFolder, "INFO");
             content = File.ReadAllText(infoName);
-            var script = new ScriptDetails(content, "INFO Editor", new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
+            var script = new ScriptInfo(content, "INFO Editor", new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
 
             Properties.Settings.Default.AdvancedEditor = true;
             Properties.Settings.Default.Save();
@@ -3806,7 +3793,7 @@ namespace BeatificaBytes.Synology.Mods
                 content = null;
 
 
-            var config = new ScriptDetails(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
+            var config = new ScriptInfo(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
 
 
             DialogResult result = Helper.ScriptEditor(script, config, null);
@@ -4546,7 +4533,7 @@ namespace BeatificaBytes.Synology.Mods
         private void toolStripMenuItemChangeLog_Click(object sender, EventArgs e)
         {
             var changelog = textBoxChangeBox.Text;
-            var content = new ScriptDetails(changelog, "ChangeLog Editor");
+            var content = new ScriptInfo(changelog, "ChangeLog Editor");
 
             DialogResult result = Helper.ScriptEditor(content, null, null);
             if (result == DialogResult.OK)

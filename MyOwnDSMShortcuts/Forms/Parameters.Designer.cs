@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Parameters));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.checkBoxPublishFolder = new System.Windows.Forms.CheckBox();
+            this.checkBoxDefaultPackageRepo = new System.Windows.Forms.CheckBox();
             this.labelToolTip = new System.Windows.Forms.Label();
             this.panelToolTip = new System.Windows.Forms.Panel();
             this.toolTipProperties = new System.Windows.Forms.ToolTip(this.components);
@@ -72,15 +72,15 @@
             // 
             // checkBoxPublishFolder
             // 
-            this.checkBoxPublishFolder.AutoSize = true;
-            this.checkBoxPublishFolder.Location = new System.Drawing.Point(12, 12);
-            this.checkBoxPublishFolder.Name = "checkBoxPublishFolder";
-            this.checkBoxPublishFolder.Size = new System.Drawing.Size(160, 17);
-            this.checkBoxPublishFolder.TabIndex = 2;
-            this.checkBoxPublishFolder.Text = "Use a Default Publish Folder";
-            this.toolTipProperties.SetToolTip(this.checkBoxPublishFolder, resources.GetString("checkBoxPublishFolder.ToolTip"));
-            this.checkBoxPublishFolder.UseVisualStyleBackColor = true;
-            this.checkBoxPublishFolder.CheckedChanged += new System.EventHandler(this.checkBoxPublishFolder_CheckedChanged);
+            this.checkBoxDefaultPackageRepo.AutoSize = true;
+            this.checkBoxDefaultPackageRepo.Location = new System.Drawing.Point(12, 12);
+            this.checkBoxDefaultPackageRepo.Name = "checkBoxPublishFolder";
+            this.checkBoxDefaultPackageRepo.Size = new System.Drawing.Size(160, 17);
+            this.checkBoxDefaultPackageRepo.TabIndex = 2;
+            this.checkBoxDefaultPackageRepo.Text = "Use a Default Publish Folder";
+            this.toolTipProperties.SetToolTip(this.checkBoxDefaultPackageRepo, resources.GetString("checkBoxPublishFolder.ToolTip"));
+            this.checkBoxDefaultPackageRepo.UseVisualStyleBackColor = true;
+            this.checkBoxDefaultPackageRepo.CheckedChanged += new System.EventHandler(this.checkBoxDefaultPackageRepo_CheckedChanged);
             // 
             // labelToolTip
             // 
@@ -224,7 +224,7 @@
             this.Controls.Add(this.labelDefaultPublishFolder);
             this.Controls.Add(this.labelToolTip);
             this.Controls.Add(this.panelToolTip);
-            this.Controls.Add(this.checkBoxPublishFolder);
+            this.Controls.Add(this.checkBoxDefaultPackageRepo);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Name = "Parameters";
@@ -241,7 +241,7 @@
 
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.CheckBox checkBoxPublishFolder;
+        private System.Windows.Forms.CheckBox checkBoxDefaultPackageRepo;
         private System.Windows.Forms.Label labelToolTip;
         private System.Windows.Forms.Panel panelToolTip;
         private System.Windows.Forms.ToolTip toolTipProperties;

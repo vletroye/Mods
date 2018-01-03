@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BeatificaBytes.Synology.Mods
 {
-    public class ScriptDetails
+    public class ScriptInfo
     {
         private string code;
         private string title;
         private HelpInfo help;
 
-        public ScriptDetails(string code, string title, Uri helpUrl, string helpLabel)
+        public ScriptInfo(string code, string title, Uri helpUrl, string helpLabel)
         {
             this.code = code;
             this.title = title;
@@ -21,7 +17,7 @@ namespace BeatificaBytes.Synology.Mods
                 this.help = new HelpInfo(helpUrl, helpLabel);
             }
         }
-        public ScriptDetails(string code, string title) : this(code, title, null, null)
+        public ScriptInfo(string code, string title) : this(code, title, null, null)
         { }
 
         public string Code

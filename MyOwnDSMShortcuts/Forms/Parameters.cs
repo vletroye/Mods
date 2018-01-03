@@ -56,11 +56,12 @@ namespace BeatificaBytes.Synology.Mods
             }
             Properties.Settings.Default.OpenWith = command == null ? false : command == "Edit with Mods Packager";
 
-            checkBoxPublishFolder.Checked = Properties.Settings.Default.DefaultPackageRepo;
+            checkBoxDefaultPackageRepo.Checked = Properties.Settings.Default.DefaultPackageRepo;
             checkBoxOpenWith.Checked = Properties.Settings.Default.OpenWith;
+            checkBoxDefaultPackageRoot.Checked = Properties.Settings.Default.DefaultPackageRoot;
 
-            buttonDefaultPackageRepo.Visible = checkBoxPublishFolder.Checked;
-            labelDefaultPublishFolder.Visible = checkBoxPublishFolder.Checked;
+            buttonDefaultPackageRepo.Visible = checkBoxDefaultPackageRepo.Checked;
+            labelDefaultPublishFolder.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
 
             buttonDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
@@ -89,10 +90,10 @@ namespace BeatificaBytes.Synology.Mods
             labelToolTip.Text = "";
         }
 
-        private void checkBoxPublishFolder_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxDefaultPackageRepo_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.DefaultPackageRepo = checkBoxPublishFolder.Checked;
-            if (checkBoxPublishFolder.Checked)
+            Properties.Settings.Default.DefaultPackageRepo = checkBoxDefaultPackageRepo.Checked;
+            if (checkBoxDefaultPackageRepo.Checked)
             {
                 if (string.IsNullOrEmpty(Properties.Settings.Default.PackageRepo))
                     PickPackageRepo();
