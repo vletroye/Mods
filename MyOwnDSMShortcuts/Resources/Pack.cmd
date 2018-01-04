@@ -3,7 +3,7 @@ cd /d %~dp0
 
 if exist mods.spk (del mods.spk)
 cd package
-"..\7z.exe" a -ttar -so "..\package" * | "..\7z.exe" a -si package.tgz
+"..\7z.exe" a -ttar -so "..\package" * -xr!*.git -xr!*.gitignore | "..\7z.exe" a -si package.tgz
 if errorlevel 1 (
    cd ..
    echo Error while archiving package.

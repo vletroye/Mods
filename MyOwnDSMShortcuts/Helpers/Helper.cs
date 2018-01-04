@@ -22,6 +22,14 @@ namespace BeatificaBytes.Synology.Mods
 {
     public static class Helper
     {
+        [DllImport("kernel32.dll")]
+        static extern bool CreateSymbolicLink(string lpSymlinkFileName, string lpTargetFileName, SymLinkFlag dwFlags);
+        internal enum SymLinkFlag
+        {
+            File = 0,
+            Directory = 1
+        }
+
         static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-]", RegexOptions.Compiled);
 
         public static string AssemblyDirectory
@@ -916,5 +924,9 @@ namespace BeatificaBytes.Synology.Mods
             return copy;
         }
 
+        public static bool CreateSymLink(string link, string target, bool isDirectory)
+        {
+            return RunProcessAsAdmin("cmd.exe", string.Format(@"/c mklink {0}""{1}"" ""{2}""", isDirectory ? "/D " : "", link, target)) == 0;
+        }
     }
 }

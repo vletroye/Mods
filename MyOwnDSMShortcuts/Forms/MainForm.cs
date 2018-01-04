@@ -970,7 +970,7 @@ namespace BeatificaBytes.Synology.Mods
         // Add an new item
         private void buttonAddItem_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren())
+            if (ValidateChildren() && SavePackage(CurrentPackageFolder, true) == DialogResult.Yes) // Need to save to get the latest value in info["package"]
             {
                 state = State.Add;
                 DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
@@ -1601,7 +1601,15 @@ namespace BeatificaBytes.Synology.Mods
                     }
 
                     if (succeed)
-                        Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
+                    {
+                        var copy = MessageBoxEx.Show(this, "Do you want to copy the files of the webApp into the package Folder (YES) or create a Symbolic Link on the target folder instead (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                        if (copy == DialogResult.Yes)
+                            succeed = Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
+                        else
+                        {
+                            succeed = Helper.CreateSymLink(targetWebAppFolder, webAppFolder, true);
+                        }
+                    }
                 }
             }
 
@@ -2018,9 +2026,9 @@ namespace BeatificaBytes.Synology.Mods
             var cleanedWebApp = Helper.CleanUpText(title);
             string actualUrl = null;
             if (info["singleApp"] == "yes")
-                actualUrl = string.Format("/webman/3rdparty/{0}/{1}", info["package"], url);
+                actualUrl = string.Format("/webman/3rdparty/{0}/{1}", info["package"], url).Replace("//", "/");
             else
-                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url);
+                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url).Replace("//", "/");
             if (webAppIndex != null && webAppFolder != null)
             {
                 url = actualUrl;
