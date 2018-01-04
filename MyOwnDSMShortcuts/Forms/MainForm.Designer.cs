@@ -1642,7 +1642,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuReviewPendingChanges
             // 
             this.menuReviewPendingChanges.Name = "menuReviewPendingChanges";
-            this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
             this.menuReviewPendingChanges.Size = new System.Drawing.Size(224, 22);
             this.menuReviewPendingChanges.Text = "Pending Changes";
             this.menuReviewPendingChanges.Click += new System.EventHandler(this.menuReviewPendingChanges_Click);

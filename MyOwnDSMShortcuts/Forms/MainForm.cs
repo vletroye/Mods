@@ -416,7 +416,20 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     if (item.Value.itemType == -1)
                         if (item.Value.type == "legacy") item.Value.itemType = (int)UrlType.WebApp;
-                    //if (item.Value.url.StartsWith("/webman/3rdparty/") ) item.Value.itemType = (int)UrlType.WebApp;
+                    var webapp = item.Value.url;
+                    if (webapp.StartsWith("/webman/3rdparty/"))
+                    {
+                        //item.Value.itemType = (int)UrlType.WebApp;
+                        webapp = webapp.Replace("/webman/3rdparty/", "");
+                        if (!webapp.StartsWith(info["package"]))
+                            PublishWarning(string.Format("Item {0} is not referencing an element of your package...", item.Value.title));
+                        else
+                        {
+                            webapp = Path.Combine(Path.GetDirectoryName(config), webapp.Replace(string.Format("{0}/", info["package"]), ""));
+                            if (!File.Exists(webapp))
+                                PublishWarning(string.Format("Item {0} is not located in the right subfolder. Check your package...", item.Value.title));
+                        }
+                    }
                 }
             }
             if (!info.ContainsKey("singleApp"))
