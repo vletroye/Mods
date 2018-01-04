@@ -123,7 +123,7 @@ namespace BeatificaBytes.Synology.Mods
             string imagepath;
             foreach (PictureBox pb in flowLayoutPanelSnapshot.Controls)
             {
-                Image image = pb.Image;
+                Image image = pb.Tag as Image;
                 imagepath = string.Format("{0}/screen_{1}.png", path, index);
                 image.Save(imagepath, ImageFormat.Png);
                 index++;

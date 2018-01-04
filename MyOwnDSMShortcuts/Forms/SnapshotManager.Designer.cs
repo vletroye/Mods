@@ -43,7 +43,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(697, 503);
+            this.buttonCancel.Location = new System.Drawing.Point(697, 520);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 1;
@@ -58,7 +58,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanelSnapshot.Location = new System.Drawing.Point(12, 12);
             this.flowLayoutPanelSnapshot.Name = "flowLayoutPanelSnapshot";
-            this.flowLayoutPanelSnapshot.Size = new System.Drawing.Size(760, 485);
+            this.flowLayoutPanelSnapshot.Size = new System.Drawing.Size(760, 502);
             this.flowLayoutPanelSnapshot.TabIndex = 2;
             this.toolTipSnapshotManager.SetToolTip(this.flowLayoutPanelSnapshot, "Drag & Drop here your screenshots or Paste them from Clipboard with CTRL-V.\r\nNB: " +
         "this feature is only supported when you publish your SPK via SSPKS (Simple SPK S" +
@@ -69,7 +69,7 @@
             // buttonDelete
             // 
             this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonDelete.Location = new System.Drawing.Point(12, 503);
+            this.buttonDelete.Location = new System.Drawing.Point(12, 520);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(75, 23);
             this.buttonDelete.TabIndex = 3;
@@ -81,7 +81,7 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonOk.Location = new System.Drawing.Point(616, 503);
+            this.buttonOk.Location = new System.Drawing.Point(616, 520);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 4;
@@ -92,7 +92,7 @@
             // buttonMoveLeft
             // 
             this.buttonMoveLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonMoveLeft.Location = new System.Drawing.Point(93, 503);
+            this.buttonMoveLeft.Location = new System.Drawing.Point(93, 520);
             this.buttonMoveLeft.Name = "buttonMoveLeft";
             this.buttonMoveLeft.Size = new System.Drawing.Size(75, 23);
             this.buttonMoveLeft.TabIndex = 5;
@@ -103,7 +103,7 @@
             // buttonMoveRight
             // 
             this.buttonMoveRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonMoveRight.Location = new System.Drawing.Point(174, 503);
+            this.buttonMoveRight.Location = new System.Drawing.Point(174, 520);
             this.buttonMoveRight.Name = "buttonMoveRight";
             this.buttonMoveRight.Size = new System.Drawing.Size(75, 23);
             this.buttonMoveRight.TabIndex = 6;
@@ -114,7 +114,7 @@
             // buttonEdit
             // 
             this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonEdit.Location = new System.Drawing.Point(12, 532);
+            this.buttonEdit.Location = new System.Drawing.Point(12, 549);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonEdit.TabIndex = 7;

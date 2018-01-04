@@ -1498,6 +1498,7 @@ namespace BeatificaBytes.Synology.Mods
                 string line;
                 foreach (var filename in Directory.GetFiles(wizard))
                 {
+
                     // Read the file and display it line by line.
                     using (var file = new StreamReader(filename))
                     {
@@ -1510,6 +1511,9 @@ namespace BeatificaBytes.Synology.Mods
                             }
                         }
                     }
+
+                    // Add a separator
+                    if (variables.Count > 0) variables.Add(new Tuple<string, string>("_________________________________________________________", null));
                 }
             }
 

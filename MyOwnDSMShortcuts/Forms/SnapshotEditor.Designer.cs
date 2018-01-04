@@ -41,9 +41,10 @@
             this.textBoxOriginalHeight = new System.Windows.Forms.TextBox();
             this.textBoxOriginalWidth = new System.Windows.Forms.TextBox();
             this.labelNewSize = new System.Windows.Forms.Label();
-            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.toolTipProvider = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnapshot)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // buttonCancel
@@ -80,6 +81,8 @@
             this.pictureBoxSnapshot.Size = new System.Drawing.Size(308, 308);
             this.pictureBoxSnapshot.TabIndex = 4;
             this.pictureBoxSnapshot.TabStop = false;
+            this.toolTipProvider.SetToolTip(this.pictureBoxSnapshot, "Maximize the screen to view the image fullsize.\r\nScroll with the mouse to resize " +
+        "the image.\r\nPress CTRL to start cropping the image.\r\n");
             this.pictureBoxSnapshot.SizeChanged += new System.EventHandler(this.pictureBoxSnapshot_SizeChanged);
             this.pictureBoxSnapshot.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
             this.pictureBoxSnapshot.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_MouseDown);
@@ -186,9 +189,9 @@
             this.labelNewSize.TabIndex = 15;
             this.labelNewSize.Text = "New size:";
             // 
-            // errorProvider1
+            // errorProvider
             // 
-            this.errorProvider1.ContainerControl = this;
+            this.errorProvider.ContainerControl = this;
             // 
             // SnapshotEditor
             // 
@@ -218,11 +221,11 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Snapshot Editor";
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.SnapshotEditor_Scroll);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SnapshotEditor_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SnapshotEditor_KeyUp);
+            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.SnapshotEditor_Scroll);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSnapshot)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -242,6 +245,7 @@
         private System.Windows.Forms.TextBox textBoxOriginalHeight;
         private System.Windows.Forms.TextBox textBoxOriginalWidth;
         private System.Windows.Forms.Label labelNewSize;
-        private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.ToolTip toolTipProvider;
     }
 }

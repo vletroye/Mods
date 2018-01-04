@@ -300,10 +300,12 @@ namespace BeatificaBytes.Synology.Mods
                 double ratio = (double)originalImage.Width / (double)width;
                 int height = (int)(originalImage.Height / ratio);
 
-                if (width > 1024) errorProvider1.SetError(textBoxWidth, "Max size: 1024x768");
-                if (height > 768) errorProvider1.SetError(textBoxHeight, "Max size: 1024x768");
-                if (width < 20) errorProvider1.SetError(textBoxWidth, "Min size: 20x20");
-                if (height < 20) errorProvider1.SetError(textBoxHeight, "Min size: 20x20");
+                errorProvider.SetError(textBoxWidth, "");
+                errorProvider.SetError(textBoxHeight, "");
+                if (width > 1024) errorProvider.SetError(textBoxWidth, "Max size: 1024x768");
+                if (height > 768) errorProvider.SetError(textBoxHeight, "Max size: 1024x768");
+                if (width < 20) errorProvider.SetError(textBoxWidth, "Min size: 20x20");
+                if (height < 20) errorProvider.SetError(textBoxHeight, "Min size: 20x20");
 
                 textBoxHeight.Text = height.ToString();
                 editing = false;
@@ -319,10 +321,12 @@ namespace BeatificaBytes.Synology.Mods
                 double ratio = (double)originalImage.Height / (double)height;
                 int width = (int)(originalImage.Width / ratio);
 
-                if (width > 1024) errorProvider1.SetError(textBoxWidth, "Max size: 1024x768");
-                if (height > 768) errorProvider1.SetError(textBoxHeight, "Max size: 1024x768");
-                if (width < 20) errorProvider1.SetError(textBoxWidth, "Min size: 20x20");
-                if (height < 20) errorProvider1.SetError(textBoxHeight, "Min size: 20x20");
+                errorProvider.SetError(textBoxWidth, "");
+                errorProvider.SetError(textBoxHeight, "");
+                if (width > 1024) errorProvider.SetError(textBoxWidth, "Max size: 1024x768");
+                if (height > 768) errorProvider.SetError(textBoxHeight, "Max size: 1024x768");
+                if (width < 20) errorProvider.SetError(textBoxWidth, "Min size: 20x20");
+                if (height < 20) errorProvider.SetError(textBoxHeight, "Min size: 20x20");
 
                 textBoxWidth.Text = width.ToString();
                 editing = false;
@@ -352,14 +356,14 @@ namespace BeatificaBytes.Synology.Mods
         {
             int width;
             int height;
-            errorProvider1.SetError(textBoxWidth, "");
-            errorProvider1.SetError(textBoxHeight, "");
+            errorProvider.SetError(textBoxWidth, "");
+            errorProvider.SetError(textBoxHeight, "");
             if (int.TryParse(textBoxWidth.Text, out width) && int.TryParse(textBoxHeight.Text, out height) && width > 0 && height > 0)
             {
-                if (width > 1024) errorProvider1.SetError(textBoxWidth, "Max size: 1024x768");
-                if (height > 768) errorProvider1.SetError(textBoxHeight, "Max size: 1024x768");
-                if (width < 20) errorProvider1.SetError(textBoxWidth, "Min size: 20x20");
-                if (height < 20) errorProvider1.SetError(textBoxHeight, "Min size: 20x20");
+                if (width > 1024) errorProvider.SetError(textBoxWidth, "Max size: 1024x768");
+                if (height > 768) errorProvider.SetError(textBoxHeight, "Max size: 1024x768");
+                if (width < 20) errorProvider.SetError(textBoxWidth, "Min size: 20x20");
+                if (height < 20) errorProvider.SetError(textBoxHeight, "Min size: 20x20");
             }
         }        
 
@@ -375,8 +379,8 @@ namespace BeatificaBytes.Synology.Mods
 
                     var previous = textBoxWidth.Text;
                     textBoxWidth.Text = width.ToString();
-                    var widthError = errorProvider1.GetError(textBoxWidth) ?? "";
-                    var heightError = errorProvider1.GetError(textBoxHeight) ?? "";
+                    var widthError = errorProvider.GetError(textBoxWidth) ?? "";
+                    var heightError = errorProvider.GetError(textBoxHeight) ?? "";
                     if (widthError.StartsWith("Min") && delta > 0) widthError = "";
                     if (heightError.StartsWith("Min") && delta > 0) heightError = "";
                     if (widthError.StartsWith("Max") && delta < 0) widthError = "";

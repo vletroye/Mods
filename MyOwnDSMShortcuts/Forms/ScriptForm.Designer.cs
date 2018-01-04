@@ -126,6 +126,7 @@
             this.listBoxVariables.Name = "listBoxVariables";
             this.listBoxVariables.Size = new System.Drawing.Size(554, 537);
             this.listBoxVariables.TabIndex = 0;
+            this.toolTip.SetToolTip(this.listBoxVariables, "Double click a Variable to copy it into the Clipboard.");
             this.listBoxVariables.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxVariables_MouseDoubleClick);
             // 
             // linkLabelHelp
