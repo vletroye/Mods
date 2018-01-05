@@ -109,6 +109,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\FindReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FindReplace.Designer.cs" >
+      <DependentUpon>FindReplace.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Forms\FindReplace.resx">
+    <DependentUpon>FindReplace.cs</DependentUpon>
+    </EmbeddedResource >
     <Compile Include="Forms\SynoServices.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -175,9 +184,18 @@
     <Compile Include="Forms\SnapshotEditor.Designer.cs">
       <DependentUpon>SnapshotEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SearchAndReplace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SearchAndReplace.Designer.cs">
+      <DependentUpon>SearchAndReplace.cs</DependentUpon>
+    </Compile>
     <None Include="Resources\Warning.png" />
     <EmbeddedResource Include="Forms\Parameters.resx">
       <DependentUpon>Parameters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SearchAndReplace.resx">
+      <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SnapshotEditor.resx">
       <DependentUpon>SnapshotEditor.cs</DependentUpon>

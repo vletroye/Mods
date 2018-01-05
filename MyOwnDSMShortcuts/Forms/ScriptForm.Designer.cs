@@ -160,6 +160,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Advanced Editor - Powered by ScintillaNet";
+            this.Activated += new System.EventHandler(this.ScriptForm_Activated);
             this.Load += new System.EventHandler(this.ScriptForm_Load);
             this.tabControl.ResumeLayout(false);
             this.tabPageVariables.ResumeLayout(false);

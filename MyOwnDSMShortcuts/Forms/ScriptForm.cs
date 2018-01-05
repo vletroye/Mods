@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using ScintillaNET;
 using System.Media;
+using ScintillaFindReplaceControl;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -20,6 +21,7 @@ namespace BeatificaBytes.Synology.Mods
         private ScriptInfo scriptTab2 = null;
         private HelpInfo helpVarDefault = new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/script_env_var.html"), "Details about environment variables");
         private HelpInfo help = null;
+        private readonly FindReplace searchForm = new FindReplace();
 
         public ScriptForm(ScriptInfo script1, ScriptInfo script2, List<Tuple<string, string>> variables)
         {
@@ -43,6 +45,10 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             this.variables = variables;
+
+            DialogResult = DialogResult.None;
+            searchForm.WindowState = FormWindowState.Normal;
+            searchForm.StartPosition = FormStartPosition.Manual;
         }
 
         private void SetHelpToolTip(HelpInfo help)
@@ -56,20 +62,72 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.OK;
-            if (scriptTab1 != null)
-                scriptTab1.Code = scintillaScriptTab1 == null ? null : scintillaScriptTab1.Text;
-            if (scriptTab2 != null)
-                scriptTab2.Code = scintillaScriptTab2 == null ? null : scintillaScriptTab2.Text;
-            Close();
+            CloseScript(DialogResult.OK);
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-            scriptTab1 = null;
-            scriptTab2 = null;
-            Close();
+            CloseScript(DialogResult.Cancel);
+        }
+
+        private void CloseScript(DialogResult exitMode)
+        {
+            DialogResult = exitMode;
+            if (DialogResult == DialogResult.None)
+            {
+                DialogResult = MessageBoxEx.Show(this, "Do you want to save your changes?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                switch (DialogResult)
+                {
+                    case DialogResult.Yes:
+                        DialogResult = DialogResult.OK;
+                        break;
+                    case DialogResult.No:
+                        DialogResult = DialogResult.Cancel;
+                        break;
+                    case DialogResult.Cancel:
+                        DialogResult = DialogResult.None;
+                        break;
+                }
+            }
+
+            if (DialogResult != DialogResult.None)
+            {
+                string code1 = null;
+                string code2 = null;
+                if (scriptTab1 != null)
+                    code1 = scintillaScriptTab1 == null ? null : scintillaScriptTab1.Text;
+                if (scriptTab2 != null)
+                    code2 = scintillaScriptTab2 == null ? null : scintillaScriptTab2.Text;
+
+                switch (DialogResult)
+                {
+                    case DialogResult.OK:
+                        if (code1 != null) scriptTab1.Code = code1;
+                        if (code2 != null) scriptTab2.Code = code2;
+                        break;
+                    case DialogResult.Cancel:
+                        if ((code1 != null && scriptTab1.Code != code1) || (code2 != null && scriptTab2.Code != code2))
+                        {
+                            DialogResult = MessageBoxEx.Show(this, "Do you want really want to quit without saving your changes?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                            switch (DialogResult)
+                            {
+                                case DialogResult.Yes:
+                                    scriptTab1 = null;
+                                    scriptTab2 = null;
+                                    break;
+                                case DialogResult.No:
+                                    DialogResult = DialogResult.None;
+                                    break;
+                                case DialogResult.Cancel:
+                                    DialogResult = DialogResult.None;
+                                    break;
+                            }
+                        }
+                        break;
+                }
+
+                if (DialogResult != DialogResult.None) Close();
+            }
         }
 
         private void ScriptForm_Load(object sender, EventArgs e)
@@ -163,13 +221,81 @@ namespace BeatificaBytes.Synology.Mods
             // CODE FOLDING MARGIN
             InitCodeFolding(textArea);
 
+            textArea.KeyDown += new System.Windows.Forms.KeyEventHandler(this.HandleKeyDown);
+            textArea.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.HandleKeyPress);
+        }
+
+        private void HandleKeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Prevent Scintilla to write CTRL characters in the text editor
+            e.Handled = (e.KeyChar < 32);
+        }
+
+        private void HandleKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.ControlKey)
+                switch (e.KeyCode)
+                {
+                    case Keys.Escape: // '\u001b': //Escape
+                        CloseScript(DialogResult.Cancel);
+                        break;
+                    case Keys.S: //'\u0013': //CTRL S
+                        if (e.Modifiers == Keys.Control)
+                            CloseScript(DialogResult.OK);
+                        break;
+                    case Keys.F: //'\u0006': //CTRL F
+                        if (e.Modifiers == Keys.Control)
+                        {
+                            var find = sender as Scintilla;
+                            if (find != null)
+                            {
+                                var findText = find.SelectedText;
+                                searchForm.SetFind(find, findText);
+                                ShowSearch();
+                            }
+                        }
+                        break;
+                    case Keys.H: // '\b': //CTRL H
+                        if (e.Modifiers == Keys.Control)
+                        {
+                            var replace = sender as Scintilla;
+                            if (replace != null)
+                            {
+                                var replaceText = replace.SelectedText;
+                                searchForm.SetReplace(replace, replaceText);
+                                ShowSearch();
+                            }
+                        }
+                        break;
+                    case Keys.F3:
+                        var search = sender as Scintilla;
+                        if (search != null)
+                        {
+                            searchForm.SearchNext(search);
+                        }
+                        break;
+                }
+        }
+
+        private void ShowSearch()
+        {
+            if (!searchForm.Visible)
+            {
+                searchForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                var formRectangle = new Rectangle(searchForm.Left, searchForm.Top, searchForm.Width, searchForm.Height);
+
+                var screen = Screen.FromControl(this);
+                if (!screen.WorkingArea.Contains(formRectangle))
+                {
+                    searchForm.Location = this.Location;
+                }
+                searchForm.Show(this);
+            }
         }
 
         private void InitColors(Scintilla textArea)
         {
-
             textArea.SetSelectionBackColor(true, Helper.IntToColor(0x114D9C));
-
         }
 
         private void InitSyntaxColoring(Scintilla textArea, Lexer type)
@@ -396,6 +522,18 @@ namespace BeatificaBytes.Synology.Mods
                 default:
                     SetHelpToolTip(null);
                     break;
+            }
+        }
+
+        private void ScriptForm_Activated(object sender, EventArgs e)
+        {
+
+            tabControl.Focus();
+            tabControl.TabPages[0].Focus();
+            var textArea = tabControl.TabPages[0].Controls[0] as Scintilla;
+            if (textArea != null)
+            {
+                textArea.Focus();
             }
         }
     }
