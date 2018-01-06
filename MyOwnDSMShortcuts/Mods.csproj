@@ -15,6 +15,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,9 +28,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -112,12 +114,12 @@
     <Compile Include="Forms\FindReplace.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FindReplace.Designer.cs" >
+    <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Forms\FindReplace.resx">
-    <DependentUpon>FindReplace.cs</DependentUpon>
-    </EmbeddedResource >
+      <DependentUpon>FindReplace.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Forms\SynoServices.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,10 +247,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Content Include="PackagingSyno.ico" />
+    <None Include="PackagingSyno.ico" />
     <None Include="Resources\EditedScript.png" />
     <None Include="Resources\backwizard.png" />
-    <None Include="Resources\Mods.ico" />
     <Content Include="Resources\Pack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -256,7 +257,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\PackagingSyno.png" />
-    <None Include="Resources\PackagingSyno.ico" />
     <Content Include="Resources\Unpack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -277,7 +277,6 @@
     <Content Include="Resources\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\settings.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Json Editor\Json Editor.csproj">
@@ -298,11 +297,4 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

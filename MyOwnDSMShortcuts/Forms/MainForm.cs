@@ -99,19 +99,6 @@ namespace BeatificaBytes.Synology.Mods
         {
             InitializeComponent();
 
-            // Load the default runner script or create one if it does not exist
-            var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
-            if (!File.Exists(defaultRunnerPath))
-                File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
-
-            // Extract the WizardUI background image if it does not exist
-            var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
-            if (!File.Exists(backWizard))
-            {
-                var backWizardPng = new Bitmap(Properties.Resources.BackWizard);
-                backWizardPng.Save(backWizard);
-            }
-
             groupBoxItem.Enabled = false;
             groupBoxPackage.Enabled = false;
             comboBoxTransparency.SelectedIndex = 0;

@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
+using static System.Environment;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -31,6 +32,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-]", RegexOptions.Compiled);
+        static string resourcesDirectory = null;
 
         public static string AssemblyDirectory
         {
@@ -47,7 +49,40 @@ namespace BeatificaBytes.Synology.Mods
         {
             get
             {
-                return Path.Combine(Helper.AssemblyDirectory, "Resources");
+                if (string.IsNullOrEmpty(resourcesDirectory))
+                {
+                    resourcesDirectory = Path.Combine(Helper.AssemblyDirectory, "Resources");
+                    if (!Directory.Exists(resourcesDirectory))
+                    {
+                        throw new Exception("MODs cannot run because its Ressource folder is missing. There is probably an issue with its setup.");
+                    }
+
+                    // Check if the folder can be written
+                    try
+                    {
+                        using (var lastRun = File.CreateText(Path.Combine(resourcesDirectory, "LastRun")))
+                        {
+                            lastRun.Write(DateTime.Now);
+                        }
+                    }
+                    catch
+                    {
+                        var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location);
+                        var companyName = versionInfo.CompanyName;
+                        var productName = versionInfo.ProductName;
+                        var appData = Path.Combine(Environment.GetFolderPath(SpecialFolder.CommonApplicationData), companyName, productName);
+
+                        Helper.CopyDirectory(resourcesDirectory, appData, true);
+                        resourcesDirectory = appData;
+
+                        using (var lastRun = File.CreateText(Path.Combine(resourcesDirectory, "LastRun")))
+                        {
+                            lastRun.Write(DateTime.Now);
+                        }
+                    }
+
+                }
+                return resourcesDirectory;
             }
         }
 
@@ -576,7 +611,7 @@ namespace BeatificaBytes.Synology.Mods
             return succeed;
         }
 
-        internal static bool CopyDirectory(string strSource, string strDestination)
+        internal static bool CopyDirectory(string strSource, string strDestination, bool overwrite = false)
         {
             var copied = false;
 
@@ -600,7 +635,7 @@ namespace BeatificaBytes.Synology.Mods
                     FileInfo[] files = dirInfo.GetFiles();
                     foreach (FileInfo tempfile in files)
                     {
-                        tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name));
+                        tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name), overwrite);
                     }
 
                     DirectoryInfo[] directories = dirInfo.GetDirectories();
@@ -608,7 +643,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         var subfolder = Path.Combine(strSource, tempdir.Name);
                         if (strDestination != subfolder)
-                            CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name));
+                            CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name), overwrite);
                     }
 
                     copied = true;

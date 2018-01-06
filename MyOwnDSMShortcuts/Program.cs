@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.IO;
-using System.Diagnostics;
+using System.Drawing;
 
 static class Win32
 {
@@ -31,31 +29,52 @@ namespace BeatificaBytes.Synology.Mods
         [STAThread]
         static void Main(string[] args)
         {
-            var hash = args.SingleOrDefault(arg => arg.StartsWith("hash:"));
-            if (!string.IsNullOrEmpty(hash))
+            try
             {
-                var path = hash.Replace("hash:", "");
-                if (path == ".") path = AppDomain.CurrentDomain.BaseDirectory;
-                Helper.ComputeMD5Hash(path);
+                var hash = args.SingleOrDefault(arg => arg.StartsWith("hash:"));
+                if (!string.IsNullOrEmpty(hash))
+                {
+                    var path = hash.Replace("hash:", "");
+                    if (path == ".") path = AppDomain.CurrentDomain.BaseDirectory;
+                    Helper.ComputeMD5Hash(path);
+                }
+                else
+                {
+                    string open = null;
+                    var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
+                    if (!string.IsNullOrEmpty(edit))
+                    {
+                        open = edit.Replace("edit:", "");
+                    }
+                    else if (Properties.Settings.Default.UpgradeRequired)
+                    {
+                        Properties.Settings.Default.Upgrade();
+                        Properties.Settings.Default.UpgradeRequired = false;
+                        Properties.Settings.Default.Save();
+                    }
+
+                    // Load the default runner script or create one if it does not exist
+                    var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
+                    if (!File.Exists(defaultRunnerPath))
+                        File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
+
+                    // Extract the WizardUI background image if it does not exist
+                    var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
+                    if (!File.Exists(backWizard))
+                    {
+                        var backWizardPng = new Bitmap(Properties.Resources.BackWizard);
+                        backWizardPng.Save(backWizard);
+                    }
+
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.Run(new MainForm(open));
+                }
             }
-            else
-            {                
-                string open = null;
-                var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
-                if (!string.IsNullOrEmpty(edit))
-                {
-                    open = edit.Replace("edit:", "");
-                }
-                else if (Properties.Settings.Default.UpgradeRequired)
-                {
-                    Properties.Settings.Default.Upgrade();
-                    Properties.Settings.Default.UpgradeRequired = false;
-                    Properties.Settings.Default.Save();
-                }
-                                
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm(open));
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show(string.Format("Mods Packager failed to run due to a fatal error : {0}\r\n\r\nIt will now stop.", ex.Message), "Fatal Error");
+                throw;
             }
         }
     }
