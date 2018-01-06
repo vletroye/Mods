@@ -120,7 +120,7 @@
   <metadata name="toolTipProperties.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="checkBoxPublishFolder.ToolTip" xml:space="preserve">
+  <data name="checkBoxDefaultPackageRepo.ToolTip" xml:space="preserve">
     <value>If you select this option, you will have to provide the path of a folder where all your packages can be published. This could be the folder used by your SSPKS  (Google on 'Simple SPK Server' of Julien Del-Piccolo).
 If you don't select this option, you will be prompted for a path each time you publish a package.</value>
   </data>

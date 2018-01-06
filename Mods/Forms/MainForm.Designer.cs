@@ -1550,7 +1550,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuResetPackage
             // 
             this.menuResetPackage.Name = "menuResetPackage";
-            this.menuResetPackage.Size = new System.Drawing.Size(224, 22);
+            this.menuResetPackage.Size = new System.Drawing.Size(226, 22);
             this.menuResetPackage.Text = "&Reset";
             this.menuResetPackage.ToolTipText = "Reset all fields of the currently opened Package.";
             this.menuResetPackage.Click += new System.EventHandler(this.menuReset_Click);
@@ -1558,7 +1558,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuMovePackage
             // 
             this.menuMovePackage.Name = "menuMovePackage";
-            this.menuMovePackage.Size = new System.Drawing.Size(224, 22);
+            this.menuMovePackage.Size = new System.Drawing.Size(226, 22);
             this.menuMovePackage.Text = "&Move";
             this.menuMovePackage.ToolTipText = "Move the currently opened Package into a new folder.";
             this.menuMovePackage.Click += new System.EventHandler(this.menuMove_Click);
@@ -1566,7 +1566,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuDeletePackage
             // 
             this.menuDeletePackage.Name = "menuDeletePackage";
-            this.menuDeletePackage.Size = new System.Drawing.Size(224, 22);
+            this.menuDeletePackage.Size = new System.Drawing.Size(226, 22);
             this.menuDeletePackage.Text = "&Delete";
             this.menuDeletePackage.ToolTipText = "Delete the folder containing the currently opened Package.";
             this.menuDeletePackage.Click += new System.EventHandler(this.menuDelete_Click);
@@ -1574,7 +1574,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuAddWizard
             // 
             this.menuAddWizard.Name = "menuAddWizard";
-            this.menuAddWizard.Size = new System.Drawing.Size(224, 22);
+            this.menuAddWizard.Size = new System.Drawing.Size(226, 22);
             this.menuAddWizard.Text = "Create &Wizard";
             this.menuAddWizard.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
             this.menuAddWizard.Click += new System.EventHandler(this.menuAddWizard_Click);
@@ -1582,20 +1582,20 @@ namespace BeatificaBytes.Synology.Mods
             // menuChangeLog
             // 
             this.menuChangeLog.Name = "menuChangeLog";
-            this.menuChangeLog.Size = new System.Drawing.Size(224, 22);
+            this.menuChangeLog.Size = new System.Drawing.Size(226, 22);
             this.menuChangeLog.Text = "Edit Change&Log";
             this.menuChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(221, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(223, 6);
             // 
             // menuBuildPackage
             // 
             this.menuBuildPackage.Name = "menuBuildPackage";
             this.menuBuildPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.menuBuildPackage.Size = new System.Drawing.Size(224, 22);
+            this.menuBuildPackage.Size = new System.Drawing.Size(226, 22);
             this.menuBuildPackage.Text = "&Build";
             this.menuBuildPackage.ToolTipText = "Generate the SPK file for the currently opened Package.";
             this.menuBuildPackage.Click += new System.EventHandler(this.menuBuild_Click);
@@ -1604,7 +1604,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPublish.Name = "menuPublish";
             this.menuPublish.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.menuPublish.Size = new System.Drawing.Size(224, 22);
+            this.menuPublish.Size = new System.Drawing.Size(226, 22);
             this.menuPublish.Text = "&Publish";
             this.menuPublish.Click += new System.EventHandler(this.toolStripMenuItemPublish_Click);
             // 
@@ -1612,7 +1612,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuOpenPackageFolder.Name = "menuOpenPackageFolder";
             this.menuOpenPackageFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.menuOpenPackageFolder.Size = new System.Drawing.Size(224, 22);
+            this.menuOpenPackageFolder.Size = new System.Drawing.Size(226, 22);
             this.menuOpenPackageFolder.Text = "&Open Folder";
             this.menuOpenPackageFolder.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
             this.menuOpenPackageFolder.Click += new System.EventHandler(this.menuOpenFolder_Click);
@@ -1620,13 +1620,13 @@ namespace BeatificaBytes.Synology.Mods
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(221, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(223, 6);
             // 
             // menuAdvancedEditor
             // 
             this.menuAdvancedEditor.Name = "menuAdvancedEditor";
-            this.menuAdvancedEditor.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H)));
-            this.menuAdvancedEditor.Size = new System.Drawing.Size(224, 22);
+            this.menuAdvancedEditor.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
+            this.menuAdvancedEditor.Size = new System.Drawing.Size(226, 22);
             this.menuAdvancedEditor.Text = "&Advanced Editor";
             this.menuAdvancedEditor.ToolTipText = "Show Package\'s advanced parameters.";
             this.menuAdvancedEditor.Click += new System.EventHandler(this.menuAdvancedEditor_Click);
@@ -1635,7 +1635,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuManageScreenshots.Name = "menuManageScreenshots";
             this.menuManageScreenshots.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.menuManageScreenshots.Size = new System.Drawing.Size(224, 22);
+            this.menuManageScreenshots.Size = new System.Drawing.Size(226, 22);
             this.menuManageScreenshots.Text = "Manage &Screenshots";
             this.menuManageScreenshots.Click += new System.EventHandler(this.menuManageScreenshots_Click);
             // 
@@ -1643,7 +1643,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuReviewPendingChanges.Name = "menuReviewPendingChanges";
             this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
-            this.menuReviewPendingChanges.Size = new System.Drawing.Size(224, 22);
+            this.menuReviewPendingChanges.Size = new System.Drawing.Size(226, 22);
             this.menuReviewPendingChanges.Text = "Pending Changes";
             this.menuReviewPendingChanges.Click += new System.EventHandler(this.menuReviewPendingChanges_Click);
             // 

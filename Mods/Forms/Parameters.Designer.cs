@@ -45,12 +45,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.buttonDefaultPackageRoot = new System.Windows.Forms.Button();
             this.buttonReset = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(12, 292);
+            this.buttonOk.Location = new System.Drawing.Point(12, 184);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 0;
@@ -62,7 +63,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(429, 292);
+            this.buttonCancel.Location = new System.Drawing.Point(429, 184);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 1;
@@ -70,15 +71,15 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // checkBoxPublishFolder
+            // checkBoxDefaultPackageRepo
             // 
             this.checkBoxDefaultPackageRepo.AutoSize = true;
             this.checkBoxDefaultPackageRepo.Location = new System.Drawing.Point(12, 12);
-            this.checkBoxDefaultPackageRepo.Name = "checkBoxPublishFolder";
+            this.checkBoxDefaultPackageRepo.Name = "checkBoxDefaultPackageRepo";
             this.checkBoxDefaultPackageRepo.Size = new System.Drawing.Size(160, 17);
             this.checkBoxDefaultPackageRepo.TabIndex = 2;
             this.checkBoxDefaultPackageRepo.Text = "Use a Default Publish Folder";
-            this.toolTipProperties.SetToolTip(this.checkBoxDefaultPackageRepo, resources.GetString("checkBoxPublishFolder.ToolTip"));
+            this.toolTipProperties.SetToolTip(this.checkBoxDefaultPackageRepo, resources.GetString("checkBoxDefaultPackageRepo.ToolTip"));
             this.checkBoxDefaultPackageRepo.UseVisualStyleBackColor = true;
             this.checkBoxDefaultPackageRepo.CheckedChanged += new System.EventHandler(this.checkBoxDefaultPackageRepo_CheckedChanged);
             // 
@@ -86,7 +87,7 @@
             // 
             this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelToolTip.Location = new System.Drawing.Point(17, 323);
+            this.labelToolTip.Location = new System.Drawing.Point(17, 215);
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(482, 82);
             this.labelToolTip.TabIndex = 22;
@@ -96,7 +97,7 @@
             this.panelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelToolTip.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelToolTip.Location = new System.Drawing.Point(12, 321);
+            this.panelToolTip.Location = new System.Drawing.Point(12, 213);
             this.panelToolTip.Name = "panelToolTip";
             this.panelToolTip.Size = new System.Drawing.Size(492, 86);
             this.panelToolTip.TabIndex = 23;
@@ -197,7 +198,7 @@
             // buttonReset
             // 
             this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(429, 263);
+            this.buttonReset.Location = new System.Drawing.Point(348, 184);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(75, 23);
             this.buttonReset.TabIndex = 33;
@@ -205,14 +206,25 @@
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label3.Location = new System.Drawing.Point(12, 179);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(492, 2);
+            this.label3.TabIndex = 34;
+            // 
             // Parameters
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(516, 419);
+            this.ClientSize = new System.Drawing.Size(516, 311);
             this.ControlBox = false;
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.checkBoxDefaultPackageRoot);
             this.Controls.Add(this.labelDefaultPackageRoot);
@@ -254,5 +266,6 @@
         private System.Windows.Forms.Label labelDefaultPackageRoot;
         private System.Windows.Forms.CheckBox checkBoxDefaultPackageRoot;
         private System.Windows.Forms.Button buttonReset;
+        private System.Windows.Forms.Label label3;
     }
 }

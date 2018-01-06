@@ -228,7 +228,11 @@ namespace BeatificaBytes.Synology.Mods
         private void checkBoxDefaultPackageRoot_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.DefaultPackageRoot = checkBoxDefaultPackageRoot.Checked;
-
+            if (checkBoxDefaultPackageRoot.Checked)
+            {
+                if (string.IsNullOrEmpty(Properties.Settings.Default.PackageRoot))
+                    PickPackageRoot();
+            }
             ShowParameters();
         }
 

@@ -970,11 +970,15 @@ namespace BeatificaBytes.Synology.Mods
         // Add an new item
         private void buttonAddItem_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren() && SavePackage(CurrentPackageFolder, true) == DialogResult.Yes) // Need to save to get the latest value in info["package"]
+            if (ValidateChildren())
             {
-                state = State.Add;
-                DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
-                textBoxTitle.Focus();
+                var saved = SavePackage(CurrentPackageFolder, true); // Need to save to get the latest value in info["package"]
+                if (saved == DialogResult.Yes || saved == DialogResult.No)
+                {
+                    state = State.Add;
+                    DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
+                    textBoxTitle.Focus();
+                }
             }
         }
 
@@ -4395,8 +4399,9 @@ namespace BeatificaBytes.Synology.Mods
             labelFirmware.Visible = advanced;
             textBoxFirmware.Visible = advanced;
             checkBoxSingleApp.Visible = advanced;
-            checkBoxBeta.Visible = advanced;
-            TextBoxReportUrl.Visible = advanced && checkBoxBeta.Checked;
+            //checkBoxBeta.Visible = advanced;
+            //TextBoxReportUrl.Visible = advanced && checkBoxBeta.Checked;
+            //labelReportUrl.Visible = TextBoxReportUrl.Visible;
 
             checkBoxOfflineInstall.Visible = advanced;
             checkBoxSilentInstalll.Visible = advanced;
@@ -4408,7 +4413,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxSilentReboot.Visible = advanced;
 
             checkBoxSupportCenter.Visible = advanced;
-            checkBoxLegacy.Visible = advanced;
+            //checkBoxLegacy.Visible = advanced;
             labelGrantPrivilege.Visible = advanced;
             ComboBoxGrantPrivilege.Visible = advanced;
             checkBoxAdvanceGrantPrivilege.Visible = advanced;
@@ -4575,7 +4580,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var param = new Parameters();
             param.ShowDialog();
-            if (Properties.Settings.Default.Recents.Count == 0)
+            if (Properties.Settings.Default.Recents != null && Properties.Settings.Default.Recents.Count == 0)
                 CreateRecentsMenu();
         }
 
