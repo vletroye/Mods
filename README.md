@@ -51,4 +51,4 @@ Here is the famous [Web Console](http://www.web-console.org) running in a popup 
 
 ![](http://i.imgur.com/Q5pqh9S.png)
 
-All those spk samples are available in the folder "Various Samples"
+All those spk samples are available [here](https://github.com/vletroye/SynoPackages)
