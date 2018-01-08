@@ -418,6 +418,13 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
                 }
+
+                config = config.Replace("config", "index.conf");
+                if (File.Exists(config))
+                {
+                    PublishWarning("This package contains a file 'index.conf' which is not yet supported by Mods Packager.");
+                }
+
             }
             if (!info.ContainsKey("singleApp"))
             {
@@ -3690,7 +3697,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (errorProvider.Tag == null)
             {
-                if (!CheckEmpty(textBoxFirmware, ref e, ""))
+                //if (!CheckEmpty(textBoxFirmware, ref e, ""))
+                if (!string.IsNullOrEmpty(textBoxFirmware.Text))
                 {
                     if (getOldFirmwareVersion.IsMatch(textBoxFirmware.Text))
                     {
