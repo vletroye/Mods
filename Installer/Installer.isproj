@@ -28,8 +28,9 @@
 		</TaggedOutputs> -->
 	</ItemGroup>
 	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2015Limited\InstallShield.targets"/>
+	<ItemGroup/>
 	<ItemGroup>
-		<ProjectReference Include="..\MyOwnDSMShortcuts\Mods.csproj">
+		<ProjectReference Include="..\Mods\Mods.csproj">
 			<Name>Mods</Name>
 			<Project>{DB8082FE-EDDD-406D-B6D7-19C26EC778A4}</Project>
 		</ProjectReference>

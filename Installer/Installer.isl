@@ -344,8 +344,8 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>Mods.Content_Files</td><td>{E2713471-377C-4EDA-9C4B-872F36005B79}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Mods.Primary_output</td><td>{933D4236-753E-4F5A-9D46-010C6766AA69}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Mods.Content_Files</td><td>{807C1A3B-EBD4-4960-9D8C-A021EC9E711C}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Mods.Primary_output</td><td>{F8BED34B-5E08-4D06-8E9C-2A5E6A9699E8}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1887,8 +1887,8 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>mods.content_files</td><td>Mods.Content_Files</td><td>Mods.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods&gt;|ContentFiles</td><td>3</td><td/></row>
-		<row><td>mods.primary_output</td><td>Mods.Primary_output</td><td>Mods.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods&gt;|Built</td><td>3</td><td/></row>
+		<row><td>mods.content_files</td><td>Mods.Content_Files</td><td>Mods.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|ContentFiles</td><td>3</td><td/></row>
+		<row><td>mods.primary_output</td><td>Mods.Primary_output</td><td>Mods.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|Built</td><td>3</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2030,8 +2030,8 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
-		<row><td>Mods.Content_Files</td><td/><td/><td>_0BDDCDED_7EAB_4CFF_B821_212FAFED53D3_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Mods.Primary_output</td><td/><td/><td>_2E0C6C02_834C_449F_BD1A_5705C0E6F72C_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Mods.Content_Files</td><td/><td/><td>_00D3A843_553E_4152_BE4B_B09F1D6E9F01_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Mods.Primary_output</td><td/><td/><td>_59E22F67_703C_452D_AACE_74D30540592D_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2316,6 +2316,7 @@
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
 		<row><td>Json Editor</td><td>Json Editor\Json Editor.csproj</td><td/><td>2</td></row>
 		<row><td>Mods</td><td>MyOwnDSMShortcuts\Mods.csproj</td><td/><td>2</td></row>
+		<row><td>Mods1</td><td>Mods\Mods.csproj</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
@@ -3722,7 +3723,7 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://www.BeatificaBytes.com</td><td>0</td><td/><td>816222765</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>https://github.com/vletroye/Mods</td><td>0</td><td/><td>1084623668</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>816222765</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>816231022</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>816195852</td></row>
@@ -3839,7 +3840,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;VSSolutionFolder&gt;\MyOwnDSMShortcuts\PackagingSyno.ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
 		<row><td>NewShortcut1_6DBF1A1F7499430FADBE08D4DC66DB56.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
 		<row><td>_1FE368E50F934826A5CA6C42E53C6903.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_204E2581017E4E47AC1D35E1D988C2B2.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Release\Mods.exe</td><td>0</td></row>
@@ -4368,7 +4369,7 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGRAMFILETOLAUNCHATEND</td><td>[INSTALLDIR]Mods.Primary output</td><td/></row>
 		<row><td>ProductCode</td><td>{4D6A4347-3372-4B79-9AD6-B7A0632892B9}</td><td/></row>
 		<row><td>ProductName</td><td>Mods Packager</td><td/></row>
-		<row><td>ProductVersion</td><td>1.00.0000</td><td/></row>
+		<row><td>ProductVersion</td><td>7.01.0000</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
@@ -4445,9 +4446,6 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<col def="L255">FileName</col>
 		<col def="s72">DirProperty</col>
 		<col def="i2">InstallMode</col>
-		<row><td>FileKey1</td><td>Mods.Primary_output</td><td/><td>beatif_1_beatificabytes</td><td>2</td></row>
-		<row><td>FileKey2</td><td>Mods.Primary_output</td><td/><td>modspa_1_mods_packager</td><td>2</td></row>
-		<row><td>NewShortcut1</td><td>Mods.Primary_output</td><td/><td>modspa_1_mods_packager</td><td>2</td></row>
 	</table>
 
 	<table name="RemoveIniFile">
@@ -4533,7 +4531,6 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>NewShortcut1</td><td>modspa_1_mods_packager</td><td>##ID_STRING3##</td><td>Mods.Primary_output</td><td>AlwaysInstall</td><td/><td/><td/><td>NewShortcut1_6DBF1A1F7499430FADBE08D4DC66DB56.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">
