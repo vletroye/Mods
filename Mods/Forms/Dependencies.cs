@@ -138,7 +138,7 @@ namespace BeatificaBytes.Synology.Mods
                 OpenEditor(item);
             }
         }
-        
+
         private void textBoxDependencies_TextChanged(object sender, EventArgs e)
         {
             if (listViewDependencies.SelectedItems.Count > 0)
@@ -153,6 +153,29 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
+            if (info != null)
+            {
+                foreach (ListViewItem item in listViewDependencies.Items)
+                {
+                    var key = item.SubItems[0].Text;
+                    var data = item.SubItems[1].Text;
+                    if (info.Keys.Contains(key))
+                    {
+                        if (string.IsNullOrEmpty(data))
+                            info.Remove(key);
+                        else
+                            info[key] = data;
+                    }
+                    else if (!string.IsNullOrEmpty(data))
+                    {
+                        info.Add(key, data);
+                    }
+                }
+            }
+            else
+            {
+                this.Close();
+            }
             DialogResult = DialogResult.OK;
             this.Hide();
         }
