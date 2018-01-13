@@ -108,7 +108,10 @@ namespace BeatificaBytes.Synology.Mods
                     var archForm = new ArchAndModels(textBoxDependencies.Text, null);
                     if (archForm.ShowDialog(this) == DialogResult.OK)
                     {
-                        textBoxDependencies.Text = archForm.archs;
+                        if (archForm.archs.Contains("noarch"))
+                            textBoxDependencies.Text = "noarch";
+                        else
+                            textBoxDependencies.Text = archForm.archs;
                     }
                     break;
                 case "model":

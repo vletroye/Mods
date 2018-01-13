@@ -86,9 +86,9 @@ namespace ScintillaFindReplaceControl
             var text = textBoxFind.Text;
 
             if (checkBoxBackward.Checked)
-                FindPrevious(text);
+                FindPrevious(text, true);
             else
-                FindNext(text);
+                FindNext(text, true);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace ScintillaFindReplaceControl
         private void buttonReplace_Click(object sender, EventArgs e)
         {
             SetSearchFlags();
-            Replace(textBoxFindRep.Text, textBoxReplace.Text);
+            Replace(textBoxFindRep.Text, textBoxReplace.Text, true);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace ScintillaFindReplaceControl
         /// <param name="text"></param>
         /// <param name="searchFlags"></param>
         /// <returns></returns>
-        public int FindNext(string text)
+        public int FindNext(string text, bool loop)
         {
             _scintilla.SearchFlags = _searchFlags;
             _scintilla.TargetStart = Math.Max(_scintilla.CurrentPosition, _scintilla.AnchorPosition);
@@ -143,7 +143,7 @@ namespace ScintillaFindReplaceControl
             var pos = _scintilla.SearchInTarget(text);
             if (pos >= 0)
                 _scintilla.SetSel(_scintilla.TargetStart, _scintilla.TargetEnd);
-            else if (_scintilla.TargetStart > 0)
+            else if (_scintilla.TargetStart > 0 && loop)
             {
                 _scintilla.TargetStart = 0;
                 _scintilla.TargetEnd = _scintilla.TextLength;
@@ -162,7 +162,7 @@ namespace ScintillaFindReplaceControl
         /// <param name="text"></param>
         /// <param name="searchFlags"></param>
         /// <returns></returns>
-        public int FindPrevious(string text)
+        public int FindPrevious(string text, bool loop)
         {
             _scintilla.SearchFlags = _searchFlags;
             _scintilla.TargetStart = Math.Min(_scintilla.CurrentPosition, _scintilla.AnchorPosition);
@@ -171,7 +171,7 @@ namespace ScintillaFindReplaceControl
             var pos = _scintilla.SearchInTarget(text);
             if (pos >= 0)
                 _scintilla.SetSel(_scintilla.TargetStart, _scintilla.TargetEnd);
-            else if (_scintilla.TargetStart < _scintilla.TextLength)
+            else if (_scintilla.TargetStart < _scintilla.TextLength && loop)
             {
                 _scintilla.TargetStart = _scintilla.TextLength;
                 _scintilla.TargetEnd = 0;
@@ -190,16 +190,16 @@ namespace ScintillaFindReplaceControl
         /// <param name="findText"></param>
         /// <param name="replaceText"></param>
         /// <returns></returns>
-        private int Replace(string findText, string replaceText)
+        private int Replace(string findText, string replaceText, bool loop)
         {
             if (_scintilla.SelectedText == findText)
                 _scintilla.ReplaceSelection(replaceText);
 
             int pos = 0;
             if (checkBoxBackward.Checked)
-                pos = FindPrevious(findText);
+                pos = FindPrevious(findText, loop);
             else
-                pos = FindNext(findText);
+                pos = FindNext(findText, loop);
 
             return pos;
         }
@@ -215,7 +215,7 @@ namespace ScintillaFindReplaceControl
             // Iterate until text is no longer found
             while (pos >= 0)
             {
-                pos = Replace(findText, replaceText);
+                pos = Replace(findText, replaceText, false);
             }
         }
 

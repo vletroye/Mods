@@ -2958,7 +2958,7 @@ namespace BeatificaBytes.Synology.Mods
             if (info != null)
             {
                 var resetPackage = CurrentPackageFolder;
-                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+                var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
                 if (answer == DialogResult.Yes)
                 {
                     string packageName = "";

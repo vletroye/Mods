@@ -246,8 +246,8 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     var width = temp.pictureBoxSnapshot.Width - img.Width;
                     var height = temp.pictureBoxSnapshot.Height - img.Height;
-                    if (width > 0) this.Width = screenBounds.Width - width;
-                    if (height > 0) this.Height = screenBounds.Height - height;
+                    if (width > 0) this.Width = screenBounds.Width - width; else this.Width = screenBounds.Width - 50;
+                    if (height > 0) this.Height = screenBounds.Height - height; else this.Height = screenBounds.Height - 50;
                     if (width > 0 || height > 0)
                     {
                         WindowState = FormWindowState.Normal;
@@ -365,7 +365,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (width < 20) errorProvider.SetError(textBoxWidth, "Min size: 20x20");
                 if (height < 20) errorProvider.SetError(textBoxHeight, "Min size: 20x20");
             }
-        }        
+        }
 
         private void SnapshotEditor_Scroll(object sender, MouseEventArgs e)
         {
