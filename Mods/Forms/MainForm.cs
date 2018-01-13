@@ -905,6 +905,13 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
 
+                    if (!checkBoxAdminUrl.Checked)
+                    {
+                        if (info.ContainsKey("adminport")) info.Remove("adminport");
+                        if (info.ContainsKey("adminprotocol")) info.Remove("adminprotocol");
+                        if (info.ContainsKey("adminurl")) info.Remove("adminurl");
+                    }
+
                     // Delete existing INFO file (try to send it to the RecycleBin
                     var infoName = Path.Combine(path, "INFO");
                     if (File.Exists(infoName))
@@ -2401,8 +2408,8 @@ namespace BeatificaBytes.Synology.Mods
                     //    File.Move(oldSnapshot, newSnapshot);
                     //}
 
-                    oldName = string.Format("/webman/3rdparty/{0}", oldName);
-                    newName = string.Format("/webman/3rdparty/{0}", newName);
+                    oldName = string.Format("/webman/3rdparty/{0}/", oldName);
+                    newName = string.Format("/webman/3rdparty/{0}/", newName);
 
                     foreach (var item in list.items)
                     {
@@ -2589,8 +2596,8 @@ namespace BeatificaBytes.Synology.Mods
                 var newName = Helper.CleanUpText(textBoxTitle.Text);
                 if (newName != oldName)
                 {
-                    oldName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], oldName);
-                    newName = string.Format("/webman/3rdparty/{0}/{1}", info["package"], newName);
+                    oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], oldName);
+                    newName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], newName);
 
                     textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
                 }
@@ -2854,6 +2861,7 @@ namespace BeatificaBytes.Synology.Mods
             bool dirty = false;
 
             if (info != null)
+            {
                 foreach (var control in groupBoxPackage.Controls)
                 {
                     var textBox = control as TextBox;
@@ -2918,7 +2926,25 @@ namespace BeatificaBytes.Synology.Mods
                             break;
                     }
                 }
-
+                if (!checkBoxAdminUrl.Checked)
+                {
+                    if (info.ContainsKey("adminport"))
+                    {
+                        dirty = !string.IsNullOrEmpty(info["adminport"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminport", info["adminport"], ""));
+                    }
+                    if (info.ContainsKey("adminurl"))
+                    {
+                        dirty = !string.IsNullOrEmpty(info["adminurl"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminurl", info["adminurl"], ""));
+                    }
+                    if (info.ContainsKey("adminprotocol"))
+                    {
+                        dirty = !string.IsNullOrEmpty(info["adminprotocol"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminprotocol", info["adminprotocol"], ""));
+                    }
+                }
+            }
             if (changes != null) dirty = changes.Count > 0;
 
             return dirty;

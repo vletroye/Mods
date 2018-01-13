@@ -344,6 +344,7 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{6CD417B1-B01A-4D5B-9C50-75441D283B39}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Mods.Content_Files</td><td>{807C1A3B-EBD4-4960-9D8C-A021EC9E711C}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Mods.Primary_output</td><td>{F8BED34B-5E08-4D06-8E9C-2A5E6A9699E8}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
@@ -1056,6 +1057,7 @@
 	<table name="CreateFolder">
 		<col key="yes" def="s72">Directory_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>INSTALLDIR</td><td>Mods.Content_Files</td></row>
 		<row><td>INSTALLDIR</td><td>Mods.Primary_output</td></row>
 	</table>
@@ -1067,12 +1069,13 @@
 		<col def="S0">Target</col>
 		<col def="I4">ExtendedType</col>
 		<col def="S255">ISComments</col>
-		<row><td>ISPreventDowngrade</td><td>19</td><td/><td>[IS_PREVENT_DOWNGRADE_EXIT]</td><td/><td>Exits install when a newer version of this product is found</td></row>
+		<row><td>ISPreventDowngrade</td><td>19</td><td/><td>[IS_PREVENT_DOWNGRADE_EXIT]</td><td/><td/></row>
 		<row><td>ISPrint</td><td>1</td><td>SetAllUsers.dll</td><td>PrintScrollableText</td><td/><td>Prints the contents of a ScrollableText control on a dialog.</td></row>
 		<row><td>ISRunSetupTypeAddLocalEvent</td><td>1</td><td>ISExpHlp.dll</td><td>RunSetupTypeAddLocalEvent</td><td/><td>Run the AddLocal events associated with the Next button on the Setup Type dialog.</td></row>
 		<row><td>ISSelfRegisterCosting</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterCosting</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>257</td><td>SetAllUsers.dll</td><td>SetAllUsers</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
 		<row><td>LaunchProgramFileFromSetupCompleteSuccess</td><td>1</td><td>NewBinary19</td><td>LaunchProgram</td><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
@@ -1871,6 +1874,7 @@
 	<table name="FeatureComponents">
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
+		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>AlwaysInstall</td><td>Mods.Content_Files</td></row>
 		<row><td>AlwaysInstall</td><td>Mods.Primary_output</td></row>
 	</table>
@@ -2030,6 +2034,7 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
+		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_7B1C6A18_98B2_4E4F_B0CC_3ABFDB512B31_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Mods.Content_Files</td><td/><td/><td>_00D3A843_553E_4152_BE4B_B09F1D6E9F01_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Mods.Primary_output</td><td/><td/><td>_59E22F67_703C_452D_AACE_74D30540592D_FILTER</td><td/><td/><td/><td/></row>
 	</table>
@@ -3726,6 +3731,8 @@
 		<row><td>ID_STRING1</td><td>1033</td><td>https://github.com/vletroye/Mods</td><td>0</td><td/><td>1084623668</td></row>
 		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>816222765</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>816231022</td></row>
+		<row><td>ID_STRING4</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>1218860564</td></row>
+		<row><td>ID_STRING5</td><td>1033</td><td>Uninstall</td><td>0</td><td/><td>1218864660</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>816195852</td></row>
 	</table>
 
@@ -3842,18 +3849,23 @@
 		<col def="I2">ISIconIndex</col>
 		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
 		<row><td>NewShortcut1_6DBF1A1F7499430FADBE08D4DC66DB56.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
+		<row><td>NewShortcut3_1AF6161E1BEA4439A75EBF95741E4ADB.exe</td><td/><td>C:\Program Files (x86)\InstallShield\2015LE\Redist\Language Independent\OS Independent\uninstall.ico</td><td>0</td></row>
 		<row><td>_1FE368E50F934826A5CA6C42E53C6903.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_204E2581017E4E47AC1D35E1D988C2B2.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_2A4E17498CEB4D1E910F5247F0163351.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_2F12380404694CEDBED088731830E538.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_363B76D18D4A455CABB8017415C9A452.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
+		<row><td>_41A02E29B4A84A7D9EBF7CA0E530FD12.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_474F4FBC6F9A4356B8E5B3D766A731DF.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_5A16D07E4256431C8CD3AD5E29974A59.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_640C510ABC28486BA8654B7151D653AA.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_698BC01DC203404AA839E5B84286CDAD.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
+		<row><td>_6E4FDAF88E0C415B9F60EE8378BAA7CF.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_7D294EC8454C43C791CC0974F48C326E.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
+		<row><td>_9E1ABA7459934476A284FE717F0E6F80.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_B3ADE7A9BD9C4A87B29589E052AE48F9.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_BBA60D912E2748DB8AE26944A0FB800F.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Release\Mods.exe</td><td>0</td></row>
+		<row><td>_C811BD35821D47D0B09A46BAF413CC28.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_E24B286946EA4DC3A0ADD60BBF3B54DE.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_E3EA6B0BF9A14B7BB393B62086A537DF.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_E84D6A01C4024F9281D1F6963BCE25F9.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
@@ -3898,11 +3910,12 @@
 		<row><td>DuplicateFiles</td><td/><td>4210</td><td>DuplicateFiles</td><td/></row>
 		<row><td>FileCost</td><td/><td>900</td><td>FileCost</td><td/></row>
 		<row><td>FindRelatedProducts</td><td>NOT ISSETUPDRIVEN</td><td>420</td><td>FindRelatedProducts</td><td/></row>
-		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td>ISPreventDowngrade</td><td/></row>
+		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td/><td/></row>
 		<row><td>ISRunSetupTypeAddLocalEvent</td><td>Not Installed And Not ISRUNSETUPTYPEADDLOCALEVENT</td><td>1050</td><td>ISRunSetupTypeAddLocalEvent</td><td/></row>
 		<row><td>ISSelfRegisterCosting</td><td/><td>2201</td><td/><td/></row>
 		<row><td>ISSelfRegisterFiles</td><td/><td>5601</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td/><td>6601</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td/><td>2202</td><td/><td/></row>
 		<row><td>InstallFiles</td><td/><td>4000</td><td>InstallFiles</td><td/></row>
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
@@ -3990,7 +4003,7 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{6514ECB8-B8DB-4268-AB81-00F88F64F54B}</td></row>
 		<row><td>ISUSSignature</td><td>{6E03227C-024D-4572-92B1-9486B0022884}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewISToday,viewLearnMore,viewRelease,viewSystemSearch,viewUI,viewServices,viewAppFiles,viewObjects,viewShortcuts,viewTextMessages</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewISToday,viewLearnMore,viewRelease,viewSystemSearch,viewUI,viewServices,viewAppFiles,viewObjects,viewShortcuts,viewTextMessages,viewUpgradePaths</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4019,7 +4032,8 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ExecuteAction</td><td/><td>1300</td><td>ExecuteAction</td><td/></row>
 		<row><td>FileCost</td><td/><td>900</td><td>FileCost</td><td/></row>
 		<row><td>FindRelatedProducts</td><td/><td>430</td><td>FindRelatedProducts</td><td/></row>
-		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td>ISPreventDowngrade</td><td/></row>
+		<row><td>ISPreventDowngrade</td><td>ISFOUNDNEWERPRODUCTVERSION</td><td>450</td><td/><td/></row>
+		<row><td>ISSetAllUsers</td><td>Not Installed</td><td>10</td><td/><td/></row>
 		<row><td>InstallWelcome</td><td>Not Installed</td><td>1210</td><td>InstallWelcome</td><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>
 		<row><td>LaunchConditions</td><td>Not Installed</td><td>410</td><td>LaunchConditions</td><td/></row>
@@ -4382,7 +4396,7 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>SERIALNUMBER</td><td/><td/></row>
 		<row><td>SERIALNUMVALSUCCESSRETVAL</td><td>1</td><td/></row>
 		<row><td>SHOWLAUNCHPROGRAM</td><td>-1</td><td/></row>
-		<row><td>SecureCustomProperties</td><td>ISFOUNDNEWERPRODUCTVERSION;USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;DOTNETVERSION45FULL</td><td/></row>
+		<row><td>SecureCustomProperties</td><td>USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;DOTNETVERSION45FULL;ISFOUNDNEWERPRODUCTVERSION</td><td/></row>
 		<row><td>SelectedSetupType</td><td>##IDS__DisplayName_Typical##</td><td/></row>
 		<row><td>SetupType</td><td>Typical</td><td/></row>
 		<row><td>UpgradeCode</td><td>{27F45286-2A72-42ED-AB4F-0F0AD96CED55}</td><td/></row>
@@ -4446,6 +4460,8 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<col def="L255">FileName</col>
 		<col def="s72">DirProperty</col>
 		<col def="i2">InstallMode</col>
+		<row><td>NewShortcut2</td><td>Mods.Primary_output</td><td/><td>modspa_1_mods_packager</td><td>2</td></row>
+		<row><td>NewShortcut3</td><td>ISX_DEFAULTCOMPONENT1</td><td/><td>modspa_1_mods_packager</td><td>2</td></row>
 	</table>
 
 	<table name="RemoveIniFile">
@@ -4531,6 +4547,8 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
+		<row><td>NewShortcut2</td><td>modspa_1_mods_packager</td><td>##ID_STRING4##</td><td>Mods.Primary_output</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut3</td><td>modspa_1_mods_packager</td><td>##ID_STRING5##</td><td>ISX_DEFAULTCOMPONENT1</td><td>[SystemFolder]MsiExec.exe</td><td>/x [ProductCode]</td><td/><td/><td>NewShortcut3_1AF6161E1BEA4439A75EBF95741E4ADB.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">
