@@ -383,15 +383,7 @@ namespace BeatificaBytes.Synology.Mods
 
                     if (list == null || list.items.Count == 0)
                     {
-                        //json = Properties.Settings.Default.Packages;
-                        //if (!string.IsNullOrEmpty(json))
-                        //{
-                        //    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-                        //}
-                        //else
-                        //{
                         list = new Package();
-                        //}
                     }
                 }
                 else
@@ -1506,13 +1498,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private List<Tuple<string, string>> GetAllWizardVariables()
         {
-            List<Tuple<string, string>> variables = null;
+            List<Tuple<string, string>> variables = new List<Tuple<string, string>>();
 
             var wizard = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES");
 
             if (Directory.Exists(wizard))
             {
-                variables = new List<Tuple<string, string>>();
                 string line;
                 foreach (var filename in Directory.GetFiles(wizard))
                 {
