@@ -404,7 +404,11 @@ namespace BeatificaBytes.Synology.Mods
                             PublishWarning(string.Format("Item {0} is not referencing an element of your package...", item.Value.title));
                         else
                         {
-                            webapp = Path.Combine(Path.GetDirectoryName(config), webapp.Replace(string.Format("{0}/", info["package"]), ""));
+                            if (webapp.StartsWith(info["package"]))
+                            {
+                                webapp = webapp.Remove(0, info["package"].Length + 1);
+                                webapp = Path.Combine(Path.GetDirectoryName(config), webapp);
+                            }
                             if (!File.Exists(webapp))
                                 PublishWarning(string.Format("Item {0} is not located in the right subfolder. Check your package...", item.Value.title));
                         }
