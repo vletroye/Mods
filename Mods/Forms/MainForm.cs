@@ -418,7 +418,7 @@ namespace BeatificaBytes.Synology.Mods
                 config = config.Replace("config", "index.conf");
                 if (File.Exists(config))
                 {
-                    PublishWarning("This package contains a file 'index.conf' which is not yet supported by Mods Packager.");
+                    PublishWarning("This package contains a file 'index.conf' whose creation and edition are not yet supported by Mods Packager.");
                 }
 
             }
@@ -517,10 +517,11 @@ namespace BeatificaBytes.Synology.Mods
                 var lines = File.ReadAllLines(file);
                 foreach (var line in lines)
                 {
-                    if (!string.IsNullOrEmpty(line))
+                    var lineText = line.Trim();
+                    if (!string.IsNullOrEmpty(lineText))
                     {
-                        var key = line.Substring(0, line.IndexOf('='));
-                        var value = line.Substring(line.IndexOf('=') + 1);
+                        var key = lineText.Substring(0, lineText.IndexOf('='));
+                        var value = lineText.Substring(lineText.IndexOf('=') + 1);
                         value = value.Trim(new char[] { '"' });
                         value = value.Replace("<br>", "\r\n");
                         if (info.ContainsKey(key))
@@ -566,12 +567,13 @@ namespace BeatificaBytes.Synology.Mods
                 var lines = File.ReadAllLines(file);
                 foreach (var line in lines)
                 {
-                    if (!string.IsNullOrEmpty(line))
+                    var lineText = line.Trim();
+                    if (!string.IsNullOrEmpty(lineText))
                     {
-                        var key = line.Substring(0, line.IndexOf('='));
+                        var key = lineText.Substring(0, lineText.IndexOf('='));
                         if (key == "dsmuidir")
                         {
-                            value = line.Substring(line.IndexOf('=') + 1);
+                            value = lineText.Substring(lineText.IndexOf('=') + 1);
                             value = value.Trim(new char[] { '"' });
                             break;
                         }
@@ -3817,35 +3819,37 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonAdvanced_Click(object sender, EventArgs e)
         {
-            string content = null; ;
-
             SavePackageInfo(CurrentPackageFolder);
             var infoName = Path.Combine(CurrentPackageFolder, "INFO");
-            content = File.ReadAllText(infoName);
+            string content = File.ReadAllText(infoName);
             var script = new ScriptInfo(content, "INFO Editor", new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
 
             Properties.Settings.Default.AdvancedEditor = true;
             Properties.Settings.Default.Save();
             ShowAdvancedEditor(true);
 
-            var configName = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
-            if (File.Exists(configName))
+            content = null;
+            string configName = null;
+            ScriptInfo config = null;
+            if (info.ContainsKey("dsmuidir"))
             {
-                content = File.ReadAllText(configName);
-                content = Helper.JsonPrettify(content);
+                configName = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                if (File.Exists(configName))
+                {
+                    content = File.ReadAllText(configName);
+                    content = Helper.JsonPrettify(content);
+                }
+                config = new ScriptInfo(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
             }
-            else
-                content = null;
 
 
-            var config = new ScriptInfo(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
 
 
             DialogResult result = Helper.ScriptEditor(script, config, null);
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(infoName, script.Code);
-                File.WriteAllText(configName, config.Code);
+                if (configName!=null) File.WriteAllText(configName, config.Code);
                 LoadPackageInfo(CurrentPackageFolder);
                 BindData(list, null);
                 DisplayItem();
