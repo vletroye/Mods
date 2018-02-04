@@ -2567,18 +2567,19 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     else
                     {
-                        foreach (var url in list.items.Values)
-                        {
-                            var existingTitle = Helper.CleanUpText(url.title);
-                            var newTitle = Helper.CleanUpText(textBoxTitle.Text);
-                            if (existingTitle.Equals(newTitle, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                        if (list != null)
+                            foreach (var url in list.items.Values)
                             {
-                                e.Cancel = true;
-                                textBoxTitle.Select(0, textBoxTitle.Text.Length);
-                                errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
-                                break;
+                                var existingTitle = Helper.CleanUpText(url.title);
+                                var newTitle = Helper.CleanUpText(textBoxTitle.Text);
+                                if (existingTitle.Equals(newTitle, StringComparison.InvariantCultureIgnoreCase) && current.Value.guid != url.guid)
+                                {
+                                    e.Cancel = true;
+                                    textBoxTitle.Select(0, textBoxTitle.Text.Length);
+                                    errorProvider.SetError(textBoxTitle, string.Format("This title is already used for another URL: {0}", url.url));
+                                    break;
+                                }
                             }
-                        }
                     }
                 }
             }
@@ -2804,7 +2805,7 @@ namespace BeatificaBytes.Synology.Mods
                             }
                         }
                     }
-                    catch { saved = DialogResult.Abort; }
+                    catch (Exception ex) { saved = DialogResult.Abort; }
                 }
                 return saved;
             }
@@ -3849,7 +3850,7 @@ namespace BeatificaBytes.Synology.Mods
             if (result == DialogResult.OK)
             {
                 File.WriteAllText(infoName, script.Code);
-                if (configName!=null) File.WriteAllText(configName, config.Code);
+                if (configName != null) File.WriteAllText(configName, config.Code);
                 LoadPackageInfo(CurrentPackageFolder);
                 BindData(list, null);
                 DisplayItem();
@@ -3905,7 +3906,7 @@ namespace BeatificaBytes.Synology.Mods
                     // Couldn't save some pending changes
                     if (closed == DialogResult.Abort)
                     {
-                        closed = MessageBoxEx.Show(this, "Pending changes couldn't be saved!\r\n\r\nDo you want to close your package anyway?\r\nChanges will be lost!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
+                        closed = MessageBoxEx.Show(this, "Pending changes couldn't be saved!\r\n(Check that all fields are valid)\r\n\r\nDo you want to close your package anyway?\r\nChanges will be lost!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
                         if (closed != DialogResult.Yes)
                             // User doesn't want to close without saving remaining changes
                             closed = DialogResult.Cancel;
