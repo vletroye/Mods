@@ -9,3 +9,4 @@ _ReSharper.*
 bin
 obj
 packages
+/.vs/Mods/v15/Server/sqlite3

@@ -70,9 +70,9 @@
             this.labelValidate.AutoSize = true;
             this.labelValidate.Location = new System.Drawing.Point(14, 9);
             this.labelValidate.Name = "labelValidate";
-            this.labelValidate.Size = new System.Drawing.Size(93, 13);
+            this.labelValidate.Size = new System.Drawing.Size(85, 13);
             this.labelValidate.TabIndex = 0;
-            this.labelValidate.Text = "Name of the Step:";
+            this.labelValidate.Text = "Title of the Step:";
             // 
             // checkBoxValidate
             // 
@@ -159,7 +159,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(300, 181);
+            this.ClientSize = new System.Drawing.Size(296, 177);
             this.ControlBox = false;
             this.Controls.Add(this.textBoxDeactivation);
             this.Controls.Add(this.textBoxActivation);

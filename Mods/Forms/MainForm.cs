@@ -2805,7 +2805,7 @@ namespace BeatificaBytes.Synology.Mods
                             }
                         }
                     }
-                    catch (Exception ex) { saved = DialogResult.Abort; }
+                    catch { saved = DialogResult.Abort; }
                 }
                 return saved;
             }

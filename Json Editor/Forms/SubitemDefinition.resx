@@ -120,6 +120,13 @@
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="textBoxFn.ToolTip" xml:space="preserve">
+    <value>Syno Property: fn
+Describe the Javascript function which is encoded by JSON-style string with curly brackets. In this function, you can use arguments[0] to get the value of the component. In addition, this function will return true if the value is valid or as an invalid string if the value is invalid.</value>
+  </data>
+  <metadata name="toolTipSubitemDefinition.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>140, 17</value>
+  </metadata>
   <metadata name="toolTipSubitemDefinition.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>140, 17</value>
   </metadata>
@@ -144,9 +151,5 @@ An inline data object readable by the reader in local store to load local JSON-a
     <value>Value to be added in the list above.
 For static Combo (store): don't type anything if you only need a Display Value in your Combo's data
 For dynamic Combo (api_store): you must type here the value to be passed as base Param to your API.</value>
-  </data>
-  <data name="textBoxFn.ToolTip" xml:space="preserve">
-    <value>Syno Property: fn
-Describe the Javascript function which is encoded by JSON-style string with curly brackets. In this function, you can use arguments[0] to get the value of the component. In addition, this function will return true if the value is valid or as an invalid string if the value is invalid.</value>
   </data>
 </root>

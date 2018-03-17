@@ -765,7 +765,7 @@ namespace ZTn.Json.Editor.Forms
             "url"});
             this.comboBoxType.Location = new System.Drawing.Point(84, 6);
             this.comboBoxType.Name = "comboBoxType";
-            this.comboBoxType.Size = new System.Drawing.Size(57, 21);
+            this.comboBoxType.Size = new System.Drawing.Size(135, 21);
             this.comboBoxType.TabIndex = 0;
             this.toolTipSubitemDefinition.SetToolTip(this.comboBoxType, "Syno Property: defaultValue [Optional]\r\nTrue/false value to initialize “singlesel" +
         "ect” or “multiselect” component.");
@@ -821,6 +821,8 @@ namespace ZTn.Json.Editor.Forms
             // 
             this.checkBoxAllowBlank.AutoSize = true;
             this.checkBoxAllowBlank.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxAllowBlank.Checked = true;
+            this.checkBoxAllowBlank.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAllowBlank.Location = new System.Drawing.Point(17, 187);
             this.checkBoxAllowBlank.Name = "checkBoxAllowBlank";
             this.checkBoxAllowBlank.Size = new System.Drawing.Size(81, 17);

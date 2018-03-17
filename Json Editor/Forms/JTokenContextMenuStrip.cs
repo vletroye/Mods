@@ -173,7 +173,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
                             if (desc.Length > 10)
-                                desc = desc.Substring(0, 20) + "...";
+                                desc = desc.Substring(0, 10) + "...";
                             RemoveWizardStepToolStripItem.Text = string.Format("Remove Step '{0}'", desc);
                             wizard = true;
                         }
@@ -193,7 +193,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
                             if (desc.Length > 10)
-                                desc = desc.Substring(0, 20) + "...";
+                                desc = desc.Substring(0, 10) + "...";
                             EditWizardStepToolStripItem.Text = string.Format("Edit Step '{0}'", desc );
                             wizard = true;
                         }
@@ -214,7 +214,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             string desc = node.Text;
                             if (desc.Length > 10)
-                                desc = desc.Substring(0, 20) + "...";
+                                desc = desc.Substring(0, 10) + "...";
                             RemoveWizardItemToolStripItem.Text = string.Format("Remove items of '{0}'", desc);
                             wizard = true;
                         }
@@ -234,7 +234,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             string desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
                             if (desc.Length > 10)
-                                desc = desc.Substring(0, 20) + "...";
+                                desc = desc.Substring(0, 10) + "...";
                             RemoveWizardSubitemToolStripItem.Text = string.Format("Remove '{0}'", desc);
                             wizard = true;
                         }
@@ -254,7 +254,7 @@ namespace ZTn.Json.Editor.Forms
                         {
                             var desc = ((JValue)(((JValueTreeNode)node).JTokenTag)).Value.ToString();
                             if (desc.Length > 10)
-                                desc = desc.Substring(0, 20) + "...";
+                                desc = desc.Substring(0, 10) + "...";
                             EditWizardSubitemToolStripItem.Text = string.Format("Edit '{0}'", desc);
                             wizard = true;
                         }
