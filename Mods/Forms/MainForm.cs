@@ -1622,7 +1622,13 @@ namespace BeatificaBytes.Synology.Mods
                             succeed = Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
                         else
                         {
-                            succeed = Helper.CreateSymLink(targetWebAppFolder, webAppFolder, true);
+                            if (info["singleApp"] == "yes")
+                            {
+                                MessageBoxEx.Show(this, "You may not use a Symbolic Link within a single app!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                succeed = false;
+                            }
+                            if (succeed)
+                                succeed = Helper.CreateSymLink(targetWebAppFolder, webAppFolder, true);
                         }
                     }
                 }
