@@ -379,7 +379,14 @@ namespace BeatificaBytes.Synology.Mods
                 if (File.Exists(config))
                 {
                     var json = File.ReadAllText(config);
-                    list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+                    try
+                    {
+                        list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
+                    }
+                    catch ( Exception ex)
+                    {
+                        PublishWarning(string.Format("The config file '{0}' is corrupted...", config));
+                    }
 
                     if (list == null || list.items.Count == 0)
                     {
@@ -549,6 +556,17 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             LoadPackageConfig(path);
+
+            if (info.Keys.Contains("displayname"))
+            {
+                var folder = Path.GetFileName(path);
+                var package = GetPackageFolderName();
+
+                if (!package.Equals(folder, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    PublishWarning(string.Format("The working folder '{0}' is not named like your package '{1}'. It will be renamed onced your close the package!", folder, package));
+                }
+            }
 
             CurrentPackageFolder = path;
             Properties.Settings.Default.LastPackage = CurrentPackageFolder;
@@ -3961,19 +3979,10 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var parent = Path.GetFileName(CurrentPackageFolder);
                 Guid tmp;
-                bool isTempFolder = Guid.TryParse(parent, out tmp);
+                var isTempFolder = Guid.TryParse(parent, out tmp);
                 if (!isTempFolder)
                 {
-                    string newName = null;
-                    if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
-                        newName = (info["displayname"]);
-                    else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
-                        newName = info["package"];
-
-                    foreach (char c in Path.GetInvalidFileNameChars())
-                    {
-                        newName = newName.Replace(c, '_');
-                    }
+                    var newName = GetPackageFolderName();
                     if (!string.IsNullOrEmpty(newName) && !newName.Equals(parent, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var RenamedPackageRootPath = CurrentPackageFolder.Replace(parent, newName);
@@ -3989,23 +3998,53 @@ namespace BeatificaBytes.Synology.Mods
                         var oldPackageRootPath = CurrentPackageFolder;
                         if (Helper.CopyDirectory(CurrentPackageFolder, RenamedPackageRootPath))
                         {
-                            CurrentPackageFolder = RenamedPackageRootPath;
-                            SavePackageSettings(CurrentPackageFolder);
-                            CreateRecentsMenu();
                             if (Directory.Exists(RenamedPackageRootPath) && RenamedPackageRootPath != oldPackageRootPath)
+                            {
+                                CurrentPackageFolder = RenamedPackageRootPath;
                                 Helper.DeleteDirectory(oldPackageRootPath);
+                            }
                             else
                             {
                                 // Something went wrong while copying the old folder into a renamed one ?! Reuse therefore the old one :(
                                 CurrentPackageFolder = oldPackageRootPath;
-                                SavePackageSettings(CurrentPackageFolder);
-                                CreateRecentsMenu();
                             }
                         }
+                        else
+                        {
+                            // Something wrong happened while renaming. Delete the target folder and keep the original one
+                            if (Directory.Exists(RenamedPackageRootPath) && RenamedPackageRootPath != oldPackageRootPath)
+                            {
+                                CurrentPackageFolder = oldPackageRootPath;
+                                Helper.DeleteDirectory(RenamedPackageRootPath);
+                            }
+                        }
+                        SavePackageSettings(CurrentPackageFolder);
+                        CreateRecentsMenu();
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            { }
+        }
+
+        private string GetPackageFolderName()
+        {
+            string name = "";
+
+            if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
+                name = (info["displayname"]);
+            else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
+                name = info["package"];
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                foreach (char c in Path.GetInvalidFileNameChars())
+                {
+                    name = name.Replace(c, '_');
+                }
+            }
+
+            return name;
         }
 
         private void menuClose_Click(object sender, EventArgs e)
@@ -4081,7 +4120,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (list.items.Count > 1)
                     checkBoxSingleApp.Checked = false;
-                else if (list.items.Count == 1)
+                else if (list.items.Count == 1 && info["singleApp"] != "yes")
                 {
                     var title = list.items.First().Value.title;
                     var type = list.items.First().Value.itemType;

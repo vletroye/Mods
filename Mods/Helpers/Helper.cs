@@ -613,41 +613,45 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static bool CopyDirectory(string strSource, string strDestination, bool overwrite = false)
         {
-            var copied = false;
-
-            using (new CWaitCursor())
+            var copied = true;
+            try
             {
-
-                strDestination += "\\";
-                strSource += "\\";
-                if (strDestination.StartsWith(strSource))
+                using (new CWaitCursor())
                 {
-                    MessageBoxEx.Show(Application.OpenForms[0], string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                    strDestination += "\\";
+                    strSource += "\\";
+                    if (strDestination.StartsWith(strSource))
+                    {
+                        MessageBoxEx.Show(Application.OpenForms[0], string.Format("'{0}' cannot be copied into '{1}'", strSource, strDestination), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(strDestination))
+                        {
+                            Directory.CreateDirectory(strDestination);
+                        }
+
+                        DirectoryInfo dirInfo = new DirectoryInfo(strSource);
+                        FileInfo[] files = dirInfo.GetFiles();
+                        foreach (FileInfo tempfile in files)
+                        {
+                            tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name), overwrite);
+                        }
+
+                        DirectoryInfo[] directories = dirInfo.GetDirectories();
+                        foreach (DirectoryInfo tempdir in directories)
+                        {
+                            var subfolder = Path.Combine(strSource, tempdir.Name);
+                            if (strDestination != subfolder)
+                                copied = CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name), overwrite);
+                            if (!copied) break;
+                        }
+                    }
                 }
-                else
-                {
-                    if (!Directory.Exists(strDestination))
-                    {
-                        Directory.CreateDirectory(strDestination);
-                    }
-
-                    DirectoryInfo dirInfo = new DirectoryInfo(strSource);
-                    FileInfo[] files = dirInfo.GetFiles();
-                    foreach (FileInfo tempfile in files)
-                    {
-                        tempfile.CopyTo(Path.Combine(strDestination, tempfile.Name), overwrite);
-                    }
-
-                    DirectoryInfo[] directories = dirInfo.GetDirectories();
-                    foreach (DirectoryInfo tempdir in directories)
-                    {
-                        var subfolder = Path.Combine(strSource, tempdir.Name);
-                        if (strDestination != subfolder)
-                            CopyDirectory(subfolder, Path.Combine(strDestination, tempdir.Name), overwrite);
-                    }
-
-                    copied = true;
-                }
+            }
+            catch (Exception ex) {
+                copied = false;
             }
 
             return copied;
