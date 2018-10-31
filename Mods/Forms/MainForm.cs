@@ -383,7 +383,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
                     }
-                    catch ( Exception ex)
+                    catch (Exception ex)
                     {
                         PublishWarning(string.Format("The config file '{0}' is corrupted...", config));
                     }
@@ -3626,7 +3626,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 var content = File.ReadAllText(scriptPath);
-                var script = new ScriptInfo(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
+                var script = new ScriptInfo(content, menu.Text, new Uri("https://originhelp.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
                 DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
                 if (result == DialogResult.OK)
                 {
@@ -3708,7 +3708,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (Path.GetExtension(jsonPath) == ".sh")
                 {
                     var content = File.ReadAllText(jsonPath);
-                    var wizard = new ScriptInfo(content, menu.Text, new Uri("https://developer.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html"), "Details about Wizard File");
+                    var wizard = new ScriptInfo(content, menu.Text, new Uri("https://originhelp.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html"), "Details about Wizard File");
 
                     string outputRunner = string.Empty;
                     result = Helper.ScriptEditor(wizard, null, null);
@@ -3847,7 +3847,7 @@ namespace BeatificaBytes.Synology.Mods
             SavePackageInfo(CurrentPackageFolder);
             var infoName = Path.Combine(CurrentPackageFolder, "INFO");
             string content = File.ReadAllText(infoName);
-            var script = new ScriptInfo(content, "INFO Editor", new Uri("https://developer.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
+            var script = new ScriptInfo(content, "INFO Editor", new Uri("https://originhelp.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
 
             Properties.Settings.Default.AdvancedEditor = true;
             Properties.Settings.Default.Save();
@@ -3864,7 +3864,7 @@ namespace BeatificaBytes.Synology.Mods
                     content = File.ReadAllText(configName);
                     content = Helper.JsonPrettify(content);
                 }
-                config = new ScriptInfo(content, "Config Editor", new Uri("https://developer.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
+                config = new ScriptInfo(content, "Config Editor", new Uri("https://originhelp.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
             }
 
 
@@ -4069,7 +4069,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void menuDevGuide_Click(object sender, EventArgs e)
         {
-            var info = new ProcessStartInfo("https://developer.synology.com/developer-guide/");
+            var info = new ProcessStartInfo("https://originhelp.synology.com/developer-guide/");
             info.UseShellExecute = true;
             Process.Start(info);
         }
@@ -4728,6 +4728,33 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
                 MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        private void menuLicense_Click(object sender, EventArgs e)
+        {
+            var menu = (ToolStripMenuItem)sender;
+            var scriptName = menu.Tag.ToString();
+            var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
+            var license = "";
+
+            if (File.Exists(scriptPath))
+                license = File.ReadAllText(scriptPath);
+
+            var script = new ScriptInfo(license, menu.Text, new Uri("https://originhelp.synology.com/developer-guide/synology_package/package_structure.html"), "Info about LICENSE");
+            DialogResult result = Helper.ScriptEditor(script, null, null);
+            if (result == DialogResult.OK)
+            {
+                if (string.IsNullOrEmpty(script.Code))
+                {
+                    File.Delete(scriptPath);
+                }
+                else
+                {
+                    File.WriteAllText(scriptPath, script.Code);
+                    menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                }
+            }
 
         }
     }

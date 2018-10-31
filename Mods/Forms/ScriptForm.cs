@@ -19,7 +19,7 @@ namespace BeatificaBytes.Synology.Mods
         private List<Tuple<string, string>> variables = null;
         private ScriptInfo scriptTab1 = null;
         private ScriptInfo scriptTab2 = null;
-        private HelpInfo helpVarDefault = new HelpInfo(new Uri("https://developer.synology.com/developer-guide/synology_package/script_env_var.html"), "Details about environment variables");
+        private HelpInfo helpVarDefault = new HelpInfo(new Uri("https://originhelp.synology.com/developer-guide/synology_package/script_env_var.html"), "Details about environment variables");
         private HelpInfo help = null;
         private readonly FindReplace searchForm = new FindReplace();
 
