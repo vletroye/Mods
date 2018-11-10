@@ -3125,13 +3125,15 @@ namespace BeatificaBytes.Synology.Mods
                     pack.Start();
                     pack.WaitForExit(10000);
                     if (pack.StartInfo.RedirectStandardOutput) Console.WriteLine(pack.StandardOutput.ReadToEnd());
-                    if (pack.ExitCode == 2)
-                        MessageBoxEx.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
 
                     // Rename the new Package with its target name
                     var packName = Path.Combine(path, info["package"] + ".spk");
-                    File.Move(Path.Combine(path, "mods.spk"), packName);
+                    var tmpName = Path.Combine(path, "mods.spk");
+                    if (pack.ExitCode == 2 || !File.Exists(tmpName))
+                    {
+                        MessageBoxEx.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    File.Move(tmpName, packName);
                 }
                 else
                 {
