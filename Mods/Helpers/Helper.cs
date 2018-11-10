@@ -508,25 +508,52 @@ namespace BeatificaBytes.Synology.Mods
 
         internal static bool GetDragDropFilename(out string filename, DragEventArgs e)
         {
-            bool ret = false;
-            filename = String.Empty;
+            string[] filenames;
+            if (GetDragDropFilenames(out filenames, e))
+                filename = GetOneValidImage(filenames);
+            else
+                filename = null;
+            return !String.IsNullOrEmpty(filename);
+        }
+
+
+        internal static bool GetDragDropFilenames(out string[] filenames, DragEventArgs e)
+        {
+            var files = new List<String>();
             if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
             {
                 Array data = ((IDataObject)e.Data).GetData("FileDrop") as Array;
                 if (data != null)
                 {
-                    if ((data.Length == 1) && (data.GetValue(0) is String))
-                    {
-                        filename = ((string[])data)[0];
-                        string ext = Path.GetExtension(filename).ToLower();
-                        if (ext == ".png" || ext == ".jpg" || ext == ".bmp")
+                    foreach (var item in data)
+                        if (item is String)
                         {
-                            ret = true;
+                            if (File.Exists(item as string) || Directory.Exists(item as string))
+                                files.Add(item as String);
                         }
-                    }
                 }
             }
-            return ret;
+            filenames = files.ToArray();
+            return filenames.Length > 0;
+        }
+
+        internal static string GetOneValidImage(string[] filenames)
+        {
+            String filename = null;
+            if (filenames.Length == 1)
+            {
+                filename = filenames[0];
+                if (File.Exists(filename))
+                {
+                    string ext = Path.GetExtension(filename).ToLower();
+                    if (ext != ".png" && ext != ".jpg" && ext != ".bmp")
+                    {
+                        filename = null;
+                    }
+                }
+                else { filename = null; }
+            }
+            return filename;
         }
 
         internal static string IncrementVersion(string version)
@@ -650,7 +677,8 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 copied = false;
             }
 
@@ -966,6 +994,36 @@ namespace BeatificaBytes.Synology.Mods
         public static bool CreateSymLink(string link, string target, bool isDirectory)
         {
             return RunProcessAsAdmin("cmd.exe", string.Format(@"/c mklink {0}""{1}"" ""{2}""", isDirectory ? "/D " : "", link, target)) == 0;
+        }
+
+        public static bool IsFile(string path)
+        {
+            var isFile = false;
+            if (File.Exists(path))
+            {
+                // get the file attributes for file or directory
+                FileAttributes attr = File.GetAttributes(path);
+
+                //detect whether its a directory or file
+                isFile = !((attr & FileAttributes.Directory) == FileAttributes.Directory);
+            }
+
+            return isFile;
+        }
+
+        public static bool IsDirectory(string path)
+        {
+            var isDirectory = false;
+            if (Directory.Exists(path))
+            {
+                // get the file attributes for file or directory
+                FileAttributes attr = File.GetAttributes(path);
+
+                //detect whether its a directory or file
+                isDirectory = ((attr & FileAttributes.Directory) == FileAttributes.Directory);
+            }
+
+            return isDirectory;
         }
     }
 }

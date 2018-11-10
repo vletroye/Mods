@@ -97,6 +97,7 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxWarning = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
+            this.labelAddResources = new System.Windows.Forms.Label();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -163,6 +164,8 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardInstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUninstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUpgradeUI = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDocumentation = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSupport = new System.Windows.Forms.ToolStripMenuItem();
@@ -171,8 +174,6 @@ namespace BeatificaBytes.Synology.Mods
             this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.menuLicense = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -1082,6 +1083,21 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
             this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
             // 
+            // labelAddResources
+            // 
+            this.labelAddResources.AllowDrop = true;
+            this.labelAddResources.AutoSize = true;
+            this.labelAddResources.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelAddResources.Location = new System.Drawing.Point(311, 220);
+            this.labelAddResources.Name = "labelAddResources";
+            this.labelAddResources.Size = new System.Drawing.Size(128, 15);
+            this.labelAddResources.TabIndex = 30;
+            this.labelAddResources.Text = "Drag&Drop here resources";
+            this.toolTip4Mods.SetToolTip(this.labelAddResources, "Drag&Drop here resources to be added next to your script (Images, scripts, etc..." +
+        "). Or press CTRL-E to open the folder with your script and manage its content.");
+            this.labelAddResources.DragDrop += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragDrop);
+            this.labelAddResources.DragEnter += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragEnter);
+            // 
             // openFileDialog4Mods
             // 
             this.openFileDialog4Mods.Filter = "Png|*.png";
@@ -1375,6 +1391,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxItem.Controls.Add(this.labelAddResources);
             this.groupBoxItem.Controls.Add(this.labelGrantPrivilege);
             this.groupBoxItem.Controls.Add(this.textBoxPort);
             this.groupBoxItem.Controls.Add(this.comboBoxProtocol);
@@ -1791,6 +1808,20 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
             this.menuWizardUpgradeUI.Click += new System.EventHandler(this.menuWizard_Click);
             // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(197, 6);
+            // 
+            // menuLicense
+            // 
+            this.menuLicense.Name = "menuLicense";
+            this.menuLicense.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuLicense.Size = new System.Drawing.Size(200, 22);
+            this.menuLicense.Tag = "LICENSE";
+            this.menuLicense.Text = "License";
+            this.menuLicense.Click += new System.EventHandler(this.menuLicense_Click);
+            // 
             // menuHelp
             // 
             this.menuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1862,20 +1893,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(970, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
-            // 
-            // menuLicense
-            // 
-            this.menuLicense.Name = "menuLicense";
-            this.menuLicense.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.menuLicense.Size = new System.Drawing.Size(200, 22);
-            this.menuLicense.Tag = "LICENSE";
-            this.menuLicense.Text = "License";
-            this.menuLicense.Click += new System.EventHandler(this.menuLicense_Click);
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(197, 6);
             // 
             // MainForm
             // 
@@ -2069,5 +2086,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuReviewPendingChanges;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem menuLicense;
+        private System.Windows.Forms.Label labelAddResources;
     }
 }

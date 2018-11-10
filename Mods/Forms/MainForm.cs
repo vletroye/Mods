@@ -77,6 +77,8 @@ namespace BeatificaBytes.Synology.Mods
         string imageDragDropPath;
         protected bool validImage4DragDrop;
         protected string validPackage4DragDrop = null;
+        string[] filesDragDropPath;
+        protected bool validFiles4DragDrop;
 
         protected List<String> warnings = new List<string>();
 
@@ -1006,6 +1008,8 @@ namespace BeatificaBytes.Synology.Mods
                 if (saved == DialogResult.Yes || saved == DialogResult.No)
                 {
                     state = State.Add;
+                    currentScript = null;
+                    currentRunner = null;
                     DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
                     textBoxTitle.Focus();
                 }
@@ -1018,6 +1022,8 @@ namespace BeatificaBytes.Synology.Mods
             if (ValidateChildren())
             {
                 state = State.Edit;
+                currentScript = null;
+                currentRunner = null;
                 EnableItemDetails();
                 textBoxTitle.Focus();
             }
@@ -1028,6 +1034,8 @@ namespace BeatificaBytes.Synology.Mods
             if (state == State.Add)
                 current = new KeyValuePair<string, AppsData>(null, null);
 
+            currentScript = null;
+            currentRunner = null;
             ResetValidateChildren(this); // Reset Error Validation on all controls
 
             DisplayItem(current);
@@ -1184,10 +1192,10 @@ namespace BeatificaBytes.Synology.Mods
 
             if (info["singleApp"] != "yes")
             {
-                var existingWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+                var existingWebAppFolder = getItemPath(cleanedCurrent);
                 if (Directory.Exists(existingWebAppFolder))
                 {
-                    var targetWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCandidate);
+                    var targetWebAppFolder = getItemPath(cleanedCandidate);
                     if (Directory.Exists(targetWebAppFolder))
                     {
                         answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1294,10 +1302,10 @@ namespace BeatificaBytes.Synology.Mods
 
             if (info["singleApp"] != "yes")
             {
-                var current = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+                var current = getItemPath(cleanedCurrent);
                 if (Directory.Exists(current))
                 {
-                    var target = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCandidate);
+                    var target = getItemPath(cleanedCandidate);
                     if (Directory.Exists(target))
                     {
                         answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1353,7 +1361,7 @@ namespace BeatificaBytes.Synology.Mods
             if (info["singleApp"] == "yes")
                 cleanedCurrent = "";
 
-            var targetScript = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+            var targetScript = getItemPath(cleanedCurrent);
             if (Directory.Exists(targetScript))
             {
                 var ex = Helper.DeleteDirectory(targetScript);
@@ -1381,7 +1389,7 @@ namespace BeatificaBytes.Synology.Mods
             if (info["singleApp"] == "yes")
                 cleanedCurrent = "";
 
-            var targetWebApp = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+            var targetWebApp = getItemPath(cleanedCurrent);
             if (Directory.Exists(targetWebApp))
             {
                 var ex = Helper.DeleteDirectory(targetWebApp);
@@ -1440,8 +1448,8 @@ namespace BeatificaBytes.Synology.Mods
 
                         case (int)UrlType.Script:
                             var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
-                            var targetScriptPath = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedScriptName, "mods.sh");
-                            var targetRunnerPath = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedScriptName, "mods.php");
+                            var targetScriptPath = getItemPath(cleanedScriptName, "mods.sh");
+                            var targetRunnerPath = getItemPath(cleanedScriptName, "mods.php");
 
                             textBoxUrl.Enabled = true;
                             textBoxUrl.ReadOnly = true;
@@ -1461,9 +1469,10 @@ namespace BeatificaBytes.Synology.Mods
                                 textBoxUrl.Text = url;
                             }
                             break;
+
                         case (int)UrlType.WebApp:
                             var cleanedWebApp = Helper.CleanUpText(textBoxTitle.Text);
-                            var targetWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedWebApp);
+                            var targetWebAppFolder = getItemPath(cleanedWebApp);
                             if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                             {
                                 answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -1483,6 +1492,19 @@ namespace BeatificaBytes.Synology.Mods
                             }
                             break;
                     }
+
+                    if (current.Value.itemType == 0)
+                    {
+                        comboBoxProtocol.Visible = textBoxUrl.Text.StartsWith("/");
+                        textBoxPort.Visible = textBoxUrl.Text.StartsWith("/");
+                    }
+                    else
+                    {
+                        comboBoxProtocol.Visible = false;
+                        textBoxPort.Visible = false;
+                        labelAddResources.Visible = (current.Value.itemType == 1);
+                    }
+
                     //if (current.Value.itemType != selectedIndex)
                     //{
                     //    current.Value.itemType = selectedIndex;
@@ -1499,6 +1521,15 @@ namespace BeatificaBytes.Synology.Mods
             string inputRunner = null;
             if (File.Exists(scriptPath))
                 inputScript = File.ReadAllText(scriptPath);
+            else
+            {
+                //When creating a new script, the script can be edited several times but is not yet saved in a file.
+                if (state == State.Add)
+                {
+                    inputScript = currentScript;
+                }
+            }
+
             if (File.Exists(runnerPath))
                 inputRunner = File.ReadAllText(runnerPath);
             else
@@ -1616,7 +1647,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 if (succeed)
                 {
-                    var targetWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+                    var targetWebAppFolder = getItemPath(cleanedCurrent);
 
                     // Delete the previous version of this WebApp if any
                     if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
@@ -1665,7 +1696,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (info["singleApp"] == "yes")
                     cleanedCurrent = "";
 
-                var target = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedCurrent);
+                var target = getItemPath(cleanedCurrent);
                 var targetRunner = Path.Combine(target, "mods.php");
                 var targetScript = Path.Combine(target, "mods.sh");
 
@@ -1838,6 +1869,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 comboBoxProtocol.Visible = true;
                 textBoxPort.Visible = true;
+                labelAddResources.Visible = false;
             }
             else if (item.Value.itemType == 0)
             {
@@ -1848,6 +1880,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 comboBoxProtocol.Visible = false;
                 textBoxPort.Visible = false;
+                labelAddResources.Visible = (item.Value.itemType == 1);
             }
 
             comboBoxProtocol.SelectedIndex = comboBoxProtocol.FindString(protocolText);
@@ -1948,6 +1981,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             this.menuSavePackage.Enabled = menuSave;
             this.menuNewPackage.Enabled = menuNew;
+            this.menuOpenPackageFolder.Enabled = true;
             this.menuOpenPackage.Enabled = menuOpen;
             menuImportPackage.Enabled = menuOpen;
             menuOpenRecentPackage.Enabled = menuRecent;
@@ -1974,6 +2008,7 @@ namespace BeatificaBytes.Synology.Mods
             ComboBoxGrantPrivilege.Enabled = bItemDetails;
             checkBoxAdvanceGrantPrivilege.Enabled = bItemDetails;
             checkBoxConfigPrivilege.Enabled = bItemDetails;
+            labelAddResources.Enabled = bItemDetails;
         }
 
         private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bbuttonPublish)
@@ -2122,11 +2157,10 @@ namespace BeatificaBytes.Synology.Mods
         #region Manage Icons ----------------------------------------------------------------------------------------------------------------------
         private void pictureBoxPkg_DragEnter(object sender, DragEventArgs e)
         {
-            string filename;
-            validImage4DragDrop = Helper.GetDragDropFilename(out filename, e);
+            validImage4DragDrop = Helper.GetDragDropFilename(out imageDragDropPath, e);
+
             if (validImage4DragDrop)
             {
-                imageDragDropPath = filename;
                 e.Effect = DragDropEffects.Copy;
             }
             else
@@ -2146,11 +2180,9 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (state == State.Add || state == State.Edit)
             {
-                string filename;
-                validImage4DragDrop = Helper.GetDragDropFilename(out filename, e);
+                validImage4DragDrop = Helper.GetDragDropFilename(out imageDragDropPath, e);
                 if (validImage4DragDrop)
                 {
-                    imageDragDropPath = filename;
                     e.Effect = DragDropEffects.Copy;
                 }
                 else
@@ -2293,9 +2325,9 @@ namespace BeatificaBytes.Synology.Mods
             string picture = null;
             if (info.ContainsKey("dsmuidir"))
                 if (icons.Length > 1)
-                    picture = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], icons[0], icons[1]);
+                    picture = getItemPath(icons[0], icons[1]);
                 else
-                    picture = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], icons[0]);
+                    picture = getItemPath(icons[0]);
             return picture;
         }
 
@@ -2712,15 +2744,15 @@ namespace BeatificaBytes.Synology.Mods
                     if (info["singleApp"] == "yes")
                         cleanedScriptName = "";
 
-                    var targetScript = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedScriptName, "mods.sh");
-                    var targetRunner = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanedScriptName, "mods.php");
+                    var targetScript = getItemPath(cleanedScriptName, "mods.sh");
+                    var targetRunner = getItemPath(cleanedScriptName, "mods.php");
 
                     //Upgrade an old "script" versions
-                    var target = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], oldCleanedScriptName);
+                    var target = getItemPath(oldCleanedScriptName);
                     if (!Directory.Exists(target))
                     {
-                        var oldTargetScript = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], oldCleanedScriptName + ".sh");
-                        var oldTargetRunner = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], oldCleanedScriptName + ".php");
+                        var oldTargetScript = getItemPath(oldCleanedScriptName + ".sh");
+                        var oldTargetRunner = getItemPath(oldCleanedScriptName + ".php");
                         if (File.Exists(oldTargetScript) && File.Exists(oldTargetRunner))
                         {
                             Directory.CreateDirectory(target);
@@ -3886,7 +3918,18 @@ namespace BeatificaBytes.Synology.Mods
         private void menuOpenFolder_Click(object sender, EventArgs e)
         {
             if (!(string.IsNullOrEmpty(CurrentPackageFolder)))
-                Process.Start(CurrentPackageFolder);
+            {
+                var path = CurrentPackageFolder;
+                if (state == State.Add || state == State.Edit)
+                {
+                    //In Add/Edit item mode, open its current folder instead of the package folder
+                    var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+                    if (info["singleApp"] == "yes")
+                        cleanedCurrent = "";
+                    path = getItemPath(cleanedCurrent);
+                }
+                Process.Start(path);
+            }
         }
 
         private void menuDelete_Click(object sender, EventArgs e)
@@ -4139,8 +4182,8 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                             {
-                                var sourceWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanTitle);
-                                var targetWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"]);
+                                var sourceWebAppFolder = getItemPath(cleanTitle);
+                                var targetWebAppFolder = getItemPath("");
 
                                 if (Directory.GetDirectories(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "images")))
                                 {
@@ -4209,8 +4252,8 @@ namespace BeatificaBytes.Synology.Mods
                             {
                                 if (MessageBoxEx.Show(this, string.Format("Do you want to tansform {0} into a side by side app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                                 {
-                                    var sourceWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"]);
-                                    var targetWebAppFolder = Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], cleanTitle);
+                                    var sourceWebAppFolder = getItemPath("");
+                                    var targetWebAppFolder = getItemPath(cleanTitle);
 
                                     try
                                     {
@@ -4676,21 +4719,23 @@ namespace BeatificaBytes.Synology.Mods
         {
             DragDropEffects effects = DragDropEffects.None;
             validPackage4DragDrop = null;
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (state == State.None || state == State.View)
             {
-                var paths = ((string[])e.Data.GetData(DataFormats.FileDrop));
-                if (paths.Length == 1)
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    validPackage4DragDrop = paths[0];
-                    if (Directory.Exists(validPackage4DragDrop))
-                        effects = DragDropEffects.Copy;
-                    else if (File.Exists(validPackage4DragDrop) && (Path.GetExtension(validPackage4DragDrop).Equals(".SPK", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(validPackage4DragDrop).Equals("INFO", StringComparison.InvariantCultureIgnoreCase)))
-                        effects = DragDropEffects.Copy;
-                    else
-                        validPackage4DragDrop = null;
+                    var paths = ((string[])e.Data.GetData(DataFormats.FileDrop));
+                    if (paths.Length == 1)
+                    {
+                        validPackage4DragDrop = paths[0];
+                        if (Directory.Exists(validPackage4DragDrop))
+                            effects = DragDropEffects.Copy;
+                        else if (File.Exists(validPackage4DragDrop) && (Path.GetExtension(validPackage4DragDrop).Equals(".SPK", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(validPackage4DragDrop).Equals("INFO", StringComparison.InvariantCultureIgnoreCase)))
+                            effects = DragDropEffects.Copy;
+                        else
+                            validPackage4DragDrop = null;
+                    }
                 }
             }
-
             e.Effect = effects;
         }
 
@@ -4742,6 +4787,8 @@ namespace BeatificaBytes.Synology.Mods
 
             if (File.Exists(scriptPath))
                 license = File.ReadAllText(scriptPath);
+            else
+                license = Properties.Settings.Default.License;
 
             var script = new ScriptInfo(license, menu.Text, new Uri("https://originhelp.synology.com/developer-guide/synology_package/package_structure.html"), "Info about LICENSE");
             DialogResult result = Helper.ScriptEditor(script, null, null);
@@ -4757,7 +4804,54 @@ namespace BeatificaBytes.Synology.Mods
                     menu.Image = new Bitmap(Properties.Resources.EditedScript);
                 }
             }
+        }
 
+        private string getItemPath(string itemName)
+        {
+            return Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], itemName);
+        }
+        private string getItemPath(string itemName, string scriptName)
+        {
+            return Path.Combine(getItemPath(itemName), scriptName);
+        }
+
+        private void labelAddResources_DragEnter(object sender, DragEventArgs e)
+        {
+            if (state == State.Add || state == State.Edit)
+            {
+                validFiles4DragDrop = Helper.GetDragDropFilenames(out filesDragDropPath, e);
+                if (validFiles4DragDrop)
+                {
+                    e.Effect = DragDropEffects.Copy;
+                }
+                else
+                    e.Effect = DragDropEffects.None;
+            }
+            else
+            {
+                validFiles4DragDrop = false;
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void labelAddResources_DragDrop(object sender, DragEventArgs e)
+        {
+            if (validFiles4DragDrop)
+            {
+                var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+                if (info["singleApp"] == "yes")
+                    cleanedCurrent = "";
+
+                var target = getItemPath(cleanedCurrent);
+                foreach (var path in filesDragDropPath)
+                {
+                    if (Helper.IsDirectory(path))
+                        Helper.CopyDirectory(path, target);
+                    else
+                        if (Helper.IsFile(path))
+                        File.Copy(path, Path.Combine(target, Path.GetFileName(path)));
+                }
+            }
         }
     }
 }
