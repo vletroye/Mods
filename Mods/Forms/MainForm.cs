@@ -111,6 +111,10 @@ namespace BeatificaBytes.Synology.Mods
             // Prepare Events
             AttachEventsToFields();
 
+            // Load AutoComplete for Firmware
+            Helper.LoadDSMReleases(textBoxFirmware);
+            Helper.LoadDSMReleases(textBoxLatestFirmware);
+
             // Prepare to reopen the last package
             string path = Properties.Settings.Default.LastPackage;
             bool? prepared = false;
@@ -1010,7 +1014,13 @@ namespace BeatificaBytes.Synology.Mods
                     state = State.Add;
                     currentScript = null;
                     currentRunner = null;
-                    DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), new AppsData()));
+                    var data = new AppsData();
+                    if (info["singleApp"] == "yes")
+                    {
+                        data.title = info["displayname"];
+                        data.desc = info["description"];
+                    }
+                    DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), data));
                     textBoxTitle.Focus();
                 }
             }
@@ -1442,7 +1452,7 @@ namespace BeatificaBytes.Synology.Mods
                             {
                                 textBoxUrl.Text = "";
                             }
-                            textBoxUrl.Focus();
+                            //textBoxUrl.Focus();
                             current.Value.itemType = selectedIndex;
                             break;
 
@@ -1630,23 +1640,35 @@ namespace BeatificaBytes.Synology.Mods
             if (webAppIndex != null && webAppFolder != null)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+
+                // A Single App is stored in the root of the package app folder. So, the Single App may not have items conflicting with the package items "images" and "config"
                 if (info["singleApp"] == "yes")
                 {
-                    if (Directory.GetDirectories(webAppFolder).Contains(Path.Combine(webAppFolder, "images")))
-                    {
-                        MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a folder named 'images'!", webAppFolder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        succeed = false;
-                    }
-                    else if (Directory.GetFiles(webAppFolder).Contains(Path.Combine(webAppFolder, "config")))
-                    {
-                        MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a file named 'config'!", webAppFolder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        succeed = false;
-                    }
-
+                    succeed = MayTransformIntoSingleApp(webAppFolder);
                     cleanedCurrent = "";
                 }
                 if (succeed)
                 {
+                    // Ask about using the Router CGI technic instead of depending on the ThirdParty package
+                    DialogResult transformIntoSingleApp = DialogResult.No;
+                    var router = MessageBoxEx.Show(this, "Do you want to use the Router CGI?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    if (router == DialogResult.Yes && info["singleApp"] != "yes")
+                    {
+                        {
+                            transformIntoSingleApp = MessageBoxEx.Show(this, "Using a Router CGI is only fully supported by MODS with Single App? Do you want to transform the WebApp into a Single App (YES) or are you going to manage yourself the scripts to support the Router CGI (NO)? You may also continue without using the Router CGI (CANCEL).", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                            if (transformIntoSingleApp == DialogResult.Yes && !MayTransformIntoSingleApp(webAppFolder))
+                            {
+                                transformIntoSingleApp = MessageBoxEx.Show(this, "Are you going to manage yourself the scripts to support the Router CGI (YES) or do you want continue without using the Router CGI (NO).", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                                if (transformIntoSingleApp == DialogResult.Yes)
+                                    transformIntoSingleApp = DialogResult.No;
+                                else
+                                    transformIntoSingleApp = DialogResult.Cancel;
+                            }
+                            if (transformIntoSingleApp == DialogResult.Cancel)
+                                router = DialogResult.No;
+                        }
+                    }
+
                     var targetWebAppFolder = getItemPath(cleanedCurrent);
 
                     // Delete the previous version of this WebApp if any
@@ -1664,26 +1686,90 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
 
+                    // Copy the files into the target WebApp Folder
                     if (succeed)
                     {
-                        var copy = MessageBoxEx.Show(this, "Do you want to copy the files of the webApp into the package Folder (YES) or create a Symbolic Link on the target folder instead (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                        DialogResult copy = DialogResult.Yes;
+                        if (router == DialogResult.No && info["singleApp"] != "yes")
+                            copy = MessageBoxEx.Show(this, "Do you want to copy the files of the webApp into the package Folder (YES) or create a Symbolic Link on the target folder instead (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+
                         if (copy == DialogResult.Yes)
-                            succeed = Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
-                        else
                         {
-                            if (info["singleApp"] == "yes")
+                            succeed = Helper.CopyDirectory(webAppFolder, targetWebAppFolder);
+
+                            if (router == DialogResult.Yes)
                             {
-                                MessageBoxEx.Show(this, "You may not use a Symbolic Link within a single app!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                succeed = false;
+                                var RouterConfig = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+                                var targetRouterConfig = Path.Combine(targetWebAppFolder, "dsm.cgi.conf");
+                                if (!File.Exists(targetRouterConfig))
+                                    File.Copy(RouterConfig, targetRouterConfig);
+                                else
+                                    MessageBoxEx.Show(this, "A file dsm.cgi.conf already exist. ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                var RouterScript = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
+                                var targetRouterScript = Path.Combine(targetWebAppFolder, "router.cgi");
+                                if (!File.Exists(targetRouterScript))
+                                    File.Copy(RouterScript, targetRouterScript);
+                                else
+                                    MessageBoxEx.Show(this, "A file router.cgi already exist. ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                                var editScript = MessageBoxEx.Show(this, "You must now edit the Post installation script. The code to be added is now in the clipboard. Simply paste it at the appropriate location!", "Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                                if (editScript == DialogResult.OK)
+                                {
+                                    var script = Properties.Settings.Default.router_inst;
+                                    if (info["singleApp"] != "yes" && transformIntoSingleApp != DialogResult.Yes)
+                                        script = script.Replace("/ui/dsm.cgi.conf", String.Format("/ui/{0}/dsm.cgi.conf", cleanedCurrent));
+                                    Clipboard.SetText(script);
+                                    if (EditInstallationScript("postinst", "Post-Install Script"))
+                                    {
+                                        menuPostInstall.Image = new Bitmap(Properties.Resources.EditedScript);
+                                    }
+
+                                    var editDependency = MessageBoxEx.Show(this, "Finally, you must add 'nginx' in the list of 'startstop_restart_services' and remove the dependency on 'Init_3rdparty>=1.5' if any.", "Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                                    if (editDependency == DialogResult.OK)
+                                    {
+                                        var edit = new Dependencies(info);
+                                        edit.ShowDialog(this);
+                                    }
+                                }
                             }
-                            if (succeed)
-                                succeed = Helper.CreateSymLink(targetWebAppFolder, webAppFolder, true);
+
+                            if (transformIntoSingleApp == DialogResult.Yes)
+                            {
+                                if (!TransformIntoSingleApp(current))
+                                {
+                                    copy = MessageBoxEx.Show(this, "The transformation into a Single App has failed. Do you want to continue without transforming your WebApp?", "Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                                    if (copy == DialogResult.OK)
+                                        copy = DialogResult.Yes;
+                                } else
+                                {
+                                    checkBoxSingleApp.Checked = true;
+                                }
+                            }
                         }
+                        else if (copy == DialogResult.No)
+                            succeed = Helper.CreateSymLink(targetWebAppFolder, webAppFolder, true);
                     }
                 }
             }
 
             return succeed; //TODO: Handle this return value
+        }
+
+        private bool MayTransformIntoSingleApp(string folder)
+        {
+            var succeed = true;
+            if (Directory.GetDirectories(folder).Contains(Path.Combine(folder, "images")))
+            {
+                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a folder named 'images'!", folder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                succeed = false;
+            }
+            else if (Directory.GetFiles(folder).Contains(Path.Combine(folder, "config")))
+            {
+                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a file named 'config'!", folder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                succeed = false;
+            }
+            return succeed;
         }
 
         private bool CreateScript(KeyValuePair<string, AppsData> current, string script, string runner)
@@ -2280,16 +2366,11 @@ namespace BeatificaBytes.Synology.Mods
         private Image LoadImage(string picture)
         {
             var transparency = int.Parse(comboBoxTransparency.SelectedItem.ToString());
-            if (MessageBoxEx.Show(this, "Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
-            {
-                transparency = 0;
-            }
-            else if (transparency == 0)
-            {
-                MessageBoxEx.Show(this, "You need to pick a transparency value");
-                comboBoxTransparency.Focus();
-                picture = null;
-            }
+            if (transparency > 0)
+                if (MessageBoxEx.Show(this, "Do you want to make this image transparent?", "Please Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                {
+                    transparency = 0;
+                }
             Image image = null;
 
             if (!string.IsNullOrEmpty(picture))
@@ -3653,6 +3734,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             var menu = (ToolStripMenuItem)sender;
             var scriptName = menu.Tag.ToString();
+            if (EditInstallationScript(scriptName, menu.Text))
+            {
+                menu.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+
+        private bool EditInstallationScript(string scriptName, string title)
+        {
+            var done = false;
             var scriptPath = Path.Combine(CurrentPackageFolder, "scripts", scriptName);
 
             if (!File.Exists(scriptPath))
@@ -3660,14 +3750,16 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 var content = File.ReadAllText(scriptPath);
-                var script = new ScriptInfo(content, menu.Text, new Uri("https://originhelp.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
+                var script = new ScriptInfo(content, title, new Uri("https://originhelp.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
                 DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
                 if (result == DialogResult.OK)
                 {
                     File.WriteAllText(scriptPath, script.Code);
-                    menu.Image = new Bitmap(Properties.Resources.EditedScript);
+                    done = true;
                 }
             }
+
+            return done;
         }
 
         private void menuExit_Click(object sender, EventArgs e)
@@ -3901,9 +3993,6 @@ namespace BeatificaBytes.Synology.Mods
                 config = new ScriptInfo(content, "Config Editor", new Uri("https://originhelp.synology.com/developer-guide/integrate_dsm/config.html"), "Details about Config settings");
             }
 
-
-
-
             DialogResult result = Helper.ScriptEditor(script, config, null);
             if (result == DialogResult.OK)
             {
@@ -3922,11 +4011,14 @@ namespace BeatificaBytes.Synology.Mods
                 var path = CurrentPackageFolder;
                 if (state == State.Add || state == State.Edit)
                 {
-                    //In Add/Edit item mode, open its current folder instead of the package folder
-                    var cleanedCurrent = Helper.CleanUpText(current.Value.title);
-                    if (info["singleApp"] == "yes")
-                        cleanedCurrent = "";
-                    path = getItemPath(cleanedCurrent);
+                    if (current.Value.title != null)
+                    {
+                        //In Add/Edit item mode, open its current folder instead of the package folder
+                        var cleanedCurrent = Helper.CleanUpText(current.Value.title);
+                        if (info["singleApp"] == "yes")
+                            cleanedCurrent = "";
+                        path = getItemPath(cleanedCurrent);
+                    }
                 }
                 Process.Start(path);
             }
@@ -4163,79 +4255,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (checkBoxSingleApp.Checked)
             {
-                if (list.items.Count > 1)
+                if (info["singleApp"] != "yes" && !TransformIntoSingleApp())
                     checkBoxSingleApp.Checked = false;
-                else if (list.items.Count == 1 && info["singleApp"] != "yes")
-                {
-                    var title = list.items.First().Value.title;
-                    var type = list.items.First().Value.itemType;
-                    if (type == 0)
-                    {
-                        MessageBoxEx.Show(this, string.Format("You may not tansform the url '{0}' into a single app!", title), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        checkBoxSingleApp.Checked = false;
-                    }
-                    else
-                    {
-                        var cleanTitle = Helper.CleanUpText(title);
-
-                        if (list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
-                        {
-                            if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                            {
-                                var sourceWebAppFolder = getItemPath(cleanTitle);
-                                var targetWebAppFolder = getItemPath("");
-
-                                if (Directory.GetDirectories(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "images")))
-                                {
-                                    MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a folder named 'images'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    checkBoxSingleApp.Checked = false;
-                                }
-                                else if (Directory.GetFiles(sourceWebAppFolder).Contains(Path.Combine(sourceWebAppFolder, "config")))
-                                {
-                                    MessageBoxEx.Show(this, string.Format("You may not tansform {0} into a single app because it contains a file named 'config'!", title), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    checkBoxSingleApp.Checked = false;
-                                }
-
-                                if (checkBoxSingleApp.Checked)
-                                {
-                                    try
-                                    {
-                                        Helper.CopyDirectory(sourceWebAppFolder, targetWebAppFolder);
-                                        Helper.DeleteDirectory(sourceWebAppFolder);
-
-                                        var focused = Helper.FindFocusedControl(this);
-
-                                        var oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
-                                        var newName = string.Format("/webman/3rdparty/{0}/", info["package"]);
-
-                                        list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
-                                        dirty = true;
-
-                                        BindData(list, null);
-                                        DisplayItem();
-                                        focused.Focus();
-
-                                        info["singleApp"] = "yes";
-
-                                        // Force saving changes without prompting the user. This is required has changes have been done in the config file.
-                                        SavePackage(CurrentPackageFolder, true);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                checkBoxSingleApp.Checked = false;
-                            }
-                        }
-                        else
-                        if (info != null)
-                            info["singleApp"] = "yes";
-                    }
-                }
             }
             else
             {
@@ -4308,6 +4329,87 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             EnableItemDetails();
+        }
+
+        private bool TransformIntoSingleApp()
+        {
+            bool succeed = true;
+            if (list.items.Count == 1)
+            {
+                var item = list.items.First();
+                if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", item.Value.title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                {
+                    succeed = TransformIntoSingleApp(item);
+                }
+                else
+                {
+                    succeed = false;
+                }
+            }
+            else if (list.items.Count > 1)
+            {
+                succeed = false;
+            }
+
+            return succeed;
+        }
+
+        private bool TransformIntoSingleApp(KeyValuePair<string, AppsData> item)
+        {
+            var succeed = true;
+            var title = item.Value.title;
+            var type = item.Value.itemType;
+            if (type == 0)
+            {
+                MessageBoxEx.Show(this, string.Format("You may not tansform the url '{0}' into a single app!", title), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                succeed = false;
+            }
+            else
+            {
+                var cleanTitle = Helper.CleanUpText(title);
+
+                if (item.Value.url.Contains(string.Format("/{0}/", cleanTitle)))
+                {
+                    var sourceWebAppFolder = getItemPath(cleanTitle);
+                    var targetWebAppFolder = getItemPath("");
+
+                    succeed = MayTransformIntoSingleApp(sourceWebAppFolder);
+
+                    if (succeed)
+                    {
+                        try
+                        {
+                            Helper.CopyDirectory(sourceWebAppFolder, targetWebAppFolder);
+                            Helper.DeleteDirectory(sourceWebAppFolder);
+
+                            var focused = Helper.FindFocusedControl(this);
+
+                            var oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
+                            var newName = string.Format("/webman/3rdparty/{0}/", info["package"]);
+
+                            item.Value.url = item.Value.url.Replace(oldName, newName);
+                            dirty = true;
+
+                            BindData(list, null);
+                            DisplayItem();
+                            focused.Focus();
+
+                            info["singleApp"] = "yes";
+
+                            // Force saving changes without prompting the user. This is required has changes have been done in the config file.
+                            SavePackage(CurrentPackageFolder, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            succeed = false;
+                        }
+                    }
+                }
+                else if (info != null)
+                    info["singleApp"] = "yes";
+            }
+            return succeed;
         }
 
         private void menuImport_Click(object sender, EventArgs e)
@@ -4706,6 +4808,10 @@ namespace BeatificaBytes.Synology.Mods
             param.ShowDialog();
             if (Properties.Settings.Default.Recents != null && Properties.Settings.Default.Recents.Count == 0)
                 CreateRecentsMenu();
+
+            // ReLoad AutoComplete for Firmware
+            Helper.LoadDSMReleases(textBoxFirmware);
+            Helper.LoadDSMReleases(textBoxLatestFirmware);
         }
 
         private void pictureBoxWarning_Click(object sender, EventArgs e)
@@ -4853,5 +4959,34 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
         }
+
+        private void menuDSMcgi_Click(object sender, EventArgs e)
+        {
+            var RouterConfig = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+
+            var content = File.ReadAllText(RouterConfig);
+            var routerConfig = new ScriptInfo(content, "Router Config", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "Redirect all calls to a CGI Router");
+            DialogResult result = Helper.ScriptEditor(null, routerConfig, null);
+            if (result == DialogResult.OK)
+            {
+                File.WriteAllText(RouterConfig, routerConfig.Code);
+                menuDSMcgi.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+
+        private void menuRouterCgi_Click(object sender, EventArgs e)
+        {
+            var RouterScript = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
+
+            var content = File.ReadAllText(RouterScript);
+            var routercgi = new ScriptInfo(content, "Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
+            DialogResult result = Helper.ScriptEditor(null, routercgi, null);
+            if (result == DialogResult.OK)
+            {
+                File.WriteAllText(RouterScript, routercgi.Code);
+                menuRouterCgi.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+
     }
 }

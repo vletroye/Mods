@@ -23,6 +23,8 @@ namespace BeatificaBytes.Synology.Mods
 {
     public static class Helper
     {
+        static Regex getFirmwareVersion = new Regex(@"^(\d+)\.(\d+)(\.[^-]*){0,1}-(\d+)(.*)$", RegexOptions.Compiled);
+
         [DllImport("kernel32.dll")]
         static extern bool CreateSymbolicLink(string lpSymlinkFileName, string lpTargetFileName, SymLinkFlag dwFlags);
         internal enum SymLinkFlag
@@ -1024,6 +1026,25 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             return isDirectory;
+        }
+
+        public static void LoadDSMReleases(TextBox box)
+        {
+            var dsmReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
+            var content = File.ReadAllText(dsmReleases);
+            var versions = Regex.Split(content, "\r\n|\r|\n");
+
+            box.AutoCompleteCustomSource = new AutoCompleteStringCollection();
+            foreach (var version in versions)
+            {
+                if (getFirmwareVersion.IsMatch(version))
+                {
+                    var match = getFirmwareVersion.Match(version);
+                    var firmware = String.Format("{0}.{1}-{2}", match.Groups[1].Value, match.Groups[2].Value, match.Groups[4].Value);
+                    if (!box.AutoCompleteCustomSource.Contains(firmware))
+                        box.AutoCompleteCustomSource.Add(firmware);
+                }
+            }
         }
     }
 }

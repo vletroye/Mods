@@ -264,5 +264,18 @@ namespace BeatificaBytes.Synology.Mods
                 ShowParameters();
             }
         }
+
+        private void buttonEditDSMReleases_Click(object sender, EventArgs e)
+        {
+            var dsmReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
+
+            var content = File.ReadAllText(dsmReleases);
+            var dsmRelease = new ScriptInfo(content, "DSM Releases", new Uri("https://archive.synology.com/download/DSM/release/"), "List of valid DSM releases");
+            DialogResult result = Helper.ScriptEditor(null, dsmRelease, null);
+            if (result == DialogResult.OK)
+            {
+                File.WriteAllText(dsmReleases, dsmRelease.Code);
+            }
+        }
     }
 }

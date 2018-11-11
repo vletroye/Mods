@@ -46,12 +46,14 @@
             this.buttonDefaultPackageRoot = new System.Windows.Forms.Button();
             this.buttonReset = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.buttonEditDSMReleases = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(12, 184);
+            this.buttonOk.Location = new System.Drawing.Point(12, 198);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 0;
@@ -63,7 +65,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(429, 184);
+            this.buttonCancel.Location = new System.Drawing.Point(429, 198);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 1;
@@ -87,7 +89,7 @@
             // 
             this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelToolTip.Location = new System.Drawing.Point(17, 215);
+            this.labelToolTip.Location = new System.Drawing.Point(17, 229);
             this.labelToolTip.Name = "labelToolTip";
             this.labelToolTip.Size = new System.Drawing.Size(482, 82);
             this.labelToolTip.TabIndex = 22;
@@ -97,7 +99,7 @@
             this.panelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelToolTip.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelToolTip.Location = new System.Drawing.Point(12, 213);
+            this.panelToolTip.Location = new System.Drawing.Point(12, 227);
             this.panelToolTip.Name = "panelToolTip";
             this.panelToolTip.Size = new System.Drawing.Size(492, 86);
             this.panelToolTip.TabIndex = 23;
@@ -198,7 +200,7 @@
             // buttonReset
             // 
             this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(348, 184);
+            this.buttonReset.Location = new System.Drawing.Point(348, 198);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(75, 23);
             this.buttonReset.TabIndex = 33;
@@ -211,10 +213,32 @@
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Location = new System.Drawing.Point(12, 179);
+            this.label3.Location = new System.Drawing.Point(12, 193);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(492, 2);
             this.label3.TabIndex = 34;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label4.Location = new System.Drawing.Point(12, 151);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(492, 2);
+            this.label4.TabIndex = 35;
+            // 
+            // buttonEditDSMReleases
+            // 
+            this.buttonEditDSMReleases.Location = new System.Drawing.Point(12, 157);
+            this.buttonEditDSMReleases.Name = "buttonEditDSMReleases";
+            this.buttonEditDSMReleases.Size = new System.Drawing.Size(75, 33);
+            this.buttonEditDSMReleases.TabIndex = 36;
+            this.buttonEditDSMReleases.Text = "Edit DSM v.";
+            this.toolTipProperties.SetToolTip(this.buttonEditDSMReleases, "Edit the list of official DSM releases. It can be created by parsing the release " +
+        "notes like https://www.synology.com/en-global/releaseNote/DS1815+");
+            this.buttonEditDSMReleases.UseVisualStyleBackColor = true;
+            this.buttonEditDSMReleases.Click += new System.EventHandler(this.buttonEditDSMReleases_Click);
             // 
             // Parameters
             // 
@@ -222,8 +246,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(516, 311);
+            this.ClientSize = new System.Drawing.Size(516, 325);
             this.ControlBox = false;
+            this.Controls.Add(this.buttonEditDSMReleases);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.checkBoxDefaultPackageRoot);
@@ -267,5 +293,7 @@
         private System.Windows.Forms.CheckBox checkBoxDefaultPackageRoot;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button buttonEditDSMReleases;
     }
 }

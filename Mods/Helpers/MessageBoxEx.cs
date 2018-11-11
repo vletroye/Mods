@@ -165,6 +165,7 @@ public class MessageBoxEx
         if (_owner != null)
         {
             _hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, AppDomain.GetCurrentThreadId());
+            // _hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, Thread.CurrentThread.ManagedThreadId); <= not obsolete - but does not work.
         }
     }
 

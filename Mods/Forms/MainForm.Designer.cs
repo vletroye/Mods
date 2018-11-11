@@ -152,6 +152,8 @@ namespace BeatificaBytes.Synology.Mods
             this.menuReviewPendingChanges = new System.Windows.Forms.ToolStripMenuItem();
             this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuScriptRunner = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDSMcgi = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRouterCgi = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStartScript = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStopScript = new System.Windows.Forms.ToolStripMenuItem();
@@ -532,6 +534,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxFirmware
             // 
+            this.textBoxFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.textBoxFirmware.Location = new System.Drawing.Point(709, 124);
             this.textBoxFirmware.Name = "textBoxFirmware";
             this.textBoxFirmware.Size = new System.Drawing.Size(100, 20);
@@ -834,6 +838,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxLatestFirmware
             // 
+            this.textBoxLatestFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxLatestFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.textBoxLatestFirmware.Location = new System.Drawing.Point(709, 148);
             this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
             this.textBoxLatestFirmware.Size = new System.Drawing.Size(100, 20);
@@ -1670,6 +1676,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuScriptRunner,
+            this.menuDSMcgi,
+            this.menuRouterCgi,
             this.toolStripSeparator1,
             this.menuStartScript,
             this.menuStopScript,
@@ -1691,12 +1699,30 @@ namespace BeatificaBytes.Synology.Mods
             // menuScriptRunner
             // 
             this.menuScriptRunner.Name = "menuScriptRunner";
-            this.menuScriptRunner.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuScriptRunner.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
             this.menuScriptRunner.Size = new System.Drawing.Size(200, 22);
             this.menuScriptRunner.Text = "Default Runner";
             this.menuScriptRunner.ToolTipText = "Edit the default Runner. This is the script used to execute your own scripts and " +
     "displayed its output in realtime.";
             this.menuScriptRunner.Click += new System.EventHandler(this.menuScriptRunner_Click);
+            // 
+            // menuDSMcgi
+            // 
+            this.menuDSMcgi.Name = "menuDSMcgi";
+            this.menuDSMcgi.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
+            this.menuDSMcgi.Size = new System.Drawing.Size(200, 22);
+            this.menuDSMcgi.Text = "Router Config";
+            this.menuDSMcgi.ToolTipText = "View the \"Router\" Config.";
+            this.menuDSMcgi.Click += new System.EventHandler(this.menuDSMcgi_Click);
+            // 
+            // menuRouterCgi
+            // 
+            this.menuRouterCgi.Name = "menuRouterCgi";
+            this.menuRouterCgi.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
+            this.menuRouterCgi.Size = new System.Drawing.Size(200, 22);
+            this.menuRouterCgi.Text = "Router Script";
+            this.menuRouterCgi.ToolTipText = "View the \"Router\" Script.";
+            this.menuRouterCgi.Click += new System.EventHandler(this.menuRouterCgi_Click);
             // 
             // toolStripSeparator1
             // 
@@ -2087,5 +2113,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem menuLicense;
         private System.Windows.Forms.Label labelAddResources;
+        private System.Windows.Forms.ToolStripMenuItem menuDSMcgi;
+        private System.Windows.Forms.ToolStripMenuItem menuRouterCgi;
     }
 }

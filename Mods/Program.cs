@@ -58,6 +58,21 @@ namespace BeatificaBytes.Synology.Mods
                     if (!File.Exists(defaultRunnerPath))
                         File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
 
+                    // Load the Router Config or create one if it does not exist
+                    var defaultRouterConfigPath = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+                    if (!File.Exists(defaultRouterConfigPath))
+                        File.WriteAllText(defaultRouterConfigPath, Properties.Settings.Default.dsm_cgi);
+
+                    // Load the Router Script or create one if it does not exist
+                    var defaultRouterScriptPath = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
+                    if (!File.Exists(defaultRouterScriptPath))
+                        File.WriteAllText(defaultRouterScriptPath, Properties.Settings.Default.router_cgi);
+
+                    // Load the default DSM release list or create one if it does not exist
+                    var defaultDSMReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
+                    if (!File.Exists(defaultDSMReleases))
+                        File.WriteAllText(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
+
                     // Extract the WizardUI background image if it does not exist
                     var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
                     if (!File.Exists(backWizard))

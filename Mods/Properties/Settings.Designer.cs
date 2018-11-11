@@ -61,38 +61,6 @@ namespace BeatificaBytes.Synology.Mods.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<script type=\"text/javascript\">\r\n function autoScrolling() { window.scrollTo(0,do" +
-            "cument.body.scrollHeight); }\r\n</script>\r\n<?php\r\n/**\r\n * Execute the given comman" +
-            "d by displaying console output live to the user.\r\n *  @param  string  cmd       " +
-            "   :  command to be executed\r\n *  @return array   exit_status  :  exit status of" +
-            " the executed command\r\n *                  output       :  console output of the" +
-            " executed command\r\n */\r\nfunction liveExecuteCommand($cmd)\r\n{\r\n\r\n    while (@ ob_" +
-            "end_flush()); // end all output buffers if any\r\n\r\n    $proc = popen(\"$cmd 2>&1 ;" +
-            " echo Exit status : $?\", \'r\');\r\n\r\n    $live_output     = \"\";\r\n    $complete_outp" +
-            "ut = \"\";\r\n\r\n    while (!feof($proc))\r\n    {\r\n        $live_output     = fread($p" +
-            "roc, 4096);\r\n        $complete_output = $complete_output . $live_output;\r\n      " +
-            "  echo \"$live_output\";\r\n\t\t\r\n\t\techo \"<script type=\\\"text/javascript\\\">\";\r\n\t\techo " +
-            "\"autoScrolling();\";\r\n\t\techo \"</script>\";\r\n\r\n        @ flush();\r\n    }\r\n\r\n    pcl" +
-            "ose($proc);\r\n\r\n    // get exit status\r\n    preg_match(\'/[0-9]+$/\', $complete_out" +
-            "put, $matches);\r\n\r\n    // return exit status and intended output\r\n    return arr" +
-            "ay (\r\n                    \'exit_status\'  => intval($matches[0]),\r\n              " +
-            "      \'output\'       => str_replace(\"Exit status : \" . $matches[0], \'\', $complet" +
-            "e_output)\r\n                 );\r\n}\r\necho \"<pre>\";\r\n\r\n$result = liveExecuteCommand" +
-            "(\"mods.sh\");\r\n\r\nif($result[\'exit_status\'] === 0){\r\n   // do something if command" +
-            " execution succeeds\r\n} else {\r\n    // do something on failure\r\n}\r\necho \"</pre>\";" +
-            "\r\necho \"<script type=\\\"text/javascript\\\">\";\r\necho \"autoScrolling();\";\r\necho \"</s" +
-            "cript>\";\r\n?>")]
-        public string Ps_Exec {
-            get {
-                return ((string)(this["Ps_Exec"]));
-            }
-            set {
-                this["Ps_Exec"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::System.Collections.Specialized.StringCollection Recents {
             get {
                 return ((global::System.Collections.Specialized.StringCollection)(this["Recents"]));
@@ -122,15 +90,6 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["UpgradeRequired"] = value;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("RTM 7.1")]
-        public string Version {
-            get {
-                return ((string)(this["Version"]));
             }
         }
         
@@ -215,6 +174,234 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
             set {
                 this["License"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(" v7.1")]
+        public string Version {
+            get {
+                return ((string)(this["Version"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n          <script type=\"text/javascript\">\r\n          function autoScrolling() {" +
+            " window.scrollTo(0,document.body.scrollHeight); }\r\n          </script>\r\n        " +
+            "  <?php\r\n          /**\r\n          * Execute the given command by displaying cons" +
+            "ole output live to the user.\r\n          *  @param  string  cmd          :  comma" +
+            "nd to be executed\r\n          *  @return array   exit_status  :  exit status of t" +
+            "he executed command\r\n          *                  output       :  console output" +
+            " of the executed command\r\n          */\r\n          function liveExecuteCommand($c" +
+            "md)\r\n          {\r\n\r\n          while (@ ob_end_flush()); // end all output buffer" +
+            "s if any\r\n\r\n          $proc = popen(\"$cmd 2>&1 ; echo Exit status : $?\", \'r\');\r\n" +
+            "\r\n          $live_output     = \"\";\r\n          $complete_output = \"\";\r\n\r\n        " +
+            "  while (!feof($proc))\r\n          {\r\n          $live_output     = fread($proc, 4" +
+            "096);\r\n          $complete_output = $complete_output . $live_output;\r\n          " +
+            "echo \"$live_output\";\r\n\r\n          echo \"<script type=\\\"text/javascript\\\">\";\r\n   " +
+            "       echo \"autoScrolling();\";\r\n          echo \"</script>\";\r\n\r\n          @ flus" +
+            "h();\r\n          }\r\n\r\n          pclose($proc);\r\n\r\n          // get exit status\r\n " +
+            "         preg_match(\'/[0-9]+$/\', $complete_output, $matches);\r\n\r\n          // re" +
+            "turn exit status and intended output\r\n          return array (\r\n          \'exit_" +
+            "status\'  => intval($matches[0]),\r\n          \'output\'       => str_replace(\"Exit " +
+            "status : \" . $matches[0], \'\', $complete_output)\r\n          );\r\n          }\r\n    " +
+            "      echo \"<pre>\";\r\n\r\n          $result = liveExecuteCommand(\"mods.sh\");\r\n\r\n   " +
+            "       if($result[\'exit_status\'] === 0){\r\n          // do something if command e" +
+            "xecution succeeds\r\n          } else {\r\n          // do something on failure\r\n   " +
+            "       }\r\n          echo \"</pre>\";\r\n          echo \"<script type=\\\"text/javascri" +
+            "pt\\\">\";\r\n          echo \"autoScrolling();\";\r\n          echo \"</script>\";\r\n      " +
+            "    ?>\r\n        ")]
+        public string Ps_Exec {
+            get {
+                return ((string)(this["Ps_Exec"]));
+            }
+            set {
+                this["Ps_Exec"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("location ~ ^/webman/3rdparty/@MODS_CGI@/.*\\.php {\n  root /usr/syno/synoman;\n  inc" +
+            "lude scgi_params;\n  rewrite .*\\.php /webman/3rdparty/@MODS_CGI@/router.cgi break" +
+            ";\n  scgi_pass synoscgi;\n}")]
+        public string dsm_cgi {
+            get {
+                return ((string)(this["dsm_cgi"]));
+            }
+            set {
+                this["dsm_cgi"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#!/bin/sh\n\nLOG=\"/var/log/@SYNOPKG_PKGNAME@\"\n\n# the web server account (Ex.: http)" +
+            " must be granted write access\nif [ -w $LOG ]; then\n  echo `date` \"--------------" +
+            "----------------------------------------------------\" >> $LOG\n  echo `date` \"ROU" +
+            "TER.cgi has been called\" >> $LOG\n  echo `date` \"HANDLING request for\" $REQUEST_U" +
+            "RI >> $LOG\n  \n  # Log all environment variables if the Query String contains \'Lo" +
+            "gRouterCgi\'\n  if [[ $QUERY_STRING = *\"LogRouterCgi\"* ]]; then  \n    printenv >> " +
+            "$LOG\n  fi  \nfi\n\nif [ \"$REQUEST_URI\" == \"$SCRIPT_NAME\" ]; then\n  if [ -w $LOG ]; " +
+            "then\n    echo `date` \"NO REQUEST:\" $SCRIPT_NAME >> $LOG\n  fi\n  #echo \"Content-ty" +
+            "pe: text/html\"\n  echo -e \"HTTP/1.1 200 OK\\n\\n\"\nelse\n\n  # Set redirect_status to " +
+            "1 to get php cgi working.\n  REDIRECT_STATUS=1 export REDIRECT_STATUS\n  \n  # Fix " +
+            "several $_SERVER globals.\n  PHP_SELF=$REQUEST_URI export PHP_SELF\n  SCRIPT_NAME=" +
+            "$REQUEST_URI export SCRIPT_NAME\n  \n  # Generate the request url without the Quer" +
+            "y String parameters\n  SCRIPT_FILENAME=$DOCUMENT_ROOT${REQUEST_URI%\\?$QUERY_STRIN" +
+            "G}\n  if [ -w $LOG ]; then\n    echo `date` \"SCRIPT_FILENAME:\" $SCRIPT_FILENAME >>" +
+            " $LOG\n  fi\n\n  # Prepare the Query String parameters\n  SCRIPT_PARAMETERS=${QUERY_" +
+            "STRING//[&]/ }\n  if [ -w $LOG ]; then\n    echo `date` \"SCRIPT_PARAMETERS:\" $SCRI" +
+            "PT_PARAMETERS >> $LOG\n  fi\n\n  SCRIPT_FILENAME=`realpath $SCRIPT_FILENAME` export" +
+            " SCRIPT_FILENAME\n  if [ -w $LOG ]; then\n    echo `date` \"REALPATH:\" $SCRIPT_FILE" +
+            "NAME >> $LOG\n  fi\n  \n  if [ -w $LOG ]; then\n    echo `date` \"EXECUTE:\" \"/usr/loc" +
+            "al/bin/php70-cgi -c /etc/php/php.ini -d open_basedir=none \"$SCRIPT_FILENAME\" \"$S" +
+            "CRIPT_PARAMETERS\" 2>&1\" >> $LOG\n  fi\n  /usr/local/bin/php70-cgi -c /etc/php/php." +
+            "ini -d open_basedir=none $SCRIPT_FILENAME $SCRIPT_PARAMETERS 2>&1\nfi")]
+        public string router_cgi {
+            get {
+                return ((string)(this["router_cgi"]));
+            }
+            set {
+                this["router_cgi"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"# set the name of the package in the nginx config
+sed -i -e ""s|@MODS_CGI@|$SYNOPKG_PKGNAME|g"" ""$SYNOPKG_PKGDEST/ui/dsm.cgi.conf""
+
+# link the nginx config to redirect pages accessed on admin port
+rm -f /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
+ln -s $SYNOPKG_PKGDEST/ui/dsm.cgi.conf /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
+#sudo synoservicecfg --reload nginx [Add startstop_restart_services=""nginx"" in INFO file instead of this line]
+")]
+        public string router_inst {
+            get {
+                return ((string)(this["router_inst"]));
+            }
+            set {
+                this["router_inst"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"6.2-23739-2
+6.2-23739-1
+6.2-23739
+6.2.1-23824-1
+6.2.1-23824
+6.1-15047-2
+6.1-15047-1
+6.1-15047
+6.1.7-15284-2
+6.1.7-15284-1
+6.1.7-15284
+6.1.6-15266-1
+6.1.6-15266
+6.1.5-15254-1
+6.1.5-15254
+6.1.4-15217-5
+6.1.4-15217-4
+6.1.4-15217-3
+6.1.4-15217-2
+6.1.4-15217-1
+6.1.4-15217
+6.1.3-15152-8
+6.1.3-15152-7
+6.1.3-15152-6
+6.1.3-15152-5
+6.1.3-15152-4
+6.1.3-15152-3
+6.1.3-15152-2
+6.1.3-15152-1
+6.1.3-15152
+6.1.2-15132-1
+6.1.2-15132
+6.1.1-15101-4
+6.1.1-15101-3
+6.1.1-15101-2
+6.1.1-15101-1
+6.1.1-15101
+6.0-7321-7
+6.0-7321-6
+6.0-7321-5
+6.0-7321-3
+6.0-7321-2
+6.0-7321-1
+6.0-7321
+6.0.3-8754-8
+6.0.3-8754-7
+6.0.3-8754-6
+6.0.3-8754-5
+6.0.3-8754-4
+6.0.3-8754-3
+6.0.3-8754-2
+6.0.3-8754-1
+6.0.3-8754
+6.0.2-8451-9
+6.0.2-8451-8
+6.0.2-8451-7
+6.0.2-8451-6
+6.0.2-8451-5
+6.0.2-8451-4
+6.0.2-8451-3
+6.0.2-8451-2
+6.0.2-8451-11
+6.0.2-8451-10
+6.0.2-8451-1
+6.0.2-8451
+6.0.1-7393-2
+6.0.1-7393-1
+6.0.1-7393
+5.2-5967-8
+5.2-5967-7
+5.2-5967-6
+5.2-5967-5
+5.2-5967-4
+5.2-5967-3
+5.2-5967-2
+5.2-5967-1
+5.2-5967
+5.2-5644-8
+5.2-5644-5
+5.2-5644-3
+5.2-5644-2
+5.2-5644-1
+5.2-5644
+5.2-5592-4
+5.2-5592-3
+5.2-5592-2
+5.2-5592-1
+5.2-5592
+5.2-5565-2
+5.2-5565-1
+5.2-5565
+5.1-5055
+5.1-5022-5
+5.1-5022-4
+5.1-5022-3
+5.1-5022-2
+5.1-5022-1
+5.1-5022
+5.1-5021-2
+5.1-5021
+5.1-5004-2
+5.1-5004
+5.0-4528-2
+5.0-4528-1
+5.0-4528
+")]
+        public string dsm_releases {
+            get {
+                return ((string)(this["dsm_releases"]));
+            }
+            set {
+                this["dsm_releases"] = value;
             }
         }
     }
