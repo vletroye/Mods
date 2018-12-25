@@ -45,7 +45,7 @@
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonOk.Location = new System.Drawing.Point(12, 597);
+            this.buttonOk.Location = new System.Drawing.Point(12, 694);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 1;
@@ -57,7 +57,7 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(511, 597);
+            this.buttonCancel.Location = new System.Drawing.Point(921, 694);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 2;
@@ -76,7 +76,7 @@
             this.tabControl.Location = new System.Drawing.Point(12, 12);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(574, 579);
+            this.tabControl.Size = new System.Drawing.Size(984, 676);
             this.tabControl.TabIndex = 4;
             this.tabControl.Tag = "";
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
@@ -86,7 +86,7 @@
             this.tabPageScript1.Location = new System.Drawing.Point(4, 22);
             this.tabPageScript1.Name = "tabPageScript1";
             this.tabPageScript1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageScript1.Size = new System.Drawing.Size(566, 553);
+            this.tabPageScript1.Size = new System.Drawing.Size(976, 650);
             this.tabPageScript1.TabIndex = 0;
             this.tabPageScript1.Tag = "TabScript1";
             this.tabPageScript1.Text = "Script1 Editor";
@@ -133,7 +133,7 @@
             // 
             this.linkLabelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabelHelp.AutoSize = true;
-            this.linkLabelHelp.Location = new System.Drawing.Point(566, 3);
+            this.linkLabelHelp.Location = new System.Drawing.Point(976, 3);
             this.linkLabelHelp.Name = "linkLabelHelp";
             this.linkLabelHelp.Size = new System.Drawing.Size(29, 13);
             this.linkLabelHelp.TabIndex = 5;
@@ -146,7 +146,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(598, 632);
+            this.ClientSize = new System.Drawing.Size(1008, 729);
             this.ControlBox = false;
             this.Controls.Add(this.linkLabelHelp);
             this.Controls.Add(this.buttonCancel);

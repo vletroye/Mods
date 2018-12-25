@@ -1741,7 +1741,8 @@ namespace BeatificaBytes.Synology.Mods
                                     copy = MessageBoxEx.Show(this, "The transformation into a Single App has failed. Do you want to continue without transforming your WebApp?", "Question", MessageBoxButtons.OKCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                                     if (copy == DialogResult.OK)
                                         copy = DialogResult.Yes;
-                                } else
+                                }
+                                else
                                 {
                                     checkBoxSingleApp.Checked = true;
                                 }
@@ -2496,11 +2497,11 @@ namespace BeatificaBytes.Synology.Mods
             if (errorProvider.Tag == null)
             {
                 if (string.IsNullOrEmpty(textBoxPackage.Text) && !string.IsNullOrEmpty(textBoxDisplay.Text))
-                    textBoxPackage.Text = textBoxDisplay.Text.Replace(' ', '_');
+                    textBoxPackage.Text = textBoxDisplay.Text.Replace(' ', '_').Replace("-", "").Replace("__", "_");
 
                 if (!CheckEmpty(textBoxPackage, ref e, ""))
                 {
-                    textBoxPackage.Text = textBoxPackage.Text.Replace(' ', '_');
+                    textBoxPackage.Text = textBoxPackage.Text.Replace(' ', '_').Replace("-", "").Replace("__", "_");
                     var name = textBoxPackage.Text;
                     var cleaned = Helper.CleanUpText(textBoxPackage.Text);
                     if (name != cleaned)
@@ -2519,7 +2520,7 @@ namespace BeatificaBytes.Synology.Mods
             if (textBoxPackage.Enabled)
             {
                 if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
-                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
+                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ').Replace("-", "").Replace("__", "_");
 
                 var newName = textBoxPackage.Text;
                 var oldName = info.Count > 0 && info.ContainsKey("package") ? info["package"] : newName;
@@ -2568,7 +2569,7 @@ namespace BeatificaBytes.Synology.Mods
             if (errorProvider.Tag == null)
             {
                 if (string.IsNullOrEmpty(textBoxDisplay.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
-                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ');
+                    textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ').Replace("-", "").Replace("__", "_");
                 CheckDoubleQuotes(textBoxDisplay, ref e);
             }
         }
@@ -2643,7 +2644,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (errorProvider.Tag == null)
             {
-                textBoxVersion.Text = textBoxVersion.Text.Replace("_", "-").Replace("b", ".");
+                textBoxVersion.Text = textBoxVersion.Text.Replace('_', '-').Replace('b', '.');
                 if (!CheckEmpty(textBoxVersion, ref e, ""))
                 {
                     var match = getOldVersion.Match(textBoxVersion.Text);
@@ -4079,7 +4080,7 @@ namespace BeatificaBytes.Synology.Mods
                     // No need to save or user saved/discarded explicitly possible changes
                     if (closed == DialogResult.Yes || closed == DialogResult.No)
                     {
-                        // Rename the parent folder with the package display name (or the package name) if other changes had to be changed
+                        // Rename the parent folder with the package display name (or the package name) if other changes had to be done
                         if (trySavingPendingChange) RenamePackageFolder();
 
                         CurrentPackageFolder = "";
@@ -4131,7 +4132,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         RemoveRecentPath(CurrentPackageFolder);
                         // Moving Package results in Windows Explorer locking them => copy into a new folder and delete the old one
-                        //Directory.Move(PackageRootPath, RenamedPackageRootPath);
+                        // Directory.Move(PackageRootPath, RenamedPackageRootPath);
                         var oldPackageRootPath = CurrentPackageFolder;
                         if (Helper.CopyDirectory(CurrentPackageFolder, RenamedPackageRootPath))
                         {

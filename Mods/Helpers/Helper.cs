@@ -691,7 +691,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             string file = null;
             var index = Array.FindIndex(files, p => p.Equals(filename, StringComparison.CurrentCultureIgnoreCase));
-            if (index >= 0)
+            if (index == 1)
             {
                 file = files[index];
             }
