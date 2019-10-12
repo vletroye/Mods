@@ -134,6 +134,10 @@ namespace BeatificaBytes.Synology.Mods
             this.menuClosePackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSavePackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDefaultRunner = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDefaultRouterConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDefaultRouterScript = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuParameters = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPackage = new System.Windows.Forms.ToolStripMenuItem();
@@ -151,10 +155,9 @@ namespace BeatificaBytes.Synology.Mods
             this.menuManageScreenshots = new System.Windows.Forms.ToolStripMenuItem();
             this.menuReviewPendingChanges = new System.Windows.Forms.ToolStripMenuItem();
             this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuScriptRunner = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDSMcgi = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuRouterCgi = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuRouterConfig = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRouterScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStartScript = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStopScript = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPostInstall = new System.Windows.Forms.ToolStripMenuItem();
@@ -1452,6 +1455,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuStripMainBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuFiles,
+            this.menuConfig,
             this.menuPackage,
             this.menuEdit,
             this.menuHelp});
@@ -1470,9 +1474,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuImportPackage,
             this.menuClosePackage,
             this.menuSavePackage,
-            this.menuExit,
-            this.toolStripSeparator6,
-            this.menuParameters});
+            this.menuExit});
             this.menuFiles.Name = "menuFiles";
             this.menuFiles.Size = new System.Drawing.Size(42, 20);
             this.menuFiles.Text = "Files";
@@ -1481,7 +1483,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuNewPackage.Name = "menuNewPackage";
             this.menuNewPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.menuNewPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuNewPackage.Size = new System.Drawing.Size(148, 22);
             this.menuNewPackage.Text = "&New";
             this.menuNewPackage.ToolTipText = "Select an empty folder where a new New empty Package can be created.";
             this.menuNewPackage.Click += new System.EventHandler(this.menuNew_Click);
@@ -1490,7 +1492,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuOpenPackage.Name = "menuOpenPackage";
             this.menuOpenPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.menuOpenPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuOpenPackage.Size = new System.Drawing.Size(148, 22);
             this.menuOpenPackage.Text = "&Open";
             this.menuOpenPackage.ToolTipText = "Select a folder containing an existing Package to open it.";
             this.menuOpenPackage.Click += new System.EventHandler(this.menuOpen_Click);
@@ -1498,7 +1500,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuOpenRecentPackage
             // 
             this.menuOpenRecentPackage.Name = "menuOpenRecentPackage";
-            this.menuOpenRecentPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuOpenRecentPackage.Size = new System.Drawing.Size(148, 22);
             this.menuOpenRecentPackage.Text = "Open &Recent";
             this.menuOpenRecentPackage.ToolTipText = "Open a Package recently accessed.";
             // 
@@ -1506,7 +1508,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuImportPackage.Name = "menuImportPackage";
             this.menuImportPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.menuImportPackage.Size = new System.Drawing.Size(170, 22);
+            this.menuImportPackage.Size = new System.Drawing.Size(148, 22);
             this.menuImportPackage.Text = "&Import";
             this.menuImportPackage.ToolTipText = "Select a SPK file to be edited. It will be expanded in a temporary folder. You ma" +
     "y move it later into a target folder.";
@@ -1516,7 +1518,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuClosePackage.Name = "menuClosePackage";
             this.menuClosePackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.menuClosePackage.Size = new System.Drawing.Size(170, 22);
+            this.menuClosePackage.Size = new System.Drawing.Size(148, 22);
             this.menuClosePackage.Text = "&Close";
             this.menuClosePackage.ToolTipText = "Close the current Package.";
             this.menuClosePackage.Click += new System.EventHandler(this.menuClose_Click);
@@ -1525,7 +1527,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuSavePackage.Name = "menuSavePackage";
             this.menuSavePackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.menuSavePackage.Size = new System.Drawing.Size(170, 22);
+            this.menuSavePackage.Size = new System.Drawing.Size(148, 22);
             this.menuSavePackage.Text = "&Save";
             this.menuSavePackage.ToolTipText = "Save the current Package.";
             this.menuSavePackage.Click += new System.EventHandler(this.menuSave_Click);
@@ -1534,22 +1536,62 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuExit.Name = "menuExit";
             this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.menuExit.Size = new System.Drawing.Size(170, 22);
+            this.menuExit.Size = new System.Drawing.Size(148, 22);
             this.menuExit.Text = "&Exit";
             this.menuExit.ToolTipText = "Quit Mods.";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
+            // menuConfig
+            // 
+            this.menuConfig.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuDefaultRunner,
+            this.menuDefaultRouterConfig,
+            this.menuDefaultRouterScript,
+            this.toolStripSeparator6,
+            this.menuParameters});
+            this.menuConfig.Name = "menuConfig";
+            this.menuConfig.Size = new System.Drawing.Size(55, 20);
+            this.menuConfig.Text = "Config";
+            // 
+            // menuDefaultRunner
+            // 
+            this.menuDefaultRunner.Name = "menuDefaultRunner";
+            this.menuDefaultRunner.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F1)));
+            this.menuDefaultRunner.Size = new System.Drawing.Size(231, 22);
+            this.menuDefaultRunner.Text = "Default Runner";
+            this.menuDefaultRunner.ToolTipText = "Edit the default Runner. This is the script used to execute your own scripts and " +
+    "displayed its output in realtime.";
+            this.menuDefaultRunner.Click += new System.EventHandler(this.menuDefaultRunner_Click);
+            // 
+            // menuDefaultRouterConfig
+            // 
+            this.menuDefaultRouterConfig.Name = "menuDefaultRouterConfig";
+            this.menuDefaultRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F2)));
+            this.menuDefaultRouterConfig.Size = new System.Drawing.Size(231, 22);
+            this.menuDefaultRouterConfig.Text = "Default Router Config";
+            this.menuDefaultRouterConfig.ToolTipText = "View the \"Router\" Config.";
+            this.menuDefaultRouterConfig.Click += new System.EventHandler(this.menuDefaultRouterConfig_Click);
+            // 
+            // menuDefaultRouterScript
+            // 
+            this.menuDefaultRouterScript.Name = "menuDefaultRouterScript";
+            this.menuDefaultRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F3)));
+            this.menuDefaultRouterScript.Size = new System.Drawing.Size(231, 22);
+            this.menuDefaultRouterScript.Text = "Default Router Script";
+            this.menuDefaultRouterScript.ToolTipText = "View the \"Router\" Script.";
+            this.menuDefaultRouterScript.Click += new System.EventHandler(this.menuDefaultRouterScript_Click);
+            // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(167, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
             // 
             // menuParameters
             // 
             this.menuParameters.Name = "menuParameters";
             this.menuParameters.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.P)));
-            this.menuParameters.Size = new System.Drawing.Size(170, 22);
-            this.menuParameters.Text = "&Parameters";
+            this.menuParameters.Size = new System.Drawing.Size(231, 22);
+            this.menuParameters.Text = "Mods &Parameters";
             this.menuParameters.Click += new System.EventHandler(this.menuParameters_Click);
             // 
             // menuPackage
@@ -1675,10 +1717,9 @@ namespace BeatificaBytes.Synology.Mods
             // menuEdit
             // 
             this.menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuScriptRunner,
-            this.menuDSMcgi,
-            this.menuRouterCgi,
-            this.toolStripSeparator1,
+            this.menuRouterConfig,
+            this.menuRouterScript,
+            this.toolStripMenuItem2,
             this.menuStartScript,
             this.menuStopScript,
             this.menuPostInstall,
@@ -1696,38 +1737,26 @@ namespace BeatificaBytes.Synology.Mods
             this.menuEdit.Size = new System.Drawing.Size(39, 20);
             this.menuEdit.Text = "Edit";
             // 
-            // menuScriptRunner
+            // menuRouterConfig
             // 
-            this.menuScriptRunner.Name = "menuScriptRunner";
-            this.menuScriptRunner.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            this.menuScriptRunner.Size = new System.Drawing.Size(200, 22);
-            this.menuScriptRunner.Text = "Default Runner";
-            this.menuScriptRunner.ToolTipText = "Edit the default Runner. This is the script used to execute your own scripts and " +
-    "displayed its output in realtime.";
-            this.menuScriptRunner.Click += new System.EventHandler(this.menuScriptRunner_Click);
+            this.menuRouterConfig.Name = "menuRouterConfig";
+            this.menuRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
+            this.menuRouterConfig.Size = new System.Drawing.Size(200, 22);
+            this.menuRouterConfig.Text = "Router Config";
+            this.menuRouterConfig.Click += new System.EventHandler(this.menuRouterConfig_Click);
             // 
-            // menuDSMcgi
+            // menuRouterScript
             // 
-            this.menuDSMcgi.Name = "menuDSMcgi";
-            this.menuDSMcgi.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
-            this.menuDSMcgi.Size = new System.Drawing.Size(200, 22);
-            this.menuDSMcgi.Text = "Router Config";
-            this.menuDSMcgi.ToolTipText = "View the \"Router\" Config.";
-            this.menuDSMcgi.Click += new System.EventHandler(this.menuDSMcgi_Click);
+            this.menuRouterScript.Name = "menuRouterScript";
+            this.menuRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
+            this.menuRouterScript.Size = new System.Drawing.Size(200, 22);
+            this.menuRouterScript.Text = "Router Script";
+            this.menuRouterScript.Click += new System.EventHandler(this.menuRouterScript_Click);
             // 
-            // menuRouterCgi
+            // toolStripMenuItem2
             // 
-            this.menuRouterCgi.Name = "menuRouterCgi";
-            this.menuRouterCgi.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
-            this.menuRouterCgi.Size = new System.Drawing.Size(200, 22);
-            this.menuRouterCgi.Text = "Router Script";
-            this.menuRouterCgi.ToolTipText = "View the \"Router\" Script.";
-            this.menuRouterCgi.Click += new System.EventHandler(this.menuRouterCgi_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(197, 6);
             // 
             // menuStartScript
             // 
@@ -2036,7 +2065,7 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuPackage;
         private System.Windows.Forms.ToolStripMenuItem menuResetPackage;
         private System.Windows.Forms.ToolStripMenuItem menuBuildPackage;
-        private System.Windows.Forms.ToolStripMenuItem menuScriptRunner;
+        private System.Windows.Forms.ToolStripMenuItem menuDefaultRunner;
         private System.Windows.Forms.ToolStripMenuItem menuStartScript;
         private System.Windows.Forms.ToolStripMenuItem menuStopScript;
         private System.Windows.Forms.ToolStripMenuItem menuPostInstall;
@@ -2051,7 +2080,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuWizardInstallUI;
         private System.Windows.Forms.ToolStripMenuItem menuWizardUninstallUI;
         private System.Windows.Forms.ToolStripMenuItem menuWizardUpgradeUI;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.GroupBox groupBoxTip;
         private System.Windows.Forms.Label labelToolTip;
@@ -2113,7 +2141,11 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem menuLicense;
         private System.Windows.Forms.Label labelAddResources;
-        private System.Windows.Forms.ToolStripMenuItem menuDSMcgi;
-        private System.Windows.Forms.ToolStripMenuItem menuRouterCgi;
+        private System.Windows.Forms.ToolStripMenuItem menuDefaultRouterConfig;
+        private System.Windows.Forms.ToolStripMenuItem menuDefaultRouterScript;
+        private System.Windows.Forms.ToolStripMenuItem menuConfig;
+        private System.Windows.Forms.ToolStripMenuItem menuRouterConfig;
+        private System.Windows.Forms.ToolStripMenuItem menuRouterScript;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     }
 }

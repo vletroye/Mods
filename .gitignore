@@ -10,3 +10,6 @@ bin
 obj
 packages
 /.vs/Mods/v15/Server/sqlite3
+/Installer/Installer/Express/SingleImage/DiskImages/DISK1
+/Installer/Installer/Express/SingleImage/LogFiles
+/Installer/Installer/Express/SingleImage/Reports

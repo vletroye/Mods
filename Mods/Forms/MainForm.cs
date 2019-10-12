@@ -2045,6 +2045,16 @@ namespace BeatificaBytes.Synology.Mods
                         break;
                 }
                 textBoxUrl.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)UrlType.Url);
+
+                if (info.ContainsKey("dsmuidir"))
+                {
+                    var file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                    if (File.Exists(file))
+                    {
+                        menuRouterScript.Enabled = File.Exists(file.Replace("config", "router.cgi"));
+                        menuRouterConfig.Enabled = File.Exists(file.Replace("config", "dsm.cgi.conf"));
+                    }
+                }
             }
 
             if (wizardExist)
@@ -3717,20 +3727,6 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void menuScriptRunner_Click(object sender, EventArgs e)
-        {
-            var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
-
-            var content = File.ReadAllText(defaultRunnerPath);
-            var runner = new ScriptInfo(content, "Default Runner", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
-            DialogResult result = Helper.ScriptEditor(null, runner, null);
-            if (result == DialogResult.OK)
-            {
-                File.WriteAllText(defaultRunnerPath, runner.Code);
-                menuScriptRunner.Image = new Bitmap(Properties.Resources.EditedScript);
-            }
-        }
-
         private void scriptEditMenuItem_Click(object sender, EventArgs e)
         {
             var menu = (ToolStripMenuItem)sender;
@@ -4961,33 +4957,96 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void menuDSMcgi_Click(object sender, EventArgs e)
+        private void menuDefaultRunner_Click(object sender, EventArgs e)
         {
-            var RouterConfig = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+            var file = Path.Combine(Helper.ResourcesDirectory, "default.runner");
 
-            var content = File.ReadAllText(RouterConfig);
-            var routerConfig = new ScriptInfo(content, "Router Config", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "Redirect all calls to a CGI Router");
+            var content = File.ReadAllText(file);
+            var runner = new ScriptInfo(content, "Default Runner", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
+            DialogResult result = Helper.ScriptEditor(null, runner, null);
+            if (result == DialogResult.OK)
+            {
+                File.WriteAllText(file, runner.Code);
+                menuDefaultRunner.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+
+        private void menuDefaultRouterConfig_Click(object sender, EventArgs e)
+        {
+            var file = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+
+            var content = File.ReadAllText(file);
+            var routerConfig = new ScriptInfo(content, "Default Router Config", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "Redirect all calls to a CGI Router");
             DialogResult result = Helper.ScriptEditor(null, routerConfig, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(RouterConfig, routerConfig.Code);
-                menuDSMcgi.Image = new Bitmap(Properties.Resources.EditedScript);
+                File.WriteAllText(file, routerConfig.Code);
+                menuDefaultRouterConfig.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
 
-        private void menuRouterCgi_Click(object sender, EventArgs e)
+        private void menuDefaultRouterScript_Click(object sender, EventArgs e)
         {
-            var RouterScript = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
+            var file = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
 
-            var content = File.ReadAllText(RouterScript);
-            var routercgi = new ScriptInfo(content, "Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
+            var content = File.ReadAllText(file);
+            var routercgi = new ScriptInfo(content, "Default Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
             DialogResult result = Helper.ScriptEditor(null, routercgi, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(RouterScript, routercgi.Code);
-                menuRouterCgi.Image = new Bitmap(Properties.Resources.EditedScript);
+                File.WriteAllText(file, routercgi.Code);
+                menuDefaultRouterScript.Image = new Bitmap(Properties.Resources.EditedScript);
+            }
+        }
+        
+        private void menuRouterConfig_Click(object sender, EventArgs e)
+        {
+            string file = null;
+            if (info != null && info.ContainsKey("dsmuidir"))
+            {
+                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                if (File.Exists(file))
+                {
+                    file = file.Replace("config", "dsm.cgi.conf");
+
+                    if (File.Exists(file))
+                    {
+                        var content = File.ReadAllText(file);
+                        var routerConfig = new ScriptInfo(content, "Router Config", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "Redirect all calls to a CGI Router");
+                        DialogResult result = Helper.ScriptEditor(null, routerConfig, null);
+                        if (result == DialogResult.OK)
+                        {
+                            File.WriteAllText(file, routerConfig.Code);
+                            menuRouterConfig.Image = new Bitmap(Properties.Resources.EditedScript);
+                        }
+                    }
+                }
             }
         }
 
+        private void menuRouterScript_Click(object sender, EventArgs e)
+        {
+            string file = null;
+            if (info != null && info.ContainsKey("dsmuidir"))
+            {
+                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                if (File.Exists(file))
+                {
+                    file = file.Replace("config", "router.cgi");
+
+                    if (File.Exists(file))
+                    {
+                        var content = File.ReadAllText(file);
+                        var routercgi = new ScriptInfo(content, "Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
+                        DialogResult result = Helper.ScriptEditor(null, routercgi, null);
+                        if (result == DialogResult.OK)
+                        {
+                            File.WriteAllText(file, routercgi.Code);
+                            menuRouterScript.Image = new Bitmap(Properties.Resources.EditedScript);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
