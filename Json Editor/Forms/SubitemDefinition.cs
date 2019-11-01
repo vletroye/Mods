@@ -250,6 +250,10 @@ namespace ZTn.Json.Editor.Forms
             subitemMaxLength = textBoxMaxLength.Text;
             subitemvType = comboBoxType.Text;
             subitemRegex = textBoxRegEx.Text;
+            if (!subitemRegex.StartsWith("/")) subitemRegex = "/" + subitemRegex;
+            if (!subitemRegex.Substring(subitemRegex.Length-2).StartsWith("/") && 
+                !subitemRegex.EndsWith("/")) subitemRegex = subitemRegex + "/";
+            textBoxRegEx.Text = subitemRegex;
             subitemFn = textBoxFn.Text;
             subitemFn = subitemFn.Replace("\r\n", "").Replace("\r", "").Replace("\n", "");
             if (!string.IsNullOrEmpty(subitemFn) && !(subitemFn.StartsWith("{") || subitemFn.EndsWith("}")))

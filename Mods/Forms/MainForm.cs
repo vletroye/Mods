@@ -558,7 +558,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
             }
 
             LoadPackageConfig(path);
@@ -606,7 +606,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
             }
 
             return value;
@@ -1086,13 +1086,13 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     else
                     {
-                        MessageBoxEx.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBoxEx.Show(this, "The changes couldn't be saved", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                     }
                 }
             }
             else
             {
-                MessageBoxEx.Show(this, "The changes may not be saved as long as you don't fix all issues.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBoxEx.Show(this, "The changes may not be saved as long as you don't fix all issues.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1619,7 +1619,7 @@ namespace BeatificaBytes.Synology.Mods
 
                     if (!webAppIndex.StartsWith(webAppFolder))
                     {
-                        MessageBoxEx.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                         webAppFolder = null;
                         webAppIndex = null;
                         comboBoxItemType.SelectedIndex = (int)UrlType.Url;
@@ -1704,14 +1704,14 @@ namespace BeatificaBytes.Synology.Mods
                                 if (!File.Exists(targetRouterConfig))
                                     File.Copy(RouterConfig, targetRouterConfig);
                                 else
-                                    MessageBoxEx.Show(this, "A file dsm.cgi.conf already exist. ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBoxEx.Show(this, "A file dsm.cgi.conf already exist. ", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
 
                                 var RouterScript = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
                                 var targetRouterScript = Path.Combine(targetWebAppFolder, "router.cgi");
                                 if (!File.Exists(targetRouterScript))
                                     File.Copy(RouterScript, targetRouterScript);
                                 else
-                                    MessageBoxEx.Show(this, "A file router.cgi already exist. ", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBoxEx.Show(this, "A file router.cgi already exist. ", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
 
                                 var editScript = MessageBoxEx.Show(this, "You must now edit the Post installation script. The code to be added is now in the clipboard. Simply paste it at the appropriate location!", "Information", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                                 if (editScript == DialogResult.OK)
@@ -1762,12 +1762,12 @@ namespace BeatificaBytes.Synology.Mods
             var succeed = true;
             if (Directory.GetDirectories(folder).Contains(Path.Combine(folder, "images")))
             {
-                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a folder named 'images'!", folder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a folder named 'images'!", folder), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 succeed = false;
             }
             else if (Directory.GetFiles(folder).Contains(Path.Combine(folder, "config")))
             {
-                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a file named 'config'!", folder), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBoxEx.Show(this, string.Format("You may not use '{0}' for a single app because it contains a file named 'config'!", folder), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 succeed = false;
             }
             return succeed;
@@ -1853,7 +1853,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 }
             }
         }
@@ -1984,7 +1984,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (item.Value.itemType != -1 && !Enum.IsDefined(typeof(UrlType), item.Value.itemType))
                 {
-                    MessageBoxEx.Show(this, "The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, "The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                     item.Value.itemType = (int)UrlType.Script;
                 }
                 if (item.Value.itemType == -1)
@@ -2399,7 +2399,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!File.Exists(picture))
             {
-                MessageBoxEx.Show(this, string.Format("Picture '{0}' is missing and can therefore not be loaded ?!", picture), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, string.Format("Picture '{0}' is missing and can therefore not be loaded ?!", picture), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
             }
             else
             {
@@ -3113,7 +3113,7 @@ namespace BeatificaBytes.Synology.Mods
                     try
                     {
                         if (string.IsNullOrEmpty(resetPackage))
-                            MessageBoxEx.Show(this, "The path of the Package is not defined. Create a new package instead.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBoxEx.Show(this, "The path of the Package is not defined. Create a new package instead.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                         else
                         {
                             if (Directory.Exists(resetPackage))
@@ -3124,7 +3124,7 @@ namespace BeatificaBytes.Synology.Mods
                                 var ex = Helper.DeleteDirectory(resetPackage);
                                 if (ex != null)
                                 {
-                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", CurrentPackageFolder, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", CurrentPackageFolder, ex.Message), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                                     succeed = false;
                                 }
                             }
@@ -3139,13 +3139,13 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     catch
                     {
-                        MessageBoxEx.Show(this, "The destination folder cannot be cleaned. The package file is possibly in use?!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "The destination folder cannot be cleaned. The package file is possibly in use?!", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
                 }
             }
             else
             {
-                MessageBoxEx.Show(this, "There is no Package loaded.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBoxEx.Show(this, "There is no Package loaded.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
             }
 
             textBoxDisplay.Focus();
@@ -3166,7 +3166,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!string.IsNullOrEmpty(CurrentPackageFolder))
             {
-                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before creating or opening a new one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before creating or opening a new one.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
             }
             else
             {
@@ -3203,7 +3203,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else if (ready == DialogResult.Abort)
                 {
-                    MessageBoxEx.Show(this, "This folder can't be used.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, "This folder can't be used.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 }
                 if (ready == DialogResult.No)
                 {
@@ -3255,13 +3255,22 @@ namespace BeatificaBytes.Synology.Mods
                     var tmpName = Path.Combine(path, "mods.spk");
                     if (pack.ExitCode == 2 || !File.Exists(tmpName))
                     {
-                        MessageBoxEx.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
-                    File.Move(tmpName, packName);
+
+                    try
+                    {
+                        File.Move(tmpName, packName);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBoxEx.Show(this, "Creation of the package has failed: " + ex.Message, "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                        Helper.DeleteFile(tmpName);
+                    }
                 }
                 else
                 {
-                    MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 }
             }
         }
@@ -3273,7 +3282,7 @@ namespace BeatificaBytes.Synology.Mods
             try
             {
                 publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
-                MessageBoxEx.Show(this, "The package has been successfuly published.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "The package has been successfuly published.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -3338,7 +3347,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!string.IsNullOrEmpty(CurrentPackageFolder))
             {
-                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before opening another one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before opening another one.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 succeed = false;
             }
             else
@@ -3363,7 +3372,7 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (ready == DialogResult.Abort)
                 {
-                    MessageBoxEx.Show(this, "The Folder does not contain any valid package.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, "The Folder does not contain any valid package.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                     ready = DialogResult.Abort;
                     succeed = false;
                 }
@@ -3660,7 +3669,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (unpack.ExitCode == 2)
                     {
                         result = false;
-                        MessageBoxEx.Show(this, "Extraction of the package has failed. Possibly try to run Unpack.cmd as Administrator in your package folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "Extraction of the package has failed. Possibly try to run Unpack.cmd as Administrator in your package folder.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
 
                     //As the package has been run as admin, Users don't have full control access
@@ -3669,7 +3678,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                MessageBoxEx.Show(this, "For some reason, required resource files are missing. Your package can't be extracted", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBoxEx.Show(this, "For some reason, required resource files are missing. Your package can't be extracted", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 result = false;
             }
 
@@ -3697,14 +3706,14 @@ namespace BeatificaBytes.Synology.Mods
         private void menuSave_Click(object sender, EventArgs e)
         {
             if (!dirty && !CheckChanges(null))
-                MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
 
             // Do not prompt the user to save changes and just do it! 
             var saved = SavePackage(CurrentPackageFolder, true);
 
             // Some Changes have been saved.
             if (saved == DialogResult.Yes)
-                MessageBoxEx.Show(this, "Package saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "Package saved.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
         }
 
         private void MenuItemOpenRecent_ClickHandler(object sender, EventArgs e)
@@ -3792,7 +3801,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 Directory.CreateDirectory(wizard);
-                MessageBoxEx.Show(this, "You can now Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "You can now Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 wizardExist = true;
             }
             EnableItemDetails();
@@ -3858,7 +3867,7 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        MessageBoxEx.Show(this, "You may not open this file due to security restriction. Try to run this app as Administrator or grant 'Modify' on this file to the group USERS.", "Security Issue", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "You may not open this file due to security restriction. Try to run this app as Administrator or grant 'Modify' on this file to the group USERS.", "Security Issue", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -4035,7 +4044,7 @@ namespace BeatificaBytes.Synology.Mods
                 var ex = Helper.DeleteDirectory(path);
                 if (ex != null)
                 {
-                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to delete {0}: {1}", path, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to delete {0}: {1}", path, ex.Message), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                 }
             }
         }
@@ -4308,7 +4317,7 @@ namespace BeatificaBytes.Synology.Mods
                                     }
                                     catch (Exception ex)
                                     {
-                                        MessageBoxEx.Show(this, string.Format("An error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                        MessageBoxEx.Show(this, string.Format("An error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                                     }
                                 }
                                 else
@@ -4358,7 +4367,7 @@ namespace BeatificaBytes.Synology.Mods
             var type = item.Value.itemType;
             if (type == 0)
             {
-                MessageBoxEx.Show(this, string.Format("You may not tansform the url '{0}' into a single app!", title), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBoxEx.Show(this, string.Format("You may not tansform the url '{0}' into a single app!", title), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 succeed = false;
             }
             else
@@ -4398,7 +4407,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         catch (Exception ex)
                         {
-                            MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", sourceWebAppFolder, targetWebAppFolder, ex.Message), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                             succeed = false;
                         }
                     }
@@ -4520,7 +4529,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", CurrentPackageFolder, path, ex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", CurrentPackageFolder, path, ex.Message), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                     succeed = false;
                 }
             }
@@ -4815,7 +4824,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
             warnings.Clear();
-            MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -4874,10 +4883,10 @@ namespace BeatificaBytes.Synology.Mods
                     message.AppendFormat("{0}: {1} => {2}\r\n", item.Item1, item.Item2, item.Item3);
                 }
 
-                MessageBoxEx.Show(this, message.ToString(), "Pending Changes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, message.ToString(), "Pending Changes", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             }
             else
-                MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
 
         }
 
