@@ -870,7 +870,6 @@ namespace BeatificaBytes.Synology.Mods
         {
             using (new CWaitCursor())
             {
-
                 if (info != null)
                 {
                     // Collect Package Info from controls tagged like PKG...
@@ -4012,7 +4011,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void menuOpenFolder_Click(object sender, EventArgs e)
         {
-            if (!(string.IsNullOrEmpty(CurrentPackageFolder)))
+            if (!(string.IsNullOrEmpty(CurrentPackageFolder)) && Directory.Exists(CurrentPackageFolder))
             {
                 var path = CurrentPackageFolder;
                 if (state == State.Add || state == State.Edit)
@@ -4032,9 +4031,10 @@ namespace BeatificaBytes.Synology.Mods
 
         private void menuDelete_Click(object sender, EventArgs e)
         {
-            var path = CurrentPackageFolder;
-            if (!string.IsNullOrEmpty(path) && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (!string.IsNullOrEmpty(CurrentPackageFolder) && Directory.Exists(CurrentPackageFolder) && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
+                var path = CurrentPackageFolder;
+
                 // Close the current Package without trying to save pending changes. 
                 CloseCurrentPackage(false);
 
@@ -4065,7 +4065,7 @@ namespace BeatificaBytes.Synology.Mods
             warnings.Clear();
 
             DialogResult closed = DialogResult.No;
-            if (info != null) try
+            if (info != null && Directory.Exists(CurrentPackageFolder)) try
                 {
                     // Prompt the user to save changes if required
                     if (trySavingPendingChange) closed = SavePackage(CurrentPackageFolder, forceSavingPendingChange);
@@ -4483,7 +4483,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         var name = info["displayname"];
                         var copies = Directory.GetDirectories(path, name + " (*)");
-                        if (copies.Length > 0)
+                        if (copies.Length > 0 || Directory.Exists(Path.Combine(path, name)))
                         {
                             var higher = 0;
                             foreach (var folder in copies)
@@ -4492,17 +4492,13 @@ namespace BeatificaBytes.Synology.Mods
                                 int count = 0;
                                 int.TryParse(counting, out count);
                                 if (count > higher)
-                                    higher = count;
+                                    higher = count - 1;
                             }
                             do
                             {
                                 higher++;
                                 name = string.Format("{0} ({1})", name, higher);
                             } while (Directory.Exists(Path.Combine(path, name)));
-                        }
-                        else
-                        {
-                            name = string.Format("{0} ({1})", name, 1);
                         }
                         path = Path.Combine(path, name);
                         result = DialogResult.OK;
@@ -4522,10 +4518,19 @@ namespace BeatificaBytes.Synology.Mods
             {
                 try
                 {
-                    Helper.CopyDirectory(CurrentPackageFolder, path);
-                    if (Directory.Exists(path) && !path.Equals(CurrentPackageFolder, StringComparison.InvariantCultureIgnoreCase))
-                        Helper.DeleteDirectory(CurrentPackageFolder);
-                    succeed = OpenExistingPackage(path);
+                    var source = CurrentPackageFolder;
+                    if (CloseCurrentPackage(true) == DialogResult.Yes)
+                    {
+                        Helper.CopyDirectory(source, path);
+                        if (Directory.Exists(path) && !path.Equals(source, StringComparison.InvariantCultureIgnoreCase))
+                            succeed = Helper.DeleteDirectory(source) == null;
+                        else
+                            succeed = path.Equals(source, StringComparison.InvariantCultureIgnoreCase);
+                    }
+                    else
+                        succeed = false;
+
+                    if (succeed) succeed = OpenExistingPackage(path);
                 }
                 catch (Exception ex)
                 {
@@ -5007,7 +5012,7 @@ namespace BeatificaBytes.Synology.Mods
                 menuDefaultRouterScript.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
-        
+
         private void menuRouterConfig_Click(object sender, EventArgs e)
         {
             string file = null;

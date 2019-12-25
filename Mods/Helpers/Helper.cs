@@ -647,7 +647,6 @@ namespace BeatificaBytes.Synology.Mods
             {
                 using (new CWaitCursor())
                 {
-
                     strDestination += "\\";
                     strSource += "\\";
                     if (strDestination.StartsWith(strSource))

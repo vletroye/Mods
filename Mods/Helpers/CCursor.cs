@@ -22,6 +22,7 @@ namespace BeatificaBytes.Synology.Mods
                 display.ForeColor = Color.Red;
             }
             Cursor.Current = newCursor;
+            Application.DoEvents();
         }
 
         public void Dispose()
