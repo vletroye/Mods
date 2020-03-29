@@ -419,7 +419,8 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             if (webapp.StartsWith(info["package"]))
                             {
-                                webapp = webapp.Remove(0, info["package"].Length + 1);
+                                if (webapp.Length > info["package"].Length)
+                                    webapp = webapp.Remove(0, info["package"].Length + 1);
                                 webapp = Path.Combine(Path.GetDirectoryName(config), webapp);
                             }
                             if (!File.Exists(webapp))
