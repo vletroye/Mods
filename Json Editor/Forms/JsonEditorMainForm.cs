@@ -503,7 +503,7 @@ namespace ZTn.Json.Editor.Forms
 
         private void wizardDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var info = new ProcessStartInfo("https://originhelp.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html");
+            var info = new ProcessStartInfo("https://help.synology.com/developer-guide/synology_package/WIZARD_UIFILES.html");
             info.UseShellExecute = true;
             Process.Start(info);
         }

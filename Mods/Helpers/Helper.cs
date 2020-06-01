@@ -1045,5 +1045,49 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
         }
+
+        public static Stream GetStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
+
+        public static bool CheckDSMVersionMin(SortedDictionary<string, string> info, int minMajor, int minMinor, int minBuild)
+        {
+            int major, minor, build;
+            GetFirmwareMajorMinor(info, out major, out minor, out build);
+
+            return (major > minMajor || (major == minMajor && minor > minMinor) || (major == minMajor && minor == minMinor && build >= minBuild));
+        }
+
+        private static void GetFirmwareMajorMinor(SortedDictionary<string, string> info, out int major, out int minor, out int build)
+        {
+            string firmware = "2.0";
+            if (info.ContainsKey("os_min_ver"))
+                firmware = info["os_min_ver"];
+            else
+            if (info.ContainsKey("firmware"))
+                firmware = info["firmware"];
+
+            if (!getFirmwareVersion.IsMatch(firmware))
+                firmware = "2.0";
+            var match = getFirmwareVersion.Match(firmware);
+
+            major = int.Parse(match.Groups[1].Value);
+            minor = int.Parse(match.Groups[2].Value);
+            build = int.Parse(match.Groups[4].Value);
+        }
+
+        public static bool CheckDSMVersionMax(SortedDictionary<string, string> info, int maxMajor, int maxMinor, int maxBuild)
+        {
+            int major, minor, build;
+            GetFirmwareMajorMinor(info, out major, out minor, out build);
+
+            return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
+        }
     }
 }

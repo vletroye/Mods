@@ -84,6 +84,10 @@
       <HintPath>..\packages\BouncyCastle.Crypto.dll.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
+      <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.2.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
       <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.2.1\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
       <Private>True</Private>
@@ -114,11 +118,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\VarInfo.cs" />
     <Compile Include="Forms\FindReplace.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Synology.cs" />
+    <Compile Include="Workers\PortConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Workers\PortConfig.Designer.cs">
+      <DependentUpon>PortConfig.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Forms\FindReplace.resx">
       <DependentUpon>FindReplace.cs</DependentUpon>
@@ -195,6 +207,9 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Workers\PortConfig.resx">
+      <DependentUpon>PortConfig.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Resources\Warning.png" />
     <EmbeddedResource Include="Forms\Parameters.resx">
       <DependentUpon>Parameters.cs</DependentUpon>
@@ -299,5 +314,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
