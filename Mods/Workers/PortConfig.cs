@@ -24,6 +24,7 @@ namespace BeatificaBytes.Synology.Mods
         private IniData synoConfig;
         private IniData origSynoConfig;
         private Regex validPorts = new Regex("^(()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))([,:](()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])))*$");
+        private string packageName;
 
         private List<string> fields;
         private Dictionary<string, string> current;
@@ -64,7 +65,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         //public PortConfig(JObject resource, string packageFolder)
-        public PortConfigWorker(JToken portConfig, IniData synoConfig, List<Tuple<string, string>> variables)
+        public PortConfigWorker(JToken portConfig, IniData synoConfig, List<Tuple<string, string>> variables, string packageName)
         {
             InitializeComponent();
 
@@ -78,6 +79,7 @@ namespace BeatificaBytes.Synology.Mods
 
             this.origPortConfig = portConfig == null ? null : portConfig.DeepClone();
             this.origSynoConfig = synoConfig == null ? null : synoConfig.Clone() as IniData;
+            this.packageName = packageName;
             this.variables = variables;
             SetPortConfig(portConfig, synoConfig);
 
@@ -121,7 +123,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (origPortConfig == null)
                 {
-                    SetPortConfig(JObject.Parse("{\"protocol-file\": \"etc/port_config.sc\"}"), null);
+                    SetPortConfig(JObject.Parse(string.Format("{\"protocol-file\": \"etc/{0}.sc\"}", packageName)), null);
                 }
                 else
                 {

@@ -5176,7 +5176,7 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
 
-                var worker = new PortConfigWorker(portConfig, portConfigData, GetAllWizardVariables());
+                var worker = new PortConfigWorker(portConfig, portConfigData, GetAllWizardVariables(), info["package"]);
                 if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
                 {
                     portConfig = worker.PortConfig;
