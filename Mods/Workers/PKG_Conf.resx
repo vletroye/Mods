@@ -117,20 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="EditedScript" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\EditedScript.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="textBoxPackage.ToolTip" xml:space="preserve">
+    <value>A unique session name. It describes a unique dependent/conflicting package. Each session contains information about the requirements of package versions and the restriction of DSM versions.
+It cannot be empty.</value>
   </data>
-  <data name="BackWizard" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\BackWizard.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="textBoxDsmMinVer.ToolTip" xml:space="preserve">
+    <value>Minimum required DSM version. If you have this version or newer of DSM, this dependency will be considered, but it will be ignored in an older DSM.
+The format must be X.Y-Z, with X for DSM major number, Y for DSM minor number and Z for DSM build number.</value>
   </data>
-  <data name="PackagingSyno" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PackagingSyno.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="textBoxDsmMaxVer.ToolTip" xml:space="preserve">
+    <value>Maxium required DSM version. If you have this version or older of DSM, this dependency will be considered, but it will be ignored in a newer DSM.
+The format must be X.Y-Z, with X for DSM major number, Y for DSM minor number and Z for DSM build number.
+</value>
   </data>
-  <data name="warning" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\warning.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Script" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Script.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  <metadata name="Package.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="PkgMinVer.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="PkgMaxVer.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="DsmMinVer.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="DsmMaxver.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>107, 17</value>
+  </metadata>
 </root>

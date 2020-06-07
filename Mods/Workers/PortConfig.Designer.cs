@@ -259,6 +259,7 @@
             // 
             // checkBoxPortConfig
             // 
+            this.checkBoxPortConfig.AutoCheck = false;
             this.checkBoxPortConfig.AutoSize = true;
             this.checkBoxPortConfig.Location = new System.Drawing.Point(12, 12);
             this.checkBoxPortConfig.Name = "checkBoxPortConfig";
@@ -266,7 +267,7 @@
             this.checkBoxPortConfig.TabIndex = 0;
             this.checkBoxPortConfig.Text = "Enable Port Config";
             this.checkBoxPortConfig.UseVisualStyleBackColor = true;
-            this.checkBoxPortConfig.CheckedChanged += new System.EventHandler(this.checkBoxPortConfig_CheckedChanged);
+            this.checkBoxPortConfig.Click += new System.EventHandler(this.checkBoxPortConfig_Click);
             // 
             // panelPortConfig
             // 

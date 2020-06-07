@@ -126,6 +126,12 @@
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Synology.cs" />
+    <Compile Include="Workers\PKG_Conf.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Workers\PKG_Conf.Designer.cs">
+      <DependentUpon>PKG_Conf.cs</DependentUpon>
+    </Compile>
     <Compile Include="Workers\PortConfig.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -207,6 +213,9 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Workers\PKG_Conf.resx">
+      <DependentUpon>PKG_Conf.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Workers\PortConfig.resx">
       <DependentUpon>PortConfig.cs</DependentUpon>
     </EmbeddedResource>
@@ -275,6 +284,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\PackagingSyno.png" />
+    <None Include="Resources\Script.bmp" />
+    <None Include="Resources\Script.png" />
     <Content Include="Resources\Unpack.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

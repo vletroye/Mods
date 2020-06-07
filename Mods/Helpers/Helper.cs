@@ -23,7 +23,13 @@ namespace BeatificaBytes.Synology.Mods
 {
     public static class Helper
     {
-        static Regex getFirmwareVersion = new Regex(@"^(\d+)\.(\d+)(\.[^-]*){0,1}-(\d+)(.*)$", RegexOptions.Compiled);
+        public static Regex getPort = new Regex(@"^:(\d*)/.*$", RegexOptions.Compiled);
+        public static Regex getOldFirmwareVersion = new Regex(@"^\d+.\d+\.\d+$", RegexOptions.Compiled);
+        public static Regex getShortFirmwareVersion = new Regex(@"^\d+\.\d+$", RegexOptions.Compiled);
+        public static Regex getFirmwareVersion = new Regex(@"^(\d+)\.(\d+)(\.[^-]*){0,1}-(\d+)(.*)$", RegexOptions.Compiled); //new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
+
+        public static Regex getOldVersion = new Regex(@"^((\d+\.)*\d+)\.(\d+)$", RegexOptions.Compiled);
+        public static Regex getVersion = new Regex(@"^(\d+\.)*\d+-\d+$", RegexOptions.Compiled);
 
         [DllImport("kernel32.dll")]
         static extern bool CreateSymbolicLink(string lpSymlinkFileName, string lpTargetFileName, SymLinkFlag dwFlags);
@@ -1088,6 +1094,50 @@ namespace BeatificaBytes.Synology.Mods
             GetFirmwareMajorMinor(info, out major, out minor, out build);
 
             return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
+        }
+
+        public static void ValidateFirmware(TextBox sender, CancelEventArgs e, ErrorProvider errorProvider)
+        {
+            if (errorProvider.Tag == null && sender != null)
+            {
+                if (sender.Text != "")
+                {
+                    if (Helper.getOldFirmwareVersion.IsMatch(sender.Text))
+                    {
+                        var parts = sender.Text.Split('.');
+                        sender.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
+                    if (Helper.getShortFirmwareVersion.IsMatch(sender.Text))
+                    {
+                        var parts = sender.Text.Split('.');
+                        sender.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
+                    }
+                    if (!Helper.getFirmwareVersion.IsMatch(sender.Text))
+                    {
+                        e.Cancel = true;
+                        sender.Select(0, sender.Text.Length);
+                        errorProvider.SetError(sender, "The format of a firmware must be like 0.0-0000");
+                    }
+                    else
+                    {
+                        var parts = sender.Text.Split(new char[] { '.', '-' });
+                        if (int.Parse(parts[2]) == 0)
+                            sender.Text = string.Format("{0}.{1}", parts[0], parts[1]);
+                        else
+                            sender.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
+                }
+            }
+        }
+
+        public static string Unquote(string text)
+        {
+            if (text != null)
+            {
+                if (text.StartsWith("\"")) text = text.Substring(1);
+                if (text.EndsWith("\"")) text = text.Substring(0, text.Length - 1);
+            }
+            return text;
         }
     }
 }

@@ -59,7 +59,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxPublisherUrl = new System.Windows.Forms.TextBox();
             this.textBoxHelpUrl = new System.Windows.Forms.TextBox();
             this.TextBoxReportUrl = new System.Windows.Forms.TextBox();
-            this.textBoxFirmware = new System.Windows.Forms.TextBox();
+            this.textBoxMinFirmware = new System.Windows.Forms.TextBox();
             this.buttonAdvanced = new System.Windows.Forms.Button();
             this.checkBoxBeta = new System.Windows.Forms.CheckBox();
             this.comboBoxItemType = new System.Windows.Forms.ComboBox();
@@ -80,11 +80,12 @@ namespace BeatificaBytes.Synology.Mods
             this.checkBoxLegacy = new System.Windows.Forms.CheckBox();
             this.checkBoxSupportCenter = new System.Windows.Forms.CheckBox();
             this.checkBoxRemovable = new System.Windows.Forms.CheckBox();
-            this.textBoxLatestFirmware = new System.Windows.Forms.TextBox();
+            this.textBoxMaxFirmware = new System.Windows.Forms.TextBox();
             this.textBoxAdminPort = new System.Windows.Forms.TextBox();
             this.comboBoxAdminProtocol = new System.Windows.Forms.ComboBox();
             this.textBoxAdminUrl = new System.Windows.Forms.TextBox();
             this.checkBoxAdminUrl = new System.Windows.Forms.CheckBox();
+            this.labelAddResources = new System.Windows.Forms.Label();
             this.pictureBox_256 = new System.Windows.Forms.PictureBox();
             this.pictureBox_128 = new System.Windows.Forms.PictureBox();
             this.pictureBox_96 = new System.Windows.Forms.PictureBox();
@@ -97,7 +98,7 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxWarning = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
-            this.labelAddResources = new System.Windows.Forms.Label();
+            this.checkBoxCheckPort = new System.Windows.Forms.CheckBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -111,12 +112,12 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage = new System.Windows.Forms.GroupBox();
             this.buttonDependencies = new System.Windows.Forms.Button();
             this.textBoxChangeBox = new System.Windows.Forms.TextBox();
-            this.labelLatestFirmware = new System.Windows.Forms.Label();
+            this.labelMaxFirmware = new System.Windows.Forms.Label();
             this.labelSupportUrl = new System.Windows.Forms.Label();
             this.labelHelpUrl = new System.Windows.Forms.Label();
             this.labelReportUrl = new System.Windows.Forms.Label();
             this.labelPublisherUrl = new System.Windows.Forms.Label();
-            this.labelFirmware = new System.Windows.Forms.Label();
+            this.labelMinFirmware = new System.Windows.Forms.Label();
             this.labelPublisher = new System.Windows.Forms.Label();
             this.listViewItems = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -139,6 +140,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuDefaultRouterConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDefaultRouterScript = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuAdvancedEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.menuParameters = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuResetPackage = new System.Windows.Forms.ToolStripMenuItem();
@@ -151,7 +153,6 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPublish = new System.Windows.Forms.ToolStripMenuItem();
             this.menuOpenPackageFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuAdvancedEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.menuManageScreenshots = new System.Windows.Forms.ToolStripMenuItem();
             this.menuReviewPendingChanges = new System.Windows.Forms.ToolStripMenuItem();
             this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
@@ -180,6 +181,9 @@ namespace BeatificaBytes.Synology.Mods
             this.PhpIniToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.portConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.syslogConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.pkgConflictsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDocumentation = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSupport = new System.Windows.Forms.ToolStripMenuItem();
@@ -225,7 +229,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxDescription.Multiline = true;
             this.textBoxDescription.Name = "textBoxDescription";
             this.textBoxDescription.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.textBoxDescription.Size = new System.Drawing.Size(468, 73);
+            this.textBoxDescription.Size = new System.Drawing.Size(468, 56);
             this.textBoxDescription.TabIndex = 8;
             this.textBoxDescription.Tag = "PKGdescription_enu;PKGdescription";
             this.toolTip4Mods.SetToolTip(this.textBoxDescription, "Enter a description of your package.\r\nThis will be displayed in DSM\'s Package Cen" +
@@ -521,9 +525,9 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxHelpUrl
             // 
-            this.textBoxHelpUrl.Location = new System.Drawing.Point(102, 229);
+            this.textBoxHelpUrl.Location = new System.Drawing.Point(102, 212);
             this.textBoxHelpUrl.Name = "textBoxHelpUrl";
-            this.textBoxHelpUrl.Size = new System.Drawing.Size(362, 20);
+            this.textBoxHelpUrl.Size = new System.Drawing.Size(468, 20);
             this.textBoxHelpUrl.TabIndex = 10;
             this.textBoxHelpUrl.Tag = "PKGhelpurl";
             this.toolTip4Mods.SetToolTip(this.textBoxHelpUrl, "Optional: Type here the url of publisher\'s website.\r\nThis url will be accessible " +
@@ -533,9 +537,9 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // TextBoxReportUrl
             // 
-            this.TextBoxReportUrl.Location = new System.Drawing.Point(556, 254);
+            this.TextBoxReportUrl.Location = new System.Drawing.Point(219, 238);
             this.TextBoxReportUrl.Name = "TextBoxReportUrl";
-            this.TextBoxReportUrl.Size = new System.Drawing.Size(254, 20);
+            this.TextBoxReportUrl.Size = new System.Drawing.Size(351, 20);
             this.TextBoxReportUrl.TabIndex = 17;
             this.TextBoxReportUrl.Tag = "PKGreport_url";
             this.toolTip4Mods.SetToolTip(this.TextBoxReportUrl, "Optional: Type here the url of developer\'s website.\r\nThis url will be accessible " +
@@ -544,19 +548,19 @@ namespace BeatificaBytes.Synology.Mods
             this.TextBoxReportUrl.Validating += new System.ComponentModel.CancelEventHandler(this.TextBoxReportUrl_Validating);
             this.TextBoxReportUrl.Validated += new System.EventHandler(this.TextBoxReportUrl_Validated);
             // 
-            // textBoxFirmware
+            // textBoxMinFirmware
             // 
-            this.textBoxFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.textBoxFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.textBoxFirmware.Location = new System.Drawing.Point(709, 124);
-            this.textBoxFirmware.Name = "textBoxFirmware";
-            this.textBoxFirmware.Size = new System.Drawing.Size(100, 20);
-            this.textBoxFirmware.TabIndex = 26;
-            this.textBoxFirmware.Tag = "PKGfirmware;PKGos_min_ver";
-            this.toolTip4Mods.SetToolTip(this.textBoxFirmware, "Earliest version of DSM firmware that is required to run the package.\r\n Value: X." +
+            this.textBoxMinFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxMinFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.textBoxMinFirmware.Location = new System.Drawing.Point(709, 124);
+            this.textBoxMinFirmware.Name = "textBoxMinFirmware";
+            this.textBoxMinFirmware.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMinFirmware.TabIndex = 26;
+            this.textBoxMinFirmware.Tag = "PKGfirmware;PKGos_min_ver";
+            this.toolTip4Mods.SetToolTip(this.textBoxMinFirmware, "Earliest version of DSM firmware that is required to run the package.\r\n Value: X." +
         "Y-Z DSM major number, DSM minor number, DSM build number");
-            this.textBoxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
-            this.textBoxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
+            this.textBoxMinFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
+            this.textBoxMinFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
             // buttonAdvanced
             // 
@@ -576,7 +580,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxBeta.AutoSize = true;
             this.checkBoxBeta.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxBeta.Location = new System.Drawing.Point(484, 230);
+            this.checkBoxBeta.Location = new System.Drawing.Point(29, 241);
             this.checkBoxBeta.Name = "checkBoxBeta";
             this.checkBoxBeta.Size = new System.Drawing.Size(86, 17);
             this.checkBoxBeta.TabIndex = 16;
@@ -606,9 +610,9 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxSupportUrl
             // 
-            this.textBoxSupportUrl.Location = new System.Drawing.Point(102, 203);
+            this.textBoxSupportUrl.Location = new System.Drawing.Point(102, 186);
             this.textBoxSupportUrl.Name = "textBoxSupportUrl";
-            this.textBoxSupportUrl.Size = new System.Drawing.Size(362, 20);
+            this.textBoxSupportUrl.Size = new System.Drawing.Size(468, 20);
             this.textBoxSupportUrl.TabIndex = 9;
             this.textBoxSupportUrl.Tag = "PKGsupport_url";
             this.toolTip4Mods.SetToolTip(this.textBoxSupportUrl, "Optional: Type here the url  to allow users to seek technical support when needed" +
@@ -620,7 +624,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSingleApp.AutoSize = true;
             this.checkBoxSingleApp.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSingleApp.Location = new System.Drawing.Point(729, 229);
+            this.checkBoxSingleApp.Location = new System.Drawing.Point(729, 264);
             this.checkBoxSingleApp.Name = "checkBoxSingleApp";
             this.checkBoxSingleApp.Size = new System.Drawing.Size(80, 17);
             this.checkBoxSingleApp.TabIndex = 29;
@@ -822,7 +826,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxSupportCenter.AutoSize = true;
             this.checkBoxSupportCenter.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxSupportCenter.Location = new System.Drawing.Point(470, 205);
+            this.checkBoxSupportCenter.Location = new System.Drawing.Point(588, 188);
             this.checkBoxSupportCenter.Name = "checkBoxSupportCenter";
             this.checkBoxSupportCenter.Size = new System.Drawing.Size(100, 17);
             this.checkBoxSupportCenter.TabIndex = 15;
@@ -848,24 +852,24 @@ namespace BeatificaBytes.Synology.Mods
         "e Center.");
             this.checkBoxRemovable.UseVisualStyleBackColor = true;
             // 
-            // textBoxLatestFirmware
+            // textBoxMaxFirmware
             // 
-            this.textBoxLatestFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.textBoxLatestFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.textBoxLatestFirmware.Location = new System.Drawing.Point(709, 148);
-            this.textBoxLatestFirmware.Name = "textBoxLatestFirmware";
-            this.textBoxLatestFirmware.Size = new System.Drawing.Size(100, 20);
-            this.textBoxLatestFirmware.TabIndex = 27;
-            this.textBoxLatestFirmware.Tag = "PKGos_max_ver";
-            this.toolTip4Mods.SetToolTip(this.textBoxLatestFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
+            this.textBoxMaxFirmware.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.textBoxMaxFirmware.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.textBoxMaxFirmware.Location = new System.Drawing.Point(709, 148);
+            this.textBoxMaxFirmware.Name = "textBoxMaxFirmware";
+            this.textBoxMaxFirmware.Size = new System.Drawing.Size(100, 20);
+            this.textBoxMaxFirmware.TabIndex = 27;
+            this.textBoxMaxFirmware.Tag = "PKGos_max_ver";
+            this.toolTip4Mods.SetToolTip(this.textBoxMaxFirmware, "Latest version of DSM firmware that is able to run the package.\r\n Value: X.Y-Z DS" +
         "M major number, DSM minor number, DSM build number");
-            this.textBoxLatestFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxLatestFirmware_Validating);
-            this.textBoxLatestFirmware.Validated += new System.EventHandler(this.textBoxLatestFirmware_Validated);
+            this.textBoxMaxFirmware.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxFirmware_Validating);
+            this.textBoxMaxFirmware.Validated += new System.EventHandler(this.textBoxFirmware_Validated);
             // 
             // textBoxAdminPort
             // 
             this.textBoxAdminPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxAdminPort.Location = new System.Drawing.Point(174, 255);
+            this.textBoxAdminPort.Location = new System.Drawing.Point(174, 264);
             this.textBoxAdminPort.MaxLength = 5;
             this.textBoxAdminPort.Name = "textBoxAdminPort";
             this.textBoxAdminPort.Size = new System.Drawing.Size(37, 20);
@@ -881,7 +885,7 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxAdminProtocol.Items.AddRange(new object[] {
             "http",
             "https"});
-            this.comboBoxAdminProtocol.Location = new System.Drawing.Point(121, 255);
+            this.comboBoxAdminProtocol.Location = new System.Drawing.Point(121, 264);
             this.comboBoxAdminProtocol.Name = "comboBoxAdminProtocol";
             this.comboBoxAdminProtocol.Size = new System.Drawing.Size(46, 21);
             this.comboBoxAdminProtocol.TabIndex = 12;
@@ -891,11 +895,10 @@ namespace BeatificaBytes.Synology.Mods
             // 
             // textBoxAdminUrl
             // 
-            this.textBoxAdminUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxAdminUrl.Location = new System.Drawing.Point(219, 255);
+            this.textBoxAdminUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxAdminUrl.Location = new System.Drawing.Point(219, 264);
             this.textBoxAdminUrl.Name = "textBoxAdminUrl";
-            this.textBoxAdminUrl.Size = new System.Drawing.Size(245, 20);
+            this.textBoxAdminUrl.Size = new System.Drawing.Size(266, 20);
             this.textBoxAdminUrl.TabIndex = 14;
             this.textBoxAdminUrl.Tag = "PKGadminurl";
             this.toolTip4Mods.SetToolTip(this.textBoxAdminUrl, resources.GetString("textBoxAdminUrl.ToolTip"));
@@ -905,7 +908,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.checkBoxAdminUrl.AutoSize = true;
             this.checkBoxAdminUrl.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxAdminUrl.Location = new System.Drawing.Point(41, 257);
+            this.checkBoxAdminUrl.Location = new System.Drawing.Point(41, 266);
             this.checkBoxAdminUrl.Name = "checkBoxAdminUrl";
             this.checkBoxAdminUrl.Size = new System.Drawing.Size(74, 17);
             this.checkBoxAdminUrl.TabIndex = 11;
@@ -915,6 +918,21 @@ namespace BeatificaBytes.Synology.Mods
         "n. This option is also enabled if you open a third party package.");
             this.checkBoxAdminUrl.UseVisualStyleBackColor = true;
             this.checkBoxAdminUrl.CheckedChanged += new System.EventHandler(this.checkBoxAdminUrl_CheckedChanged);
+            // 
+            // labelAddResources
+            // 
+            this.labelAddResources.AllowDrop = true;
+            this.labelAddResources.AutoSize = true;
+            this.labelAddResources.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelAddResources.Location = new System.Drawing.Point(311, 220);
+            this.labelAddResources.Name = "labelAddResources";
+            this.labelAddResources.Size = new System.Drawing.Size(128, 15);
+            this.labelAddResources.TabIndex = 30;
+            this.labelAddResources.Text = "Drag&Drop here resources";
+            this.toolTip4Mods.SetToolTip(this.labelAddResources, "Drag&Drop here resources to be added next to your script (Images, scripts, etc..." +
+        "). Or press CTRL-E to open the folder with your script and manage its content.");
+            this.labelAddResources.DragDrop += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragDrop);
+            this.labelAddResources.DragEnter += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragEnter);
             // 
             // pictureBox_256
             // 
@@ -1058,7 +1076,7 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxWarning.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBoxWarning.ErrorImage = null;
             this.pictureBoxWarning.InitialImage = null;
-            this.pictureBoxWarning.Location = new System.Drawing.Point(576, 154);
+            this.pictureBoxWarning.Location = new System.Drawing.Point(765, 206);
             this.pictureBoxWarning.Name = "pictureBoxWarning";
             this.pictureBoxWarning.Size = new System.Drawing.Size(44, 43);
             this.pictureBoxWarning.TabIndex = 81;
@@ -1101,20 +1119,20 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
             this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
             // 
-            // labelAddResources
+            // checkBoxCheckPort
             // 
-            this.labelAddResources.AllowDrop = true;
-            this.labelAddResources.AutoSize = true;
-            this.labelAddResources.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelAddResources.Location = new System.Drawing.Point(311, 220);
-            this.labelAddResources.Name = "labelAddResources";
-            this.labelAddResources.Size = new System.Drawing.Size(128, 15);
-            this.labelAddResources.TabIndex = 30;
-            this.labelAddResources.Text = "Drag&Drop here resources";
-            this.toolTip4Mods.SetToolTip(this.labelAddResources, "Drag&Drop here resources to be added next to your script (Images, scripts, etc..." +
-        "). Or press CTRL-E to open the folder with your script and manage its content.");
-            this.labelAddResources.DragDrop += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragDrop);
-            this.labelAddResources.DragEnter += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragEnter);
+            this.checkBoxCheckPort.AutoSize = true;
+            this.checkBoxCheckPort.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxCheckPort.Location = new System.Drawing.Point(491, 266);
+            this.checkBoxCheckPort.Name = "checkBoxCheckPort";
+            this.checkBoxCheckPort.Size = new System.Drawing.Size(79, 17);
+            this.checkBoxCheckPort.TabIndex = 82;
+            this.checkBoxCheckPort.Tag = "PKGcheckport";
+            this.checkBoxCheckPort.Text = "Check Port";
+            this.toolTip4Mods.SetToolTip(this.checkBoxCheckPort, "Check if there is any conflict between the adminport and the ports which are rese" +
+        "rved or are listening on DSM except web-service ports (e.g. 80, 443) and DSM por" +
+        "ts (e.g. 5000, 5001).");
+            this.checkBoxCheckPort.UseVisualStyleBackColor = true;
             // 
             // openFileDialog4Mods
             // 
@@ -1204,6 +1222,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.groupBoxPackage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPackage.Controls.Add(this.checkBoxCheckPort);
             this.groupBoxPackage.Controls.Add(this.pictureBoxWarning);
             this.groupBoxPackage.Controls.Add(this.buttonDependencies);
             this.groupBoxPackage.Controls.Add(this.textBoxChangeBox);
@@ -1211,10 +1230,10 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Controls.Add(this.textBoxAdminPort);
             this.groupBoxPackage.Controls.Add(this.comboBoxAdminProtocol);
             this.groupBoxPackage.Controls.Add(this.textBoxAdminUrl);
-            this.groupBoxPackage.Controls.Add(this.labelLatestFirmware);
+            this.groupBoxPackage.Controls.Add(this.labelMaxFirmware);
             this.groupBoxPackage.Controls.Add(this.checkBoxRemovable);
             this.groupBoxPackage.Controls.Add(this.checkBoxOfflineInstall);
-            this.groupBoxPackage.Controls.Add(this.textBoxLatestFirmware);
+            this.groupBoxPackage.Controls.Add(this.textBoxMaxFirmware);
             this.groupBoxPackage.Controls.Add(this.checkBoxPrecheck);
             this.groupBoxPackage.Controls.Add(this.checkBoxStartable);
             this.groupBoxPackage.Controls.Add(this.checkBoxSupportCenter);
@@ -1233,10 +1252,10 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxPackage.Controls.Add(this.TextBoxReportUrl);
             this.groupBoxPackage.Controls.Add(this.labelPublisherUrl);
             this.groupBoxPackage.Controls.Add(this.textBoxPublisherUrl);
-            this.groupBoxPackage.Controls.Add(this.labelFirmware);
+            this.groupBoxPackage.Controls.Add(this.labelMinFirmware);
             this.groupBoxPackage.Controls.Add(this.labelPublisher);
             this.groupBoxPackage.Controls.Add(this.textBoxPublisher);
-            this.groupBoxPackage.Controls.Add(this.textBoxFirmware);
+            this.groupBoxPackage.Controls.Add(this.textBoxMinFirmware);
             this.groupBoxPackage.Controls.Add(this.labelDSMAppName);
             this.groupBoxPackage.Controls.Add(this.labelPackageIcons);
             this.groupBoxPackage.Controls.Add(this.textBoxDsmAppName);
@@ -1282,20 +1301,20 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxChangeBox.Tag = "PKGchangelog";
             this.textBoxChangeBox.Visible = false;
             // 
-            // labelLatestFirmware
+            // labelMaxFirmware
             // 
-            this.labelLatestFirmware.AutoSize = true;
-            this.labelLatestFirmware.Location = new System.Drawing.Point(652, 152);
-            this.labelLatestFirmware.Name = "labelLatestFirmware";
-            this.labelLatestFirmware.Size = new System.Drawing.Size(55, 13);
-            this.labelLatestFirmware.TabIndex = 74;
-            this.labelLatestFirmware.Text = "Max Firm.:";
+            this.labelMaxFirmware.AutoSize = true;
+            this.labelMaxFirmware.Location = new System.Drawing.Point(652, 152);
+            this.labelMaxFirmware.Name = "labelMaxFirmware";
+            this.labelMaxFirmware.Size = new System.Drawing.Size(55, 13);
+            this.labelMaxFirmware.TabIndex = 74;
+            this.labelMaxFirmware.Text = "Max Firm.:";
             // 
             // labelSupportUrl
             // 
             this.labelSupportUrl.AutoSize = true;
             this.labelSupportUrl.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelSupportUrl.Location = new System.Drawing.Point(37, 207);
+            this.labelSupportUrl.Location = new System.Drawing.Point(37, 190);
             this.labelSupportUrl.Name = "labelSupportUrl";
             this.labelSupportUrl.Size = new System.Drawing.Size(63, 13);
             this.labelSupportUrl.TabIndex = 66;
@@ -1306,7 +1325,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.labelHelpUrl.AutoSize = true;
             this.labelHelpUrl.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelHelpUrl.Location = new System.Drawing.Point(52, 233);
+            this.labelHelpUrl.Location = new System.Drawing.Point(52, 216);
             this.labelHelpUrl.Name = "labelHelpUrl";
             this.labelHelpUrl.Size = new System.Drawing.Size(48, 13);
             this.labelHelpUrl.TabIndex = 61;
@@ -1317,7 +1336,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.labelReportUrl.AutoSize = true;
             this.labelReportUrl.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.labelReportUrl.Location = new System.Drawing.Point(492, 258);
+            this.labelReportUrl.Location = new System.Drawing.Point(155, 242);
             this.labelReportUrl.Name = "labelReportUrl";
             this.labelReportUrl.Size = new System.Drawing.Size(58, 13);
             this.labelReportUrl.TabIndex = 59;
@@ -1336,14 +1355,14 @@ namespace BeatificaBytes.Synology.Mods
             this.labelPublisherUrl.Text = "Publisher\'s Url:";
             this.labelPublisherUrl.Click += new System.EventHandler(this.labelPublisherUrl_Click);
             // 
-            // labelFirmware
+            // labelMinFirmware
             // 
-            this.labelFirmware.AutoSize = true;
-            this.labelFirmware.Location = new System.Drawing.Point(655, 128);
-            this.labelFirmware.Name = "labelFirmware";
-            this.labelFirmware.Size = new System.Drawing.Size(52, 13);
-            this.labelFirmware.TabIndex = 64;
-            this.labelFirmware.Text = "Min Firm.:";
+            this.labelMinFirmware.AutoSize = true;
+            this.labelMinFirmware.Location = new System.Drawing.Point(655, 128);
+            this.labelMinFirmware.Name = "labelMinFirmware";
+            this.labelMinFirmware.Size = new System.Drawing.Size(52, 13);
+            this.labelMinFirmware.TabIndex = 64;
+            this.labelMinFirmware.Text = "Min Firm.:";
             // 
             // labelPublisher
             // 
@@ -1558,10 +1577,11 @@ namespace BeatificaBytes.Synology.Mods
             this.menuDefaultRouterConfig,
             this.menuDefaultRouterScript,
             this.toolStripSeparator6,
+            this.menuAdvancedEditor,
             this.menuParameters});
             this.menuConfig.Name = "menuConfig";
-            this.menuConfig.Size = new System.Drawing.Size(55, 20);
-            this.menuConfig.Text = "Config";
+            this.menuConfig.Size = new System.Drawing.Size(94, 20);
+            this.menuConfig.Text = "Mods Settings";
             // 
             // menuDefaultRunner
             // 
@@ -1596,6 +1616,15 @@ namespace BeatificaBytes.Synology.Mods
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
             // 
+            // menuAdvancedEditor
+            // 
+            this.menuAdvancedEditor.Name = "menuAdvancedEditor";
+            this.menuAdvancedEditor.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
+            this.menuAdvancedEditor.Size = new System.Drawing.Size(231, 22);
+            this.menuAdvancedEditor.Text = "&Advanced Editor";
+            this.menuAdvancedEditor.ToolTipText = "Show Package\'s advanced parameters.";
+            this.menuAdvancedEditor.Click += new System.EventHandler(this.menuAdvancedEditor_Click);
+            // 
             // menuParameters
             // 
             this.menuParameters.Name = "menuParameters";
@@ -1611,23 +1640,23 @@ namespace BeatificaBytes.Synology.Mods
             this.menuMovePackage,
             this.menuDeletePackage,
             this.menuAddWizard,
-            this.menuChangeLog,
             this.toolStripSeparator3,
             this.menuBuildPackage,
             this.menuPublish,
             this.menuOpenPackageFolder,
             this.toolStripSeparator5,
-            this.menuAdvancedEditor,
             this.menuManageScreenshots,
+            this.menuChangeLog,
             this.menuReviewPendingChanges});
             this.menuPackage.Name = "menuPackage";
-            this.menuPackage.Size = new System.Drawing.Size(63, 20);
-            this.menuPackage.Text = "Package";
+            this.menuPackage.Size = new System.Drawing.Size(62, 20);
+            this.menuPackage.Text = "Manage";
+            this.menuPackage.Click += new System.EventHandler(this.menuPackage_Click);
             // 
             // menuResetPackage
             // 
             this.menuResetPackage.Name = "menuResetPackage";
-            this.menuResetPackage.Size = new System.Drawing.Size(223, 22);
+            this.menuResetPackage.Size = new System.Drawing.Size(205, 22);
             this.menuResetPackage.Text = "&Reset";
             this.menuResetPackage.ToolTipText = "Reset all fields of the currently opened Package.";
             this.menuResetPackage.Click += new System.EventHandler(this.menuReset_Click);
@@ -1635,7 +1664,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuMovePackage
             // 
             this.menuMovePackage.Name = "menuMovePackage";
-            this.menuMovePackage.Size = new System.Drawing.Size(223, 22);
+            this.menuMovePackage.Size = new System.Drawing.Size(205, 22);
             this.menuMovePackage.Text = "&Move";
             this.menuMovePackage.ToolTipText = "Move the currently opened Package into a new folder.";
             this.menuMovePackage.Click += new System.EventHandler(this.menuMove_Click);
@@ -1643,7 +1672,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuDeletePackage
             // 
             this.menuDeletePackage.Name = "menuDeletePackage";
-            this.menuDeletePackage.Size = new System.Drawing.Size(223, 22);
+            this.menuDeletePackage.Size = new System.Drawing.Size(205, 22);
             this.menuDeletePackage.Text = "&Delete";
             this.menuDeletePackage.ToolTipText = "Delete the folder containing the currently opened Package.";
             this.menuDeletePackage.Click += new System.EventHandler(this.menuDelete_Click);
@@ -1651,7 +1680,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuAddWizard
             // 
             this.menuAddWizard.Name = "menuAddWizard";
-            this.menuAddWizard.Size = new System.Drawing.Size(223, 22);
+            this.menuAddWizard.Size = new System.Drawing.Size(205, 22);
             this.menuAddWizard.Text = "Create &Wizard";
             this.menuAddWizard.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
             this.menuAddWizard.Click += new System.EventHandler(this.menuAddWizard_Click);
@@ -1659,20 +1688,21 @@ namespace BeatificaBytes.Synology.Mods
             // menuChangeLog
             // 
             this.menuChangeLog.Name = "menuChangeLog";
-            this.menuChangeLog.Size = new System.Drawing.Size(223, 22);
+            this.menuChangeLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.L)));
+            this.menuChangeLog.Size = new System.Drawing.Size(205, 22);
             this.menuChangeLog.Text = "Edit Change&Log";
             this.menuChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(220, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(202, 6);
             // 
             // menuBuildPackage
             // 
             this.menuBuildPackage.Name = "menuBuildPackage";
             this.menuBuildPackage.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.menuBuildPackage.Size = new System.Drawing.Size(223, 22);
+            this.menuBuildPackage.Size = new System.Drawing.Size(205, 22);
             this.menuBuildPackage.Text = "&Build";
             this.menuBuildPackage.ToolTipText = "Generate the SPK file for the currently opened Package.";
             this.menuBuildPackage.Click += new System.EventHandler(this.menuBuild_Click);
@@ -1681,7 +1711,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPublish.Name = "menuPublish";
             this.menuPublish.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.menuPublish.Size = new System.Drawing.Size(223, 22);
+            this.menuPublish.Size = new System.Drawing.Size(205, 22);
             this.menuPublish.Text = "&Publish";
             this.menuPublish.Click += new System.EventHandler(this.toolStripMenuItemPublish_Click);
             // 
@@ -1689,7 +1719,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuOpenPackageFolder.Name = "menuOpenPackageFolder";
             this.menuOpenPackageFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.menuOpenPackageFolder.Size = new System.Drawing.Size(223, 22);
+            this.menuOpenPackageFolder.Size = new System.Drawing.Size(205, 22);
             this.menuOpenPackageFolder.Text = "&Open Folder";
             this.menuOpenPackageFolder.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
             this.menuOpenPackageFolder.Click += new System.EventHandler(this.menuOpenFolder_Click);
@@ -1697,31 +1727,23 @@ namespace BeatificaBytes.Synology.Mods
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(220, 6);
-            // 
-            // menuAdvancedEditor
-            // 
-            this.menuAdvancedEditor.Name = "menuAdvancedEditor";
-            this.menuAdvancedEditor.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.A)));
-            this.menuAdvancedEditor.Size = new System.Drawing.Size(223, 22);
-            this.menuAdvancedEditor.Text = "&Advanced Editor";
-            this.menuAdvancedEditor.ToolTipText = "Show Package\'s advanced parameters.";
-            this.menuAdvancedEditor.Click += new System.EventHandler(this.menuAdvancedEditor_Click);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(202, 6);
             // 
             // menuManageScreenshots
             // 
             this.menuManageScreenshots.Name = "menuManageScreenshots";
-            this.menuManageScreenshots.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
-            this.menuManageScreenshots.Size = new System.Drawing.Size(223, 22);
-            this.menuManageScreenshots.Text = "Manage &Screenshots";
+            this.menuManageScreenshots.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
+            this.menuManageScreenshots.Size = new System.Drawing.Size(205, 22);
+            this.menuManageScreenshots.Tag = "screen_*.png";
+            this.menuManageScreenshots.Text = "Edit &Screenshots";
             this.menuManageScreenshots.Click += new System.EventHandler(this.menuManageScreenshots_Click);
             // 
             // menuReviewPendingChanges
             // 
             this.menuReviewPendingChanges.Name = "menuReviewPendingChanges";
-            this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.S)));
-            this.menuReviewPendingChanges.Size = new System.Drawing.Size(223, 22);
-            this.menuReviewPendingChanges.Text = "Pending Changes";
+            this.menuReviewPendingChanges.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
+            this.menuReviewPendingChanges.Size = new System.Drawing.Size(205, 22);
+            this.menuReviewPendingChanges.Text = "Pending &Changes";
             this.menuReviewPendingChanges.Click += new System.EventHandler(this.menuReviewPendingChanges_Click);
             // 
             // menuEdit
@@ -1752,6 +1774,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuRouterConfig.Name = "menuRouterConfig";
             this.menuRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
             this.menuRouterConfig.Size = new System.Drawing.Size(200, 22);
+            this.menuRouterConfig.Tag = "package\\{0}\\dsm.cgi.conf";
             this.menuRouterConfig.Text = "Router Config";
             this.menuRouterConfig.Click += new System.EventHandler(this.menuRouterConfig_Click);
             // 
@@ -1760,6 +1783,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuRouterScript.Name = "menuRouterScript";
             this.menuRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
             this.menuRouterScript.Size = new System.Drawing.Size(200, 22);
+            this.menuRouterScript.Tag = "package\\{0}\\router.cgi";
             this.menuRouterScript.Text = "Router Script";
             this.menuRouterScript.Click += new System.EventHandler(this.menuRouterScript_Click);
             // 
@@ -1773,7 +1797,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuStartScript.Name = "menuStartScript";
             this.menuStartScript.ShortcutKeys = System.Windows.Forms.Keys.F1;
             this.menuStartScript.Size = new System.Drawing.Size(200, 22);
-            this.menuStartScript.Tag = "start-stop-status";
+            this.menuStartScript.Tag = "scripts\\start-stop-status";
             this.menuStartScript.Text = "Start-Stop Script";
             this.menuStartScript.ToolTipText = "Edit the script used to start/stop the currently opened Package.";
             this.menuStartScript.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1783,7 +1807,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuStopScript.Name = "menuStopScript";
             this.menuStopScript.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this.menuStopScript.Size = new System.Drawing.Size(200, 22);
-            this.menuStopScript.Tag = "preinst";
+            this.menuStopScript.Tag = "scripts\\preinst";
             this.menuStopScript.Text = "Pre-Install Script";
             this.menuStopScript.ToolTipText = "Edit the script to be run before installing the currently opened Package.";
             this.menuStopScript.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1793,7 +1817,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPostInstall.Name = "menuPostInstall";
             this.menuPostInstall.ShortcutKeys = System.Windows.Forms.Keys.F3;
             this.menuPostInstall.Size = new System.Drawing.Size(200, 22);
-            this.menuPostInstall.Tag = "postinst";
+            this.menuPostInstall.Tag = "scripts\\postinst";
             this.menuPostInstall.Text = "Post-Install Script";
             this.menuPostInstall.ToolTipText = "Edit the script to be run after installing the currently opened Package.";
             this.menuPostInstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1803,7 +1827,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPreUninstall.Name = "menuPreUninstall";
             this.menuPreUninstall.ShortcutKeys = System.Windows.Forms.Keys.F4;
             this.menuPreUninstall.Size = new System.Drawing.Size(200, 22);
-            this.menuPreUninstall.Tag = "preuninst";
+            this.menuPreUninstall.Tag = "scripts\\preuninst";
             this.menuPreUninstall.Text = "Pre-Uninstall Script";
             this.menuPreUninstall.ToolTipText = "Edit the script to be run before uninstalling the currently opened Package.";
             this.menuPreUninstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1813,7 +1837,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPostUninstall.Name = "menuPostUninstall";
             this.menuPostUninstall.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.menuPostUninstall.Size = new System.Drawing.Size(200, 22);
-            this.menuPostUninstall.Tag = "postuninst";
+            this.menuPostUninstall.Tag = "scripts\\postuninst";
             this.menuPostUninstall.Text = "Post-Uninstall Script";
             this.menuPostUninstall.ToolTipText = "Edit the script to be run after uninstalling the currently opened Package.";
             this.menuPostUninstall.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1823,7 +1847,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPreUpgrade.Name = "menuPreUpgrade";
             this.menuPreUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F6;
             this.menuPreUpgrade.Size = new System.Drawing.Size(200, 22);
-            this.menuPreUpgrade.Tag = "preupgrade";
+            this.menuPreUpgrade.Tag = "scripts\\preupgrade";
             this.menuPreUpgrade.Text = "Pre-Upgrade Script";
             this.menuPreUpgrade.ToolTipText = "Edit the script to be run before upgrading the currently opened Package.";
             this.menuPreUpgrade.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1833,7 +1857,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPostUpgrade.Name = "menuPostUpgrade";
             this.menuPostUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F7;
             this.menuPostUpgrade.Size = new System.Drawing.Size(200, 22);
-            this.menuPostUpgrade.Tag = "postupgrade";
+            this.menuPostUpgrade.Tag = "scripts\\postupgrade";
             this.menuPostUpgrade.Text = "Post-Upgrade Script";
             this.menuPostUpgrade.ToolTipText = "Edit the script to be run after upgrading the currently opened Package.";
             this.menuPostUpgrade.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
@@ -1848,7 +1872,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardInstallUI.Name = "menuWizardInstallUI";
             this.menuWizardInstallUI.ShortcutKeys = System.Windows.Forms.Keys.F9;
             this.menuWizardInstallUI.Size = new System.Drawing.Size(200, 22);
-            this.menuWizardInstallUI.Tag = "install_uifile";
+            this.menuWizardInstallUI.Tag = "WIZARD_UIFILES\\install_uifile";
             this.menuWizardInstallUI.Text = "Wizard-Install UI";
             this.menuWizardInstallUI.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
             this.menuWizardInstallUI.Click += new System.EventHandler(this.menuWizard_Click);
@@ -1858,7 +1882,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
             this.menuWizardUninstallUI.ShortcutKeys = System.Windows.Forms.Keys.F10;
             this.menuWizardUninstallUI.Size = new System.Drawing.Size(200, 22);
-            this.menuWizardUninstallUI.Tag = "uninstall_uifile";
+            this.menuWizardUninstallUI.Tag = "WIZARD_UIFILES\\uninstall_uifile";
             this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
             this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
             this.menuWizardUninstallUI.Click += new System.EventHandler(this.menuWizard_Click);
@@ -1868,7 +1892,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardUpgradeUI.Name = "menuWizardUpgradeUI";
             this.menuWizardUpgradeUI.ShortcutKeys = System.Windows.Forms.Keys.F11;
             this.menuWizardUpgradeUI.Size = new System.Drawing.Size(200, 22);
-            this.menuWizardUpgradeUI.Tag = "upgrade_uifile";
+            this.menuWizardUpgradeUI.Tag = "WIZARD_UIFILES\\upgrade_uifile";
             this.menuWizardUpgradeUI.Text = "Wizard-Upgrade UI";
             this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
             this.menuWizardUpgradeUI.Click += new System.EventHandler(this.menuWizard_Click);
@@ -1897,24 +1921,27 @@ namespace BeatificaBytes.Synology.Mods
             this.mariaDBToolStripMenuItem,
             this.PhpIniToolStripMenuItem,
             this.portConfigToolStripMenuItem,
-            this.syslogConfigToolStripMenuItem});
+            this.syslogConfigToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem3,
+            this.pkgConflictsToolStripMenuItem});
             this.menuWorkers.Name = "menuWorkers";
-            this.menuWorkers.Size = new System.Drawing.Size(62, 20);
-            this.menuWorkers.Text = "Workers";
+            this.menuWorkers.Size = new System.Drawing.Size(45, 20);
+            this.menuWorkers.Text = "Conf";
             // 
             // linkerToolStripMenuItem
             // 
             this.linkerToolStripMenuItem.Name = "linkerToolStripMenuItem";
             this.linkerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F1)));
-            this.linkerToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.linkerToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.linkerToolStripMenuItem.Text = "Linker";
             this.linkerToolStripMenuItem.Click += new System.EventHandler(this.linkerToolStripMenuItem_Click);
             // 
-            // appacheToolStripMenuItem
+            // apacheToolStripMenuItem
             // 
-            this.apacheToolStripMenuItem.Name = "appacheToolStripMenuItem";
+            this.apacheToolStripMenuItem.Name = "apacheToolStripMenuItem";
             this.apacheToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F2)));
-            this.apacheToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.apacheToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.apacheToolStripMenuItem.Text = "Apache";
             this.apacheToolStripMenuItem.Click += new System.EventHandler(this.apacheToolStripMenuItem_Click);
             // 
@@ -1922,7 +1949,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.dataShareToolStripMenuItem.Name = "dataShareToolStripMenuItem";
             this.dataShareToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
-            this.dataShareToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.dataShareToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.dataShareToolStripMenuItem.Text = "Data Share";
             this.dataShareToolStripMenuItem.Click += new System.EventHandler(this.dataShareToolStripMenuItem_Click);
             // 
@@ -1930,23 +1957,23 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.indexDBToolStripMenuItem.Name = "indexDBToolStripMenuItem";
             this.indexDBToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F4)));
-            this.indexDBToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.indexDBToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.indexDBToolStripMenuItem.Text = "Index DB";
             this.indexDBToolStripMenuItem.Click += new System.EventHandler(this.indexDBToolStripMenuItem_Click);
             // 
-            // maridDBToolStripMenuItem
+            // mariaDBToolStripMenuItem
             // 
-            this.mariaDBToolStripMenuItem.Name = "maridDBToolStripMenuItem";
+            this.mariaDBToolStripMenuItem.Name = "mariaDBToolStripMenuItem";
             this.mariaDBToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F5)));
-            this.mariaDBToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.mariaDBToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.mariaDBToolStripMenuItem.Text = "Maria DB";
             this.mariaDBToolStripMenuItem.Click += new System.EventHandler(this.mariaDBToolStripMenuItem_Click);
             // 
-            // pHPINIToolStripMenuItem
+            // PhpIniToolStripMenuItem
             // 
-            this.PhpIniToolStripMenuItem.Name = "pHPINIToolStripMenuItem";
+            this.PhpIniToolStripMenuItem.Name = "PhpIniToolStripMenuItem";
             this.PhpIniToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F6)));
-            this.PhpIniToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.PhpIniToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.PhpIniToolStripMenuItem.Text = "PHP INI";
             this.PhpIniToolStripMenuItem.Click += new System.EventHandler(this.pHPINIToolStripMenuItem_Click);
             // 
@@ -1954,7 +1981,8 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.portConfigToolStripMenuItem.Name = "portConfigToolStripMenuItem";
             this.portConfigToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F7)));
-            this.portConfigToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.portConfigToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.portConfigToolStripMenuItem.Tag = "!port-config";
             this.portConfigToolStripMenuItem.Text = "Port Config";
             this.portConfigToolStripMenuItem.Click += new System.EventHandler(this.portConfigToolStripMenuItem_Click);
             // 
@@ -1962,9 +1990,32 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.syslogConfigToolStripMenuItem.Name = "syslogConfigToolStripMenuItem";
             this.syslogConfigToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F8)));
-            this.syslogConfigToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.syslogConfigToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
             this.syslogConfigToolStripMenuItem.Text = "Syslog Config";
             this.syslogConfigToolStripMenuItem.Click += new System.EventHandler(this.syslogConfigToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(219, 6);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F9)));
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(222, 22);
+            this.toolStripMenuItem3.Tag = "conf\\PKG_DEPS";
+            this.toolStripMenuItem3.Text = "Pkg Dependencies";
+            this.toolStripMenuItem3.Click += new System.EventHandler(this.pkgDependenciesToolStripMenu_Click);
+            // 
+            // pkgConflictsToolStripMenuItem
+            // 
+            this.pkgConflictsToolStripMenuItem.Name = "pkgConflictsToolStripMenuItem";
+            this.pkgConflictsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F10)));
+            this.pkgConflictsToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
+            this.pkgConflictsToolStripMenuItem.Tag = "conf\\PKG_CONX";
+            this.pkgConflictsToolStripMenuItem.Text = "Pkg Conflicts";
+            this.pkgConflictsToolStripMenuItem.Click += new System.EventHandler(this.pkgConflictsToolStripMenuItem_Click);
             // 
             // menuHelp
             // 
@@ -2178,8 +2229,8 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.TextBox textBoxHelpUrl;
         private System.Windows.Forms.Label labelReportUrl;
         private System.Windows.Forms.TextBox TextBoxReportUrl;
-        private System.Windows.Forms.Label labelFirmware;
-        private System.Windows.Forms.TextBox textBoxFirmware;
+        private System.Windows.Forms.Label labelMinFirmware;
+        private System.Windows.Forms.TextBox textBoxMinFirmware;
         private System.Windows.Forms.CheckBox checkBoxBeta;
         private System.Windows.Forms.Button buttonAdvanced;
         private System.Windows.Forms.ToolStripMenuItem menuOpenPackageFolder;
@@ -2210,8 +2261,8 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuAdvancedEditor;
         private System.Windows.Forms.CheckBox checkBoxSupportCenter;
         private System.Windows.Forms.CheckBox checkBoxRemovable;
-        private System.Windows.Forms.Label labelLatestFirmware;
-        private System.Windows.Forms.TextBox textBoxLatestFirmware;
+        private System.Windows.Forms.Label labelMaxFirmware;
+        private System.Windows.Forms.TextBox textBoxMaxFirmware;
         private System.Windows.Forms.CheckBox checkBoxAdminUrl;
         private System.Windows.Forms.TextBox textBoxAdminPort;
         private System.Windows.Forms.ComboBox comboBoxAdminProtocol;
@@ -2245,5 +2296,9 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem PhpIniToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem portConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem syslogConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem pkgConflictsToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxCheckPort;
     }
 }

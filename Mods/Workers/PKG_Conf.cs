@@ -14,45 +14,28 @@ using IniParser.Parser;
 
 namespace BeatificaBytes.Synology.Mods
 {
-    public partial class PortConfigWorker : Form
+    public partial class PKG_Conf : Form
     {
-        //private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/resource_acquisition/port_config.html"), "Details about Port Config");
-        private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/integrate_dsm/install_ports.html"), "Details about Port Config");
+        private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/synology_package/conf.html"), "Details about Port Config");
         List<Tuple<string, string>> variables;
-        private JToken portConfig;
-        private JToken origPortConfig;
-        private IniData synoConfig;
-        private IniData origSynoConfig;
-        private Regex validPorts = new Regex("^(()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5]))([,:](()([1-9]|[1-5]?[0-9]{2,4}|6[1-4][0-9]{3}|65[1-4][0-9]{2}|655[1-2][0-9]|6553[1-5])))*$");
-        private string packageName;
+        private IniData pkgConf;
+        private IniData origPkgConf;
+        private string pkgConfName;
 
         private List<string> fields;
         private Dictionary<string, string> current;
         private State state = State.None;
 
-        public JToken PortConfig
+        public IniData PkgConf
         {
             get
             {
-                return portConfig;
+                return pkgConf;
             }
 
             set
             {
-                portConfig = value;
-            }
-        }
-
-        public IniData SynoConfig
-        {
-            get
-            {
-                return synoConfig;
-            }
-
-            set
-            {
-                synoConfig = value;
+                pkgConf = value;
             }
         }
 
@@ -65,23 +48,25 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         //public PortConfig(JObject resource, string packageFolder)
-        public PortConfigWorker(JToken portConfig, IniData synoConfig, List<Tuple<string, string>> variables, string packageName)
+        public PKG_Conf(IniData pkgConf, List<Tuple<string, string>> variables, string pkgConfName, string toolTip)
         {
             InitializeComponent();
 
             fields = new List<string>();
-            fields.Add("service_name");
-            fields.Add("title");
-            fields.Add("desc");
-            fields.Add("port_forward");
-            fields.Add("src.ports");
-            fields.Add("dst.ports");
+            fields.Add("package_name");
+            fields.Add("pkg_min_ver");
+            fields.Add("pkg_max_ver");
+            fields.Add("dsm_min_ver");
+            fields.Add("dsm_max_ver");
 
-            this.origPortConfig = portConfig;
-            this.origSynoConfig = synoConfig;
-            this.packageName = packageName;
+            this.origPkgConf = pkgConf == null ? null : pkgConf.Clone() as IniData;
+            this.pkgConfName = pkgConfName;
+            this.Text = this.Text + " - " + pkgConfName;
+
+            this.toolTip.SetToolTip(this.dataGridViewConfig, toolTip);
+
             this.variables = variables;
-            SetPortConfig(portConfig, synoConfig);
+            SetPkgConfig(pkgConf);
 
             foreach (var control in panelPortConfig.Controls)
             {
@@ -96,25 +81,27 @@ namespace BeatificaBytes.Synology.Mods
                         item.TextChanged += new System.EventHandler(this.OnTextChanged);
                 }
             }
+
+            Helper.LoadDSMReleases(textBoxDsmMinVer);
+            Helper.LoadDSMReleases(textBoxDsmMaxVer);
         }
 
-        private void SetPortConfig(JToken portConfig, IniData synoConfig)
+        private void SetPkgConfig(IniData pkgConf)
         {
-            PortConfig = portConfig == null ? null : portConfig.DeepClone();
-            SynoConfig = synoConfig == null ? null : synoConfig.Clone() as IniData;
+            this.PkgConf = pkgConf;
 
-            checkBoxPortConfig.Checked = portConfig != null;
-            panelPortConfig.Visible = portConfig != null;
-            buttonAdvanced.Enabled = portConfig != null;
+            checkBoxConfig.Checked = pkgConf != null;
+            panelPortConfig.Visible = pkgConf != null;
+            buttonAdvanced.Enabled = pkgConf != null;
 
-            DisplayPortConfig();
+            DisplayPkgConf();
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
-            if (portConfig != null && (SynoConfig == null || SynoConfig.Sections.Count == 0))
+            if (PkgConf != null && PkgConf.Sections.Count == 0)
             {
-                MessageBoxEx.Show(this, "You must add at least one Port Configuration!", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "You must add at least one Package Configuration!", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -188,51 +175,32 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void DisplayPortConfig()
+        private void DisplayPkgConf()
         {
-            if (PortConfig != null)
+            if (PkgConf != null)
             {
                 DataTable dt = new DataTable();
                 var index = 0;
                 foreach (var field in fields)
                 {
                     dt.Columns.Add(field);
-                    dataGridViewPortConfig.Columns[index].DataPropertyName = field;
+                    dataGridViewConfig.Columns[index].DataPropertyName = field;
                     index++;
                 }
-                if (SynoConfig != null)
+                foreach (var section in PkgConf.Sections)
                 {
-                    foreach (var section in SynoConfig.Sections)
-                    {
-                        dt.Rows.Add(
-                            section.SectionName,
-                            Unquote(section.Keys["title"]),
-                            Unquote(section.Keys["desc"]),
-                            section.Keys["port_forward"] == "\"yes\"",
-                            Unquote(section.Keys["src.ports"]),
-                            Unquote(section.Keys["dst.ports"]));
-                    }
-                    dataGridViewPortConfig.DataSource = dt;
-                    dataGridViewPortConfig.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
-
-                    dataGridViewPortConfig.ClearSelection();
+                    dt.Rows.Add(
+                        section.SectionName,
+                        Helper.Unquote(section.Keys["pkg_min_ver"]),
+                        Helper.Unquote(section.Keys["pkg_max_ver"]),
+                        Helper.Unquote(section.Keys["dsm_min_ver"]),
+                        Helper.Unquote(section.Keys["dsm_max_ver"]));
                 }
-                else
-                {
-                    SetCurrent();
-                }
+                dataGridViewConfig.DataSource = dt;
+                dataGridViewConfig.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
 
+                dataGridViewConfig.ClearSelection();
             }
-        }
-
-        private string Unquote(string text)
-        {
-            if (text != null)
-            {
-                if (text.StartsWith("\"")) text = text.Substring(1);
-                if (text.EndsWith("\"")) text = text.Substring(0, text.Length - 1);
-            }
-            return text;
         }
 
         private void dataGridViewPortConfig_SelectionChanged(object sender, EventArgs e)
@@ -242,9 +210,9 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SetCurrent()
         {
-            if (dataGridViewPortConfig.SelectedRows.Count > 0)
+            if (dataGridViewConfig.SelectedRows.Count > 0)
             {
-                var row = dataGridViewPortConfig.SelectedRows[0];
+                var row = dataGridViewConfig.SelectedRows[0];
                 current = new Dictionary<string, string>();
                 var index = 0;
                 foreach (var field in fields)
@@ -256,13 +224,13 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                SetEmptyPortConfig();
+                SetEmptyConfig();
                 state = State.None;
             }
             DisplayPortConfigDetails();
         }
 
-        private void SetEmptyPortConfig()
+        private void SetEmptyConfig()
         {
             current = new Dictionary<string, string>();
             int index = 0;
@@ -291,36 +259,13 @@ namespace BeatificaBytes.Synology.Mods
                     break;
             }
 
-            textBoxService.Text = current["service_name"];
-            textBoxTitle.Text = current["title"];
-            textBoxDescription.Text = current["desc"];
-            checkBoxForward.Checked = current["port_forward"] == "True";
-
-            string protocol;
-            string ports;
-            GetPortProtocol(current["src.ports"], out ports, out protocol);
-            textBoxSrcPorts.Text = ports;
-            comboBoxSrcProtocol.SelectedItem = protocol;
-            GetPortProtocol(current["dst.ports"], out ports, out protocol);
-            textBoxDstPorts.Text = ports;
-            comboBoxDstProtocol.SelectedItem = protocol;
+            textBoxPackage.Text = current["package_name"];
+            textBoxPkgMinVer.Text = current["pkg_min_ver"];
+            textBoxPkgMaxVer.Text = current["pkg_max_ver"];
+            textBoxDsmMinVer.Text = current["dsm_min_ver"];
+            textBoxDsmMaxVer.Text = current["dsm_max_ver"];
 
             EnableFields();
-        }
-
-        private void GetPortProtocol(string data, out string ports, out string protocol)
-        {
-            var parts = (data ?? "").Split('/');
-            if (parts.Length == 2)
-            {
-                protocol = parts[1];
-                ports = parts[0];
-            }
-            else
-            {
-                protocol = "";
-                ports = "";
-            }
         }
 
         private void EnableButtons(bool Add, bool Edit, bool Delete, bool Save, bool Abort, bool Others)
@@ -340,7 +285,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var enabled = state == State.Edit || state == State.Add;
 
-            checkBoxPortConfig.Enabled = (state != State.Add) && (state != State.Edit);
+            checkBoxConfig.Enabled = (state != State.Add) && (state != State.Edit);
 
             if (enabled)
             {
@@ -351,15 +296,12 @@ namespace BeatificaBytes.Synology.Mods
                 this.CancelButton = this.buttonCancel;
             }
 
-            textBoxService.Enabled = enabled;
-            textBoxTitle.Enabled = enabled;
-            textBoxDescription.Enabled = enabled;
-            checkBoxForward.Enabled = enabled;
-            comboBoxSrcProtocol.Enabled = enabled;
-            textBoxSrcPorts.Enabled = enabled;
-            textBoxDescription.Enabled = enabled;
-            comboBoxDstProtocol.Enabled = enabled;
-            textBoxDstPorts.Enabled = enabled;
+            textBoxPackage.Enabled = enabled;
+            textBoxPkgMinVer.Enabled = enabled;
+            textBoxPkgMaxVer.Enabled = enabled;
+            textBoxDsmMinVer.Enabled = enabled;
+            textBoxPkgMaxVer.Enabled = enabled;
+            textBoxDsmMaxVer.Enabled = enabled;
         }
 
         private void OnTextChanged(object sender, EventArgs e)
@@ -391,9 +333,9 @@ namespace BeatificaBytes.Synology.Mods
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             state = State.Add;
-            SetEmptyPortConfig();
+            SetEmptyConfig();
             DisplayPortConfigDetails();
-            textBoxService.Focus();
+            textBoxPackage.Focus();
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
@@ -404,13 +346,13 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            var result = MessageBoxEx.Show(this, string.Format("Do you really want to delete the config {0} ?", current["service_name"]), "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+            var result = MessageBoxEx.Show(this, string.Format("Do you really want to delete the config {0} ?", current["package_name"]), "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
             switch (result)
             {
                 case DialogResult.Yes:
-                    SynoConfig.Sections.RemoveSection(current["service_name"]);
+                    PkgConf.Sections.RemoveSection(current["package_name"]);
                     state = State.None;
-                    DisplayPortConfig();
+                    DisplayPkgConf();
                     break;
                 case DialogResult.No:
                 case DialogResult.Cancel:
@@ -427,15 +369,17 @@ namespace BeatificaBytes.Synology.Mods
                 if (state == State.Edit)
                 {
                     var newSc = new IniData();
-                    foreach (var section in SynoConfig.Sections)
+                    foreach (var section in PkgConf.Sections)
                     {
-                        if (section.SectionName != current["service_name"])
+                        if (section.SectionName != current["package_name"])
                         {
                             newSc.Sections.AddSection(section.SectionName);
                             var newSection = newSc.Sections[section.SectionName];
-                            foreach (var key in SynoConfig.Sections[section.SectionName])
+                            foreach (var key in PkgConf.Sections[section.SectionName])
                             {
-                                newSection.AddKey(key.KeyName, key.Value);
+                                var value = Helper.Unquote(key.Value.Trim());
+                                if (!string.IsNullOrEmpty(value))
+                                    newSection.AddKey(key.KeyName, value);
                             }
                         }
                         else
@@ -443,18 +387,18 @@ namespace BeatificaBytes.Synology.Mods
                             AddNewSection(ref newSc);
                         }
                     }
-                    SynoConfig = newSc;
+                    PkgConf = newSc;
                 }
                 else
                 {
-                    succeed = AddNewSection(ref synoConfig);
+                    succeed = AddNewSection(ref pkgConf);
                 }
             }
 
             if (succeed)
             {
                 state = State.None;
-                DisplayPortConfig();
+                DisplayPkgConf();
                 buttonAdd.Focus();
             }
         }
@@ -462,24 +406,18 @@ namespace BeatificaBytes.Synology.Mods
         private bool AddNewSection(ref IniData newSc)
         {
             if (newSc == null) newSc = new IniData();
-            var succeed = newSc.Sections.AddSection(textBoxService.Text);
+            var succeed = newSc.Sections.AddSection(textBoxPackage.Text);
             if (succeed)
             {
-                var newSection = newSc.Sections[textBoxService.Text];
-                newSection.AddKey("title", string.Format("\"{0}\"", textBoxTitle.Text));
-                newSection.AddKey("desc", string.Format("\"{0}\"", textBoxDescription.Text));
-
-                if (checkBoxForward.Checked)
-                    newSection.AddKey("port_forward", "\"yes\"");
-
-                if (!string.IsNullOrEmpty(textBoxSrcPorts.Text))
-                    newSection.AddKey("src.ports", string.Format("\"{0}/{1}\"", textBoxSrcPorts.Text, comboBoxSrcProtocol.SelectedItem));
-
-                newSection.AddKey("dst.ports", string.Format("\"{0}/{1}\"", textBoxDstPorts.Text, comboBoxDstProtocol.SelectedItem));
+                var newSection = newSc.Sections[textBoxPackage.Text];
+                newSection.AddKey("pkg_min_ver", textBoxPkgMinVer.Text.Trim());
+                newSection.AddKey("pkg_max_ver", textBoxPkgMaxVer.Text.Trim());
+                newSection.AddKey("dsm_min_ver", textBoxDsmMinVer.Text.Trim());
+                newSection.AddKey("dsm_max_ver", textBoxDsmMaxVer.Text.Trim());
             }
             else
             {
-                errorProvider.SetError(textBoxService, string.Format("You may not save this Port Config as another one with the same name '{0}' exists!", textBoxService.Text));
+                errorProvider.SetError(textBoxPackage, string.Format("You may not save this Package Config as another one with the same name '{0}' exists!", textBoxPackage.Text));
             }
 
             return succeed;
@@ -497,7 +435,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 errorProvider.Tag = new object(); ;
                 ResetValidateChildren(this);
-                checkBoxPortConfig.Focus();
+                checkBoxConfig.Focus();
                 errorProvider.Tag = null;
             }
         }
@@ -515,27 +453,27 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void textBoxService_Validated(object sender, EventArgs e)
+        private void textBoxPackage_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(textBoxService, "");
+            errorProvider.SetError(textBoxPackage, "");
         }
 
-        private void textBoxService_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void textBoxPackage_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (errorProvider.Tag == null)
             {
-                if (!CheckEmpty(textBoxService, ref e, ""))
+                if (!CheckEmpty(textBoxPackage, ref e, ""))
                 {
-                    if (SynoConfig != null)
+                    if (PkgConf != null)
                     {
-                        var newService = Helper.CleanUpText(textBoxService.Text);
-                        foreach (var section in SynoConfig.Sections)
+                        var newService = Helper.CleanUpText(textBoxPackage.Text);
+                        foreach (var section in PkgConf.Sections)
                         {
-                            if (section.SectionName == newService && section.SectionName != current["service_name"])
+                            if (section.SectionName == newService && section.SectionName != current["package_name"])
                             {
                                 e.Cancel = true;
-                                textBoxService.Select(0, textBoxService.Text.Length);
-                                errorProvider.SetError(textBoxService, "This Service Name is already used");
+                                textBoxPackage.Select(0, textBoxPackage.Text.Length);
+                                errorProvider.SetError(textBoxPackage, "This Service Name is already used");
                                 break;
                             }
                         }
@@ -557,18 +495,6 @@ namespace BeatificaBytes.Synology.Mods
             return e.Cancel;
         }
 
-        private bool CheckValidPorts(TextBox textBox, ref CancelEventArgs e)
-        {
-            if (textBox.Enabled && !string.IsNullOrEmpty(textBox.Text) && !validPorts.IsMatch(textBox.Text))
-            {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "This field must contain valid ports: 1~65535 separated by ‘,’ and using ‘:’ to represent port range.");
-            }
-
-            return e.Cancel;
-        }
-
         private void CheckDoubleQuotes(TextBox textBox, ref CancelEventArgs e)
         {
             if (textBox.Text.Contains("\""))
@@ -584,66 +510,14 @@ namespace BeatificaBytes.Synology.Mods
                 errorProvider.SetError(textBox, "You may not use CRLF in this textbox.");
             }
         }
-        private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(textBox.Text) && !textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
-            {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "You didn't type a well formed http(s) absolute Url.");
-            }
-        }
-
-        private void textBoxSrcPorts_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxSrcPorts, "");
-        }
-
-        private void textBoxSrcPorts_Validating(object sender, CancelEventArgs e)
-        {
-            if (errorProvider.Tag == null)
-            {
-                if (!string.IsNullOrEmpty(textBoxSrcPorts.Text))
-                {
-                    if (string.IsNullOrEmpty(comboBoxSrcProtocol.SelectedItem as string))
-                        comboBoxSrcProtocol.SelectedItem = "tcp,udp";
-
-                    CheckValidPorts(textBoxSrcPorts, ref e);
-                }
-            }
-        }
-
-        private void textBoxDstPorts_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxDstPorts, "");
-        }
-
-        private void textBoxDstPorts_Validating(object sender, CancelEventArgs e)
-        {
-            if (errorProvider.Tag == null)
-            {
-                if (!CheckEmpty(textBoxDstPorts, ref e, ""))
-                {
-                    if (string.IsNullOrEmpty(comboBoxDstProtocol.SelectedItem as string))
-                        comboBoxDstProtocol.SelectedItem = "tcp,udp";
-
-                    CheckValidPorts(textBoxDstPorts, ref e);
-                }
-            }
-        }
 
         public bool PendingChanges()
         {
-            var pendingChanges = !(origPortConfig == null && (portConfig == null || (synoConfig == null || synoConfig.Sections.Count == 0)));
+            var pendingChanges = !(origPkgConf == null && (pkgConf == null || pkgConf.Sections.Count == 0));
 
             if (pendingChanges)
             {
-                pendingChanges = (origPortConfig == null && portConfig != null) || (origPortConfig != null && (portConfig == null || origPortConfig.ToString() != portConfig.ToString()));
-
-                if (!pendingChanges)
-                {
-                    pendingChanges = (origSynoConfig == null && synoConfig != null) || (origSynoConfig != null && (synoConfig == null || origSynoConfig.ToString() != synoConfig.ToString()));
-                }
+                pendingChanges = (origPkgConf == null && pkgConf != null) || (origPkgConf != null && (pkgConf == null || origPkgConf.ToString() != pkgConf.ToString()));
             }
 
             return pendingChanges;
@@ -651,7 +525,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonAdvanced_Click(object sender, EventArgs e)
         {
-            var script = new ScriptInfo(synoConfig.ToString(), "Port Config", help.Url, "Details about script files");
+            var script = new ScriptInfo(pkgConf.ToString(), "Package Configuration", help.Url, "Details about Package Configuration");
             DialogResult result = Helper.ScriptEditor(script, null, variables);
             if (result == DialogResult.OK)
             {
@@ -666,68 +540,97 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             using (var streamReader = new StreamReader(stream))
                             {
-                                synoConfig = streamParser.ReadData(streamReader);
+                                pkgConf = streamParser.ReadData(streamReader);
                             }
                         }
                     }
                     catch
                     {
-                        MessageBoxEx.Show(this, "This Service Configuration can't be parsed.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                        MessageBoxEx.Show(this, "This Package Configuration can't be parsed.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
                 }
-                DisplayPortConfig();
+                DisplayPkgConf();
             }
         }
 
-        private void textBoxTitle_Validating(object sender, CancelEventArgs e)
+
+        private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (errorProvider.Tag == null)
+            TextBox firmware = sender as TextBox;
+            if (errorProvider.Tag == null && firmware != null)
             {
-                CheckEmpty(textBoxTitle, ref e, "");
-            }
-        }
-
-        private void textBoxTitle_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxTitle, "");
-        }
-
-        private void textBoxDescription_Validating(object sender, CancelEventArgs e)
-        {
-            if (errorProvider.Tag == null)
-            {
-                CheckEmpty(textBoxDescription, ref e, "");
-            }
-        }
-
-        private void textBoxDescription_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxDescription, "");
-        }
-
-        private void checkBoxPortConfig_Click(object sender, EventArgs e)
-        {
-            if (checkBoxPortConfig.Checked && PortConfig != null)
-            {
-                var dialogResult = synoConfig != null || synoConfig.Sections.Count == 0 ? DialogResult.Yes : MessageBoxEx.Show(this, "Do you want really want to delete the Port Config?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
-                if (dialogResult == DialogResult.Yes)
+                //if (!CheckEmpty(textBoxFirmware, ref e, ""))
+                if (!string.IsNullOrEmpty(firmware.Text))
                 {
-                    SetPortConfig(null, null);
-                    checkBoxPortConfig.Checked = false;
+                    if (Helper.getOldFirmwareVersion.IsMatch(firmware.Text))
+                    {
+                        var parts = firmware.Text.Split('.');
+                        firmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
+                    if (Helper.getShortFirmwareVersion.IsMatch(firmware.Text))
+                    {
+                        var parts = firmware.Text.Split('.');
+                        firmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
+                    }
+                    if (!Helper.getFirmwareVersion.IsMatch(firmware.Text))
+                    {
+                        e.Cancel = true;
+                        firmware.Select(0, firmware.Text.Length);
+                        errorProvider.SetError(firmware, "The format of a firmware must be like 0.0-0000");
+                    }
+                    else
+                    {
+                        var parts = firmware.Text.Split(new char[] { '.', '-' });
+                        if (int.Parse(parts[2]) == 0)
+                            firmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
+                        else
+                            firmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+                    }
                 }
             }
-            else if (!checkBoxPortConfig.Checked && PortConfig == null)
+        }
+        private void textBoxFirmware_Validated(object sender, EventArgs e)
+        {
+            TextBox firmware = sender as TextBox;
+            if (firmware != null)
             {
-                if (origPortConfig == null)
+                errorProvider.SetError(firmware, "");
+            }
+        }
+
+        private void checkBoxConfig_Click(object sender, EventArgs e)
+        {
+            if (checkBoxConfig.Checked)
+            {
+                if (PkgConf != null && PkgConf.Sections.Count > 0)
                 {
-                    SetPortConfig(JObject.Parse(string.Format("{\"protocol-file\": \"etc/{0}.sc\"}", packageName)), null);
+                    var dialogResult = origPkgConf == null ? DialogResult.Yes : MessageBoxEx.Show(this, "Do you want really want to delete this Package Configuration?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        SetPkgConfig(null);
+                    }
                 }
                 else
                 {
-                    SetPortConfig(origPortConfig, origSynoConfig);
+                    SetPkgConfig(null);
                 }
-                checkBoxPortConfig.Checked = true;
             }
+            else if (pkgConf == null)
+            {
+                if (origPkgConf == null)
+                {
+                    SetPkgConfig(new IniData());
+                }
+                else
+                {
+                    SetPkgConfig(origPkgConf);
+                }
+            }
+            else
+            {
+                SetPkgConfig(pkgConf);
+            }
+            SetCurrent();
         }
     }
 }

@@ -45,13 +45,6 @@ namespace BeatificaBytes.Synology.Mods
 
         #region Declarations -----------------------------------------------------------------------------------------------------------------------
         const string CONFIGFILE = @"package\{0}\config";
-        static Regex getPort = new Regex(@"^:(\d*)/.*$", RegexOptions.Compiled);
-        static Regex getOldFirmwareVersion = new Regex(@"^\d+.\d+\.\d+$", RegexOptions.Compiled);
-        static Regex getShortFirmwareVersion = new Regex(@"^\d+\.\d+$", RegexOptions.Compiled);
-        static Regex getFirmwareVersion = new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
-
-        static Regex getOldVersion = new Regex(@"^((\d+\.)*\d+)\.(\d+)$", RegexOptions.Compiled);
-        static Regex getVersion = new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
 
         string CurrentPackageRepository = Properties.Settings.Default.PackageRepo;
         string CurrentPackageFolder = null;
@@ -115,8 +108,8 @@ namespace BeatificaBytes.Synology.Mods
             AttachEventsToFields();
 
             // Load AutoComplete for Firmware
-            Helper.LoadDSMReleases(textBoxFirmware);
-            Helper.LoadDSMReleases(textBoxLatestFirmware);
+            Helper.LoadDSMReleases(textBoxMinFirmware);
+            Helper.LoadDSMReleases(textBoxMaxFirmware);
 
             // Prepare to reopen the last package
             string path = Properties.Settings.Default.LastPackage;
@@ -1048,6 +1041,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (info.ContainsKey("adminport")) info.Remove("adminport");
                     if (info.ContainsKey("adminprotocol")) info.Remove("adminprotocol");
                     if (info.ContainsKey("adminurl")) info.Remove("adminurl");
+                    if (info.ContainsKey("checkport")) info.Remove("checkport");
                 }
             }
         }
@@ -1780,7 +1774,7 @@ namespace BeatificaBytes.Synology.Mods
                                     if (info["singleApp"] != "yes" && transformIntoSingleApp != DialogResult.Yes)
                                         script = script.Replace("/ui/dsm.cgi.conf", String.Format("/ui/{0}/dsm.cgi.conf", cleanedCurrent));
                                     Clipboard.SetText(script);
-                                    if (EditInstallationScript("postinst", "Post-Install Script"))
+                                    if (EditInstallationScript("scripts/postinst", "Post-Install Script"))
                                     {
                                         menuPostInstall.Image = new Bitmap(Properties.Resources.EditedScript);
                                     }
@@ -2722,12 +2716,12 @@ namespace BeatificaBytes.Synology.Mods
                 textBoxVersion.Text = textBoxVersion.Text.Replace('_', '-').Replace('b', '.');
                 if (!CheckEmpty(textBoxVersion, ref e, ""))
                 {
-                    var match = getOldVersion.Match(textBoxVersion.Text);
+                    var match = Helper.getOldVersion.Match(textBoxVersion.Text);
                     if (match.Success)
                     {
                         textBoxVersion.Text = string.Format("{0}-{1:D4}", match.Groups[1], int.Parse(match.Groups[3].ToString()));
                     }
-                    if (!getVersion.IsMatch(textBoxVersion.Text))
+                    if (!Helper.getVersion.IsMatch(textBoxVersion.Text))
                     {
                         e.Cancel = true;
                         textBoxVersion.Select(0, textBoxVersion.Text.Length);
@@ -3051,6 +3045,8 @@ namespace BeatificaBytes.Synology.Mods
 
             Properties.Settings.Default.LastPackage = path;
             Properties.Settings.Default.Save();
+
+            menuReviewPendingChanges.Image = null;
         }
 
         private void RemoveRecentPath(string path)
@@ -3083,13 +3079,13 @@ namespace BeatificaBytes.Synology.Mods
 
                         if (info.ContainsKey(key))
                         {
-                            dirty = textBox.Text != info[key];
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], textBox.Text));
+                            dirty = textBox.Text.Trim() != info[key].Trim();
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], textBox.Text.Trim()));
                         }
                         else
                         {
-                            dirty = !string.IsNullOrEmpty(textBox.Text);
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", textBox.Text));
+                            dirty = !string.IsNullOrEmpty(textBox.Text.Trim());
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", textBox.Text.Trim()));
                         }
 
                         if (changes != null) dirty = false;
@@ -3122,13 +3118,13 @@ namespace BeatificaBytes.Synology.Mods
 
                         if (info.ContainsKey(key))
                         {
-                            dirty = comboBox.Text != info[key];
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], comboBox.Text));
+                            dirty = comboBox.Text.Trim() != info[key];
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], comboBox.Text.Trim()));
                         }
                         else
                         {
-                            dirty = !string.IsNullOrEmpty(comboBox.Text);
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", comboBox.Text));
+                            dirty = !string.IsNullOrEmpty(comboBox.Text.Trim());
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, "", comboBox.Text.Trim()));
                         }
 
                         if (changes != null) dirty = false;
@@ -3153,6 +3149,11 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         dirty = !string.IsNullOrEmpty(info["adminprotocol"]);
                         if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminprotocol", info["adminprotocol"], ""));
+                    }
+                    if (info.ContainsKey("checkport"))
+                    {
+                        dirty = !string.IsNullOrEmpty(info["checkport"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("checkport", info["checkport"], ""));
                     }
                 }
             }
@@ -3377,8 +3378,60 @@ namespace BeatificaBytes.Synology.Mods
         {
             foreach (ToolStripItem menu in menuEdit.DropDownItems)
             {
-                menu.Image = null;
+                ShowIconOnScriptMenu(menu);
             }
+
+            foreach (ToolStripItem menu in menuWorkers.DropDownItems)
+            {
+                ShowIconOnScriptMenu(menu);
+            }
+
+            ShowIconOnScriptMenu(menuManageScreenshots);
+            menuChangeLog.Image = null;
+            menuReviewPendingChanges.Image = null;
+        }
+
+        private void ShowIconOnScriptMenu(ToolStripItem menu)
+        {
+            var file = menu.Tag as String;
+            if (!string.IsNullOrEmpty(file))
+            {
+                switch (file)
+                {
+                    case "!port-config":
+                        file = null;
+                        var portConfig = resource == null ? null : resource.SelectToken("port-config");
+                        if (portConfig != null)
+                        {
+                            var protocolFile = portConfig.SelectToken("protocol-file").ToString();
+                            if (protocolFile != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                            {
+                                file = Path.Combine(CurrentPackageFolder, "package", protocolFile.Replace("/", "\\"));
+                            }
+                        }
+                        break;
+                    default:
+                        // {0} => dsmuidir
+                        if (!string.IsNullOrEmpty(CurrentPackageFolder))
+                        {
+                            if (file.Contains("*"))
+                            {
+                                var files = Directory.GetFiles(CurrentPackageFolder, file, SearchOption.TopDirectoryOnly);
+                                if (files.Length > 0) file = files[0]; else file = null;
+                            }
+                            else
+                            {
+                                file = Path.Combine(CurrentPackageFolder, string.Format(file, info["dsmuidir"]));
+                            }
+                        }
+                        break;
+                }
+                if (!string.IsNullOrEmpty(file) && !File.Exists(file) && !File.Exists(file + ".sh")) file = null;
+            }
+            if (!string.IsNullOrEmpty(file))
+                menu.Image = new Bitmap(Properties.Resources.Script);
+            else
+                menu.Image = null;
         }
 
         private void menuOpen_Click(object sender, EventArgs e)
@@ -3470,6 +3523,7 @@ namespace BeatificaBytes.Synology.Mods
                         CopyPackagingBinaries(path);
                         DisplayItem();
                         textBoxDisplay.Focus();
+                        ResetEditScriptMenuIcons();
                     }
                 }
             }
@@ -3618,7 +3672,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (content.Contains(conf))
                     {
                         content.Remove(conf);
-                        PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker is fully supported. Other workers, privilege, PKG_DEPS and PKG_CONX are ot supported.");
+                        PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers and privilege are not supported.");
                     }
 
                     if (content.Count > 0)
@@ -3822,7 +3876,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool EditInstallationScript(string scriptName, string title)
         {
             var done = false;
-            var scriptPath = Path.Combine(CurrentPackageFolder, "scripts", scriptName);
+            var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
 
             if (!File.Exists(scriptPath))
                 MessageBoxEx.Show(this, "This Script cannot be found. Please Reset your Package.");
@@ -3884,8 +3938,8 @@ namespace BeatificaBytes.Synology.Mods
         {
             DialogResult result = DialogResult.Cancel;
             var menu = (ToolStripMenuItem)sender;
-            var json = menu.Tag.ToString();
-            var jsonPath = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES", json);
+            var json = menu.Tag.ToString(); // = "WIZARD_UIFILES/xxxx"
+            var jsonPath = Path.Combine(CurrentPackageFolder, json);
 
             if (!File.Exists(jsonPath))
             {
@@ -3944,45 +3998,6 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
             }
-        }
-
-        private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
-        {
-            if (errorProvider.Tag == null)
-            {
-                //if (!CheckEmpty(textBoxFirmware, ref e, ""))
-                if (!string.IsNullOrEmpty(textBoxFirmware.Text))
-                {
-                    if (getOldFirmwareVersion.IsMatch(textBoxFirmware.Text))
-                    {
-                        var parts = textBoxFirmware.Text.Split('.');
-                        textBoxFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                    }
-                    if (getShortFirmwareVersion.IsMatch(textBoxFirmware.Text))
-                    {
-                        var parts = textBoxFirmware.Text.Split('.');
-                        textBoxFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
-                    }
-                    if (!getFirmwareVersion.IsMatch(textBoxFirmware.Text))
-                    {
-                        e.Cancel = true;
-                        textBoxFirmware.Select(0, textBoxFirmware.Text.Length);
-                        errorProvider.SetError(textBoxFirmware, "The format of a firmware must be like 0.0-0000");
-                    }
-                    else
-                    {
-                        var parts = textBoxFirmware.Text.Split(new char[] { '.', '-' });
-                        if (int.Parse(parts[2]) == 0)
-                            textBoxFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
-                        else
-                            textBoxFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                    }
-                }
-            }
-        }
-        private void textBoxFirmware_Validated(object sender, EventArgs e)
-        {
-            errorProvider.SetError(textBoxFirmware, "");
         }
 
         private void checkBoxBeta_CheckedChanged(object sender, EventArgs e)
@@ -4163,10 +4178,10 @@ namespace BeatificaBytes.Synology.Mods
                         // Rename the parent folder with the package display name (or the package name) if other changes had to be done
                         if (trySavingPendingChange) RenamePackageFolder();
 
-                        CurrentPackageFolder = "";
                         textBoxDisplay.Focus();
                         ResetValidateChildren(this); // Reset Error Validation on all controls
                         ResetEditScriptMenuIcons();
+                        CurrentPackageFolder = "";
 
                         info = null;
                         list = null;
@@ -4182,7 +4197,11 @@ namespace BeatificaBytes.Synology.Mods
                         closed = DialogResult.Yes;
                     }
                 }
-                catch { closed = DialogResult.Abort; }
+                catch (Exception ex)
+                {
+                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to close the current package: {0}", ex.Message), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                    closed = DialogResult.Abort;
+                }
 
             return closed;
         }
@@ -4624,7 +4643,7 @@ namespace BeatificaBytes.Synology.Mods
             { }
             else if (url.StartsWith(":"))
             {
-                var portMatch = getPort.Match(url);
+                var portMatch = Helper.getPort.Match(url);
                 if (portMatch.Success)
                 {
                     var port = portMatch.Groups[1].Value;
@@ -4706,10 +4725,10 @@ namespace BeatificaBytes.Synology.Mods
             labelDSMAppName.Visible = advanced;
             textBoxDsmAppName.Visible = advanced;
 
-            labelLatestFirmware.Visible = advanced;
-            textBoxLatestFirmware.Visible = advanced;
-            labelFirmware.Visible = advanced;
-            textBoxFirmware.Visible = advanced;
+            labelMaxFirmware.Visible = advanced;
+            textBoxMaxFirmware.Visible = advanced;
+            labelMinFirmware.Visible = advanced;
+            textBoxMinFirmware.Visible = advanced;
             checkBoxSingleApp.Visible = advanced;
             //checkBoxBeta.Visible = advanced;
             //TextBoxReportUrl.Visible = advanced && checkBoxBeta.Checked;
@@ -4735,6 +4754,7 @@ namespace BeatificaBytes.Synology.Mods
             textBoxAdminPort.Visible = advanced && checkBoxAdminUrl.Checked;
             textBoxAdminUrl.Visible = advanced && checkBoxAdminUrl.Checked;
             comboBoxAdminProtocol.Visible = advanced && checkBoxAdminUrl.Checked;
+            checkBoxCheckPort.Visible = advanced;
 
             buttonDependencies.Visible = advanced;
         }
@@ -4802,43 +4822,53 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void textBoxLatestFirmware_Validated(object sender, EventArgs e)
+        private void textBoxFirmware_Validated(object sender, EventArgs e)
         {
-            errorProvider.SetError(textBoxLatestFirmware, "");
+            var textBox = sender as TextBox;
+            if (textBox != null)
+            {
+                errorProvider.SetError(textBox, "");
+            }
         }
 
-        private void textBoxLatestFirmware_Validating(object sender, CancelEventArgs e)
+        private void textBoxFirmware_Validating(object sender, CancelEventArgs e)
         {
-            if (errorProvider.Tag == null)
+            var textBox = sender as TextBox;
+            if (textBox != null)
             {
-                if (textBoxLatestFirmware.Text != "")
-                {
-                    if (getOldFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-                    {
-                        var parts = textBoxLatestFirmware.Text.Split('.');
-                        textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                    }
-                    if (getShortFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-                    {
-                        var parts = textBoxLatestFirmware.Text.Split('.');
-                        textBoxLatestFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
-                    }
-                    if (!getFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-                    {
-                        e.Cancel = true;
-                        textBoxLatestFirmware.Select(0, textBoxLatestFirmware.Text.Length);
-                        errorProvider.SetError(textBoxLatestFirmware, "The format of a firmware must be like 0.0-0000");
-                    }
-                    else
-                    {
-                        var parts = textBoxLatestFirmware.Text.Split(new char[] { '.', '-' });
-                        if (int.Parse(parts[2]) == 0)
-                            textBoxLatestFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
-                        else
-                            textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-                    }
-                }
+                Helper.ValidateFirmware(textBox, e, errorProvider);
             }
+
+            //if (errorProvider.Tag == null)
+            //{
+            //    if (textBoxLatestFirmware.Text != "")
+            //    {
+            //        if (Helper.getOldFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+            //        {
+            //            var parts = textBoxLatestFirmware.Text.Split('.');
+            //            textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+            //        }
+            //        if (Helper.getShortFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+            //        {
+            //            var parts = textBoxLatestFirmware.Text.Split('.');
+            //            textBoxLatestFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
+            //        }
+            //        if (!Helper.getFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
+            //        {
+            //            e.Cancel = true;
+            //            textBoxLatestFirmware.Select(0, textBoxLatestFirmware.Text.Length);
+            //            errorProvider.SetError(textBoxLatestFirmware, "The format of a firmware must be like 0.0-0000");
+            //        }
+            //        else
+            //        {
+            //            var parts = textBoxLatestFirmware.Text.Split(new char[] { '.', '-' });
+            //            if (int.Parse(parts[2]) == 0)
+            //                textBoxLatestFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
+            //            else
+            //                textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
+            //        }
+            //    }
+            //}
         }
 
         private void checkBoxAdminUrl_CheckedChanged(object sender, EventArgs e)
@@ -4846,6 +4876,18 @@ namespace BeatificaBytes.Synology.Mods
             comboBoxAdminProtocol.Visible = checkBoxAdminUrl.Checked;
             textBoxAdminPort.Visible = checkBoxAdminUrl.Checked;
             textBoxAdminUrl.Visible = checkBoxAdminUrl.Checked;
+            checkBoxCheckPort.Visible = checkBoxAdminUrl.Checked;
+
+            if (checkBoxAdminUrl.Checked && info != null && !info.ContainsKey("checkport"))
+            {
+                info.Add("checkport", "yes");
+                checkBoxCheckPort.Checked = true;
+            }
+            if (!checkBoxAdminUrl.Checked && info != null && info.ContainsKey("checkport"))
+            {
+                info.Remove("checkport");
+                checkBoxCheckPort.Checked = false;
+            }
         }
 
         private void toolStripMenuItemPublish_Click(object sender, EventArgs e)
@@ -4867,6 +4909,8 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(content, null, null);
             if (result == DialogResult.OK)
             {
+                if (textBoxChangeBox.Text.Trim() != content.Code.Trim())
+                    menuChangeLog.Image = new Bitmap(Properties.Resources.EditedScript);
                 textBoxChangeBox.Text = content.Code;
             }
         }
@@ -4896,8 +4940,8 @@ namespace BeatificaBytes.Synology.Mods
                 CreateRecentsMenu();
 
             // ReLoad AutoComplete for Firmware
-            Helper.LoadDSMReleases(textBoxFirmware);
-            Helper.LoadDSMReleases(textBoxLatestFirmware);
+            Helper.LoadDSMReleases(textBoxMinFirmware);
+            Helper.LoadDSMReleases(textBoxMaxFirmware);
         }
 
         private void pictureBoxWarning_Click(object sender, EventArgs e)
@@ -5330,6 +5374,110 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        private void pkgDependenciesToolStripMenu_Click(object sender, EventArgs e)
+        {
+            EditPackageConfig("DEPS", "Define dependency between packages with restrictions of DSM version. Before your package is installed or upgraded, these packages must be installed first. Package Center controls the order of start or stop packages according to the dependency.");
+        }
 
+
+        private void pkgConflictsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditPackageConfig("CONX", "Define conflicts between packages with restrictions of DSM version. Before your package is installed or upgraded, these conflicting packages cannot be installed.");
+        }
+
+        private void EditPackageConfig(string pkgType, string doc)
+        {
+            UpdatePackageInfo();
+
+            if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
+            {
+                MessageBoxEx.Show(this, "PKG " + pkgType + " is only supported by firmware >= 4.2.3160", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+            }
+            else
+            {
+                IniData pkgConfig = null;
+                var pkgConfigFile = Path.Combine(CurrentPackageFolder, "conf", "PKG_" + pkgType);
+                if (File.Exists(pkgConfigFile))
+                {
+                    //Read the INI PKG_DEPS file (remove space before and after the '=')
+                    IniParserConfiguration config = new IniParserConfiguration();
+                    config.AssigmentSpacer = "";
+                    var parser = new IniDataParser(config);
+                    var fileParser = new FileIniDataParser(parser);
+                    try
+                    {
+                        pkgConfig = fileParser.ReadFile(pkgConfigFile);
+                    }
+                    catch
+                    {
+                        MessageBoxEx.Show(this, string.Format("PKG_" + pkgType + " file {0} can't be parsed.", pkgConfigFile), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                    }
+                }
+
+                var pkgConfigEditor = new PKG_Conf(pkgConfig, GetAllWizardVariables(), "PKG_" + pkgType, doc);
+                if (pkgConfigEditor.ShowDialog(this) == DialogResult.OK && pkgConfigEditor.PendingChanges())
+                {
+                    pkgConfig = pkgConfigEditor.PkgConf;
+                    if (pkgConfig != null)
+                    {
+                        var pkg_copy = new IniData();
+                        foreach (var section in pkgConfig.Sections)
+                        {
+                            pkg_copy.Sections.AddSection(section.SectionName);
+                            var section_copy = pkg_copy.Sections[section.SectionName];
+                            foreach (var key in section.Keys)
+                            {
+                                var value = Helper.Unquote(key.Value);
+                                if (!string.IsNullOrEmpty(value))
+                                    section_copy.AddKey(key.KeyName, value);
+                            }
+                        }
+                        pkgConfig = pkg_copy;
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(pkgConfigFile));
+
+                        //Read the INI PKG string and remove space before and after the '='
+                        IniParserConfiguration config = new IniParserConfiguration();
+                        config.AssigmentSpacer = "";
+                        var parser = new IniDataParser(config);
+                        var streamParser = new StreamIniDataParser(parser);
+                        using (var stream = Helper.GetStreamFromString(pkgConfig.ToString()))
+                        {
+                            using (var streamReader = new StreamReader(stream))
+                            {
+                                pkgConfig = streamParser.ReadData(streamReader);
+                            }
+                        }
+
+                        //Save the INI protocol file
+                        var fileParser = new FileIniDataParser(parser);
+                        fileParser.WriteFile(pkgConfigFile, pkgConfig);
+                    }
+                    else
+                    {
+                        //Update the Resource file (or delete it) and delete the INI PKG
+                        if (!string.IsNullOrEmpty(pkgConfigFile) && File.Exists(pkgConfigFile))
+                        {
+                            File.Delete(pkgConfigFile);
+                            var synoConfigDir = Path.GetDirectoryName(pkgConfigFile);
+                            if (Directory.EnumerateFileSystemEntries(synoConfigDir).Count() == 0)
+                                Directory.Delete(synoConfigDir);
+                        }
+                    }
+
+                    ResetEditScriptMenuIcons();
+                }
+            }
+        }
+
+        private void menuPackage_Click(object sender, EventArgs e)
+        {
+            var changes = new List<Tuple<string, string, string>>();
+            var exist = CheckChanges(changes);
+            if (exist)
+                menuReviewPendingChanges.Image = new Bitmap(Properties.Resources.EditedScript);
+            else
+                menuReviewPendingChanges.Image = null;
+        }
     }
 }
