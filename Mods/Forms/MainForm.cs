@@ -480,6 +480,11 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     if (item.Value.itemType == -1)
                         if (item.Value.type == "legacy") item.Value.itemType = (int)UrlType.WebApp;
+                    if (item.Value.url == null)
+                    {
+                        //if (!string.IsNullOrEmpty(item.Value.port))
+                        item.Value.url = "/";
+                    }
                     var webapp = item.Value.url;
                     if (webapp.StartsWith("/webman/3rdparty/"))
                     {

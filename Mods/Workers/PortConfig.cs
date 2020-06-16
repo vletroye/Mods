@@ -720,7 +720,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (origPortConfig == null)
                 {
-                    SetPortConfig(JObject.Parse(string.Format("{\"protocol-file\": \"etc/{0}.sc\"}", packageName)), null);
+                    SetPortConfig(JObject.Parse(string.Format("{{\"protocol-file\": \"etc/{0}.sc\"}}", packageName)), null);
                 }
                 else
                 {
