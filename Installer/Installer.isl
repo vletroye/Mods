@@ -2345,6 +2345,8 @@
 		<col key="yes" def="s72">ISProductConfiguration_</col>
 		<col key="yes" def="s72">Property</col>
 		<col def="L255">Value</col>
+		<row><td>Express</td><td>MSIPackageFileName</td><td>ModsPackager</td></row>
+		<row><td>Express</td><td>SetupFileName</td><td>ModsPackager</td></row>
 	</table>
 
 	<table name="ISRelease">
@@ -2627,7 +2629,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>816222765</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>598270898</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>816198604</td></row>
@@ -3728,8 +3730,8 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>https://github.com/vletroye/Mods</td><td>0</td><td/><td>1084623668</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>816222765</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://www.BeatificaBytes.com</td><td>0</td><td/><td>598270898</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>598270898</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>816231022</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>1218860564</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>Uninstall</td><td>0</td><td/><td>1218864660</td></row>
@@ -3856,8 +3858,10 @@
 		<row><td>_2F12380404694CEDBED088731830E538.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_363B76D18D4A455CABB8017415C9A452.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_41A02E29B4A84A7D9EBF7CA0E530FD12.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
+		<row><td>_45D34636B41C478AAA320B656E448520.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_474F4FBC6F9A4356B8E5B3D766A731DF.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_5A16D07E4256431C8CD3AD5E29974A59.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
+		<row><td>_5B14CC6636404AFE83AD1B9917A9EDBC.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_640C510ABC28486BA8654B7151D653AA.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_698BC01DC203404AA839E5B84286CDAD.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_6E4FDAF88E0C415B9F60EE8378BAA7CF.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
@@ -3866,6 +3870,7 @@
 		<row><td>_B3ADE7A9BD9C4A87B29589E052AE48F9.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_BBA60D912E2748DB8AE26944A0FB800F.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_C811BD35821D47D0B09A46BAF413CC28.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
+		<row><td>_D158E5CA42AA43D3B7360F9982A42B57.exe</td><td/><td>E:\Work\Development\Git\Mods Packager\Mods\bin\Release\Mods.exe</td><td>0</td></row>
 		<row><td>_E24B286946EA4DC3A0ADD60BBF3B54DE.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_E3EA6B0BF9A14B7BB393B62086A537DF.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_E84D6A01C4024F9281D1F6963BCE25F9.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
@@ -3985,8 +3990,8 @@
 		<col def="S0">Value</col>
 		<row><td>ActiveLanguage</td><td>1033</td></row>
 		<row><td>Comments</td><td/></row>
-		<row><td>CurrentMedia</td><td dt:dt="bin.base64" md5="a4f66fafb30885f14d732b73e196bba0">
-RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
+		<row><td>CurrentMedia</td><td dt:dt="bin.base64" md5="6d78a46bf2c52ee27034bbcad20f7f95">
+QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 			</td></row>
 		<row><td>DefaultProductConfiguration</td><td>Express</td></row>
 		<row><td>EnableSwidtag</td><td>0</td></row>
@@ -4003,7 +4008,7 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{6514ECB8-B8DB-4268-AB81-00F88F64F54B}</td></row>
 		<row><td>ISUSSignature</td><td>{6E03227C-024D-4572-92B1-9486B0022884}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewISToday,viewLearnMore,viewRelease,viewSystemSearch,viewUI,viewServices,viewAppFiles,viewObjects,viewShortcuts,viewTextMessages,viewUpgradePaths</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewProject,viewISToday,viewLearnMore,viewRelease,viewSystemSearch,viewUI,viewServices,viewAppFiles,viewObjects,viewShortcuts,viewTextMessages,viewUpgradePaths,viewUpdateService,viewIniFiles,viewFileExtensions,viewEnvironmentVariables,viewRegistry,viewCustomActions</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4062,7 +4067,6 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 	<table name="LaunchCondition">
 		<col key="yes" def="s255">Condition</col>
 		<col def="l255">Description</col>
-		<row><td>(Not Version9X) And (Not ((VersionNT&gt;=400 And VersionNT&lt;=600) Or (VersionNT&gt;=601 And VersionNT&lt;=603 And MsiNTProductType&gt;1)))</td><td>##IDPROP_EXPRESS_LAUNCH_CONDITION_OS##</td></row>
 		<row><td>DOTNETVERSION45FULL&gt;="#1"</td><td>##IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL##</td></row>
 	</table>
 
@@ -4383,7 +4387,7 @@ RABWAEQALQA1AAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGRAMFILETOLAUNCHATEND</td><td>[INSTALLDIR]Mods.Primary output</td><td/></row>
 		<row><td>ProductCode</td><td>{4D6A4347-3372-4B79-9AD6-B7A0632892B9}</td><td/></row>
 		<row><td>ProductName</td><td>Mods Packager</td><td/></row>
-		<row><td>ProductVersion</td><td>7.01.0000</td><td/></row>
+		<row><td>ProductVersion</td><td>7.02.0000</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>

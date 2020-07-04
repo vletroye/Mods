@@ -274,7 +274,7 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(null, dsmRelease, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(dsmReleases, dsmRelease.Code);
+                Helper.WriteAnsiFile(dsmReleases, dsmRelease.Code);
             }
         }
     }

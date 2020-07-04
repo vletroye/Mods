@@ -404,7 +404,8 @@ namespace BeatificaBytes.Synology.Mods
                     if (this.resource.Count > 0)
                     {
                         var json = JsonConvert.SerializeObject(this.resource, Formatting.Indented);
-                        File.WriteAllText(resourceFile, json);
+
+                        Helper.WriteAnsiFile(resourceFile, json);
                     }
                 }
                 catch (Exception ex)
@@ -959,7 +960,7 @@ namespace BeatificaBytes.Synology.Mods
                         Helper.DeleteFile(infoName);
 
                     // Write the new INFO file
-                    using (StreamWriter outputFile = new StreamWriter(infoName))
+                    using (StreamWriter outputFile = new StreamWriter(infoName, false, Encoding.GetEncoding(1252)))
                     {
                         foreach (var element in info)
                         {
@@ -1865,14 +1866,8 @@ namespace BeatificaBytes.Synology.Mods
                     Directory.CreateDirectory(target);
 
                     // Create sh script (ANSI) to be executed by the php runner script
-                    using (TextWriter text = new StreamWriter(targetScript, true, Encoding.GetEncoding(1252)))
-                    {
-                        text.Write(script);
-                    }
-                    using (TextWriter text = new StreamWriter(targetRunner, true, Encoding.GetEncoding(1252)))
-                    {
-                        text.Write(runner);
-                    }
+                    Helper.WriteAnsiFile(targetScript, script);
+                    Helper.WriteAnsiFile(targetRunner, runner);
                 }
             }
 
@@ -1908,7 +1903,8 @@ namespace BeatificaBytes.Synology.Mods
                 var config = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
                 if (Directory.Exists(Path.GetDirectoryName(config)))
                 {
-                    File.WriteAllText(config, json);
+                    // Save Config as Ansi
+                    Helper.WriteAnsiFile(config, json);
                 }
                 else
                 {
@@ -3892,7 +3888,7 @@ namespace BeatificaBytes.Synology.Mods
                 DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
                 if (result == DialogResult.OK)
                 {
-                    File.WriteAllText(scriptPath, script.Code);
+                    Helper.WriteAnsiFile(scriptPath, script.Code);
                     done = true;
                 }
             }
@@ -3903,6 +3899,7 @@ namespace BeatificaBytes.Synology.Mods
         private void menuExit_Click(object sender, EventArgs e)
         {
             // Trigger the Close event on the Main Form. (See MainForm_FormClosing)
+            //DialogResult = DialogResult.Abort;
             this.Close();
         }
 
@@ -3963,8 +3960,7 @@ namespace BeatificaBytes.Synology.Mods
                     jsonPath = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES", json);
 
                 if (jsonPath != null)
-                    using (File.CreateText(jsonPath))
-                    { }
+                    Helper.WriteAnsiFile(jsonPath, string.Empty);
             }
 
             if (jsonPath != null)
@@ -3978,7 +3974,7 @@ namespace BeatificaBytes.Synology.Mods
                     result = Helper.ScriptEditor(wizard, null, null);
                     if (result == DialogResult.OK)
                     {
-                        File.WriteAllText(jsonPath, wizard.Code);
+                        Helper.WriteAnsiFile(jsonPath, wizard.Code);
                         menu.Image = new Bitmap(Properties.Resources.EditedScript);
                     }
                 }
@@ -4095,8 +4091,8 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(script, config, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(infoName, script.Code);
-                if (configName != null) File.WriteAllText(configName, config.Code);
+                Helper.WriteAnsiFile(infoName, script.Code);
+                if (configName != null) Helper.WriteAnsiFile(configName, config.Code);
                 LoadPackageInfo(CurrentPackageFolder);
                 LoadResourceConfig(CurrentPackageFolder);
                 BindData(list, null);
@@ -5041,7 +5037,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    File.WriteAllText(scriptPath, script.Code);
+                    Helper.WriteAnsiFile(scriptPath, script.Code);
                     menu.Image = new Bitmap(Properties.Resources.EditedScript);
                 }
             }
@@ -5104,7 +5100,7 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(null, runner, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(file, runner.Code);
+                Helper.WriteAnsiFile(file, runner.Code);
                 menuDefaultRunner.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
@@ -5118,7 +5114,7 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(null, routerConfig, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(file, routerConfig.Code);
+                Helper.WriteAnsiFile(file, routerConfig.Code);
                 menuDefaultRouterConfig.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
@@ -5132,7 +5128,7 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(null, routercgi, null);
             if (result == DialogResult.OK)
             {
-                File.WriteAllText(file, routercgi.Code);
+                Helper.WriteAnsiFile(file, routercgi.Code);
                 menuDefaultRouterScript.Image = new Bitmap(Properties.Resources.EditedScript);
             }
         }
@@ -5154,7 +5150,7 @@ namespace BeatificaBytes.Synology.Mods
                         DialogResult result = Helper.ScriptEditor(null, routerConfig, null);
                         if (result == DialogResult.OK)
                         {
-                            File.WriteAllText(file, routerConfig.Code);
+                            Helper.WriteAnsiFile(file, routerConfig.Code);
                             menuRouterConfig.Image = new Bitmap(Properties.Resources.EditedScript);
                         }
                     }
@@ -5179,7 +5175,7 @@ namespace BeatificaBytes.Synology.Mods
                         DialogResult result = Helper.ScriptEditor(null, routercgi, null);
                         if (result == DialogResult.OK)
                         {
-                            File.WriteAllText(file, routercgi.Code);
+                            Helper.WriteAnsiFile(file, routercgi.Code);
                             menuRouterScript.Image = new Bitmap(Properties.Resources.EditedScript);
                         }
                     }
@@ -5253,8 +5249,10 @@ namespace BeatificaBytes.Synology.Mods
                             }
 
                             //Save the INI protocol file
-                            var fileParser = new FileIniDataParser(parser);
-                            fileParser.WriteFile(protocolFile, portConfigData);
+                            Helper.WriteAnsiFile(protocolFile, portConfigData.ToString());
+                            //var fileParser = new FileIniDataParser(parser);
+                            //fileParser.WriteFile(protocolFile, portConfigData, Encoding.GetEncoding(1252));
+
 
                             //Update the Resource file
                             if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
@@ -5455,8 +5453,9 @@ namespace BeatificaBytes.Synology.Mods
                         }
 
                         //Save the INI protocol file
-                        var fileParser = new FileIniDataParser(parser);
-                        fileParser.WriteFile(pkgConfigFile, pkgConfig);
+                        //var fileParser = new FileIniDataParser(parser);
+                        //fileParser.WriteFile(pkgConfigFile, pkgConfig);
+                        Helper.WriteAnsiFile(pkgConfigFile, pkgConfig.ToString());
                     }
                     else
                     {

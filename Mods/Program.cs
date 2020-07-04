@@ -41,6 +41,10 @@ namespace BeatificaBytes.Synology.Mods
                 else
                 {
                     string open = null;
+
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+
                     var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
                     if (!string.IsNullOrEmpty(edit))
                     {
@@ -56,22 +60,22 @@ namespace BeatificaBytes.Synology.Mods
                     // Load the default runner script or create one if it does not exist
                     var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
                     if (!File.Exists(defaultRunnerPath))
-                        File.WriteAllText(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
+                        Helper.WriteAnsiFile(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
 
                     // Load the Router Config or create one if it does not exist
                     var defaultRouterConfigPath = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
                     if (!File.Exists(defaultRouterConfigPath))
-                        File.WriteAllText(defaultRouterConfigPath, Properties.Settings.Default.dsm_cgi);
+                        Helper.WriteAnsiFile(defaultRouterConfigPath, Properties.Settings.Default.dsm_cgi);
 
                     // Load the Router Script or create one if it does not exist
                     var defaultRouterScriptPath = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
                     if (!File.Exists(defaultRouterScriptPath))
-                        File.WriteAllText(defaultRouterScriptPath, Properties.Settings.Default.router_cgi);
+                        Helper.WriteAnsiFile(defaultRouterScriptPath, Properties.Settings.Default.router_cgi);
 
                     // Load the default DSM release list or create one if it does not exist
                     var defaultDSMReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
                     if (!File.Exists(defaultDSMReleases))
-                        File.WriteAllText(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
+                        Helper.WriteAnsiFile(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
 
                     // Extract the WizardUI background image if it does not exist
                     var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
@@ -81,8 +85,6 @@ namespace BeatificaBytes.Synology.Mods
                         backWizardPng.Save(backWizard);
                     }
 
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
                     Application.Run(new MainForm(open));
                 }
             }

@@ -147,13 +147,13 @@ namespace BeatificaBytes.Synology.Mods
             this.menuMovePackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuDeletePackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAddWizard = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuBuildPackage = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPublish = new System.Windows.Forms.ToolStripMenuItem();
             this.menuOpenPackageFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuManageScreenshots = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuChangeLog = new System.Windows.Forms.ToolStripMenuItem();
             this.menuReviewPendingChanges = new System.Windows.Forms.ToolStripMenuItem();
             this.menuEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuRouterConfig = new System.Windows.Forms.ToolStripMenuItem();
@@ -1685,14 +1685,6 @@ namespace BeatificaBytes.Synology.Mods
             this.menuAddWizard.ToolTipText = "Add installation/upgrade/uninstallation wizards to the currently opened Package.";
             this.menuAddWizard.Click += new System.EventHandler(this.menuAddWizard_Click);
             // 
-            // menuChangeLog
-            // 
-            this.menuChangeLog.Name = "menuChangeLog";
-            this.menuChangeLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.L)));
-            this.menuChangeLog.Size = new System.Drawing.Size(205, 22);
-            this.menuChangeLog.Text = "Edit Change&Log";
-            this.menuChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
-            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -1720,7 +1712,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuOpenPackageFolder.Name = "menuOpenPackageFolder";
             this.menuOpenPackageFolder.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.menuOpenPackageFolder.Size = new System.Drawing.Size(205, 22);
-            this.menuOpenPackageFolder.Text = "&Open Folder";
+            this.menuOpenPackageFolder.Text = "&Explore Folder";
             this.menuOpenPackageFolder.ToolTipText = "Opened the folder of the currently opened Package within Windows Explorer.";
             this.menuOpenPackageFolder.Click += new System.EventHandler(this.menuOpenFolder_Click);
             // 
@@ -1737,6 +1729,14 @@ namespace BeatificaBytes.Synology.Mods
             this.menuManageScreenshots.Tag = "screen_*.png";
             this.menuManageScreenshots.Text = "Edit &Screenshots";
             this.menuManageScreenshots.Click += new System.EventHandler(this.menuManageScreenshots_Click);
+            // 
+            // menuChangeLog
+            // 
+            this.menuChangeLog.Name = "menuChangeLog";
+            this.menuChangeLog.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.L)));
+            this.menuChangeLog.Size = new System.Drawing.Size(205, 22);
+            this.menuChangeLog.Text = "Edit Change&Log";
+            this.menuChangeLog.Click += new System.EventHandler(this.toolStripMenuItemChangeLog_Click);
             // 
             // menuReviewPendingChanges
             // 
@@ -1772,7 +1772,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuRouterConfig
             // 
             this.menuRouterConfig.Name = "menuRouterConfig";
-            this.menuRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
+            this.menuRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
             this.menuRouterConfig.Size = new System.Drawing.Size(200, 22);
             this.menuRouterConfig.Tag = "package\\{0}\\dsm.cgi.conf";
             this.menuRouterConfig.Text = "Router Config";
@@ -1781,7 +1781,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuRouterScript
             // 
             this.menuRouterScript.Name = "menuRouterScript";
-            this.menuRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
+            this.menuRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
             this.menuRouterScript.Size = new System.Drawing.Size(200, 22);
             this.menuRouterScript.Tag = "package\\{0}\\router.cgi";
             this.menuRouterScript.Text = "Router Script";

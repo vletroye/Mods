@@ -1130,6 +1130,19 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        public static void WriteAnsiFile(string path, string content)
+        {
+            if (string.IsNullOrEmpty(content))
+                content = string.Empty;
+            else
+                content = content.Replace("\r\n", "\n");
+
+            using (TextWriter text = new StreamWriter(path, false, Encoding.GetEncoding(1252)))
+            {
+                text.Write(content);
+            }
+        }
+
         public static string Unquote(string text)
         {
             if (text != null)

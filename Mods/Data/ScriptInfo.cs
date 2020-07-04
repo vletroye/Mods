@@ -24,7 +24,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             get
             {
-                if (code != null) code = code.Replace("\r\n", "\n");
+                //if (!string.IsNullOrEmpty(code)) code = code.Replace("\r\n", "\n");
                 return code;
             }
 

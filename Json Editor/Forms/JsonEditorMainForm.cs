@@ -36,6 +36,8 @@ namespace ZTn.Json.Editor.Forms
 
         private bool validJSon = true;
 
+        private string originalJson = string.Empty;
+
         #endregion
 
         #region >> Properties
@@ -51,6 +53,9 @@ namespace ZTn.Json.Editor.Forms
                 if (string.IsNullOrEmpty(json))
                 {
                     CreateEmptyJson(path);
+                } else
+                {
+                    originalJson = json;
                 }
                 OpenJson(path);
             }
@@ -93,7 +98,7 @@ namespace ZTn.Json.Editor.Forms
         private void CreateEmptyJson(string path)
         {
             var jsonEditorItem = new JTokenRoot("[]");
-            File.WriteAllText(path, jsonEditorItem.JTokenValue.ToString());
+            Helper.WriteAnsiFile(path, jsonEditorItem.JTokenValue.ToString());
         }
 
         /// <summary>
@@ -463,6 +468,7 @@ namespace ZTn.Json.Editor.Forms
         {
             if (OpenedFileName == null)
             {
+                DialogResult = DialogResult.Cancel;
                 return;
             }
 
@@ -478,6 +484,14 @@ namespace ZTn.Json.Editor.Forms
                     {
                         JsonEditorItem.Save(stream);
                     }
+
+                    SetActionStatus(@"Wizard successfully saved.", false);
+
+                    string json = File.ReadAllText(OpenedFileName);
+                    if (json != originalJson)
+                        DialogResult = DialogResult.OK;
+                    else
+                        DialogResult = DialogResult.Cancel;
                 }
                 catch
                 {
@@ -486,19 +500,18 @@ namespace ZTn.Json.Editor.Forms
                     OpenedFileName = null;
                     SetActionStatus(@"Wizard NOT saved.", true);
 
-                    return;
+                    DialogResult = DialogResult.Cancel;
                 }
-
-                SetActionStatus(@"Wizard successfully saved.", false);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+            } else
+            {
+                DialogResult = DialogResult.Cancel;
             }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            //this.Close();
         }
 
         private void wizardDevGuideToolStripMenuItem_Click(object sender, EventArgs e)
@@ -975,8 +988,6 @@ namespace ZTn.Json.Editor.Forms
 
         private void JsonEditorMainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.DialogResult != DialogResult.Cancel)
-                buttonCancel_Click(sender, e);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -985,7 +996,7 @@ namespace ZTn.Json.Editor.Forms
             {
                 File.Delete(OpenedFileName);
                 this.DialogResult = DialogResult.OK;
-                this.Close();
+                //this.Close();
             }
         }
     }

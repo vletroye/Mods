@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Windows.Forms;
+using System.Text;
 
 namespace ZTn.Json.Editor
 {
@@ -102,14 +103,14 @@ namespace ZTn.Json.Editor
                 return;
             }
 
-            var json = jTokenValue.ToString();
+            var json = jTokenValue.ToString().Replace("\r\n","\n");
             DialogResult response = DialogResult.Yes;
             if (string.IsNullOrEmpty(json) || json == "[]")
                 response = MessageBox.Show(Application.OpenForms[0], "This wizard is empty, incomplete or incorrect. Do you really want to save it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
 
             if (response == DialogResult.Yes)
             {
-                using (var streamWriter = new StreamWriter(jsonStream))
+                using (var streamWriter = new StreamWriter(jsonStream, Encoding.GetEncoding(1252)))
                 {
                     streamWriter.Write(json);
                 }
