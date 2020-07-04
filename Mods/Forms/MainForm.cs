@@ -3356,15 +3356,32 @@ namespace BeatificaBytes.Synology.Mods
                 MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to copy files: {0}", ex.Message));
             }
         }
+        private void UnpublishPackage(string PackageRepo)
+        {
+            var packName = info["package"];
+
+            try
+            {
+                publishFile(null, Path.Combine(PackageRepo, packName + ".spk"));
+                MessageBoxEx.Show(this, "The package has been successfuly removed.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while deleting files: {0}", ex.Message));
+            }
+        }
         private void publishFile(string src, string dest)
         {
-            if (File.Exists(dest))
+            if (!string.IsNullOrEmpty(dest) && File.Exists(dest))
             {
                 // try to send the existing SPK to the RecycleBin
                 Helper.DeleteFile(dest);
             }
 
-            File.Copy(src, dest);
+            if (!string.IsNullOrEmpty(src))
+            {
+                File.Copy(src, dest);
+            }
         }
 
         private void GrantAccess(string fullPath)
@@ -5482,6 +5499,12 @@ namespace BeatificaBytes.Synology.Mods
                 menuReviewPendingChanges.Image = new Bitmap(Properties.Resources.EditedScript);
             else
                 menuReviewPendingChanges.Image = null;
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(CurrentPackageRepository))
+                UnpublishPackage(CurrentPackageRepository);
         }
     }
 }
