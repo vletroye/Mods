@@ -67,6 +67,8 @@ namespace BeatificaBytes.Synology.Mods
         Package list;
         JObject resource;
         bool dirty = false;
+        bool dirtyPic72 = false;
+        bool dirtyPic256 = false;
         bool wizardExist = false;
 
         string previousReportUrl;
@@ -848,7 +850,9 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             LoadPictureBox(pictureBoxPkg_256, picturePkg_256);
+            dirtyPic256 = false;
             LoadPictureBox(pictureBoxPkg_72, picturePkg_72);
+            dirtyPic72 = false;
         }
         private async void PublishWarning(string message)
         {
@@ -973,10 +977,18 @@ namespace BeatificaBytes.Synology.Mods
                     }
 
                     // Save Package's icons
-                    var imageName = Path.Combine(path, "PACKAGE_ICON.PNG");
-                    SavePkgImage(pictureBoxPkg_72, imageName);
-                    imageName = Path.Combine(path, "PACKAGE_ICON_256.PNG");
-                    SavePkgImage(pictureBoxPkg_256, imageName);
+                    if (dirtyPic72)
+                    {
+                        var imageName = Path.Combine(path, "PACKAGE_ICON.PNG");
+                        SavePkgImage(pictureBoxPkg_72, imageName);
+                        dirtyPic72 = false;
+                    }
+                    if (dirtyPic256)
+                    {
+                        var imageName = Path.Combine(path, "PACKAGE_ICON_256.PNG");
+                        SavePkgImage(pictureBoxPkg_256, imageName);
+                        dirtyPic256 = false;
+                    }
                 }
 
                 dirty = false;
@@ -2411,11 +2423,11 @@ namespace BeatificaBytes.Synology.Mods
             Image image = LoadImage(picture);
             if (image != null)
             {
-                result = true;
                 if (size == "256")
-                    LoadPictureBox(pictureBoxPkg_256, image);
+                    result = dirtyPic256 = LoadPictureBox(pictureBoxPkg_256, image);
+
                 if (size == "72")
-                    LoadPictureBox(pictureBoxPkg_72, image);
+                    result = dirtyPic72 = LoadPictureBox(pictureBoxPkg_72, image);
             }
 
             return result;
@@ -2502,8 +2514,9 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         // Load an image in a pictureBox, resizing the image to match it
-        private void LoadPictureBox(PictureBox pictureBox, Image image)
+        private bool LoadPictureBox(PictureBox pictureBox, Image image)
         {
+            var loaded = true;
             if (image == null)
             {
                 pictureBox.Image = null;
@@ -2514,9 +2527,16 @@ namespace BeatificaBytes.Synology.Mods
 
                 var copy = Helper.ResizeImage(image, size, size);
 
-                pictureBox.Image = copy;
-                pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                if (pictureBox.Image == null || !Helper.CompareImages(new Bitmap(pictureBox.Image), new Bitmap(image)))
+                {
+                    pictureBox.Image = copy;
+                    pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+                }
+                else
+                    loaded = false;
             }
+
+            return loaded;
         }
 
         // Save all the pictures of the current Item
