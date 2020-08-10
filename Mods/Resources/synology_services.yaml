@@ -8,7 +8,7 @@ DSM_4.3:
     - cron
     - nfs
     - firewall
-DSM_5.0:
+DSM_5.x:
     - apache-sys
     - apache-web
     - mdns
@@ -17,7 +17,7 @@ DSM_5.0:
     - cron
     - nfs
     - firewall
-DSM_6.0:
+DSM_6.x:
     - nginx
     - mdns
     - samba
