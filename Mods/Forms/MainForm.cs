@@ -4956,7 +4956,7 @@ namespace BeatificaBytes.Synology.Mods
         private void buttonDependencies_Click(object sender, EventArgs e)
         {
             var edit = new Dependencies(info);
-            edit.ShowDialog(this);
+            if (edit.ShowDialog(this) == DialogResult.OK) dirty = true;
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)

@@ -13,6 +13,7 @@ namespace BeatificaBytes.Synology.Mods
     public partial class Dependencies : Form
     {
         SortedDictionary<string, string> info;
+        StringBuilder init = new StringBuilder();
 
         public Dependencies(SortedDictionary<string, string> info)
         {
@@ -53,6 +54,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         var data = info[item.Text];
                         item.SubItems.Add(data);
+                        init.Append(data + " ");
                     }
                     else
                     {
@@ -156,8 +158,11 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
+            bool dirty = false;
+
             if (info != null)
             {
+                var edit = new StringBuilder();
                 foreach (ListViewItem item in listViewDependencies.Items)
                 {
                     var key = item.SubItems[0].Text;
@@ -173,13 +178,20 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         info.Add(key, data);
                     }
+                    if (!string.IsNullOrEmpty(data))
+                        edit.Append(data + " ");
                 }
+
+                if (edit.ToString() != init.ToString()) dirty = true;
             }
             else
             {
                 this.Close();
             }
-            DialogResult = DialogResult.OK;
+            if (dirty)
+                DialogResult = DialogResult.OK;
+            else
+                DialogResult = DialogResult.Cancel;
             this.Hide();
         }
 
