@@ -48,6 +48,7 @@
             this.formMenuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wizardDevGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutJsonEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +56,7 @@
             this.actionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.jsonStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonRemove = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.jsonTreeViewSplitContainer)).BeginInit();
             this.jsonTreeViewSplitContainer.Panel1.SuspendLayout();
             this.jsonTreeViewSplitContainer.Panel2.SuspendLayout();
@@ -134,6 +135,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.buttonRemove);
             this.splitContainer1.Panel2.Controls.Add(this.labelSteps);
             this.splitContainer1.Panel2.Controls.Add(this.buttonNext);
             this.splitContainer1.Panel2.Controls.Add(this.buttonPrev);
@@ -298,9 +300,16 @@
             // 
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
             this.importToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.importToolStripMenuItem.Text = "&Import";
             this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -355,12 +364,17 @@
             this.jsonStatusLabel.Size = new System.Drawing.Size(62, 17);
             this.jsonStatusLabel.Text = "JsonStatus";
             // 
-            // deleteToolStripMenuItem
+            // buttonRemove
             // 
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRemove.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonRemove.Location = new System.Drawing.Point(195, 559);
+            this.buttonRemove.Name = "buttonRemove";
+            this.buttonRemove.Size = new System.Drawing.Size(75, 23);
+            this.buttonRemove.TabIndex = 14;
+            this.buttonRemove.Text = "Remove";
+            this.buttonRemove.UseVisualStyleBackColor = true;
+            this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
             // 
             // JsonEditorMainForm
             // 
@@ -432,6 +446,7 @@
         private System.Windows.Forms.Button buttonPrev;
         private System.Windows.Forms.Label labelSteps;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.Button buttonRemove;
     }
 }
 

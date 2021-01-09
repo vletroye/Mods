@@ -90,8 +90,7 @@ namespace BeatificaBytes.Synology.Mods
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(string.Format("Mods Packager failed to run due to a fatal error : {0}\r\n\r\nIt will now stop.", ex.Message), "Fatal Error");
-                throw;
+                MessageBoxEx.Show(string.Format("Mods Packager failed to run due to a fatal error : {0}\r\n\r\nIt will now stop.", ex.Message), "Fatal Error");                
             }
         }
     }

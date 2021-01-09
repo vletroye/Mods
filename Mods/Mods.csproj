@@ -125,6 +125,12 @@
     <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
+    <Compile Include="Workers\Privilege.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Workers\Privilege.Designer.cs">
+      <DependentUpon>Privilege.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\Synology.cs" />
     <Compile Include="Workers\PKG_Conf.cs">
       <SubType>Form</SubType>
@@ -213,6 +219,9 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Workers\Privilege.resx">
+      <DependentUpon>Privilege.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Workers\PKG_Conf.resx">
       <DependentUpon>PKG_Conf.cs</DependentUpon>
     </EmbeddedResource>

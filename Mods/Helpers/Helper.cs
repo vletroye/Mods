@@ -1069,9 +1069,10 @@ namespace BeatificaBytes.Synology.Mods
             box.AutoCompleteCustomSource = new AutoCompleteStringCollection();
             foreach (var version in versions)
             {
-                if (getFirmwareVersion.IsMatch(version))
+                var ver = version.Trim();
+                if (getFirmwareVersion.IsMatch(ver))
                 {
-                    var match = getFirmwareVersion.Match(version);
+                    var match = getFirmwareVersion.Match(ver);
                     var firmware = String.Format("{0}.{1}-{2}", match.Groups[1].Value, match.Groups[2].Value, match.Groups[4].Value);
                     if (!box.AutoCompleteCustomSource.Contains(firmware))
                         box.AutoCompleteCustomSource.Add(firmware);
@@ -1163,6 +1164,10 @@ namespace BeatificaBytes.Synology.Mods
                 content = string.Empty;
             else
                 content = content.Replace("\r\n", "\n");
+
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
 
             using (TextWriter text = new StreamWriter(path, false, Encoding.GetEncoding(1252)))
             {

@@ -66,6 +66,7 @@ namespace BeatificaBytes.Synology.Mods
         State state;
         Package list;
         JObject resource;
+        JObject privilege;
         bool dirty = false;
         bool dirtyPic72 = false;
         bool dirtyPic256 = false;
@@ -423,6 +424,83 @@ namespace BeatificaBytes.Synology.Mods
             if (info.ContainsKey("support_conf_folder"))
                 info.Remove("support_conf_folder");
             if (Directory.Exists(resourceDir))
+            {
+                var addKey = true;
+                if (info.ContainsKey("os_min_ver"))
+                {
+                    var major = 0;
+                    int.TryParse(info["os_min_ver"].Substring(0, 1), out major);
+                    addKey = major < 6;
+                }
+                if (addKey)
+                    info.Add("support_conf_folder", "yes");
+            }
+        }
+
+        private void LoadPrivilegeConfig(string path)
+        {
+            this.privilege = null;
+            var privilegeDir = Path.Combine(path, "conf");
+            if (Directory.Exists(privilegeDir))
+            {
+                var privilegeFile = Path.Combine(privilegeDir, "privilege");
+
+                if (File.Exists(privilegeFile))
+                {
+                    var json = File.ReadAllText(privilegeFile);
+                    try
+                    {
+                        this.privilege = JsonConvert.DeserializeObject<JObject>(json);
+                    }
+                    catch (Exception ex)
+                    {
+                        PublishWarning(string.Format("The privilege file '{0}' is corrupted...", privilegeFile));
+                    }
+
+                    if (this.privilege != null && this.privilege.Count == 0)
+                    {
+                        this.privilege = null;
+                    }
+                }
+            }
+        }
+        private void SavePrivilegeConfig(string path)
+        {
+            var privilegeDir = Path.Combine(path, "conf");
+            var privilegeFile = Path.Combine(privilegeDir, "privilege");
+            if (File.Exists(privilegeFile))
+            {
+                File.Delete(privilegeFile);
+            }
+
+            if (this.privilege != null)
+            {
+                if (!Directory.Exists(privilegeDir))
+                    Directory.CreateDirectory(privilegeDir);
+
+                try
+                {
+
+                    if (this.privilege.Count > 0)
+                    {
+                        var json = JsonConvert.SerializeObject(this.privilege, Formatting.Indented);
+
+                        Helper.WriteAnsiFile(privilegeFile, json);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PublishWarning(string.Format("The privilege file '{0}' can't be updated.", privilegeFile));
+                }
+            }
+
+            if (Directory.EnumerateFileSystemEntries(privilegeDir).Count() == 0)
+                Directory.Delete(privilegeDir);
+
+            // Required for DSM 4.2 ~ DSM 5.2
+            if (info.ContainsKey("support_conf_folder"))
+                info.Remove("support_conf_folder");
+            if (Directory.Exists(privilegeDir))
             {
                 var addKey = true;
                 if (info.ContainsKey("os_min_ver"))
@@ -3557,6 +3635,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         LoadPackageInfo(path);
                         LoadResourceConfig(path);
+                        LoadPrivilegeConfig(path);
                         BindData(list, null);
                         CopyPackagingBinaries(path);
                         DisplayItem();
@@ -3710,7 +3789,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (content.Contains(conf))
                     {
                         content.Remove(conf);
-                        PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers and privilege are not supported.");
+                        PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers are not supported. Privileges are partially supported.");
                     }
 
                     if (content.Count > 0)
@@ -3917,17 +3996,17 @@ namespace BeatificaBytes.Synology.Mods
             var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
 
             if (!File.Exists(scriptPath))
-                MessageBoxEx.Show(this, "This Script cannot be found. Please Reset your Package.");
-            else
             {
-                var content = File.ReadAllText(scriptPath);
-                var script = new ScriptInfo(content, title, new Uri("https://help.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
-                DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
-                if (result == DialogResult.OK)
-                {
-                    Helper.WriteAnsiFile(scriptPath, script.Code);
-                    done = true;
-                }
+                MessageBoxEx.Show(this, "This Script does not yet exist.\r\n\r\nPossibly 'Reset' your Package or create yourself the script from scratch.");
+                File.WriteAllLines(scriptPath, new string[] { "#!/bin/sh", "", "exit 0" });
+            }
+            var content = File.ReadAllText(scriptPath);
+            var script = new ScriptInfo(content, title, new Uri("https://help.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
+            DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
+            if (result == DialogResult.OK)
+            {
+                Helper.WriteAnsiFile(scriptPath, script.Code);
+                done = true;
             }
 
             return done;
@@ -3989,12 +4068,12 @@ namespace BeatificaBytes.Synology.Mods
 
             if (jsonPath == null)
             {
-                result = MessageBoxEx.Show(this, "Do you want to create a standard json wizard? (Answering 'No' will create a dynamic wizard using a shell script)", "Type of Wizard", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                result = MessageBoxEx.Show(this, "Do you want to create a standard json wizard?\r\n(Answering 'No' will create a dynamic wizard using a shell script)", "Type of Wizard", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 if (result == DialogResult.No)
-                    jsonPath = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES", json + ".sh");
+                    jsonPath = Path.Combine(CurrentPackageFolder, json + ".sh");
                 else if (result == DialogResult.Yes)
-                    jsonPath = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES", json);
+                    jsonPath = Path.Combine(CurrentPackageFolder, json);
 
                 if (jsonPath != null)
                     Helper.WriteAnsiFile(jsonPath, string.Empty);
@@ -4014,6 +4093,8 @@ namespace BeatificaBytes.Synology.Mods
                         Helper.WriteAnsiFile(jsonPath, wizard.Code);
                         menu.Image = new Bitmap(Properties.Resources.EditedScript);
                     }
+                    if (wizard.Code.Trim()=="")
+                        Helper.DeleteFile(jsonPath);
                 }
                 else
                 {
@@ -4029,12 +4110,20 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             menu.Image = new Bitmap(Properties.Resources.EditedScript);
                         }
+                        if (result == DialogResult.Abort)
+                        {
+                            menu.Image = null;
+                        }
                     }
                     catch (UnauthorizedAccessException)
                     {
                         MessageBoxEx.Show(this, "You may not open this file due to security restriction. Try to run this app as Administrator or grant 'Modify' on this file to the group USERS.", "Security Issue", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                     }
                 }
+
+                var dir = Path.GetDirectoryName(jsonPath);
+                if (Directory.Exists(dir) && Directory.EnumerateFiles(dir).Count() ==0)
+                    Directory.Delete(dir);
             }
         }
 
@@ -4132,6 +4221,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (configName != null) Helper.WriteAnsiFile(configName, config.Code);
                 LoadPackageInfo(CurrentPackageFolder);
                 LoadResourceConfig(CurrentPackageFolder);
+                LoadPrivilegeConfig(CurrentPackageFolder);
                 BindData(list, null);
                 DisplayItem();
             }
@@ -5525,6 +5615,34 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!string.IsNullOrEmpty(CurrentPackageRepository))
                 UnpublishPackage(CurrentPackageRepository);
+        }
+
+        private void privilegeConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePackageInfo();
+
+            if (!Helper.CheckDSMVersionMin(info, 6, 0, 7145))
+            {
+                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+            }
+            else
+            {
+
+                var privilegeEditor = new Privilege(privilege, info);
+                if (privilegeEditor.ShowDialog(this) == DialogResult.OK)
+                {
+                    privilege = privilegeEditor.Specification as JObject;
+
+                    //Save the Resource file
+                    SavePrivilegeConfig(CurrentPackageFolder);
+                }
+                else
+                {
+
+                }
+
+                ResetEditScriptMenuIcons();
+            }
         }
     }
 }

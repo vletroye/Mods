@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -82,6 +83,20 @@ namespace ZTn.Json.Editor
             using (TextWriter text = new StreamWriter(path, false, Encoding.GetEncoding(1252)))
             {
                 text.Write(content);
+            }
+        }
+
+        internal static void DeleteFile(string fullName)
+        {
+            try
+            {
+                if (File.Exists(fullName))
+                    // Try to send deleted file to RecycleBin 
+                    FileSystem.DeleteFile(fullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin, UICancelOption.DoNothing);
+            }
+            catch
+            {
+                File.Delete(fullName);
             }
         }
     }

@@ -999,5 +999,19 @@ namespace ZTn.Json.Editor.Forms
                 //this.Close();
             }
         }
+
+        private void buttonRemove_Click(object sender, EventArgs e)
+        {
+            var answer = MessageBoxEx.Show(this, "Do you really want to delete this wizard?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (answer == DialogResult.Yes)
+            {
+                if (OpenedFileName != null)
+                {
+                    Helper.DeleteFile(OpenedFileName);
+                    DialogResult = DialogResult.Abort;
+                }
+                this.Close();
+            }
+        }
     }
 }
