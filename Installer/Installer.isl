@@ -51,10 +51,10 @@
 	
 	<summary>
 		<codepage>1252</codepage>
-		<title>Installation Database</title>
+		<title>##ID_STRING6##</title>
 		<subject>Mods Packager</subject>
 		<author>##ID_STRING2##</author>
-		<keywords>Installer,MSI,Database</keywords>
+		<keywords>Installer,MSI,Synology,Package</keywords>
 		<comments>Contact:  Your local administrator</comments>
 		<template>Intel;1033</template>
 		<lastauthor>Administrator</lastauthor>
@@ -346,7 +346,9 @@
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{6CD417B1-B01A-4D5B-9C50-75441D283B39}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Mods.Content_Files</td><td>{807C1A3B-EBD4-4960-9D8C-A021EC9E711C}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Mods.Content_Files1</td><td>{64CC7C9A-7B60-4FD2-9766-0C2CF81DE954}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Mods.Primary_output</td><td>{F8BED34B-5E08-4D06-8E9C-2A5E6A9699E8}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Mods.Primary_output1</td><td>{8921831D-1126-419D-AF7C-73B34871DB91}</td><td>INSTALLDIR</td><td>2</td><td/><td>mods.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1059,7 +1061,9 @@
 		<col key="yes" def="s72">Component_</col>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>INSTALLDIR</td><td>Mods.Content_Files</td></row>
+		<row><td>INSTALLDIR</td><td>Mods.Content_Files1</td></row>
 		<row><td>INSTALLDIR</td><td>Mods.Primary_output</td></row>
+		<row><td>INSTALLDIR</td><td>Mods.Primary_output1</td></row>
 	</table>
 
 	<table name="CustomAction">
@@ -1876,7 +1880,9 @@
 		<col key="yes" def="s72">Component_</col>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>AlwaysInstall</td><td>Mods.Content_Files</td></row>
+		<row><td>AlwaysInstall</td><td>Mods.Content_Files1</td></row>
 		<row><td>AlwaysInstall</td><td>Mods.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>Mods.Primary_output1</td></row>
 	</table>
 
 	<table name="File">
@@ -1891,8 +1897,8 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>mods.content_files</td><td>Mods.Content_Files</td><td>Mods.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|ContentFiles</td><td>3</td><td/></row>
-		<row><td>mods.primary_output</td><td>Mods.Primary_output</td><td>Mods.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>mods.content_files</td><td>Mods.Content_Files1</td><td>Mods.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|ContentFiles</td><td>3</td><td/></row>
+		<row><td>mods.primary_output</td><td>Mods.Primary_output1</td><td>Mods.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Mods1&gt;|Built</td><td>3</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2036,7 +2042,9 @@
 		<col def="S0">Miscellaneous</col>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_7B1C6A18_98B2_4E4F_B0CC_3ABFDB512B31_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Mods.Content_Files</td><td/><td/><td>_00D3A843_553E_4152_BE4B_B09F1D6E9F01_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Mods.Content_Files1</td><td/><td/><td>_75987947_24D9_4D60_95BE_13929A1C1E1A_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Mods.Primary_output</td><td/><td/><td>_59E22F67_703C_452D_AACE_74D30540592D_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Mods.Primary_output1</td><td/><td/><td>_3B622F5F_9419_42D6_81C8_56643C5C59AA_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2629,10 +2637,10 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>598270898</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>-2136391948</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
-		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>816198604</td></row>
+		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION45FULL</td><td>1033</td><td>Microsoft .NET Framework 4.5 Full package or greater needs to be installed for this installation to continue.</td><td>0</td><td/><td>-2136374156</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_OS</td><td>1033</td><td>The operating system is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
@@ -3730,11 +3738,13 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>816195852</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://www.BeatificaBytes.com</td><td>0</td><td/><td>598270898</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>598270898</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://www.BeatificaBytes.com</td><td>0</td><td/><td>-2136391948</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>BeatificaBytes</td><td>0</td><td/><td>-2136391948</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>816231022</td></row>
 		<row><td>ID_STRING4</td><td>1033</td><td>MODSPA~1|Mods Packager</td><td>0</td><td/><td>1218860564</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>Uninstall</td><td>0</td><td/><td>1218864660</td></row>
+		<row><td>ID_STRING6</td><td>1033</td><td>Installation Setup</td><td>0</td><td/><td>-2136379788</td></row>
+		<row><td>ID_STRING7</td><td>1033</td><td>https://github.com/vletroye/Mods/issues</td><td>0</td><td/><td>-2136391948</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>816195852</td></row>
 	</table>
 
@@ -3851,6 +3861,7 @@
 		<col def="I2">ISIconIndex</col>
 		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
 		<row><td>NewShortcut1_6DBF1A1F7499430FADBE08D4DC66DB56.exe</td><td/><td>&lt;ISProjectFolder&gt;\PackagingSyno.ico</td><td>0</td></row>
+		<row><td>NewShortcut2_C94034979F044213920A74F599CECB88.exe</td><td/><td>&lt;VSSolutionFolder&gt;\Mods\PackagingSyno.ico</td><td>0</td></row>
 		<row><td>NewShortcut3_1AF6161E1BEA4439A75EBF95741E4ADB.exe</td><td/><td>C:\Program Files (x86)\InstallShield\2015LE\Redist\Language Independent\OS Independent\uninstall.ico</td><td>0</td></row>
 		<row><td>_1FE368E50F934826A5CA6C42E53C6903.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Debug\Mods.exe</td><td>0</td></row>
 		<row><td>_204E2581017E4E47AC1D35E1D988C2B2.exe</td><td/><td>E:\Work\Development\Git\Mods\Mods\MyOwnDSMShortcuts\bin\Release\Mods.exe</td><td>0</td></row>
@@ -4315,6 +4326,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<col def="L0">Value</col>
 		<col def="S255">ISComments</col>
 		<row><td>ALLUSERS</td><td>1</td><td/></row>
+		<row><td>ARPHELPLINK</td><td>##ID_STRING7##</td><td/></row>
 		<row><td>ARPINSTALLLOCATION</td><td/><td/></row>
 		<row><td>ARPPRODUCTICON</td><td>ARPPRODUCTICON.exe</td><td/></row>
 		<row><td>ARPSIZE</td><td/><td/></row>
@@ -4358,6 +4370,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<row><td>LAUNCHPROGRAMCOMPCODE</td><td>{933D4236-753E-4F5A-9D46-010C6766AA69}</td><td/></row>
 		<row><td>LAUNCHPROGRAMFILEKEY</td><td>mods.primary_output</td><td/></row>
 		<row><td>LAUNCHREADME</td><td>1</td><td/></row>
+		<row><td>MSIFASTINSTALL</td><td>1</td><td/></row>
 		<row><td>Manufacturer</td><td>##COMPANY_NAME##</td><td/></row>
 		<row><td>PIDKEY</td><td/><td/></row>
 		<row><td>PIDTemplate</td><td>12345&lt;###-%%%%%%%&gt;@@@@@</td><td/></row>
@@ -4387,7 +4400,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<row><td>PROGRAMFILETOLAUNCHATEND</td><td>[INSTALLDIR]Mods.Primary output</td><td/></row>
 		<row><td>ProductCode</td><td>{4D6A4347-3372-4B79-9AD6-B7A0632892B9}</td><td/></row>
 		<row><td>ProductName</td><td>Mods Packager</td><td/></row>
-		<row><td>ProductVersion</td><td>7.02.0000</td><td/></row>
+		<row><td>ProductVersion</td><td>7.03.0000</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
@@ -4400,7 +4413,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<row><td>SERIALNUMBER</td><td/><td/></row>
 		<row><td>SERIALNUMVALSUCCESSRETVAL</td><td>1</td><td/></row>
 		<row><td>SHOWLAUNCHPROGRAM</td><td>-1</td><td/></row>
-		<row><td>SecureCustomProperties</td><td>USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;DOTNETVERSION45FULL;ISFOUNDNEWERPRODUCTVERSION</td><td/></row>
+		<row><td>SecureCustomProperties</td><td>USERNAME;COMPANYNAME;ISX_SERIALNUM;SUPPORTDIR;ISFOUNDNEWERPRODUCTVERSION;DOTNETVERSION45FULL</td><td/></row>
 		<row><td>SelectedSetupType</td><td>##IDS__DisplayName_Typical##</td><td/></row>
 		<row><td>SetupType</td><td>Typical</td><td/></row>
 		<row><td>UpgradeCode</td><td>{27F45286-2A72-42ED-AB4F-0F0AD96CED55}</td><td/></row>
@@ -4551,7 +4564,7 @@ QwBEAF8AUgBPAE0AAQBFAHgAcAByAGUAcwBzAA==
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>NewShortcut2</td><td>modspa_1_mods_packager</td><td>##ID_STRING4##</td><td>Mods.Primary_output</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut2</td><td>modspa_1_mods_packager</td><td>##ID_STRING4##</td><td>Mods.Primary_output</td><td>AlwaysInstall</td><td/><td/><td/><td>NewShortcut2_C94034979F044213920A74F599CECB88.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 		<row><td>NewShortcut3</td><td>modspa_1_mods_packager</td><td>##ID_STRING5##</td><td>ISX_DEFAULTCOMPONENT1</td><td>[SystemFolder]MsiExec.exe</td><td>/x [ProductCode]</td><td/><td/><td>NewShortcut3_1AF6161E1BEA4439A75EBF95741E4ADB.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 

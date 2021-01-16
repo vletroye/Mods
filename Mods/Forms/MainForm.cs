@@ -3865,7 +3865,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (!string.IsNullOrEmpty(uiDir)) content.Remove(Path.Combine(path, uiDir));
             }
 
-            content.Remove(Path.Combine(path, "Mods.exe"));
+            content.Remove(Path.Combine(path, "Hash.exe"));
 
             content.Remove(Path.Combine(path, "7z.dll"));
             content.Remove(Path.Combine(path, "7z.exe"));
