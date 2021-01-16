@@ -802,48 +802,7 @@ namespace BeatificaBytes.Synology.Mods
                 encrypter.EncryptAndSign(outputStream, new FileInfo(sourcePath));
             }
         }
-
-        public static void ComputeMD5Hash(string path)
-        {
-            string hash = "";
-            var package = Path.Combine(path, "package.tgz");
-            var info = Path.Combine(path, "INFO");
-
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(package))
-                {
-                    var hashByte = md5.ComputeHash(stream);
-                    hash = BitConverter.ToString(hashByte).Replace("-", "").ToLower();
-                }
-            }
-
-            if (File.Exists(info))
-            {
-                var lines = File.ReadAllLines(info);
-                using (StreamWriter outputFile = new StreamWriter(info))
-                {
-                    bool check = false;
-                    foreach (var line in lines)
-                    {
-                        var key = line.Substring(0, line.IndexOf('='));
-                        var value = line.Substring(line.IndexOf('=') + 1);
-                        value = value.Trim(new char[] { '"' });
-
-                        if (key == "checksum")
-                        {
-                            value = hash;
-                            check = true;
-                        }
-
-                        outputFile.WriteLine("{0}=\"{1}\"", key, value);
-                    }
-                    if (!check)
-                        outputFile.WriteLine("checksum=\"{0}\"", hash);
-                }
-            }
-        }
-
+        
         public static string JsonPrettify(string json)
         {
             using (var stringReader = new StringReader(json))

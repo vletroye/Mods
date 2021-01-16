@@ -31,66 +31,56 @@ namespace BeatificaBytes.Synology.Mods
         {
             try
             {
-                var hash = args.SingleOrDefault(arg => arg.StartsWith("hash:"));
-                if (!string.IsNullOrEmpty(hash))
+                string open = null;
+
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
+                if (!string.IsNullOrEmpty(edit))
                 {
-                    var path = hash.Replace("hash:", "");
-                    if (path == ".") path = AppDomain.CurrentDomain.BaseDirectory;
-                    Helper.ComputeMD5Hash(path);
+                    open = edit.Replace("edit:", "");
                 }
-                else
+                else if (Properties.Settings.Default.UpgradeRequired)
                 {
-                    string open = null;
-
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-
-                    var edit = args.SingleOrDefault(arg => arg.StartsWith("edit:"));
-                    if (!string.IsNullOrEmpty(edit))
-                    {
-                        open = edit.Replace("edit:", "");
-                    }
-                    else if (Properties.Settings.Default.UpgradeRequired)
-                    {
-                        Properties.Settings.Default.Upgrade();
-                        Properties.Settings.Default.UpgradeRequired = false;
-                        Properties.Settings.Default.Save();
-                    }
-
-                    // Load the default runner script or create one if it does not exist
-                    var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
-                    if (!File.Exists(defaultRunnerPath))
-                        Helper.WriteAnsiFile(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
-
-                    // Load the Router Config or create one if it does not exist
-                    var defaultRouterConfigPath = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
-                    if (!File.Exists(defaultRouterConfigPath))
-                        Helper.WriteAnsiFile(defaultRouterConfigPath, Properties.Settings.Default.dsm_cgi);
-
-                    // Load the Router Script or create one if it does not exist
-                    var defaultRouterScriptPath = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
-                    if (!File.Exists(defaultRouterScriptPath))
-                        Helper.WriteAnsiFile(defaultRouterScriptPath, Properties.Settings.Default.router_cgi);
-
-                    // Load the default DSM release list or create one if it does not exist
-                    var defaultDSMReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
-                    if (!File.Exists(defaultDSMReleases))
-                        Helper.WriteAnsiFile(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
-
-                    // Extract the WizardUI background image if it does not exist
-                    var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
-                    if (!File.Exists(backWizard))
-                    {
-                        var backWizardPng = new Bitmap(Properties.Resources.BackWizard);
-                        backWizardPng.Save(backWizard);
-                    }
-
-                    Application.Run(new MainForm(open));
+                    Properties.Settings.Default.Upgrade();
+                    Properties.Settings.Default.UpgradeRequired = false;
+                    Properties.Settings.Default.Save();
                 }
+
+                // Load the default runner script or create one if it does not exist
+                var defaultRunnerPath = Path.Combine(Helper.ResourcesDirectory, "default.runner");
+                if (!File.Exists(defaultRunnerPath))
+                    Helper.WriteAnsiFile(defaultRunnerPath, Properties.Settings.Default.Ps_Exec);
+
+                // Load the Router Config or create one if it does not exist
+                var defaultRouterConfigPath = Path.Combine(Helper.ResourcesDirectory, "dsm.cgi.conf");
+                if (!File.Exists(defaultRouterConfigPath))
+                    Helper.WriteAnsiFile(defaultRouterConfigPath, Properties.Settings.Default.dsm_cgi);
+
+                // Load the Router Script or create one if it does not exist
+                var defaultRouterScriptPath = Path.Combine(Helper.ResourcesDirectory, "router.cgi");
+                if (!File.Exists(defaultRouterScriptPath))
+                    Helper.WriteAnsiFile(defaultRouterScriptPath, Properties.Settings.Default.router_cgi);
+
+                // Load the default DSM release list or create one if it does not exist
+                var defaultDSMReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
+                if (!File.Exists(defaultDSMReleases))
+                    Helper.WriteAnsiFile(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
+
+                // Extract the WizardUI background image if it does not exist
+                var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
+                if (!File.Exists(backWizard))
+                {
+                    var backWizardPng = new Bitmap(Properties.Resources.BackWizard);
+                    backWizardPng.Save(backWizard);
+                }
+
+                Application.Run(new MainForm(open));
             }
             catch (Exception ex)
             {
-                MessageBoxEx.Show(string.Format("Mods Packager failed to run due to a fatal error : {0}\r\n\r\nIt will now stop.", ex.Message), "Fatal Error");                
+                MessageBoxEx.Show(string.Format("Mods Packager failed to run due to a fatal error : {0}\r\n\r\nIt will now stop.", ex.Message), "Fatal Error");
             }
         }
     }

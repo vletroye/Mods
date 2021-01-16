@@ -697,7 +697,8 @@ namespace BeatificaBytes.Synology.Mods
                         value = value.Replace("<br>", "\r\n");
                         if (info.ContainsKey(key))
                             info.Remove(key);
-                        info.Add(key, value);
+                        if (key != "checksum")
+                            info.Add(key, value);
                     }
                 }
 
@@ -3606,7 +3607,8 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (ready == DialogResult.Abort)
                 {
-                    MessageBoxEx.Show(this, "The Folder does not contain any valid package.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                    var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
+                    MessageBoxEx.Show(this, "The Folder does not contain a valid package.\r\n\r\n" + message, "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
                     ready = DialogResult.Abort;
                     succeed = false;
                 }
@@ -3662,9 +3664,15 @@ namespace BeatificaBytes.Synology.Mods
             if (File.Exists(Path.Combine(path, "Unpack.cmd")))
                 File.Delete(Path.Combine(path, "Unpack.cmd"));
             File.Copy(Path.Combine(Helper.ResourcesDirectory, "Unpack.cmd"), Path.Combine(path, "Unpack.cmd"));
-            if (File.Exists(Path.Combine(path, "Mods.exe")))
-                File.Delete(Path.Combine(path, "Mods.exe"));
-            File.Copy(Assembly.GetEntryAssembly().Location, Path.Combine(path, "Mods.exe"));
+
+            var binFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var hash = Path.Combine(binFolder, "Hash.exe");
+            if (File.Exists(hash))
+            {
+                if (File.Exists(Path.Combine(path, "Hash.exe")))
+                    File.Delete(Path.Combine(path, "Hash.exe"));
+                File.Copy(hash, Path.Combine(path, "Hash.exe"));
+            }
         }
 
         /// <summary>
@@ -4093,7 +4101,7 @@ namespace BeatificaBytes.Synology.Mods
                         Helper.WriteAnsiFile(jsonPath, wizard.Code);
                         menu.Image = new Bitmap(Properties.Resources.EditedScript);
                     }
-                    if (wizard.Code.Trim()=="")
+                    if (wizard.Code.Trim() == "")
                         Helper.DeleteFile(jsonPath);
                 }
                 else
@@ -4122,7 +4130,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
 
                 var dir = Path.GetDirectoryName(jsonPath);
-                if (Directory.Exists(dir) && Directory.EnumerateFiles(dir).Count() ==0)
+                if (Directory.Exists(dir) && Directory.EnumerateFiles(dir).Count() == 0)
                     Directory.Delete(dir);
             }
         }
