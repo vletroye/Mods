@@ -1,15 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BeatificaBytes.Synology.Mods
@@ -59,6 +52,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxDefaultPackageRepo.Checked = Properties.Settings.Default.DefaultPackageRepo;
             checkBoxOpenWith.Checked = Properties.Settings.Default.OpenWith;
             checkBoxDefaultPackageRoot.Checked = Properties.Settings.Default.DefaultPackageRoot;
+            checkBoxPromptExplorer.Checked = Properties.Settings.Default.PromptExplorer;
 
             buttonDefaultPackageRepo.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Visible = checkBoxDefaultPackageRepo.Checked;
@@ -236,6 +230,12 @@ namespace BeatificaBytes.Synology.Mods
             ShowParameters();
         }
 
+        private void checkBoxPromptExplorer_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.PromptExplorer = checkBoxPromptExplorer.Checked;
+            ShowParameters();
+        }
+
         private void labelDefaultPackageRoot_Click(object sender, EventArgs e)
         {
             var path = Properties.Settings.Default.PackageRoot;
@@ -254,6 +254,7 @@ namespace BeatificaBytes.Synology.Mods
                 Properties.Settings.Default.PackageRoot = "";
                 Properties.Settings.Default.DefaultPackageRepo = false;
                 Properties.Settings.Default.PackageRepo = "";
+                Properties.Settings.Default.PromptExplorer = true;
                 Properties.Settings.Default.Recents = new System.Collections.Specialized.StringCollection();
                 Properties.Settings.Default.RecentsName = new System.Collections.Specialized.StringCollection();
                 Properties.Settings.Default.AdvancedEditor = false;

@@ -2286,7 +2286,7 @@ namespace BeatificaBytes.Synology.Mods
 
             var url = textBoxUrl.Text.Trim();
             var key = string.Format("{0}.{1}", textBoxDsmAppName.Text, Helper.CleanUpText(title));
-            //var key = dsmName;
+            if (!multiInstance) key = textBoxDsmAppName.Text; // This is recommended otherwise the Task Manager does not find the icon of the service
 
             var urlType = comboBoxItemType.SelectedIndex;
             switch (urlType)
@@ -3947,10 +3947,13 @@ namespace BeatificaBytes.Synology.Mods
             if (ValidateChildren())
             {
                 BuildPackage(CurrentPackageFolder);
-                var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], CurrentPackageFolder), "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-                if (answer == DialogResult.Yes)
+                if (Properties.Settings.Default.PromptExplorer)
                 {
-                    Process.Start(CurrentPackageFolder);
+                    var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], CurrentPackageFolder), "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                    if (answer == DialogResult.Yes)
+                    {
+                        Process.Start(CurrentPackageFolder);
+                    }
                 }
             }
         }
@@ -4005,35 +4008,40 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!File.Exists(scriptPath))
             {
-                MessageBoxEx.Show(this, "This Script does not yet exist.\r\n\r\nPossibly 'Reset' your Package or create yourself the script from scratch.");
-                File.WriteAllLines(scriptPath, new string[] { "#!/bin/sh", "", "exit 0" });
-            }
-            var content = File.ReadAllText(scriptPath);
-            var script = new ScriptInfo(content, title, new Uri("https://help.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
-            DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
-            if (result == DialogResult.OK)
-            {
-                if (string.IsNullOrEmpty(script.Code))
+                if (MessageBoxEx.Show(this, "This Script does not yet exist.\r\n\r\nPossibly 'Reset' your Package or click 'OK' to create yourself the script from scratch.", "Warning", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    result = MessageBoxEx.Show(this, "This Script is now empty.\r\n\r\nDo you want to delete it ?.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                    switch (result)
-                    {
-                        case DialogResult.Yes:
-                            File.Delete(scriptPath);
-                            result = DialogResult.Cancel;
-                            break;
-                        case DialogResult.No:
-                            result = DialogResult.OK;
-                            break;
-                        default:
-                            break;
-                    }
+                    File.WriteAllLines(scriptPath, new string[] { "#!/bin/sh", "", "exit 0" });
                 }
-
+            }
+            if (File.Exists(scriptPath))
+            {
+                var content = File.ReadAllText(scriptPath);
+                var script = new ScriptInfo(content, title, new Uri("https://help.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
+                DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
                 if (result == DialogResult.OK)
-                    Helper.WriteAnsiFile(scriptPath, script.Code);
+                {
+                    if (string.IsNullOrEmpty(script.Code))
+                    {
+                        result = MessageBoxEx.Show(this, "This Script is now empty.\r\n\r\nDo you want to delete it ?.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                        switch (result)
+                        {
+                            case DialogResult.Yes:
+                                File.Delete(scriptPath);
+                                result = DialogResult.Cancel;
+                                break;
+                            case DialogResult.No:
+                                result = DialogResult.OK;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
 
-                done = true;
+                    if (result == DialogResult.OK)
+                        Helper.WriteAnsiFile(scriptPath, script.Code);
+
+                    done = true;
+                }
             }
 
             return done;

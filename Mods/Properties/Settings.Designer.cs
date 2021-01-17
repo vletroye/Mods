@@ -177,9 +177,28 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             }
         }
         
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"# set the name of the package in the nginx config
+sed -i -e ""s|@MODS_CGI@|$SYNOPKG_PKGNAME|g"" ""$SYNOPKG_PKGDEST/ui/dsm.cgi.conf""
+
+# link the nginx config to redirect pages accessed on admin port
+rm -f /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
+ln -s $SYNOPKG_PKGDEST/ui/dsm.cgi.conf /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
+#sudo synoservicecfg --reload nginx [Add startstop_restart_services=""nginx"" in INFO file instead of this line]
+")]
+        public string router_inst {
+            get {
+                return ((string)(this["router_inst"]));
+            }
+            set {
+                this["router_inst"] = value;
+            }
+        }
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(" v7.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute(" v7.3")]
         public string Version {
             get {
                 return ((string)(this["Version"]));
@@ -207,12 +226,12 @@ namespace BeatificaBytes.Synology.Mods.Properties {
             "turn exit status and intended output\r\n          return array (\r\n          \'exit_" +
             "status\'  => intval($matches[0]),\r\n          \'output\'       => str_replace(\"Exit " +
             "status : \" . $matches[0], \'\', $complete_output)\r\n          );\r\n          }\r\n    " +
-            "      echo \"<pre>\";\r\n\r\n          $result = liveExecuteCommand(\"mods.sh\");\r\n\r\n   " +
-            "       if($result[\'exit_status\'] === 0){\r\n          // do something if command e" +
-            "xecution succeeds\r\n          } else {\r\n          // do something on failure\r\n   " +
-            "       }\r\n          echo \"</pre>\";\r\n          echo \"<script type=\\\"text/javascri" +
-            "pt\\\">\";\r\n          echo \"autoScrolling();\";\r\n          echo \"</script>\";\r\n      " +
-            "    ?>\r\n        ")]
+            "      echo \"<pre>\";\r\n\r\n          $result = liveExecuteCommand(\"./mods.sh\");\r\n\r\n " +
+            "         if($result[\'exit_status\'] === 0){\r\n          // do something if command" +
+            " execution succeeds\r\n          } else {\r\n          // do something on failure\r\n " +
+            "         }\r\n          echo \"</pre>\";\r\n          echo \"<script type=\\\"text/javasc" +
+            "ript\\\">\";\r\n          echo \"autoScrolling();\";\r\n          echo \"</script>\";\r\n    " +
+            "      ?>\r\n        ")]
         public string Ps_Exec {
             get {
                 return ((string)(this["Ps_Exec"]));
@@ -224,9 +243,9 @@ namespace BeatificaBytes.Synology.Mods.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("location ~ ^/webman/3rdparty/@MODS_CGI@/.*\\.php {\n  root /usr/syno/synoman;\n  inc" +
-            "lude scgi_params;\n  rewrite .*\\.php /webman/3rdparty/@MODS_CGI@/router.cgi break" +
-            ";\n  scgi_pass synoscgi;\n}")]
+        [global::System.Configuration.DefaultSettingValueAttribute("location ~ ^/webman/3rdparty/@MODS_CGI@/.*\\.php {\r\n  root /usr/syno/synoman;\r\n  i" +
+            "nclude scgi_params;\r\n  rewrite .*\\.php /webman/3rdparty/@MODS_CGI@/router.cgi br" +
+            "eak;\r\n  scgi_pass synoscgi;\r\n}")]
         public string dsm_cgi {
             get {
                 return ((string)(this["dsm_cgi"]));
@@ -238,28 +257,29 @@ namespace BeatificaBytes.Synology.Mods.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#!/bin/sh\n\nLOG=\"/var/log/@SYNOPKG_PKGNAME@\"\n\n# the web server account (Ex.: http)" +
-            " must be granted write access\nif [ -w $LOG ]; then\n  echo `date` \"--------------" +
-            "----------------------------------------------------\" >> $LOG\n  echo `date` \"ROU" +
-            "TER.cgi has been called\" >> $LOG\n  echo `date` \"HANDLING request for\" $REQUEST_U" +
-            "RI >> $LOG\n  \n  # Log all environment variables if the Query String contains \'Lo" +
-            "gRouterCgi\'\n  if [[ $QUERY_STRING = *\"LogRouterCgi\"* ]]; then  \n    printenv >> " +
-            "$LOG\n  fi  \nfi\n\nif [ \"$REQUEST_URI\" == \"$SCRIPT_NAME\" ]; then\n  if [ -w $LOG ]; " +
-            "then\n    echo `date` \"NO REQUEST:\" $SCRIPT_NAME >> $LOG\n  fi\n  #echo \"Content-ty" +
-            "pe: text/html\"\n  echo -e \"HTTP/1.1 200 OK\\n\\n\"\nelse\n\n  # Set redirect_status to " +
-            "1 to get php cgi working.\n  REDIRECT_STATUS=1 export REDIRECT_STATUS\n  \n  # Fix " +
-            "several $_SERVER globals.\n  PHP_SELF=$REQUEST_URI export PHP_SELF\n  SCRIPT_NAME=" +
-            "$REQUEST_URI export SCRIPT_NAME\n  \n  # Generate the request url without the Quer" +
-            "y String parameters\n  SCRIPT_FILENAME=$DOCUMENT_ROOT${REQUEST_URI%\\?$QUERY_STRIN" +
-            "G}\n  if [ -w $LOG ]; then\n    echo `date` \"SCRIPT_FILENAME:\" $SCRIPT_FILENAME >>" +
-            " $LOG\n  fi\n\n  # Prepare the Query String parameters\n  SCRIPT_PARAMETERS=${QUERY_" +
-            "STRING//[&]/ }\n  if [ -w $LOG ]; then\n    echo `date` \"SCRIPT_PARAMETERS:\" $SCRI" +
-            "PT_PARAMETERS >> $LOG\n  fi\n\n  SCRIPT_FILENAME=`realpath $SCRIPT_FILENAME` export" +
-            " SCRIPT_FILENAME\n  if [ -w $LOG ]; then\n    echo `date` \"REALPATH:\" $SCRIPT_FILE" +
-            "NAME >> $LOG\n  fi\n  \n  if [ -w $LOG ]; then\n    echo `date` \"EXECUTE:\" \"/usr/loc" +
-            "al/bin/php70-cgi -c /etc/php/php.ini -d open_basedir=none \"$SCRIPT_FILENAME\" \"$S" +
-            "CRIPT_PARAMETERS\" 2>&1\" >> $LOG\n  fi\n  /usr/local/bin/php70-cgi -c /etc/php/php." +
-            "ini -d open_basedir=none $SCRIPT_FILENAME $SCRIPT_PARAMETERS 2>&1\nfi")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#!/bin/sh\r\n\r\nLOG=\"/var/log/@SYNOPKG_PKGNAME@\"\r\n\r\n# the web server account (Ex.: h" +
+            "ttp) must be granted write access\r\nif [ -w $LOG ]; then\r\n  echo `date` \"--------" +
+            "----------------------------------------------------------\" >> $LOG\r\n  echo `dat" +
+            "e` \"ROUTER.cgi has been called\" >> $LOG\r\n  echo `date` \"HANDLING request for\" $R" +
+            "EQUEST_URI >> $LOG\r\n  \r\n  # Log all environment variables if the Query String co" +
+            "ntains \'LogRouterCgi\'\r\n  if [[ $QUERY_STRING = *\"LogRouterCgi\"* ]]; then  \r\n    " +
+            "printenv >> $LOG\r\n  fi  \r\nfi\r\n\r\nif [ \"$REQUEST_URI\" == \"$SCRIPT_NAME\" ]; then\r\n " +
+            " if [ -w $LOG ]; then\r\n    echo `date` \"NO REQUEST:\" $SCRIPT_NAME >> $LOG\r\n  fi\r" +
+            "\n  #echo \"Content-type: text/html\"\r\n  echo -e \"HTTP/1.1 200 OK\\n\\n\"\r\nelse\r\n\r\n  #" +
+            " Set redirect_status to 1 to get php cgi working.\r\n  REDIRECT_STATUS=1 export RE" +
+            "DIRECT_STATUS\r\n  \r\n  # Fix several $_SERVER globals.\r\n  PHP_SELF=$REQUEST_URI ex" +
+            "port PHP_SELF\r\n  SCRIPT_NAME=$REQUEST_URI export SCRIPT_NAME\r\n  \r\n  # Generate t" +
+            "he request url without the Query String parameters\r\n  SCRIPT_FILENAME=$DOCUMENT_" +
+            "ROOT${REQUEST_URI%\\?$QUERY_STRING}\r\n  if [ -w $LOG ]; then\r\n    echo `date` \"SCR" +
+            "IPT_FILENAME:\" $SCRIPT_FILENAME >> $LOG\r\n  fi\r\n\r\n  # Prepare the Query String pa" +
+            "rameters\r\n  SCRIPT_PARAMETERS=${QUERY_STRING//[&]/ }\r\n  if [ -w $LOG ]; then\r\n  " +
+            "  echo `date` \"SCRIPT_PARAMETERS:\" $SCRIPT_PARAMETERS >> $LOG\r\n  fi\r\n\r\n  SCRIPT_" +
+            "FILENAME=`realpath $SCRIPT_FILENAME` export SCRIPT_FILENAME\r\n  if [ -w $LOG ]; t" +
+            "hen\r\n    echo `date` \"REALPATH:\" $SCRIPT_FILENAME >> $LOG\r\n  fi\r\n  \r\n  if [ -w $" +
+            "LOG ]; then\r\n    echo `date` \"EXECUTE:\" \"/usr/local/bin/php70-cgi -c /etc/php/ph" +
+            "p.ini -d open_basedir=none \"$SCRIPT_FILENAME\" \"$SCRIPT_PARAMETERS\" 2>&1\" >> $LOG" +
+            "\r\n  fi\r\n  /usr/local/bin/php70-cgi -c /etc/php/php.ini -d open_basedir=none $SCR" +
+            "IPT_FILENAME $SCRIPT_PARAMETERS 2>&1\r\nfi")]
         public string router_cgi {
             get {
                 return ((string)(this["router_cgi"]));
@@ -271,137 +291,55 @@ namespace BeatificaBytes.Synology.Mods.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"# set the name of the package in the nginx config
-sed -i -e ""s|@MODS_CGI@|$SYNOPKG_PKGNAME|g"" ""$SYNOPKG_PKGDEST/ui/dsm.cgi.conf""
-
-# link the nginx config to redirect pages accessed on admin port
-rm -f /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
-ln -s $SYNOPKG_PKGDEST/ui/dsm.cgi.conf /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG_PKGNAME.conf
-#sudo synoservicecfg --reload nginx [Add startstop_restart_services=""nginx"" in INFO file instead of this line]
-")]
-        public string router_inst {
-            get {
-                return ((string)(this["router_inst"]));
-            }
-            set {
-                this["router_inst"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"6.2-23739-2
-6.2-23739-1
-6.2-23739
-6.2.1-23824-1
-6.2.1-23824
-6.1-15047-2
-6.1-15047-1
-6.1-15047
-6.1.7-15284-2
-6.1.7-15284-1
-6.1.7-15284
-6.1.6-15266-1
-6.1.6-15266
-6.1.5-15254-1
-6.1.5-15254
-6.1.4-15217-5
-6.1.4-15217-4
-6.1.4-15217-3
-6.1.4-15217-2
-6.1.4-15217-1
-6.1.4-15217
-6.1.3-15152-8
-6.1.3-15152-7
-6.1.3-15152-6
-6.1.3-15152-5
-6.1.3-15152-4
-6.1.3-15152-3
-6.1.3-15152-2
-6.1.3-15152-1
-6.1.3-15152
-6.1.2-15132-1
-6.1.2-15132
-6.1.1-15101-4
-6.1.1-15101-3
-6.1.1-15101-2
-6.1.1-15101-1
-6.1.1-15101
-6.0-7321-7
-6.0-7321-6
-6.0-7321-5
-6.0-7321-3
-6.0-7321-2
-6.0-7321-1
-6.0-7321
-6.0.3-8754-8
-6.0.3-8754-7
-6.0.3-8754-6
-6.0.3-8754-5
-6.0.3-8754-4
-6.0.3-8754-3
-6.0.3-8754-2
-6.0.3-8754-1
-6.0.3-8754
-6.0.2-8451-9
-6.0.2-8451-8
-6.0.2-8451-7
-6.0.2-8451-6
-6.0.2-8451-5
-6.0.2-8451-4
-6.0.2-8451-3
-6.0.2-8451-2
-6.0.2-8451-11
-6.0.2-8451-10
-6.0.2-8451-1
-6.0.2-8451
-6.0.1-7393-2
-6.0.1-7393-1
-6.0.1-7393
-5.2-5967-8
-5.2-5967-7
-5.2-5967-6
-5.2-5967-5
-5.2-5967-4
-5.2-5967-3
-5.2-5967-2
-5.2-5967-1
-5.2-5967
-5.2-5644-8
-5.2-5644-5
-5.2-5644-3
-5.2-5644-2
-5.2-5644-1
-5.2-5644
-5.2-5592-4
-5.2-5592-3
-5.2-5592-2
-5.2-5592-1
-5.2-5592
-5.2-5565-2
-5.2-5565-1
-5.2-5565
-5.1-5055
-5.1-5022-5
-5.1-5022-4
-5.1-5022-3
-5.1-5022-2
-5.1-5022-1
-5.1-5022
-5.1-5021-2
-5.1-5021
-5.1-5004-2
-5.1-5004
-5.0-4528-2
-5.0-4528-1
-5.0-4528
-")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n          7.0-40000\r\n          6.2-23739-2\r\n          6.2-23739-1\r\n          6." +
+            "2-23739\r\n          6.2.1-23824-1\r\n          6.2.1-23824\r\n          6.1-15047-2\r\n" +
+            "          6.1-15047-1\r\n          6.1-15047\r\n          6.1.7-15284-2\r\n          6" +
+            ".1.7-15284-1\r\n          6.1.7-15284\r\n          6.1.6-15266-1\r\n          6.1.6-15" +
+            "266\r\n          6.1.5-15254-1\r\n          6.1.5-15254\r\n          6.1.4-15217-5\r\n  " +
+            "        6.1.4-15217-4\r\n          6.1.4-15217-3\r\n          6.1.4-15217-2\r\n       " +
+            "   6.1.4-15217-1\r\n          6.1.4-15217\r\n          6.1.3-15152-8\r\n          6.1." +
+            "3-15152-7\r\n          6.1.3-15152-6\r\n          6.1.3-15152-5\r\n          6.1.3-151" +
+            "52-4\r\n          6.1.3-15152-3\r\n          6.1.3-15152-2\r\n          6.1.3-15152-1\r" +
+            "\n          6.1.3-15152\r\n          6.1.2-15132-1\r\n          6.1.2-15132\r\n        " +
+            "  6.1.1-15101-4\r\n          6.1.1-15101-3\r\n          6.1.1-15101-2\r\n          6.1" +
+            ".1-15101-1\r\n          6.1.1-15101\r\n          6.0-7321-7\r\n          6.0-7321-6\r\n " +
+            "         6.0-7321-5\r\n          6.0-7321-3\r\n          6.0-7321-2\r\n          6.0-7" +
+            "321-1\r\n          6.0-7321\r\n          6.0.3-8754-8\r\n          6.0.3-8754-7\r\n     " +
+            "     6.0.3-8754-6\r\n          6.0.3-8754-5\r\n          6.0.3-8754-4\r\n          6.0" +
+            ".3-8754-3\r\n          6.0.3-8754-2\r\n          6.0.3-8754-1\r\n          6.0.3-8754\r" +
+            "\n          6.0.2-8451-9\r\n          6.0.2-8451-8\r\n          6.0.2-8451-7\r\n       " +
+            "   6.0.2-8451-6\r\n          6.0.2-8451-5\r\n          6.0.2-8451-4\r\n          6.0.2" +
+            "-8451-3\r\n          6.0.2-8451-2\r\n          6.0.2-8451-11\r\n          6.0.2-8451-1" +
+            "0\r\n          6.0.2-8451-1\r\n          6.0.2-8451\r\n          6.0.1-7393-2\r\n       " +
+            "   6.0.1-7393-1\r\n          6.0.1-7393\r\n          5.2-5967-8\r\n          5.2-5967-" +
+            "7\r\n          5.2-5967-6\r\n          5.2-5967-5\r\n          5.2-5967-4\r\n          5" +
+            ".2-5967-3\r\n          5.2-5967-2\r\n          5.2-5967-1\r\n          5.2-5967\r\n     " +
+            "     5.2-5644-8\r\n          5.2-5644-5\r\n          5.2-5644-3\r\n          5.2-5644-" +
+            "2\r\n          5.2-5644-1\r\n          5.2-5644\r\n          5.2-5592-4\r\n          5.2" +
+            "-5592-3\r\n          5.2-5592-2\r\n          5.2-5592-1\r\n          5.2-5592\r\n       " +
+            "   5.2-5565-2\r\n          5.2-5565-1\r\n          5.2-5565\r\n          5.1-5055\r\n   " +
+            "       5.1-5022-5\r\n          5.1-5022-4\r\n          5.1-5022-3\r\n          5.1-502" +
+            "2-2\r\n          5.1-5022-1\r\n          5.1-5022\r\n          5.1-5021-2\r\n          5" +
+            ".1-5021\r\n          5.1-5004-2\r\n          5.1-5004\r\n          5.0-4528-2\r\n       " +
+            "   5.0-4528-1\r\n          5.0-4528\r\n        ")]
         public string dsm_releases {
             get {
                 return ((string)(this["dsm_releases"]));
             }
             set {
                 this["dsm_releases"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PromptExplorer {
+            get {
+                return ((bool)(this["PromptExplorer"]));
+            }
+            set {
+                this["PromptExplorer"] = value;
             }
         }
     }

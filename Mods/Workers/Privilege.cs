@@ -19,7 +19,8 @@ namespace BeatificaBytes.Synology.Mods
         private JToken origPrivilege;
         private JToken privilege;
         private State stateCtrlScript = State.None;
-        private List<string> actions = new List<string>() { "start", "stop", "status", "prestart", "", "prestop", "preinst", "postinst", "preuninst", "postuninst", "preupgrade", "postupgrade" };
+        private State stateExecutable = State.None;
+        private List<string> actions = new List<string>() { "start", "stop", "status", "prestart", "prestop", "preinst", "postinst", "preuninst", "postuninst", "preupgrade", "postupgrade" };
 
         public JToken Specification
         {
@@ -67,14 +68,22 @@ namespace BeatificaBytes.Synology.Mods
                 if (groupname != null) textBoxGroupname.Text = groupname.ToString();
 
                 var ctrlScript = privilege.SelectToken("ctrl-script");
-                foreach (var ctrl in ctrlScript)
-                {
-                    var item = new ListViewItem(ctrl.SelectToken("action").ToString());
-                    item.SubItems.Add(ctrl.SelectToken("run-as").ToString());
-                    listViewCtrlScript.Items.Add(item);
-                }
+                if (ctrlScript != null)
+                    foreach (var ctrl in ctrlScript)
+                    {
+                        var item = new ListViewItem(ctrl.SelectToken("action").ToString());
+                        item.SubItems.Add(ctrl.SelectToken("run-as").ToString());
+                        listViewCtrlScript.Items.Add(item);
+                    }
 
                 var executable = privilege.SelectToken("executable");
+                if (executable != null)
+                    foreach (var exec in executable)
+                    {
+                        var item = new ListViewItem(exec.SelectToken("relpath").ToString());
+                        item.SubItems.Add(exec.SelectToken("run-as").ToString());
+                        listViewExecutable.Items.Add(item);
+                    }
 
                 var tool = privilege.SelectToken("tool");
             }
@@ -84,7 +93,8 @@ namespace BeatificaBytes.Synology.Mods
                 this.Close();
             }
 
-            DisplayDetails(null, null);
+            DisplayCtrlScriptDetails(null, null);
+            DisplayExecutableDetails(null, null);
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -100,14 +110,44 @@ namespace BeatificaBytes.Synology.Mods
 
             //Update the Resource file
             privilege["defaults"] = defaults;
+
+
+            if (privilege.SelectToken("username") != null) ((JObject)privilege).Remove("username");
             if (username == null)
-            { if (privilege.SelectToken("username") != null) ((JObject)privilege).Remove("username"); }
-            else
-            { privilege["username"] = username; }
-            if (groupname == null)
-            { if (privilege.SelectToken("groupname") != null) ((JObject)privilege).Remove("groupname"); }
-            else
-            { privilege["groupname"] = groupname; }
+                privilege["username"] = username;
+
+            if (privilege.SelectToken("groupname") != null) ((JObject)privilege).Remove("groupname");
+            if (groupname != null)
+                privilege["groupname"] = groupname;
+
+            if (privilege.SelectToken("ctrl-script") != null) ((JObject)privilege).Remove("ctrl-script");
+            var ctrlScript = new List<string>();
+            foreach (ListViewItem item in listViewCtrlScript.Items)
+            {
+                var action = item.Text;
+                var runAs = item.SubItems[1].Text;
+                ctrlScript.Add(string.Format("{{\"action\": \"{0}\",\"run-as\": \"{1}\"}}", action, runAs));
+            }
+            if (ctrlScript.Count > 0)
+            {
+                var ctrl = JArray.Parse("[" + ctrlScript.Aggregate((i, j) => i + "," + j) + "]");
+                privilege["ctrl-script"] = ctrl;
+            }
+
+            if (privilege.SelectToken("executable") != null) ((JObject)privilege).Remove("executable");
+            var executable = new List<string>();
+            foreach (ListViewItem item in listViewExecutable.Items)
+            {
+                var relpath = item.Text;
+                var runAs = item.SubItems[1].Text;
+                executable.Add(string.Format("{{\"relpath\": \"{0}\",\"run-as\": \"{1}\"}}", relpath, runAs));
+            }
+            if (executable.Count > 0)
+            {
+                var exec = JArray.Parse("[" + executable.Aggregate((i, j) => i + "," + j) + "]");
+                privilege["executable"] = exec;
+            }
+
             CloseScript(DialogResult.OK);
         }
 
@@ -221,26 +261,29 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void DisplayDetails(string action, string runas)
+        //----------------------------------
+        //Tab Ctrl-Script
+
+        private void DisplayCtrlScriptDetails(string action, string runas)
         {
             if (action == null || runas == null)
             {
-                comboBox1.SelectedIndex = -1;
-                comboBox2.SelectedIndex = -1;
+                comboBoxCtrlScriptAction.SelectedIndex = -1;
+                comboBoxCtrlScriptRunAs.SelectedIndex = -1;
             }
             else
             {
-                comboBox1.SelectedItem = action;
-                comboBox2.SelectedItem = runas;
+                comboBoxCtrlScriptAction.SelectedItem = action;
+                comboBoxCtrlScriptRunAs.SelectedItem = runas;
             }
 
-            EnableItemDetails();
+            EnableCtrlScriptItemDetails();
         }
 
-        private void EnableItemDetails()
+        private void EnableCtrlScriptItemDetails()
         {
-            comboBox1.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
-            comboBox2.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+            comboBoxCtrlScriptAction.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+            comboBoxCtrlScriptRunAs.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
 
             buttonCtrlScriptAdd.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
             buttonCtrlScriptEdit.Enabled = (stateCtrlScript == State.View);
@@ -249,6 +292,10 @@ namespace BeatificaBytes.Synology.Mods
             buttonCtrlScriptCancel.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
 
             listViewCtrlScript.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
+
+            buttonCancel.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
+            buttonOk.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
+            buttonRemove.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
         }
 
 
@@ -259,12 +306,14 @@ namespace BeatificaBytes.Synology.Mods
                 if (listViewCtrlScript.SelectedItems.Count > 0)
                 {
                     stateCtrlScript = State.View;
-                    DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+                    comboBoxCtrlScriptAction.Items.Clear();
+                    comboBoxCtrlScriptAction.Items.AddRange(actions.ToArray());
+                    DisplayCtrlScriptDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
                 }
                 else
                 {
                     stateCtrlScript = State.None;
-                    DisplayDetails(null, null);
+                    DisplayCtrlScriptDetails(null, null);
                 }
             }
         }
@@ -273,92 +322,228 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (listViewCtrlScript.SelectedItems.Count == 1)
             {
-                buttonEditItem_Click(sender, e);
+                buttonCtrlScriptEditItem_Click(sender, e);
             }
         }
 
 
         // Add an new item
-        private void buttonAddItem_Click(object sender, EventArgs e)
+        private void buttonCtrlScriptAddItem_Click(object sender, EventArgs e)
         {
             if (ValidateChildren())
             {
                 stateCtrlScript = State.Add;
-                comboBox1.Items.Clear();
-                comboBox1.Items.Add(actions);
+                comboBoxCtrlScriptAction.Items.Clear();
+                comboBoxCtrlScriptAction.Items.AddRange(actions.ToArray());
                 foreach (ListViewItem item in listViewCtrlScript.Items)
                 {
-                    comboBox1.Items.Remove(item.Text);
+                    comboBoxCtrlScriptAction.Items.Remove(item.Text);
                 }
-                DisplayDetails(null, null);
-                comboBox1.Focus();
+                DisplayCtrlScriptDetails(null, null);
+                comboBoxCtrlScriptAction.Focus();
             }
         }
 
         // Edit the item currently selected
-        private void buttonEditItem_Click(object sender, EventArgs e)
+        private void buttonCtrlScriptEditItem_Click(object sender, EventArgs e)
         {
             if (ValidateChildren())
             {
                 stateCtrlScript = State.Edit;
-                comboBox1.Items.Clear();
-                comboBox1.Items.Add(actions);
+                comboBoxCtrlScriptAction.Items.Clear();
+                comboBoxCtrlScriptAction.Items.AddRange(actions.ToArray());
                 foreach (ListViewItem item in listViewCtrlScript.Items)
                 {
-                    comboBox1.Items.Remove(item.Text);
+                    if (item.Text != comboBoxCtrlScriptAction.Text)
+                        comboBoxCtrlScriptAction.Items.Remove(item.Text);
                 }
-                EnableItemDetails();
-                comboBox1.Focus();
+                EnableCtrlScriptItemDetails();
+                comboBoxCtrlScriptAction.Focus();
             }
         }
 
-        private void buttonCancelItem_Click(object sender, EventArgs e)
+        private void buttonCtrlScriptCancelItem_Click(object sender, EventArgs e)
         {
             if (stateCtrlScript == State.Add)
             {
                 stateCtrlScript = State.None;
-                DisplayDetails(null, null);
+                DisplayCtrlScriptDetails(null, null);
             }
             else
             {
                 if (listViewCtrlScript.SelectedItems.Count > 0)
                 {
                     stateCtrlScript = State.View;
-                    DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+                    DisplayCtrlScriptDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
                 }
                 else
                 {
                     stateCtrlScript = State.None;
-                    DisplayDetails(null, null);
+                    DisplayCtrlScriptDetails(null, null);
                 }
             }
 
         }
 
-        private void buttonSaveItem_Click(object sender, EventArgs e)
+        private void buttonCtrlScriptSaveItem_Click(object sender, EventArgs e)
         {
             if (stateCtrlScript == State.Add)
             {
-                var item = new ListViewItem(comboBox1.SelectedItem.ToString());
-                item.SubItems.Add(comboBox2.SelectedItem.ToString());
+                var item = new ListViewItem(comboBoxCtrlScriptAction.SelectedItem.ToString());
+                item.SubItems.Add(comboBoxCtrlScriptRunAs.SelectedItem.ToString());
                 listViewCtrlScript.Items.Add(item);
             }
             else
             {
-                listViewCtrlScript.SelectedItems[0].SubItems[0].Text = comboBox1.SelectedItem.ToString();
-                listViewCtrlScript.SelectedItems[0].SubItems[1].Text = comboBox2.SelectedItem.ToString();
+                listViewCtrlScript.SelectedItems[0].SubItems[0].Text = comboBoxCtrlScriptAction.Text;
+                listViewCtrlScript.SelectedItems[0].SubItems[1].Text = comboBoxCtrlScriptRunAs.Text;
             }
-            stateCtrlScript = State.View;
-            DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+            stateCtrlScript = State.None;
+            DisplayCtrlScriptDetails(null, null);
         }
 
-        private void buttonDeleteItem_Click(object sender, EventArgs e)
+        private void buttonCtrlScriptDeleteItem_Click(object sender, EventArgs e)
         {
             if (listViewCtrlScript.SelectedItems.Count > 0)
             {
                 stateCtrlScript = State.None;
-                DisplayDetails(null, null);
+                DisplayCtrlScriptDetails(null, null);
                 listViewCtrlScript.SelectedItems[0].Remove();
+            }
+        }
+
+        //----------------------------------
+        //Tab Executable
+
+        private void DisplayExecutableDetails(string action, string runas)
+        {
+            if (action == null || runas == null)
+            {
+                textBoxExecutablePath.Text = "";
+                comboBoxExecutableRunAs.SelectedIndex = -1;
+            }
+            else
+            {
+                textBoxExecutablePath.Text = action;
+                comboBoxExecutableRunAs.SelectedItem = runas;
+            }
+
+            EnableExecutableItemDetails();
+        }
+
+        private void EnableExecutableItemDetails()
+        {
+            textBoxExecutablePath.Enabled = (stateExecutable == State.Edit || stateExecutable == State.Add);
+            comboBoxExecutableRunAs.Enabled = (stateExecutable == State.Edit || stateExecutable == State.Add);
+
+            buttonExecutableAdd.Enabled = (stateExecutable == State.View || stateExecutable == State.None);
+            buttonExecutableEdit.Enabled = (stateExecutable == State.View);
+            buttonExecutableDelete.Enabled = (stateExecutable == State.View);
+            buttonExecutableSave.Enabled = (stateExecutable == State.Edit || stateExecutable == State.Add);
+            buttonExecutableCancel.Enabled = (stateExecutable == State.Edit || stateExecutable == State.Add);
+
+            listViewExecutable.Enabled = (stateExecutable == State.View || stateExecutable == State.None);
+
+            buttonCancel.Enabled = (stateExecutable == State.View || stateExecutable == State.None);
+            buttonOk.Enabled = (stateExecutable == State.View || stateExecutable == State.None);
+            buttonRemove.Enabled = (stateExecutable == State.View || stateExecutable == State.None);
+        }
+
+
+        private void listViewExecutable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (stateExecutable != State.Edit)
+            {
+                if (listViewExecutable.SelectedItems.Count > 0)
+                {
+                    stateExecutable = State.View;
+                    DisplayExecutableDetails(listViewExecutable.SelectedItems[0].SubItems[0].Text, listViewExecutable.SelectedItems[0].SubItems[1].Text);
+                }
+                else
+                {
+                    stateExecutable = State.None;
+                    DisplayExecutableDetails(null, null);
+                }
+            }
+        }
+
+        private void listViewExecutable_DoubleClick(object sender, EventArgs e)
+        {
+            if (listViewExecutable.SelectedItems.Count == 1)
+            {
+                buttonExecutableEdit_Click(sender, e);
+            }
+        }
+
+
+        // Add an new item
+        private void buttonExecutableAdd_Click(object sender, EventArgs e)
+        {
+            if (ValidateChildren())
+            {
+                stateExecutable = State.Add;
+                DisplayExecutableDetails(null, null);
+                textBoxExecutablePath.Focus();
+            }
+        }
+
+        // Edit the item currently selected
+        private void buttonExecutableEdit_Click(object sender, EventArgs e)
+        {
+            if (ValidateChildren())
+            {
+                EnableExecutableItemDetails();
+                textBoxExecutablePath.Focus();
+            }
+        }
+
+        private void buttonExecutableCancel_Click(object sender, EventArgs e)
+        {
+            if (stateExecutable == State.Add)
+            {
+                stateExecutable = State.None;
+                DisplayExecutableDetails(null, null);
+            }
+            else
+            {
+                if (listViewExecutable.SelectedItems.Count > 0)
+                {
+                    stateExecutable = State.View;
+                    DisplayExecutableDetails(listViewExecutable.SelectedItems[0].SubItems[0].Text, listViewExecutable.SelectedItems[0].SubItems[1].Text);
+                }
+                else
+                {
+                    stateExecutable = State.None;
+                    DisplayExecutableDetails(null, null);
+                }
+            }
+
+        }
+
+        private void buttonExecutableSave_Click(object sender, EventArgs e)
+        {
+            if (stateExecutable == State.Add)
+            {
+                var item = new ListViewItem(textBoxExecutablePath.Text);
+                item.SubItems.Add(comboBoxExecutableRunAs.SelectedItem.ToString());
+                listViewExecutable.Items.Add(item);
+            }
+            else
+            {
+                listViewExecutable.SelectedItems[0].SubItems[0].Text = textBoxExecutablePath.Text;
+                listViewExecutable.SelectedItems[0].SubItems[1].Text = comboBoxExecutableRunAs.SelectedItem.ToString();
+            }
+            stateExecutable = State.None;
+            DisplayExecutableDetails(null, null);
+        }
+
+        private void buttonExecutableDelete_Click(object sender, EventArgs e)
+        {
+            if (listViewExecutable.SelectedItems.Count > 0)
+            {
+                stateExecutable = State.None;
+                DisplayExecutableDetails(null, null);
+                listViewExecutable.SelectedItems[0].Remove();
             }
         }
     }

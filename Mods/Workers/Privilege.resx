@@ -120,6 +120,11 @@
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="comboBoxRunAs.ToolTip" xml:space="preserve">
+    <value>package - Run as ${package} and drop privilege. Apply chown -hR "${package}:${package}" on files.
+system - Run as ${package}, but preserve the ability to grant privilege. Apply chown -hR "${package}:system" on files.
+root - Run as root. Do not apply any chown.</value>
+  </data>
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>107, 17</value>
   </metadata>
