@@ -45,8 +45,19 @@
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonRemove = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.listViewCtrlScript = new System.Windows.Forms.ListView();
+            this.buttonCtrlScriptAdd = new System.Windows.Forms.Button();
+            this.buttonCtrlScriptDelete = new System.Windows.Forms.Button();
+            this.buttonCtrlScriptEdit = new System.Windows.Forms.Button();
+            this.buttonCtrlScriptCancel = new System.Windows.Forms.Button();
+            this.buttonCtrlScriptSave = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBoxDefaults.SuspendLayout();
             this.tabControl.SuspendLayout();
+            this.tabPageCtrlScript.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
@@ -152,15 +163,23 @@
             this.tabControl.Location = new System.Drawing.Point(12, 143);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(494, 245);
+            this.tabControl.Size = new System.Drawing.Size(494, 283);
             this.tabControl.TabIndex = 3;
             // 
             // tabPageCtrlScript
             // 
+            this.tabPageCtrlScript.Controls.Add(this.comboBox2);
+            this.tabPageCtrlScript.Controls.Add(this.comboBox1);
+            this.tabPageCtrlScript.Controls.Add(this.buttonCtrlScriptSave);
+            this.tabPageCtrlScript.Controls.Add(this.buttonCtrlScriptCancel);
+            this.tabPageCtrlScript.Controls.Add(this.buttonCtrlScriptEdit);
+            this.tabPageCtrlScript.Controls.Add(this.buttonCtrlScriptDelete);
+            this.tabPageCtrlScript.Controls.Add(this.buttonCtrlScriptAdd);
+            this.tabPageCtrlScript.Controls.Add(this.listViewCtrlScript);
             this.tabPageCtrlScript.Location = new System.Drawing.Point(4, 22);
             this.tabPageCtrlScript.Name = "tabPageCtrlScript";
             this.tabPageCtrlScript.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCtrlScript.Size = new System.Drawing.Size(486, 219);
+            this.tabPageCtrlScript.Size = new System.Drawing.Size(486, 257);
             this.tabPageCtrlScript.TabIndex = 0;
             this.tabPageCtrlScript.Text = "Ctrl-Script";
             this.tabPageCtrlScript.UseVisualStyleBackColor = true;
@@ -200,6 +219,113 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // listViewCtrlScript
+            // 
+            this.listViewCtrlScript.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewCtrlScript.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.listViewCtrlScript.FullRowSelect = true;
+            this.listViewCtrlScript.GridLines = true;
+            this.listViewCtrlScript.Location = new System.Drawing.Point(6, 6);
+            this.listViewCtrlScript.Name = "listViewCtrlScript";
+            this.listViewCtrlScript.Size = new System.Drawing.Size(474, 184);
+            this.listViewCtrlScript.TabIndex = 0;
+            this.listViewCtrlScript.UseCompatibleStateImageBehavior = false;
+            this.listViewCtrlScript.View = System.Windows.Forms.View.Details;
+            this.listViewCtrlScript.SelectedIndexChanged += new System.EventHandler(this.listViewCtrlScript_SelectedIndexChanged);
+            this.listViewCtrlScript.DoubleClick += new System.EventHandler(this.listViewCtrlScript_DoubleClick);
+            // 
+            // buttonCtrlScriptAdd
+            // 
+            this.buttonCtrlScriptAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptAdd.Location = new System.Drawing.Point(6, 223);
+            this.buttonCtrlScriptAdd.Name = "buttonCtrlScriptAdd";
+            this.buttonCtrlScriptAdd.Size = new System.Drawing.Size(66, 28);
+            this.buttonCtrlScriptAdd.TabIndex = 1;
+            this.buttonCtrlScriptAdd.Text = "Add";
+            this.buttonCtrlScriptAdd.UseVisualStyleBackColor = true;
+            this.buttonCtrlScriptAdd.Click += new System.EventHandler(this.buttonAddItem_Click);
+            // 
+            // buttonCtrlScriptDelete
+            // 
+            this.buttonCtrlScriptDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptDelete.Location = new System.Drawing.Point(78, 223);
+            this.buttonCtrlScriptDelete.Name = "buttonCtrlScriptDelete";
+            this.buttonCtrlScriptDelete.Size = new System.Drawing.Size(66, 28);
+            this.buttonCtrlScriptDelete.TabIndex = 2;
+            this.buttonCtrlScriptDelete.Text = "Delete";
+            this.buttonCtrlScriptDelete.UseVisualStyleBackColor = true;
+            this.buttonCtrlScriptDelete.Click += new System.EventHandler(this.buttonDeleteItem_Click);
+            // 
+            // buttonCtrlScriptEdit
+            // 
+            this.buttonCtrlScriptEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptEdit.Location = new System.Drawing.Point(150, 223);
+            this.buttonCtrlScriptEdit.Name = "buttonCtrlScriptEdit";
+            this.buttonCtrlScriptEdit.Size = new System.Drawing.Size(66, 28);
+            this.buttonCtrlScriptEdit.TabIndex = 3;
+            this.buttonCtrlScriptEdit.Text = "Edit";
+            this.buttonCtrlScriptEdit.UseVisualStyleBackColor = true;
+            this.buttonCtrlScriptEdit.Click += new System.EventHandler(this.buttonEditItem_Click);
+            // 
+            // buttonCtrlScriptCancel
+            // 
+            this.buttonCtrlScriptCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptCancel.Location = new System.Drawing.Point(222, 223);
+            this.buttonCtrlScriptCancel.Name = "buttonCtrlScriptCancel";
+            this.buttonCtrlScriptCancel.Size = new System.Drawing.Size(66, 28);
+            this.buttonCtrlScriptCancel.TabIndex = 4;
+            this.buttonCtrlScriptCancel.Text = "Cancel";
+            this.buttonCtrlScriptCancel.UseVisualStyleBackColor = true;
+            this.buttonCtrlScriptCancel.Click += new System.EventHandler(this.buttonCancelItem_Click);
+            // 
+            // buttonCtrlScriptSave
+            // 
+            this.buttonCtrlScriptSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptSave.Location = new System.Drawing.Point(294, 223);
+            this.buttonCtrlScriptSave.Name = "buttonCtrlScriptSave";
+            this.buttonCtrlScriptSave.Size = new System.Drawing.Size(66, 28);
+            this.buttonCtrlScriptSave.TabIndex = 5;
+            this.buttonCtrlScriptSave.Text = "Save";
+            this.buttonCtrlScriptSave.UseVisualStyleBackColor = true;
+            this.buttonCtrlScriptSave.Click += new System.EventHandler(this.buttonSaveItem_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 196);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(138, 21);
+            this.comboBox1.TabIndex = 6;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "root",
+            "system",
+            "package"});
+            this.comboBox2.Location = new System.Drawing.Point(150, 196);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(138, 21);
+            this.comboBox2.TabIndex = 7;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Action";
+            this.columnHeader1.Width = 140;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Run-as";
+            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.columnHeader2.Width = 140;
+            // 
             // Privilege
             // 
             this.AcceptButton = this.buttonOk;
@@ -219,6 +345,7 @@
             this.groupBoxDefaults.ResumeLayout(false);
             this.groupBoxDefaults.PerformLayout();
             this.tabControl.ResumeLayout(false);
+            this.tabPageCtrlScript.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
 
@@ -242,5 +369,15 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.ListView listViewCtrlScript;
+        private System.Windows.Forms.Button buttonCtrlScriptSave;
+        private System.Windows.Forms.Button buttonCtrlScriptCancel;
+        private System.Windows.Forms.Button buttonCtrlScriptEdit;
+        private System.Windows.Forms.Button buttonCtrlScriptDelete;
+        private System.Windows.Forms.Button buttonCtrlScriptAdd;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }

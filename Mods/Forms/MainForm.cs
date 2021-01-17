@@ -4013,7 +4013,26 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
             if (result == DialogResult.OK)
             {
-                Helper.WriteAnsiFile(scriptPath, script.Code);
+                if (string.IsNullOrEmpty(script.Code))
+                {
+                    result = MessageBoxEx.Show(this, "This Script is now empty.\r\n\r\nDo you want to delete it ?.", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    switch (result)
+                    {
+                        case DialogResult.Yes:
+                            File.Delete(scriptPath);
+                            result = DialogResult.Cancel;
+                            break;
+                        case DialogResult.No:
+                            result = DialogResult.OK;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (result == DialogResult.OK)
+                    Helper.WriteAnsiFile(scriptPath, script.Code);
+
                 done = true;
             }
 

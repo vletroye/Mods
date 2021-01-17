@@ -9,14 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static BeatificaBytes.Synology.Mods.MainForm;
 
 namespace BeatificaBytes.Synology.Mods
 {
     public partial class Privilege : Form
     {
-        SortedDictionary<string, string> info;
+        private SortedDictionary<string, string> info;
         private JToken origPrivilege;
         private JToken privilege;
+        private State stateCtrlScript = State.None;
+        private List<string> actions = new List<string>() { "start", "stop", "status", "prestart", "", "prestop", "preinst", "postinst", "preuninst", "postuninst", "preupgrade", "postupgrade" };
 
         public JToken Specification
         {
@@ -64,6 +67,12 @@ namespace BeatificaBytes.Synology.Mods
                 if (groupname != null) textBoxGroupname.Text = groupname.ToString();
 
                 var ctrlScript = privilege.SelectToken("ctrl-script");
+                foreach (var ctrl in ctrlScript)
+                {
+                    var item = new ListViewItem(ctrl.SelectToken("action").ToString());
+                    item.SubItems.Add(ctrl.SelectToken("run-as").ToString());
+                    listViewCtrlScript.Items.Add(item);
+                }
 
                 var executable = privilege.SelectToken("executable");
 
@@ -74,6 +83,8 @@ namespace BeatificaBytes.Synology.Mods
                 MessageBoxEx.Show(this, "The privilege file can't be parsed.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                 this.Close();
             }
+
+            DisplayDetails(null, null);
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -197,7 +208,7 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     int.TryParse(info["os_min_ver"].Substring(0, 1), out min);
                 }
-                if (info.ContainsKey("os_max_ver") && info["os_max_ver"] !="")
+                if (info.ContainsKey("os_max_ver") && info["os_max_ver"] != "")
                 {
                     int.TryParse(info["os_max_ver"].Substring(0, 1), out max);
                 }
@@ -207,6 +218,147 @@ namespace BeatificaBytes.Synology.Mods
                     e.Cancel = true;
                     errorProvider.SetError(comboBoxRunAs, "Must run as 'package' since targeting DSM >= 7");
                 }
+            }
+        }
+
+        private void DisplayDetails(string action, string runas)
+        {
+            if (action == null || runas == null)
+            {
+                comboBox1.SelectedIndex = -1;
+                comboBox2.SelectedIndex = -1;
+            }
+            else
+            {
+                comboBox1.SelectedItem = action;
+                comboBox2.SelectedItem = runas;
+            }
+
+            EnableItemDetails();
+        }
+
+        private void EnableItemDetails()
+        {
+            comboBox1.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+            comboBox2.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+
+            buttonCtrlScriptAdd.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
+            buttonCtrlScriptEdit.Enabled = (stateCtrlScript == State.View);
+            buttonCtrlScriptDelete.Enabled = (stateCtrlScript == State.View);
+            buttonCtrlScriptSave.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+            buttonCtrlScriptCancel.Enabled = (stateCtrlScript == State.Edit || stateCtrlScript == State.Add);
+
+            listViewCtrlScript.Enabled = (stateCtrlScript == State.View || stateCtrlScript == State.None);
+        }
+
+
+        private void listViewCtrlScript_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (stateCtrlScript != State.Edit)
+            {
+                if (listViewCtrlScript.SelectedItems.Count > 0)
+                {
+                    stateCtrlScript = State.View;
+                    DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+                }
+                else
+                {
+                    stateCtrlScript = State.None;
+                    DisplayDetails(null, null);
+                }
+            }
+        }
+
+        private void listViewCtrlScript_DoubleClick(object sender, EventArgs e)
+        {
+            if (listViewCtrlScript.SelectedItems.Count == 1)
+            {
+                buttonEditItem_Click(sender, e);
+            }
+        }
+
+
+        // Add an new item
+        private void buttonAddItem_Click(object sender, EventArgs e)
+        {
+            if (ValidateChildren())
+            {
+                stateCtrlScript = State.Add;
+                comboBox1.Items.Clear();
+                comboBox1.Items.Add(actions);
+                foreach (ListViewItem item in listViewCtrlScript.Items)
+                {
+                    comboBox1.Items.Remove(item.Text);
+                }
+                DisplayDetails(null, null);
+                comboBox1.Focus();
+            }
+        }
+
+        // Edit the item currently selected
+        private void buttonEditItem_Click(object sender, EventArgs e)
+        {
+            if (ValidateChildren())
+            {
+                stateCtrlScript = State.Edit;
+                comboBox1.Items.Clear();
+                comboBox1.Items.Add(actions);
+                foreach (ListViewItem item in listViewCtrlScript.Items)
+                {
+                    comboBox1.Items.Remove(item.Text);
+                }
+                EnableItemDetails();
+                comboBox1.Focus();
+            }
+        }
+
+        private void buttonCancelItem_Click(object sender, EventArgs e)
+        {
+            if (stateCtrlScript == State.Add)
+            {
+                stateCtrlScript = State.None;
+                DisplayDetails(null, null);
+            }
+            else
+            {
+                if (listViewCtrlScript.SelectedItems.Count > 0)
+                {
+                    stateCtrlScript = State.View;
+                    DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+                }
+                else
+                {
+                    stateCtrlScript = State.None;
+                    DisplayDetails(null, null);
+                }
+            }
+
+        }
+
+        private void buttonSaveItem_Click(object sender, EventArgs e)
+        {
+            if (stateCtrlScript == State.Add)
+            {
+                var item = new ListViewItem(comboBox1.SelectedItem.ToString());
+                item.SubItems.Add(comboBox2.SelectedItem.ToString());
+                listViewCtrlScript.Items.Add(item);
+            }
+            else
+            {
+                listViewCtrlScript.SelectedItems[0].SubItems[0].Text = comboBox1.SelectedItem.ToString();
+                listViewCtrlScript.SelectedItems[0].SubItems[1].Text = comboBox2.SelectedItem.ToString();
+            }
+            stateCtrlScript = State.View;
+            DisplayDetails(listViewCtrlScript.SelectedItems[0].SubItems[0].Text, listViewCtrlScript.SelectedItems[0].SubItems[1].Text);
+        }
+
+        private void buttonDeleteItem_Click(object sender, EventArgs e)
+        {
+            if (listViewCtrlScript.SelectedItems.Count > 0)
+            {
+                stateCtrlScript = State.None;
+                DisplayDetails(null, null);
+                listViewCtrlScript.SelectedItems[0].Remove();
             }
         }
     }
