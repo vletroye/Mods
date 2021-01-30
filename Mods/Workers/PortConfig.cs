@@ -132,9 +132,6 @@ namespace BeatificaBytes.Synology.Mods
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var info = new ProcessStartInfo(help.Url.AbsoluteUri);
-            info.UseShellExecute = true;
-            Process.Start(info);
         }
 
         private void CloseScript(DialogResult exitMode)
@@ -291,6 +288,8 @@ namespace BeatificaBytes.Synology.Mods
                     break;
             }
 
+            EnableFields();
+
             textBoxService.Text = current["service_name"];
             textBoxTitle.Text = current["title"];
             textBoxDescription.Text = current["desc"];
@@ -299,13 +298,30 @@ namespace BeatificaBytes.Synology.Mods
             string protocol;
             string ports;
             GetPortProtocol(current["src.ports"], out ports, out protocol);
-            textBoxSrcPorts.Text = ports;
-            comboBoxSrcProtocol.SelectedItem = protocol;
-            GetPortProtocol(current["dst.ports"], out ports, out protocol);
-            textBoxDstPorts.Text = ports;
-            comboBoxDstProtocol.SelectedItem = protocol;
+            if (current["src.ports"] != null && string.IsNullOrEmpty(protocol))
+            {
+                comboBoxSrcProtocol.SelectedItem = null;
+                comboBoxSrcProtocol.Enabled = false;
+                textBoxSrcPorts.Text = current["src.ports"];
+            }
+            else
+            {
+                textBoxSrcPorts.Text = ports;
+                comboBoxSrcProtocol.SelectedItem = protocol;
+            }
 
-            EnableFields();
+            GetPortProtocol(current["dst.ports"], out ports, out protocol);
+            if (current["dst.ports"] != null && string.IsNullOrEmpty(protocol))
+            {
+                comboBoxDstProtocol.SelectedItem = null;
+                comboBoxDstProtocol.Enabled = false;
+                textBoxDstPorts.Text = current["dst.ports"];
+            }
+            else
+            {
+                textBoxDstPorts.Text = ports;
+                comboBoxDstProtocol.SelectedItem = protocol;
+            }
         }
 
         private void GetPortProtocol(string data, out string ports, out string protocol)
@@ -559,39 +575,31 @@ namespace BeatificaBytes.Synology.Mods
 
         private bool CheckValidPorts(TextBox textBox, ref CancelEventArgs e)
         {
-            if (textBox.Enabled && !string.IsNullOrEmpty(textBox.Text) && !validPorts.IsMatch(textBox.Text))
+            if (textBox.Enabled && !string.IsNullOrEmpty(textBox.Text))
             {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "This field must contain valid ports: 1~65535 separated by ‘,’ and using ‘:’ to represent port range.");
-            }
+                var valid = validPorts.IsMatch(textBox.Text);
+                if (!valid)
+                {
+                    var ports = textBox.Text.Split(',');
+                    valid = true;
+                    foreach (var oldPort in ports)
+                    {
+                        var port = oldPort.Split('/');
+                        if (port.Length == 2 && (port[1] == "udp" || port[1] == "tcp"))
+                            valid = valid && validPorts.IsMatch(port[0]);
+                        else
+                            valid = false;
+                    }
+                }
 
+                if (!valid)
+                {
+                    e.Cancel = true;
+                    textBox.Select(0, textBox.Text.Length);
+                    errorProvider.SetError(textBox, "This field must contain valid ports: 1~65535 separated by ‘,’ and using ‘:’ to represent port range.");
+                }
+            }
             return e.Cancel;
-        }
-
-        private void CheckDoubleQuotes(TextBox textBox, ref CancelEventArgs e)
-        {
-            if (textBox.Text.Contains("\""))
-            {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "You may not use double quotes in this textbox.");
-            }
-            if (textBox.Text.Contains("\r\n"))
-            {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "You may not use CRLF in this textbox.");
-            }
-        }
-        private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(textBox.Text) && !textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
-            {
-                e.Cancel = true;
-                textBox.Select(0, textBox.Text.Length);
-                errorProvider.SetError(textBox, "You didn't type a well formed http(s) absolute Url.");
-            }
         }
 
         private void textBoxSrcPorts_Validated(object sender, EventArgs e)
@@ -728,6 +736,13 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 checkBoxPortConfig.Checked = true;
             }
+        }
+
+        private void PortConfigWorker_HelpButtonClicked(object sender, CancelEventArgs e)
+        {
+            var info = new ProcessStartInfo(help.Url.AbsoluteUri);
+            info.UseShellExecute = true;
+            Process.Start(info);
         }
     }
 }

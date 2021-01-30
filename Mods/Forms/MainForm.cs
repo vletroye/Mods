@@ -2697,12 +2697,15 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     var focused = Helper.FindFocusedControl(this);
 
-                    var copy = new Package();
-                    foreach (var item in list.items)
+                    if (list != null)
                     {
-                        copy.items.Add(item.Key.Replace(oldName, newName), item.Value);
+                        var copy = new Package();
+                        foreach (var item in list.items)
+                        {
+                            copy.items.Add(item.Key.Replace(oldName, newName), item.Value);
+                        }
+                        list = copy;
                     }
-                    list = copy;
                     if (!string.IsNullOrEmpty(textBoxDsmAppName.Text))
                         textBoxDsmAppName.Text = textBoxDsmAppName.Text.Replace(oldName, newName);
 
@@ -2715,14 +2718,17 @@ namespace BeatificaBytes.Synology.Mods
                     oldName = string.Format("/webman/3rdparty/{0}/", oldName);
                     newName = string.Format("/webman/3rdparty/{0}/", newName);
 
-                    foreach (var item in list.items)
+                    if (list != null)
                     {
-                        if (item.Value.url.StartsWith(oldName))
+                        foreach (var item in list.items)
                         {
-                            item.Value.url = item.Value.url.Replace(oldName, newName);
+                            if (item.Value.url.StartsWith(oldName))
+                            {
+                                item.Value.url = item.Value.url.Replace(oldName, newName);
+                            }
                         }
+                        BindData(list, null);
                     }
-                    BindData(list, null);
                     DisplayItem();
                     focused.Focus();
 
@@ -2842,9 +2848,9 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (string.IsNullOrEmpty(textBoxDsmAppName.Text) && !string.IsNullOrEmpty(textBoxPackage.Text))
                 {
-                    textBoxDsmAppName.Text = string.Format("SYNO.SDS._ThirdParty.App.{0}", Helper.CleanUpText(textBoxPackage.Text));
+                    textBoxDsmAppName.Text = string.Format("SYNO.SDS.ThirdParty.App.{0}", Helper.CleanUpText(textBoxPackage.Text));
                 }
-                var name = textBoxDsmAppName.Text.Replace(".", "_").Replace("__", "_");
+                var name = textBoxDsmAppName.Text; //.Replace(".", "_").Replace("__", "_");
                 var cleaned = Helper.CleanUpText(textBoxDsmAppName.Text);
                 if (name != cleaned)
                 {
@@ -3112,7 +3118,7 @@ namespace BeatificaBytes.Synology.Mods
                             }
                         }
                     }
-                    catch { saved = DialogResult.Abort; }
+                    catch (Exception ex) { saved = DialogResult.Abort; }
                 }
                 return saved;
             }
@@ -3515,15 +3521,26 @@ namespace BeatificaBytes.Synology.Mods
             {
                 switch (file)
                 {
+                    case "!usr-local-linker":
+                        var item = resource == null ? null : resource.SelectToken(file.Substring(1));
+                        if (item != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                            file = Path.Combine(CurrentPackageFolder, "INFO");
+                        else
+                            file = null;
+                        break;
                     case "!port-config":
                         file = null;
                         var portConfig = resource == null ? null : resource.SelectToken("port-config");
-                        if (portConfig != null)
+                        if (portConfig != null && !string.IsNullOrEmpty(CurrentPackageFolder))
                         {
-                            var protocolFile = portConfig.SelectToken("protocol-file").ToString();
-                            if (protocolFile != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                            var protocolFile = portConfig.SelectToken("protocol-file");
+                            if (protocolFile == null) // Maybe the old style ?
                             {
-                                file = Path.Combine(CurrentPackageFolder, "package", protocolFile.Replace("/", "\\"));
+                                file = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                            }
+                            else
+                            {
+                                file = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
                             }
                         }
                         break;
@@ -3538,7 +3555,8 @@ namespace BeatificaBytes.Synology.Mods
                             }
                             else
                             {
-                                file = Path.Combine(CurrentPackageFolder, string.Format(file, info["dsmuidir"]));
+                                var uidir = info.Keys.Contains("dsmuidir") ? info["dsmuidir"] : "";
+                                file = Path.Combine(CurrentPackageFolder, string.Format(file, uidir));
                             }
                         }
                         break;
@@ -5360,25 +5378,29 @@ namespace BeatificaBytes.Synology.Mods
                 var portConfig = resource == null ? null : resource.SelectToken("port-config");
                 if (portConfig != null)
                 {
-                    var protocolFile = portConfig.SelectToken("protocol-file").ToString();
-                    if (protocolFile != null)
+                    var protocolFile = portConfig.SelectToken("protocol-file");
+                    if (protocolFile == null) // Maybe the old style ?
                     {
-                        portConfigFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.Replace("/", "\\"));
-                        if (File.Exists(portConfigFile))
+                        portConfigFile = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                    }
+                    else
+                    {
+                        portConfigFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
+                    }
+                    if (File.Exists(portConfigFile))
+                    {
+                        //Read the INI protocol file (remove space before and after the '=')
+                        IniParserConfiguration config = new IniParserConfiguration();
+                        config.AssigmentSpacer = "";
+                        var parser = new IniDataParser(config);
+                        var fileParser = new FileIniDataParser(parser);
+                        try
                         {
-                            //Read the INI protocol file (remove space before and after the '=')
-                            IniParserConfiguration config = new IniParserConfiguration();
-                            config.AssigmentSpacer = "";
-                            var parser = new IniDataParser(config);
-                            var fileParser = new FileIniDataParser(parser);
-                            try
-                            {
-                                portConfigData = fileParser.ReadFile(portConfigFile);
-                            }
-                            catch
-                            {
-                                MessageBoxEx.Show(this, string.Format("Service Configuration file {0} can't be parsed.", protocolFile), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                            }
+                            portConfigData = fileParser.ReadFile(portConfigFile);
+                        }
+                        catch
+                        {
+                            MessageBoxEx.Show(this, string.Format("Service Configuration file {0} can't be parsed.", protocolFile.ToString()), "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
                         }
                     }
                 }
@@ -5391,11 +5413,18 @@ namespace BeatificaBytes.Synology.Mods
 
                     if (portConfig != null)
                     {
-                        var protocolFile = portConfig.SelectToken("protocol-file").ToString();
-                        if (protocolFile != null)
+                        var protocolFile = portConfig.SelectToken("protocol-file");
+                        if (protocolFile == null) // Maybe the old style ?
                         {
-                            protocolFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.Replace("/", "\\"));
-                            Directory.CreateDirectory(Path.GetDirectoryName(protocolFile));
+                            portConfigFile = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                        }
+                        else
+                        {
+                            portConfigFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
+                        }
+                        if (portConfigFile != null && portConfigFile.EndsWith(".sc"))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(portConfigFile));
 
                             //Read the INI protocol string and remove space before and after the '='
                             IniParserConfiguration config = new IniParserConfiguration();
@@ -5411,7 +5440,7 @@ namespace BeatificaBytes.Synology.Mods
                             }
 
                             //Save the INI protocol file
-                            Helper.WriteAnsiFile(protocolFile, portConfigData.ToString());
+                            Helper.WriteAnsiFile(portConfigFile, portConfigData.ToString());
                             //var fileParser = new FileIniDataParser(parser);
                             //fileParser.WriteFile(protocolFile, portConfigData, Encoding.GetEncoding(1252));
 
@@ -5535,7 +5564,29 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                MessageBoxEx.Show(this, "This Worker is not yet implemented.", "Notification", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                var linkerConfig = resource == null ? null : resource.SelectToken("usr-local-linker");
+
+                var ui = info.ContainsKey("dsmuidir") ? info["dsmuidir"] : "";
+                var worker = new Linker(linkerConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
+                if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
+                {
+                    linkerConfig = worker.Specification;
+
+                    if (linkerConfig != null && linkerConfig.HasValues)
+                    {
+                        //Update the Resource file
+                        if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
+                        resource["usr-local-linker"] = linkerConfig;
+                    }
+                    else
+                    {
+                        if (resource != null)
+                            resource.Remove("usr-local-linker");
+                    }
+
+                    //Save the Resource file
+                    SaveResourceConfig(CurrentPackageFolder);
+                }
             }
         }
 

@@ -2002,6 +2002,7 @@ namespace BeatificaBytes.Synology.Mods
             this.linkerToolStripMenuItem.Name = "linkerToolStripMenuItem";
             this.linkerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F1)));
             this.linkerToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+            this.linkerToolStripMenuItem.Tag = "!usr-local-linker";
             this.linkerToolStripMenuItem.Text = "Linker";
             this.linkerToolStripMenuItem.Click += new System.EventHandler(this.linkerToolStripMenuItem_Click);
             // 

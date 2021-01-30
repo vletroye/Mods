@@ -146,6 +146,12 @@
     <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
+    <Compile Include="Workers\Linker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Workers\Linker.Designer.cs">
+      <DependentUpon>Linker.cs</DependentUpon>
+    </Compile>
     <Compile Include="Workers\Privilege.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -239,6 +245,9 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Workers\Linker.resx">
+      <DependentUpon>Linker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Workers\Privilege.resx">
       <DependentUpon>Privilege.cs</DependentUpon>
     </EmbeddedResource>

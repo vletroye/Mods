@@ -29,7 +29,7 @@ namespace BeatificaBytes.Synology.Mods
         public static Regex getPort = new Regex(@"^:(\d*)/.*$", RegexOptions.Compiled);
         public static Regex getOldFirmwareVersion = new Regex(@"^\d+.\d+\.\d+$", RegexOptions.Compiled);
         public static Regex getShortFirmwareVersion = new Regex(@"^\d+\.\d+$", RegexOptions.Compiled);
-        public static Regex getFirmwareVersion = new Regex(@"^(\d+)\.(\d+)(\.[^-]*){0,1}-(\d+)(.*)$", RegexOptions.Compiled); //new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
+        public static Regex getFirmwareVersion = new Regex(@"^(\d+)\.(\d+)(\.[^-]*){0,1}(-(\d+)(.*)){0,1}$", RegexOptions.Compiled); //new Regex(@"^(\d+\.)*\d-\d+$", RegexOptions.Compiled);
 
         public static Regex getOldVersion = new Regex(@"^((\d+\.)*\d+)\.(\d+)$", RegexOptions.Compiled);
         public static Regex getVersion = new Regex(@"^(\d+\.)*\d+-\d+$", RegexOptions.Compiled);
@@ -42,7 +42,7 @@ namespace BeatificaBytes.Synology.Mods
             Directory = 1
         }
 
-        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-]", RegexOptions.Compiled);
+        static Regex cleanChar = new Regex(@"[^a-zA-Z0-9\-\.]", RegexOptions.Compiled);
         static string resourcesDirectory = null;
 
         public static bool CompareImages(Bitmap b1, Bitmap b2)
@@ -802,7 +802,7 @@ namespace BeatificaBytes.Synology.Mods
                 encrypter.EncryptAndSign(outputStream, new FileInfo(sourcePath));
             }
         }
-        
+
         public static string JsonPrettify(string json)
         {
             using (var stringReader = new StringReader(json))
@@ -1032,7 +1032,7 @@ namespace BeatificaBytes.Synology.Mods
                 if (getFirmwareVersion.IsMatch(ver))
                 {
                     var match = getFirmwareVersion.Match(ver);
-                    var firmware = String.Format("{0}.{1}-{2}", match.Groups[1].Value, match.Groups[2].Value, match.Groups[4].Value);
+                    var firmware = String.Format("{0}.{1}-{2}", match.Groups[1].Value, match.Groups[2].Value, match.Groups[5].Value);
                     if (!box.AutoCompleteCustomSource.Contains(firmware))
                         box.AutoCompleteCustomSource.Add(firmware);
                 }
@@ -1072,7 +1072,7 @@ namespace BeatificaBytes.Synology.Mods
 
             major = int.Parse(match.Groups[1].Value);
             minor = int.Parse(match.Groups[2].Value);
-            build = int.Parse(match.Groups[4].Value);
+            int.TryParse(match.Groups[5].Value, out build);
         }
 
         public static bool CheckDSMVersionMax(SortedDictionary<string, string> info, int maxMajor, int maxMinor, int maxBuild)

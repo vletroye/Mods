@@ -32,7 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PortConfigWorker));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
-            this.linkLabelHelp = new System.Windows.Forms.LinkLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.dataGridViewPortConfig = new System.Windows.Forms.DataGridView();
             this.Service = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -94,18 +93,6 @@
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
-            // 
-            // linkLabelHelp
-            // 
-            this.linkLabelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabelHelp.AutoSize = true;
-            this.linkLabelHelp.Location = new System.Drawing.Point(824, 3);
-            this.linkLabelHelp.Name = "linkLabelHelp";
-            this.linkLabelHelp.Size = new System.Drawing.Size(29, 13);
-            this.linkLabelHelp.TabIndex = 1;
-            this.linkLabelHelp.TabStop = true;
-            this.linkLabelHelp.Text = "Help";
-            this.linkLabelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
             // 
             // dataGridViewPortConfig
             // 
@@ -477,13 +464,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(856, 640);
-            this.ControlBox = false;
             this.Controls.Add(this.buttonAdvanced);
             this.Controls.Add(this.panelPortConfig);
             this.Controls.Add(this.checkBoxPortConfig);
-            this.Controls.Add(this.linkLabelHelp);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.HelpButton = true;
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -493,6 +479,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Config Editor";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PortConfigWorker_HelpButtonClicked);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PortConfig_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPortConfig)).EndInit();
             this.panelPortConfig.ResumeLayout(false);
@@ -507,7 +494,6 @@
         #endregion
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.LinkLabel linkLabelHelp;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.CheckBox checkBoxPortConfig;
         private System.Windows.Forms.Panel panelPortConfig;

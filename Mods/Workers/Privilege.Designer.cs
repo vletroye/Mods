@@ -33,6 +33,7 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxDefaults = new System.Windows.Forms.GroupBox();
+            this.linkLabelHelp = new System.Windows.Forms.LinkLabel();
             this.textBoxGroupname = new System.Windows.Forms.TextBox();
             this.textBoxUsername = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -99,6 +100,7 @@
             // 
             this.groupBoxDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxDefaults.Controls.Add(this.linkLabelHelp);
             this.groupBoxDefaults.Controls.Add(this.textBoxGroupname);
             this.groupBoxDefaults.Controls.Add(this.textBoxUsername);
             this.groupBoxDefaults.Controls.Add(this.label2);
@@ -111,6 +113,13 @@
             this.groupBoxDefaults.TabIndex = 0;
             this.groupBoxDefaults.TabStop = false;
             this.groupBoxDefaults.Text = "Defaults";
+            // 
+            // linkLabelHelp
+            // 
+            this.linkLabelHelp.Location = new System.Drawing.Point(0, 0);
+            this.linkLabelHelp.Name = "linkLabelHelp";
+            this.linkLabelHelp.Size = new System.Drawing.Size(100, 23);
+            this.linkLabelHelp.TabIndex = 0;
             // 
             // textBoxGroupname
             // 
@@ -292,6 +301,7 @@
             this.listViewCtrlScript.View = System.Windows.Forms.View.Details;
             this.listViewCtrlScript.SelectedIndexChanged += new System.EventHandler(this.listViewCtrlScript_SelectedIndexChanged);
             this.listViewCtrlScript.DoubleClick += new System.EventHandler(this.listViewCtrlScript_DoubleClick);
+            this.listViewCtrlScript.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listViewCtrlScript_KeyUp);
             // 
             // columnHeader1
             // 
@@ -301,7 +311,6 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Run-as";
-            this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader2.Width = 140;
             // 
             // tabPageExecutable
@@ -416,6 +425,7 @@
             this.listViewExecutable.View = System.Windows.Forms.View.Details;
             this.listViewExecutable.SelectedIndexChanged += new System.EventHandler(this.listViewExecutable_SelectedIndexChanged);
             this.listViewExecutable.DoubleClick += new System.EventHandler(this.listViewExecutable_DoubleClick);
+            this.listViewExecutable.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listViewExecutable_KeyUp);
             // 
             // columnHeader3
             // 
@@ -425,7 +435,6 @@
             // columnHeader4
             // 
             this.columnHeader4.Text = "Run-as";
-            this.columnHeader4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.columnHeader4.Width = 140;
             // 
             // tabPageTool
@@ -464,11 +473,15 @@
             this.Controls.Add(this.groupBoxDefaults);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.HelpButton = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Privilege";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Configure Privilege";
+            this.Text = "Privilege Editor";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.Privilege_HelpButtonClicked);
             this.groupBoxDefaults.ResumeLayout(false);
             this.groupBoxDefaults.PerformLayout();
             this.tabControl.ResumeLayout(false);
@@ -518,5 +531,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.TextBox textBoxExecutablePath;
+        private System.Windows.Forms.LinkLabel linkLabelHelp;
     }
 }

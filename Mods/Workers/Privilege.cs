@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,32 @@ using static BeatificaBytes.Synology.Mods.MainForm;
 
 namespace BeatificaBytes.Synology.Mods
 {
+    /// <summary>
+    /// Edit Privilege: https://help.synology.com/developer-guide/privilege/privilege_specification.html
+    /// In file /conf/privilege
+    // {
+    //  "defaults":{
+    //    "run-as": "<run-as>"
+    //  },
+    //  "username": "<username>",
+    //  "groupname": "<groupname>",
+    //  "ctrl-script":[{
+    //    "action": "<action>",
+    //    "run-as": "<run-as>"
+    //  }, ...],
+    //  "executable": [{
+    //    "relpath": "<relpath>",
+    //    "run-as": "<run-as>"
+    //  }, ...],
+    //  "tool": [{
+    //    "relpath": "<relpath>",
+    //    "user": "<user>",
+    //    "group": "<group>",
+    //    "permission": "<mode>"
+    //  }, ...]
+    // }
+
+    /// </summary>
     public partial class Privilege : Form
     {
         private SortedDictionary<string, string> info;
@@ -21,6 +48,7 @@ namespace BeatificaBytes.Synology.Mods
         private State stateCtrlScript = State.None;
         private State stateExecutable = State.None;
         private List<string> actions = new List<string>() { "start", "stop", "status", "prestart", "prestop", "preinst", "postinst", "preuninst", "postuninst", "preupgrade", "postupgrade" };
+        private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/privilege/privilege_specification.html"), "Details about Privilege");
 
         public JToken Specification
         {
@@ -99,7 +127,6 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonOk_Click(object sender, EventArgs e)
         {
-
             var defaults = JObject.Parse(string.Format("{{\"run-as\": \"{0}\"}}", comboBoxRunAs.SelectedItem));
             var username = textBoxUsername.Text;
             var groupname = textBoxGroupname.Text;
@@ -113,7 +140,7 @@ namespace BeatificaBytes.Synology.Mods
 
 
             if (privilege.SelectToken("username") != null) ((JObject)privilege).Remove("username");
-            if (username == null)
+            if (username != null)
                 privilege["username"] = username;
 
             if (privilege.SelectToken("groupname") != null) ((JObject)privilege).Remove("groupname");
@@ -545,6 +572,29 @@ namespace BeatificaBytes.Synology.Mods
                 DisplayExecutableDetails(null, null);
                 listViewExecutable.SelectedItems[0].Remove();
             }
+        }
+
+        private void Privilege_HelpButtonClicked(object sender, CancelEventArgs e)
+        {
+            var info = new ProcessStartInfo(help.Url.AbsoluteUri);
+            info.UseShellExecute = true;
+            Process.Start(info);
+        }
+
+        private void listViewCtrlScript_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (stateCtrlScript == State.View && e.KeyCode == Keys.Delete)
+                buttonCtrlScriptDeleteItem_Click(null, null);
+            if ((stateCtrlScript == State.None || stateCtrlScript == State.View) && e.KeyCode == Keys.Insert)
+                buttonCtrlScriptAddItem_Click(null, null);
+        }
+
+        private void listViewExecutable_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (stateExecutable == State.View && e.KeyCode == Keys.Delete)
+                buttonExecutableDelete_Click(null, null);
+            if ((stateExecutable == State.None || stateExecutable == State.View) && e.KeyCode == Keys.Insert)
+                buttonExecutableAdd_Click(null, null);
         }
     }
 }
