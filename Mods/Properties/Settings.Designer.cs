@@ -342,5 +342,50 @@ ln -s $SYNOPKG_PKGDEST/ui/dsm.cgi.conf /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG
                 this["PromptExplorer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"#!/bin/sh
+
+exec 1<&-
+exec 1>>$SYNOPKG_TEMP_LOGFILE
+exec 2<&-
+exec 2>>$SYNOPKG_TEMP_LOGFILE
+
+if [ -f ""/var/packages/$SYNOPKG_PKGNAME/etc/parameters"" ]; then
+	#source /var/packages/$SYNOPKG_PKGNAME/etc/parameters
+	. /var/packages/$SYNOPKG_PKGNAME/etc/parameters
+fi
+
+cat /var/packages/$SYNOPKG_PKGNAME/WIZARD_UIFILES/@MODS_WIZARD@ >> $SYNOPKG_TEMP_LOGFILE
+sed -i -e ""s|@MODS_ADMIN@|$WIZARD_ADMIN|g"" $SYNOPKG_TEMP_LOGFILE
+sed -i -e ""s|@MODS_PORT@|$WIZARD_PORT|g"" $SYNOPKG_TEMP_LOGFILE
+if [ -v $WIZARD_PASSWORD ]; then
+	sed -i -e ""s|@MODS_PASS@|$WIZARD_PASSWORD|g"" $SYNOPKG_TEMP_LOGFILE
+fi
+
+#echo ""[]"" >> $SYNOPKG_TEMP_LOGFILE
+
+exit 0")]
+        public string wizard {
+            get {
+                return ((string)(this["wizard"]));
+            }
+            set {
+                this["wizard"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CopyPackagePath {
+            get {
+                return ((bool)(this["CopyPackagePath"]));
+            }
+            set {
+                this["CopyPackagePath"] = value;
+            }
+        }
     }
 }

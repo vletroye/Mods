@@ -104,6 +104,7 @@
             this.textBoxDependencies.TabIndex = 1;
             this.textBoxDependencies.TextChanged += new System.EventHandler(this.textBoxDependencies_TextChanged);
             this.textBoxDependencies.DoubleClick += new System.EventHandler(this.textBoxDependencies_DoubleClick);
+            this.textBoxDependencies.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxDependencies_KeyDown);
             // 
             // labelToolTip
             // 
@@ -131,19 +132,22 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(654, 498);
-            this.ControlBox = false;
             this.Controls.Add(this.labelToolTip);
             this.Controls.Add(this.panelToolTip);
             this.Controls.Add(this.textBoxDependencies);
             this.Controls.Add(this.listViewDependencies);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.HelpButton = true;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(670, 514);
             this.Name = "Dependencies";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit dependencies on other services & packages";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.Dependencies_HelpButtonClicked);
             this.Load += new System.EventHandler(this.Dependencies_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

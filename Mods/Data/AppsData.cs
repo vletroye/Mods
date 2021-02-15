@@ -76,7 +76,7 @@ namespace BeatificaBytes.Synology.Mods
                                     using <section>: <variable>. (eg for title or desc)
         icon:                       The icon of the application for the 4 resolutions (16,24,32,48px),      ✔         ✔     16, 24, 32, 48
                                     the variable {0} is automatically filled with one of the 4 resolutions
-        AppWindow:                  The name of the application must be entered here, as in the parameter   -          -      alphanumeric, necessary for type legacy?
+        appWindow:                  The name of the application must be entered here, as in the parameter   -          -      alphanumeric, necessary for type legacy?
                                     <unique_name> above
         width / height:             The width / height of the application window when called in pixels      -          -      numeric
         url:                        The call address of the application, absolute URL or relative to        ✔         ✔     relative path ( must then start with a / ) or absolute URL
@@ -99,6 +99,7 @@ namespace BeatificaBytes.Synology.Mods
         public string title { get; set; }
         public string desc { get; set; }
         public string icon { get; set; }
+        public string appWindow { get; set; }        
         public string protocol { get; set; }
         public string url { get; set; }
         public int port { get; set; }

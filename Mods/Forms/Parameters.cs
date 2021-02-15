@@ -53,7 +53,8 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxOpenWith.Checked = Properties.Settings.Default.OpenWith;
             checkBoxDefaultPackageRoot.Checked = Properties.Settings.Default.DefaultPackageRoot;
             checkBoxPromptExplorer.Checked = Properties.Settings.Default.PromptExplorer;
-
+            checkBoxCopyPackagePath.Checked = Properties.Settings.Default.CopyPackagePath;
+            
             buttonDefaultPackageRepo.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
@@ -277,6 +278,12 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Helper.WriteAnsiFile(dsmReleases, dsmRelease.Code);
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.CopyPackagePath = checkBoxCopyPackagePath.Checked;
+            ShowParameters();
         }
     }
 }

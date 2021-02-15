@@ -301,7 +301,7 @@ namespace BeatificaBytes.Synology.Mods
             if (current["src.ports"] != null && string.IsNullOrEmpty(protocol))
             {
                 comboBoxSrcProtocol.SelectedItem = null;
-                comboBoxSrcProtocol.Enabled = false;
+                comboBoxSrcProtocol.Enabled = state == State.Add;
                 textBoxSrcPorts.Text = current["src.ports"];
             }
             else
@@ -314,7 +314,7 @@ namespace BeatificaBytes.Synology.Mods
             if (current["dst.ports"] != null && string.IsNullOrEmpty(protocol))
             {
                 comboBoxDstProtocol.SelectedItem = null;
-                comboBoxDstProtocol.Enabled = false;
+                comboBoxDstProtocol.Enabled = state == State.Add;
                 textBoxDstPorts.Text = current["dst.ports"];
             }
             else

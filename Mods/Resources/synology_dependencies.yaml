@@ -1,0 +1,27 @@
+DSM_4.2_and_previous:
+    - mysql
+    - apache-web
+    - php_disable_safe_exec_dir
+DSM_4.3:
+    - ssh
+    - mysql
+    - apache-web
+    - php_disable_safe_exec_dir
+DSM_5.x:
+    - ssh
+    - pgsql
+    - apache-web
+    - php_disable_safe_exec_dir
+DSM_6.x:
+    - ssh
+    - pgsql
+DSM_7.x:
+    - pgsql
+    - ssh-shell
+    - nginx.service
+    - avahi.service
+    - atalk.service
+    - crond.service
+    - network.target
+    - network-online.target
+    - nfs-server.service

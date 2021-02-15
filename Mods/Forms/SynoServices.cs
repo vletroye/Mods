@@ -44,11 +44,28 @@ namespace BeatificaBytes.Synology.Mods
 
         private string[] selectedServices;
 
-        public SynoServices(string services)
+        public SynoServices(string services, string defaults)
         {
             InitializeComponent();
+
             if (services == null) services = "";
             this.selectedServices = services.Split(' ');
+
+            string yaml = File.ReadAllText(defaults);
+            var deserializer = new Deserializer();
+            var result = deserializer.Deserialize<Dictionary<string, List<String>>>(new StringReader(yaml));
+            foreach (var item in result)
+            {
+                var firmware = treeViewServices.Nodes.Add(item.Key);
+                foreach (var service in item.Value)
+                {
+                    var srvc = firmware.Nodes.Add(service);
+                    if (selectedServices.Contains(service, StringComparer.InvariantCultureIgnoreCase))
+                        srvc.Checked = true;
+                }
+                firmware.ExpandAll();
+            }
+
             treeViewServices.DrawMode = TreeViewDrawMode.OwnerDrawText;
             treeViewServices.DrawNode += new DrawTreeNodeEventHandler(tree_DrawNode);
         }
@@ -78,24 +95,6 @@ namespace BeatificaBytes.Synology.Mods
             IntPtr lparam = Marshal.AllocHGlobal(Marshal.SizeOf(tvi));
             Marshal.StructureToPtr(tvi, lparam, false);
             SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, lparam);
-        }
-
-        private void SynoServices_Load(object sender, EventArgs e)
-        {
-            string yaml = File.ReadAllText(@"Resources\synology_services.yaml");
-            var deserializer = new Deserializer();
-            var result = deserializer.Deserialize<Dictionary<string, List<String>>>(new StringReader(yaml));
-            foreach (var item in result)
-            {
-                var firmware = treeViewServices.Nodes.Add(item.Key);
-                foreach (var service in item.Value)
-                {
-                    var srvc = firmware.Nodes.Add(service);
-                    if (selectedServices.Contains(service, StringComparer.InvariantCultureIgnoreCase))
-                        srvc.Checked = true;
-                }
-                firmware.ExpandAll();
-            }
         }
 
         public string services

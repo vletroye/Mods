@@ -88,6 +88,7 @@
             // buttonCancel
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCancel.CausesValidation = false;
             this.buttonCancel.Location = new System.Drawing.Point(431, 432);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -218,6 +219,8 @@
             this.comboBoxCtrlScriptRunAs.Name = "comboBoxCtrlScriptRunAs";
             this.comboBoxCtrlScriptRunAs.Size = new System.Drawing.Size(138, 21);
             this.comboBoxCtrlScriptRunAs.TabIndex = 2;
+            this.comboBoxCtrlScriptRunAs.Validating += new System.ComponentModel.CancelEventHandler(this.comboBoxCtrlScriptRunAs_Validating);
+            this.comboBoxCtrlScriptRunAs.Validated += new System.EventHandler(this.comboBoxCtrlScriptRunAs_Validated);
             // 
             // comboBoxCtrlScriptAction
             // 
@@ -227,6 +230,8 @@
             this.comboBoxCtrlScriptAction.Name = "comboBoxCtrlScriptAction";
             this.comboBoxCtrlScriptAction.Size = new System.Drawing.Size(138, 21);
             this.comboBoxCtrlScriptAction.TabIndex = 1;
+            this.comboBoxCtrlScriptAction.Validating += new System.ComponentModel.CancelEventHandler(this.comboBoxCtrlScriptAction_Validating);
+            this.comboBoxCtrlScriptAction.Validated += new System.EventHandler(this.comboBoxCtrlScriptAction_Validated);
             // 
             // buttonCtrlScriptSave
             // 
@@ -242,6 +247,7 @@
             // buttonCtrlScriptCancel
             // 
             this.buttonCtrlScriptCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonCtrlScriptCancel.CausesValidation = false;
             this.buttonCtrlScriptCancel.Location = new System.Drawing.Point(222, 223);
             this.buttonCtrlScriptCancel.Name = "buttonCtrlScriptCancel";
             this.buttonCtrlScriptCancel.Size = new System.Drawing.Size(66, 28);
@@ -338,6 +344,8 @@
             this.textBoxExecutablePath.Size = new System.Drawing.Size(330, 20);
             this.textBoxExecutablePath.TabIndex = 1;
             this.toolTip.SetToolTip(this.textBoxExecutablePath, "String, the file\'s relative path under /var/packages/${package}/target/.");
+            this.textBoxExecutablePath.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxExecutablePath_Validating);
+            this.textBoxExecutablePath.Validated += new System.EventHandler(this.textBoxExecutablePath_Validated);
             // 
             // comboBoxExecutableRunAs
             // 
@@ -351,6 +359,8 @@
             this.comboBoxExecutableRunAs.Name = "comboBoxExecutableRunAs";
             this.comboBoxExecutableRunAs.Size = new System.Drawing.Size(138, 21);
             this.comboBoxExecutableRunAs.TabIndex = 2;
+            this.comboBoxExecutableRunAs.Validating += new System.ComponentModel.CancelEventHandler(this.comboBoxExecutableRunAs_Validating);
+            this.comboBoxExecutableRunAs.Validated += new System.EventHandler(this.comboBoxExecutableRunAs_Validated);
             // 
             // buttonExecutableSave
             // 
@@ -474,6 +484,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.HelpButton = true;
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Privilege";
@@ -482,6 +493,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Privilege Editor";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.Privilege_HelpButtonClicked);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Privilege_KeyDown);
             this.groupBoxDefaults.ResumeLayout(false);
             this.groupBoxDefaults.PerformLayout();
             this.tabControl.ResumeLayout(false);

@@ -25,3 +25,9 @@ DSM_6.x:
     - cron
     - nfs
     - firewall
+DSM_7.x:
+    - nginx.service
+    - avahi.service
+    - atalk.service
+    - crond.service
+    - nfs-server.service

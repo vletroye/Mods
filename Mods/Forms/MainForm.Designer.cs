@@ -169,13 +169,13 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPreReplace = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPostReplace = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStartStopScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuInstallerScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStartScriptShell = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuWizardInstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUninstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUpgradeUI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuInstallerScript = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStartScriptShell = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWorkers = new System.Windows.Forms.ToolStripMenuItem();
@@ -1778,13 +1778,13 @@ namespace BeatificaBytes.Synology.Mods
             this.menuPreReplace,
             this.menuPostReplace,
             this.menuStartStopScript,
-            this.toolStripSeparator2,
-            this.menuWizardInstallUI,
-            this.menuWizardUninstallUI,
-            this.menuWizardUpgradeUI,
             this.toolStripSeparator7,
             this.menuInstallerScript,
             this.menuStartScriptShell,
+            this.toolStripSeparator2,
+            this.menuWizardInstallUI,
+            this.menuWizardUpgradeUI,
+            this.menuWizardUninstallUI,
             this.toolStripSeparator1,
             this.menuLicense});
             this.menuEdit.Name = "menuEdit";
@@ -1795,7 +1795,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuRouterConfig.Name = "menuRouterConfig";
             this.menuRouterConfig.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            this.menuRouterConfig.Size = new System.Drawing.Size(240, 22);
+            this.menuRouterConfig.Size = new System.Drawing.Size(227, 22);
             this.menuRouterConfig.Tag = "package\\{0}\\dsm.cgi.conf";
             this.menuRouterConfig.Text = "Router Config";
             this.menuRouterConfig.Click += new System.EventHandler(this.menuRouterConfig_Click);
@@ -1804,7 +1804,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuRouterScript.Name = "menuRouterScript";
             this.menuRouterScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
-            this.menuRouterScript.Size = new System.Drawing.Size(240, 22);
+            this.menuRouterScript.Size = new System.Drawing.Size(227, 22);
             this.menuRouterScript.Tag = "package\\{0}\\router.cgi";
             this.menuRouterScript.Text = "Router Script";
             this.menuRouterScript.Click += new System.EventHandler(this.menuRouterScript_Click);
@@ -1812,13 +1812,13 @@ namespace BeatificaBytes.Synology.Mods
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(237, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(224, 6);
             // 
             // menuPreInstall
             // 
             this.menuPreInstall.Name = "menuPreInstall";
             this.menuPreInstall.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.menuPreInstall.Size = new System.Drawing.Size(240, 22);
+            this.menuPreInstall.Size = new System.Drawing.Size(227, 22);
             this.menuPreInstall.Tag = "scripts\\preinst";
             this.menuPreInstall.Text = "Pre-Install Script";
             this.menuPreInstall.ToolTipText = "Edit the script to be run before installing the currently opened Package.";
@@ -1828,7 +1828,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPostInstall.Name = "menuPostInstall";
             this.menuPostInstall.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.menuPostInstall.Size = new System.Drawing.Size(240, 22);
+            this.menuPostInstall.Size = new System.Drawing.Size(227, 22);
             this.menuPostInstall.Tag = "scripts\\postinst";
             this.menuPostInstall.Text = "Post-Install Script";
             this.menuPostInstall.ToolTipText = "Edit the script to be run after installing the currently opened Package.";
@@ -1838,7 +1838,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPreUninstall.Name = "menuPreUninstall";
             this.menuPreUninstall.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.menuPreUninstall.Size = new System.Drawing.Size(240, 22);
+            this.menuPreUninstall.Size = new System.Drawing.Size(227, 22);
             this.menuPreUninstall.Tag = "scripts\\preuninst";
             this.menuPreUninstall.Text = "Pre-Uninstall Script";
             this.menuPreUninstall.ToolTipText = "Edit the script to be run before uninstalling the currently opened Package.";
@@ -1848,7 +1848,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPostUninstall.Name = "menuPostUninstall";
             this.menuPostUninstall.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.menuPostUninstall.Size = new System.Drawing.Size(240, 22);
+            this.menuPostUninstall.Size = new System.Drawing.Size(227, 22);
             this.menuPostUninstall.Tag = "scripts\\postuninst";
             this.menuPostUninstall.Text = "Post-Uninstall Script";
             this.menuPostUninstall.ToolTipText = "Edit the script to be run after uninstalling the currently opened Package.";
@@ -1858,7 +1858,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPreUpgrade.Name = "menuPreUpgrade";
             this.menuPreUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.menuPreUpgrade.Size = new System.Drawing.Size(240, 22);
+            this.menuPreUpgrade.Size = new System.Drawing.Size(227, 22);
             this.menuPreUpgrade.Tag = "scripts\\preupgrade";
             this.menuPreUpgrade.Text = "Pre-Upgrade Script";
             this.menuPreUpgrade.ToolTipText = "Edit the script to be run before upgrading the currently opened Package.";
@@ -1868,7 +1868,7 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPostUpgrade.Name = "menuPostUpgrade";
             this.menuPostUpgrade.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.menuPostUpgrade.Size = new System.Drawing.Size(240, 22);
+            this.menuPostUpgrade.Size = new System.Drawing.Size(227, 22);
             this.menuPostUpgrade.Tag = "scripts\\postupgrade";
             this.menuPostUpgrade.Text = "Post-Upgrade Script";
             this.menuPostUpgrade.ToolTipText = "Edit the script to be run after upgrading the currently opened Package.";
@@ -1878,77 +1878,40 @@ namespace BeatificaBytes.Synology.Mods
             // 
             this.menuPreReplace.Name = "menuPreReplace";
             this.menuPreReplace.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.menuPreReplace.Size = new System.Drawing.Size(240, 22);
+            this.menuPreReplace.Size = new System.Drawing.Size(227, 22);
             this.menuPreReplace.Tag = "scripts\\prereplace";
             this.menuPreReplace.Text = "Pre-Replace Script";
-            this.menuPreReplace.Visible = false;
             this.menuPreReplace.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
             // menuPostReplace
             // 
             this.menuPostReplace.Name = "menuPostReplace";
             this.menuPostReplace.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.menuPostReplace.Size = new System.Drawing.Size(240, 22);
+            this.menuPostReplace.Size = new System.Drawing.Size(227, 22);
             this.menuPostReplace.Tag = "scripts\\postreplace";
             this.menuPostReplace.Text = "Post-Replace Script";
-            this.menuPostReplace.Visible = false;
             this.menuPostReplace.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
             // menuStartStopScript
             // 
             this.menuStartStopScript.Name = "menuStartStopScript";
             this.menuStartStopScript.ShortcutKeys = System.Windows.Forms.Keys.F9;
-            this.menuStartStopScript.Size = new System.Drawing.Size(240, 22);
+            this.menuStartStopScript.Size = new System.Drawing.Size(227, 22);
             this.menuStartStopScript.Tag = "scripts\\start-stop-status";
             this.menuStartStopScript.Text = "Start-Stop Script";
             this.menuStartStopScript.ToolTipText = "Edit the script used to start/stop the currently opened Package.";
             this.menuStartStopScript.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(237, 6);
-            // 
-            // menuWizardInstallUI
-            // 
-            this.menuWizardInstallUI.Name = "menuWizardInstallUI";
-            this.menuWizardInstallUI.ShortcutKeys = System.Windows.Forms.Keys.F10;
-            this.menuWizardInstallUI.Size = new System.Drawing.Size(240, 22);
-            this.menuWizardInstallUI.Tag = "WIZARD_UIFILES\\install_uifile";
-            this.menuWizardInstallUI.Text = "Wizard-Install UI";
-            this.menuWizardInstallUI.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
-            this.menuWizardInstallUI.Click += new System.EventHandler(this.menuWizard_Click);
-            // 
-            // menuWizardUninstallUI
-            // 
-            this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
-            this.menuWizardUninstallUI.ShortcutKeys = System.Windows.Forms.Keys.F11;
-            this.menuWizardUninstallUI.Size = new System.Drawing.Size(240, 22);
-            this.menuWizardUninstallUI.Tag = "WIZARD_UIFILES\\uninstall_uifile";
-            this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
-            this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
-            this.menuWizardUninstallUI.Click += new System.EventHandler(this.menuWizard_Click);
-            // 
-            // menuWizardUpgradeUI
-            // 
-            this.menuWizardUpgradeUI.Name = "menuWizardUpgradeUI";
-            this.menuWizardUpgradeUI.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.menuWizardUpgradeUI.Size = new System.Drawing.Size(240, 22);
-            this.menuWizardUpgradeUI.Tag = "WIZARD_UIFILES\\upgrade_uifile";
-            this.menuWizardUpgradeUI.Text = "Wizard-Upgrade UI";
-            this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
-            this.menuWizardUpgradeUI.Click += new System.EventHandler(this.menuWizard_Click);
-            // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(237, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(224, 6);
             // 
             // menuInstallerScript
             // 
             this.menuInstallerScript.Name = "menuInstallerScript";
-            this.menuInstallerScript.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F10)));
-            this.menuInstallerScript.Size = new System.Drawing.Size(240, 22);
+            this.menuInstallerScript.ShortcutKeys = System.Windows.Forms.Keys.F10;
+            this.menuInstallerScript.Size = new System.Drawing.Size(227, 22);
             this.menuInstallerScript.Tag = "scripts\\installer.sh";
             this.menuInstallerScript.Text = "Installer Script Shell";
             this.menuInstallerScript.ToolTipText = "Edit an Installer shell script if used within your Scripts";
@@ -1957,23 +1920,58 @@ namespace BeatificaBytes.Synology.Mods
             // menuStartScriptShell
             // 
             this.menuStartScriptShell.Name = "menuStartScriptShell";
-            this.menuStartScriptShell.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F11)));
-            this.menuStartScriptShell.Size = new System.Drawing.Size(240, 22);
+            this.menuStartScriptShell.ShortcutKeys = System.Windows.Forms.Keys.F11;
+            this.menuStartScriptShell.Size = new System.Drawing.Size(227, 22);
             this.menuStartScriptShell.Tag = "scripts\\start-stop-status.sh";
             this.menuStartScriptShell.Text = "Start-Stop Script Shell";
             this.menuStartScriptShell.ToolTipText = "Edit a Start-Stop shell script if used within your Scripts";
             this.menuStartScriptShell.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(224, 6);
+            // 
+            // menuWizardInstallUI
+            // 
+            this.menuWizardInstallUI.Name = "menuWizardInstallUI";
+            this.menuWizardInstallUI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F9)));
+            this.menuWizardInstallUI.Size = new System.Drawing.Size(227, 22);
+            this.menuWizardInstallUI.Tag = "WIZARD_UIFILES\\install_uifile;install";
+            this.menuWizardInstallUI.Text = "Wizard-Install UI";
+            this.menuWizardInstallUI.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
+            this.menuWizardInstallUI.Click += new System.EventHandler(this.menuWizard_Click);
+            // 
+            // menuWizardUninstallUI
+            // 
+            this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
+            this.menuWizardUninstallUI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F11)));
+            this.menuWizardUninstallUI.Size = new System.Drawing.Size(227, 22);
+            this.menuWizardUninstallUI.Tag = "WIZARD_UIFILES\\uninstall_uifile;uninstall";
+            this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
+            this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
+            this.menuWizardUninstallUI.Click += new System.EventHandler(this.menuWizard_Click);
+            // 
+            // menuWizardUpgradeUI
+            // 
+            this.menuWizardUpgradeUI.Name = "menuWizardUpgradeUI";
+            this.menuWizardUpgradeUI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F10)));
+            this.menuWizardUpgradeUI.Size = new System.Drawing.Size(227, 22);
+            this.menuWizardUpgradeUI.Tag = "WIZARD_UIFILES\\upgrade_uifile;upgrade";
+            this.menuWizardUpgradeUI.Text = "Wizard-Upgrade UI";
+            this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
+            this.menuWizardUpgradeUI.Click += new System.EventHandler(this.menuWizard_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(237, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(224, 6);
             // 
             // menuLicense
             // 
             this.menuLicense.Name = "menuLicense";
             this.menuLicense.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F12)));
-            this.menuLicense.Size = new System.Drawing.Size(240, 22);
+            this.menuLicense.Size = new System.Drawing.Size(227, 22);
             this.menuLicense.Tag = "LICENSE";
             this.menuLicense.Text = "License";
             this.menuLicense.Click += new System.EventHandler(this.menuLicense_Click);

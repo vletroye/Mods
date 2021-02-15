@@ -293,16 +293,18 @@ namespace BeatificaBytes.Synology.Mods
 
         private void DisplayCtrlScriptDetails(string action, string runas)
         {
-            if (action == null || runas == null)
-            {
-                comboBoxCtrlScriptAction.SelectedIndex = -1;
-                comboBoxCtrlScriptRunAs.SelectedIndex = -1;
-            }
+            comboBoxCtrlScriptAction.Text= "";
+            comboBoxCtrlScriptRunAs.Text = "";
+
+            if (action == null)
+                comboBoxCtrlScriptAction.SelectedIndex = comboBoxCtrlScriptAction.Items.Count == 0 ? -1 : 0;
             else
-            {
                 comboBoxCtrlScriptAction.SelectedItem = action;
+
+            if (runas == null)
+                comboBoxCtrlScriptRunAs.SelectedIndex = comboBoxCtrlScriptRunAs.Items.Count == 0 ? -1 : 0;
+            else
                 comboBoxCtrlScriptRunAs.SelectedItem = runas;
-            }
 
             EnableCtrlScriptItemDetails();
         }
@@ -357,18 +359,15 @@ namespace BeatificaBytes.Synology.Mods
         // Add an new item
         private void buttonCtrlScriptAddItem_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren())
+            stateCtrlScript = State.Add;
+            comboBoxCtrlScriptAction.Items.Clear();
+            comboBoxCtrlScriptAction.Items.AddRange(actions.ToArray());
+            foreach (ListViewItem item in listViewCtrlScript.Items)
             {
-                stateCtrlScript = State.Add;
-                comboBoxCtrlScriptAction.Items.Clear();
-                comboBoxCtrlScriptAction.Items.AddRange(actions.ToArray());
-                foreach (ListViewItem item in listViewCtrlScript.Items)
-                {
-                    comboBoxCtrlScriptAction.Items.Remove(item.Text);
-                }
-                DisplayCtrlScriptDetails(null, null);
-                comboBoxCtrlScriptAction.Focus();
+                comboBoxCtrlScriptAction.Items.Remove(item.Text);
             }
+            DisplayCtrlScriptDetails(null, comboBoxRunAs.SelectedItem == null ? null : comboBoxRunAs.SelectedItem.ToString());
+            comboBoxCtrlScriptAction.Focus();
         }
 
         // Edit the item currently selected
@@ -414,19 +413,22 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonCtrlScriptSaveItem_Click(object sender, EventArgs e)
         {
-            if (stateCtrlScript == State.Add)
+            if (ValidateChildren())
             {
-                var item = new ListViewItem(comboBoxCtrlScriptAction.SelectedItem.ToString());
-                item.SubItems.Add(comboBoxCtrlScriptRunAs.SelectedItem.ToString());
-                listViewCtrlScript.Items.Add(item);
+                if (stateCtrlScript == State.Add)
+                {
+                    var item = new ListViewItem(comboBoxCtrlScriptAction.SelectedItem.ToString());
+                    item.SubItems.Add(comboBoxCtrlScriptRunAs.SelectedItem.ToString());
+                    listViewCtrlScript.Items.Add(item);
+                }
+                else
+                {
+                    listViewCtrlScript.SelectedItems[0].SubItems[0].Text = comboBoxCtrlScriptAction.Text;
+                    listViewCtrlScript.SelectedItems[0].SubItems[1].Text = comboBoxCtrlScriptRunAs.Text;
+                }
+                stateCtrlScript = State.None;
+                DisplayCtrlScriptDetails(null, null);
             }
-            else
-            {
-                listViewCtrlScript.SelectedItems[0].SubItems[0].Text = comboBoxCtrlScriptAction.Text;
-                listViewCtrlScript.SelectedItems[0].SubItems[1].Text = comboBoxCtrlScriptRunAs.Text;
-            }
-            stateCtrlScript = State.None;
-            DisplayCtrlScriptDetails(null, null);
         }
 
         private void buttonCtrlScriptDeleteItem_Click(object sender, EventArgs e)
@@ -506,12 +508,9 @@ namespace BeatificaBytes.Synology.Mods
         // Add an new item
         private void buttonExecutableAdd_Click(object sender, EventArgs e)
         {
-            if (ValidateChildren())
-            {
-                stateExecutable = State.Add;
-                DisplayExecutableDetails(null, null);
-                textBoxExecutablePath.Focus();
-            }
+            stateExecutable = State.Add;
+            DisplayExecutableDetails(null, comboBoxRunAs.SelectedItem == null ? null : comboBoxRunAs.SelectedItem.ToString());
+            textBoxExecutablePath.Focus();
         }
 
         // Edit the item currently selected
@@ -549,19 +548,22 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonExecutableSave_Click(object sender, EventArgs e)
         {
-            if (stateExecutable == State.Add)
+            if (ValidateChildren())
             {
-                var item = new ListViewItem(textBoxExecutablePath.Text);
-                item.SubItems.Add(comboBoxExecutableRunAs.SelectedItem.ToString());
-                listViewExecutable.Items.Add(item);
+                if (stateExecutable == State.Add)
+                {
+                    var item = new ListViewItem(textBoxExecutablePath.Text);
+                    item.SubItems.Add(comboBoxExecutableRunAs.SelectedItem.ToString());
+                    listViewExecutable.Items.Add(item);
+                }
+                else
+                {
+                    listViewExecutable.SelectedItems[0].SubItems[0].Text = textBoxExecutablePath.Text;
+                    listViewExecutable.SelectedItems[0].SubItems[1].Text = comboBoxExecutableRunAs.SelectedItem.ToString();
+                }
+                stateExecutable = State.None;
+                DisplayExecutableDetails(null, null);
             }
-            else
-            {
-                listViewExecutable.SelectedItems[0].SubItems[0].Text = textBoxExecutablePath.Text;
-                listViewExecutable.SelectedItems[0].SubItems[1].Text = comboBoxExecutableRunAs.SelectedItem.ToString();
-            }
-            stateExecutable = State.None;
-            DisplayExecutableDetails(null, null);
         }
 
         private void buttonExecutableDelete_Click(object sender, EventArgs e)
@@ -596,5 +598,97 @@ namespace BeatificaBytes.Synology.Mods
             if ((stateExecutable == State.None || stateExecutable == State.View) && e.KeyCode == Keys.Insert)
                 buttonExecutableAdd_Click(null, null);
         }
+
+        private void comboBoxCtrlScriptAction_Validating(object sender, CancelEventArgs e)
+        {
+            if (errorProvider.Tag == null)
+            {
+                if (comboBoxCtrlScriptAction.SelectedItem == null && comboBoxCtrlScriptAction.Enabled)
+                {
+                    e.Cancel = true;
+                    errorProvider.SetError(comboBoxCtrlScriptAction, "The Script may not be empty");
+                }
+            }
+        }
+
+        private void comboBoxCtrlScriptAction_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(comboBoxCtrlScriptAction, "");
+        }
+ 
+        private void comboBoxCtrlScriptRunAs_Validating(object sender, CancelEventArgs e)
+        {
+            if (errorProvider.Tag == null)
+            {
+                if (comboBoxCtrlScriptRunAs.SelectedItem == null && comboBoxCtrlScriptRunAs.Enabled)
+                {
+                    e.Cancel = true;
+                    errorProvider.SetError(comboBoxCtrlScriptRunAs, "The RunAs may not be empty");
+                }
+            }
+        }
+
+        private void comboBoxCtrlScriptRunAs_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(comboBoxCtrlScriptRunAs, "");
+        }
+
+
+        private void textBoxExecutablePath_Validating(object sender, CancelEventArgs e)
+        {
+            if (errorProvider.Tag == null)
+            {
+                if (string.IsNullOrEmpty(textBoxExecutablePath.Text) && textBoxExecutablePath.Enabled)
+                {
+                    e.Cancel = true;
+                    errorProvider.SetError(textBoxExecutablePath, "The Path may not be empty");
+                }
+            }
+        }
+
+        private void textBoxExecutablePath_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(textBoxExecutablePath, "");
+        }
+
+        private void comboBoxExecutableRunAs_Validating(object sender, CancelEventArgs e)
+        {
+            if (errorProvider.Tag == null)
+            {
+                if (comboBoxExecutableRunAs.SelectedItem == null && comboBoxExecutableRunAs.Enabled)
+                {
+                    e.Cancel = true;
+                    errorProvider.SetError(comboBoxExecutableRunAs, "The RunAs may not be empty");
+                }
+            }
+        }
+
+        private void comboBoxExecutableRunAs_Validated(object sender, EventArgs e)
+        {
+            errorProvider.SetError(comboBoxExecutableRunAs, "");
+        }
+
+        private void Privilege_KeyDown(object sender, KeyEventArgs e)
+        {
+                if (e.KeyCode == Keys.Escape)
+            {
+                errorProvider.Tag = new object();
+                ResetValidateChildren(this);
+                errorProvider.Tag = null;
+            }
+        }
+
+        private void ResetValidateChildren(Control control)
+        {
+            errorProvider.SetError(control, "");
+            foreach (Control ctrl in control.Controls)
+            {
+                if (ctrl != null)
+                {
+                    ResetValidateChildren(ctrl);
+                }
+            }
+        }
+
     }
 }

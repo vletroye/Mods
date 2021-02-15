@@ -1057,7 +1057,7 @@ namespace BeatificaBytes.Synology.Mods
             return (major > minMajor || (major == minMajor && minor > minMinor) || (major == minMajor && minor == minMinor && build >= minBuild));
         }
 
-        private static void GetFirmwareMajorMinor(SortedDictionary<string, string> info, out int major, out int minor, out int build)
+        public static void GetFirmwareMajorMinor(SortedDictionary<string, string> info, out int major, out int minor, out int build)
         {
             string firmware = "2.0";
             if (info.ContainsKey("os_min_ver"))

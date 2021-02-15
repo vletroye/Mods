@@ -257,6 +257,9 @@
     <EmbeddedResource Include="Workers\PortConfig.resx">
       <DependentUpon>PortConfig.cs</DependentUpon>
     </EmbeddedResource>
+    <Content Include="Resources\synology_dependencies.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Warning.png" />
     <EmbeddedResource Include="Forms\Parameters.resx">
       <DependentUpon>Parameters.cs</DependentUpon>

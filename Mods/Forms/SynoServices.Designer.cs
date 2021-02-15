@@ -85,7 +85,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Services";
-            this.Load += new System.EventHandler(this.SynoServices_Load);
             this.ResumeLayout(false);
 
         }

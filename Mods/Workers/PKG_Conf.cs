@@ -433,7 +433,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (e.KeyCode == Keys.Escape)
             {
-                errorProvider.Tag = new object(); ;
+                errorProvider.Tag = new object();
                 ResetValidateChildren(this);
                 checkBoxConfig.Focus();
                 errorProvider.Tag = null;

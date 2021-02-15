@@ -292,5 +292,32 @@ fi</Value>
     <Setting Name="PromptExplorer" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="wizard" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#!/bin/sh
+
+exec 1&lt;&amp;-
+exec 1&gt;&gt;$SYNOPKG_TEMP_LOGFILE
+exec 2&lt;&amp;-
+exec 2&gt;&gt;$SYNOPKG_TEMP_LOGFILE
+
+if [ -f "/var/packages/$SYNOPKG_PKGNAME/etc/parameters" ]; then
+	#source /var/packages/$SYNOPKG_PKGNAME/etc/parameters
+	. /var/packages/$SYNOPKG_PKGNAME/etc/parameters
+fi
+
+cat /var/packages/$SYNOPKG_PKGNAME/WIZARD_UIFILES/@MODS_WIZARD@ &gt;&gt; $SYNOPKG_TEMP_LOGFILE
+sed -i -e "s|@MODS_ADMIN@|$WIZARD_ADMIN|g" $SYNOPKG_TEMP_LOGFILE
+sed -i -e "s|@MODS_PORT@|$WIZARD_PORT|g" $SYNOPKG_TEMP_LOGFILE
+if [ -v $WIZARD_PASSWORD ]; then
+	sed -i -e "s|@MODS_PASS@|$WIZARD_PASSWORD|g" $SYNOPKG_TEMP_LOGFILE
+fi
+
+#echo "[]" &gt;&gt; $SYNOPKG_TEMP_LOGFILE
+
+exit 0</Value>
+    </Setting>
+    <Setting Name="CopyPackagePath" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
