@@ -849,6 +849,45 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        public static int RunProcess(string command, string parameters, out string output)
+        {
+            output = null;
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.UseShellExecute = false; //Must be false to read the output
+                startInfo.RedirectStandardOutput = true;
+                startInfo.RedirectStandardError = true;
+                startInfo.WorkingDirectory = Environment.SystemDirectory;
+                startInfo.FileName = command;
+                startInfo.Arguments = parameters;
+                startInfo.ErrorDialog = true;
+                startInfo.CreateNoWindow = true;
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                Process process = Process.Start(startInfo);
+                output = process.StandardOutput.ReadToEnd();
+                //err = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+                return process.ExitCode;
+            }
+            catch (Win32Exception ex)
+            {
+                switch (ex.NativeErrorCode)
+                {
+                    case 1223:
+                        return ex.NativeErrorCode;
+                    default:
+                        return -1;
+                }
+
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
         /// <summary>
         /// Gets whether the specified path is a valid absolute file path.
         /// </summary>

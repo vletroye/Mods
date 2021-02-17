@@ -7,6 +7,9 @@ using ScintillaNET;
 using System.Media;
 using ScintillaFindReplaceControl;
 using BeatificaBytes.Synology.Mods.Data;
+using System.IO;
+using System.Reflection;
+using System.Text;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -16,6 +19,8 @@ namespace BeatificaBytes.Synology.Mods
     {
         private Scintilla scintillaScriptTab1 = null;
         private Scintilla scintillaScriptTab2 = null;
+        private Scintilla scintillaShellCheck = null;
+        private int splitter;
 
         private List<Tuple<string, string>> variables = null;
         private ScriptInfo scriptTab1 = null;
@@ -157,6 +162,12 @@ namespace BeatificaBytes.Synology.Mods
             else
                 tabControl.TabPages.RemoveAt(tab);
 
+            scintillaShellCheck = new ScintillaNET.Scintilla();
+            splitContainer.Panel2Collapsed = true;
+            this.splitContainer.Panel2.Controls.Add(scintillaShellCheck);
+            InitScriptEditor(scintillaShellCheck, Lexer.Batch);
+            splitter = splitContainer.Width * 3/7;
+
             if (variables == null)
             {
                 tabControl.TabPages.RemoveAt(tabControl.TabPages.Count - 1);
@@ -174,7 +185,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
         }
-        
+
         private void InitScriptEditor(Scintilla textArea, Lexer type)
         {
             // BASIC CONFIG
@@ -488,15 +499,19 @@ namespace BeatificaBytes.Synology.Mods
             {
                 case "TabScript3":
                     SetHelpToolTip(helpVarDefault);
+                    buttonSpellCheck.Enabled = false;
                     break;
                 case "TabScript2":
                     SetHelpToolTip(scriptTab2.Help);
+                    buttonSpellCheck.Enabled = true;
                     break;
                 case "TabScript1":
                     SetHelpToolTip(scriptTab1.Help);
+                    buttonSpellCheck.Enabled = true;
                     break;
                 default:
                     SetHelpToolTip(null);
+                    buttonSpellCheck.Enabled = false;
                     break;
             }
         }
@@ -511,6 +526,63 @@ namespace BeatificaBytes.Synology.Mods
             {
                 textArea.Focus();
             }
+        }
+
+        private void buttonSpellCheck_Click(object sender, EventArgs e)
+        {
+            if (splitContainer.Panel2Collapsed)
+            {
+                string script = string.Empty;
+                switch (tabControl.SelectedTab.Tag.ToString())
+                {
+                    case "TabScript2":
+                        script = scintillaScriptTab2.Text;
+                        break;
+                    case "TabScript1":
+                        script = scintillaScriptTab1.Text;
+                        break;
+                }
+
+                var fileName = Path.GetTempFileName();
+                File.WriteAllText(fileName, script);
+
+                var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Resources\shellcheck.exe");
+                Helper.RunProcess(path, string.Format("-s sh -f tty {0}", fileName), out script);
+                File.Delete(fileName);
+
+                var strings = script.Split('\n');
+                var check = new StringBuilder();
+                foreach (var line in strings)
+                {
+                    string text = line.Replace('\r', ' ');
+                    if (text.TrimStart().StartsWith("^"))
+                    {
+                        if (text.StartsWith("^"))
+                            text = "#^" + text.Substring(2);
+                        else
+                            text = "#" + text.Substring(1);
+
+                    }
+                    else if (text.StartsWith("In"))
+                        text = text.Replace(string.Format("In {0} ", fileName), "");
+
+                    check.AppendLine(text);
+                }
+
+                scintillaShellCheck.Text = check.ToString();
+
+                splitContainer.Panel2Collapsed = false;
+                splitContainer.SplitterDistance = splitter;
+            }
+            else
+            {
+                splitContainer.Panel2Collapsed = true;
+            }
+        }
+
+        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            splitter = splitContainer.SplitterDistance;
         }
     }
 }

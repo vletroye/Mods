@@ -53,7 +53,8 @@ namespace ZTn.Json.Editor.Forms
                 if (string.IsNullOrEmpty(json))
                 {
                     CreateEmptyJson(path);
-                } else
+                }
+                else
                 {
                     originalJson = json;
                 }
@@ -502,7 +503,8 @@ namespace ZTn.Json.Editor.Forms
 
                     DialogResult = DialogResult.Cancel;
                 }
-            } else
+            }
+            else
             {
                 DialogResult = DialogResult.Cancel;
             }
@@ -529,8 +531,15 @@ namespace ZTn.Json.Editor.Forms
                 using (var writer = new HtmlTextWriter(stringWriter))
                 {
                     writer.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
-                    writer.AddStyleAttribute("background-color", "#0198F3");
+
+                    // ADD first the attributed and next render the tag
+                    writer.AddStyleAttribute("background-color", "EEEEEE"); // "#0198F3");
+                    writer.AddStyleAttribute("color", "#696969");
+                    writer.AddStyleAttribute("font-family", "Verdana,Arial,Microsoft JhengHei,sans-serif");
+                    writer.AddStyleAttribute("font-size", "12");
+                    //writer.AddStyleAttribute("font-weight", "700");
                     writer.RenderBeginTag(HtmlTextWriterTag.Body);
+
                     int count = 0;
                     foreach (JToken step in JsonEditorItem.JTokenValue.Children())
                     {
@@ -541,8 +550,9 @@ namespace ZTn.Json.Editor.Forms
                             var uri = new System.Uri(imgSrc).AbsoluteUri;
                             writer.RenderBeginTag(HtmlTextWriterTag.Div);
                             writer.AddAttribute(HtmlTextWriterAttribute.Style, "background-image: url('" + uri + "'); background-position: right; color:#FFFFFF; height:50px; display: flex; vertical-align: middle;");
-
                             writer.RenderBeginTag(HtmlTextWriterTag.Div);
+
+                            writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-top: 15px;margin-left: 20px");
                             writer.RenderBeginTag(HtmlTextWriterTag.H3);
                             var property = GetNodeByKey(step.Children(), "step_title") as JProperty;
                             if (property != null)
@@ -553,13 +563,20 @@ namespace ZTn.Json.Editor.Forms
                             {
                                 writer.Write("Step title not found ?!");
                             }
-                            writer.RenderEndTag();
+                            writer.RenderEndTag(); //H3
+                            writer.RenderEndTag(); //Div
+                            writer.RenderBeginTag(HtmlTextWriterTag.Br);
                             writer.RenderEndTag();
                             var items = GetNodeByKey(step.Children(), "items");
+
+                            writer.AddAttribute(HtmlTextWriterAttribute.Style, "margin-left: 20px");
+                            writer.RenderBeginTag(HtmlTextWriterTag.Div);
                             GenerateHtmlStep(writer, items);
-                            writer.RenderEndTag();
+                            writer.RenderEndTag(); //Div
+
+                            writer.RenderEndTag(); //Div
                             writer.RenderBeginTag(HtmlTextWriterTag.Hr);
-                            writer.RenderEndTag();
+                            writer.RenderEndTag(); //Hr
                         }
                     }
                     writer.RenderEndTag();
@@ -622,9 +639,9 @@ namespace ZTn.Json.Editor.Forms
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
-            writer.RenderBeginTag(HtmlTextWriterTag.Br);
-            writer.RenderEndTag();
-            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            //writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            //writer.RenderEndTag();
+            //writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
             {
                 //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
@@ -693,16 +710,16 @@ namespace ZTn.Json.Editor.Forms
             {
                 writer.Write("Missing an [Array] under 'subitems'");
             }
-            writer.RenderEndTag();
+            //writer.RenderEndTag();
         }
 
         private void GenerateHtmlPassword(HtmlTextWriter writer, JToken item, string description)
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
-            writer.RenderBeginTag(HtmlTextWriterTag.Br);
-            writer.RenderEndTag();
-            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            //writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            //writer.RenderEndTag();
+            //writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
             {
                 //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
@@ -757,16 +774,16 @@ namespace ZTn.Json.Editor.Forms
             {
                 writer.Write("Missing an [Array] under 'subitems'");
             }
-            writer.RenderEndTag();
+            //writer.RenderEndTag();
         }
 
         private void GenerateHtmlTextField(HtmlTextWriter writer, JToken item, string description)
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
-            writer.RenderBeginTag(HtmlTextWriterTag.Br);
-            writer.RenderEndTag();
-            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            //writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            //writer.RenderEndTag();
+            //writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
             {
                 //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
@@ -821,16 +838,16 @@ namespace ZTn.Json.Editor.Forms
             {
                 writer.Write("Missing an [Array] under 'subitems'");
             }
-            writer.RenderEndTag();
+            //writer.RenderEndTag();
         }
 
         private void GenerateHtmlCheckBoxes(HtmlTextWriter writer, JToken item, string description)
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
-            writer.RenderBeginTag(HtmlTextWriterTag.Br);
-            writer.RenderEndTag();
-            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            //writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            //writer.RenderEndTag();
+            //writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
             {
                 //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
@@ -875,16 +892,16 @@ namespace ZTn.Json.Editor.Forms
             {
                 writer.Write("Missing an [Array] under 'subitems'");
             }
-            writer.RenderEndTag();
+            // writer.RenderEndTag();
         }
 
         private void GenerateHtmlRadioButtons(HtmlTextWriter writer, JToken item, string description)
         {
             var uid = Guid.NewGuid().ToString();
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uid);
-            writer.RenderBeginTag(HtmlTextWriterTag.Br);
-            writer.RenderEndTag();
-            writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
+            //writer.RenderBeginTag(HtmlTextWriterTag.Br);
+            //writer.RenderEndTag();
+            //writer.RenderBeginTag(HtmlTextWriterTag.Fieldset);
             if (!string.IsNullOrEmpty(description))
             {
                 //writer.RenderBeginTag(HtmlTextWriterTag.Legend);
@@ -929,7 +946,7 @@ namespace ZTn.Json.Editor.Forms
             {
                 writer.Write("Missing an [Array] under 'subitems'");
             }
-            writer.RenderEndTag();
+            //writer.RenderEndTag();
         }
 
         private JToken GetNodeByKey(JEnumerable<JToken> nodes, string key)

@@ -4039,6 +4039,22 @@ namespace BeatificaBytes.Synology.Mods
             var created = false;
             var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
 
+            if (scriptName.EndsWith("*"))
+            {
+                openFileDialog4Mods.Title = "Pick the script file.";
+                openFileDialog4Mods.InitialDirectory = Path.GetDirectoryName(scriptPath);
+                openFileDialog4Mods.Filter = "script |*.*";
+                openFileDialog4Mods.FileName = null;
+                if (openFileDialog4Mods.ShowDialog() == DialogResult.OK)
+                {
+                    scriptPath = openFileDialog4Mods.FileName;
+                }
+                else
+                {
+                    return done;
+                }
+            }
+
             if (!File.Exists(scriptPath))
             {
                 if (MessageBoxEx.Show(this, "This Script does not yet exist.\r\n\r\nPossibly 'Reset' your Package or click 'OK' to create yourself the script from scratch.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.OK)

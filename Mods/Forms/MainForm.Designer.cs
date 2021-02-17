@@ -174,8 +174,8 @@ namespace BeatificaBytes.Synology.Mods
             this.menuStartScriptShell = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuWizardInstallUI = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuWizardUninstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUpgradeUI = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizardUninstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWorkers = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,6 +199,7 @@ namespace BeatificaBytes.Synology.Mods
             this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
+            this.menuOthers = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -1781,6 +1782,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolStripSeparator7,
             this.menuInstallerScript,
             this.menuStartScriptShell,
+            this.menuOthers,
             this.toolStripSeparator2,
             this.menuWizardInstallUI,
             this.menuWizardUpgradeUI,
@@ -1942,16 +1944,6 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardInstallUI.ToolTipText = "Edit the wizard to be run before installing of the currently opened Package.";
             this.menuWizardInstallUI.Click += new System.EventHandler(this.menuWizard_Click);
             // 
-            // menuWizardUninstallUI
-            // 
-            this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
-            this.menuWizardUninstallUI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F11)));
-            this.menuWizardUninstallUI.Size = new System.Drawing.Size(227, 22);
-            this.menuWizardUninstallUI.Tag = "WIZARD_UIFILES\\uninstall_uifile;uninstall";
-            this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
-            this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
-            this.menuWizardUninstallUI.Click += new System.EventHandler(this.menuWizard_Click);
-            // 
             // menuWizardUpgradeUI
             // 
             this.menuWizardUpgradeUI.Name = "menuWizardUpgradeUI";
@@ -1961,6 +1953,16 @@ namespace BeatificaBytes.Synology.Mods
             this.menuWizardUpgradeUI.Text = "Wizard-Upgrade UI";
             this.menuWizardUpgradeUI.ToolTipText = "Edit the wizard to be run before upgrading of the currently opened Package.";
             this.menuWizardUpgradeUI.Click += new System.EventHandler(this.menuWizard_Click);
+            // 
+            // menuWizardUninstallUI
+            // 
+            this.menuWizardUninstallUI.Name = "menuWizardUninstallUI";
+            this.menuWizardUninstallUI.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F11)));
+            this.menuWizardUninstallUI.Size = new System.Drawing.Size(227, 22);
+            this.menuWizardUninstallUI.Tag = "WIZARD_UIFILES\\uninstall_uifile;uninstall";
+            this.menuWizardUninstallUI.Text = "Wizard-Uninstall UI";
+            this.menuWizardUninstallUI.ToolTipText = "Edit the wizard to be run before uninstalling of the currently opened Package.";
+            this.menuWizardUninstallUI.Click += new System.EventHandler(this.menuWizard_Click);
             // 
             // toolStripSeparator1
             // 
@@ -2165,6 +2167,16 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
             // 
+            // menuOthers
+            // 
+            this.menuOthers.Name = "menuOthers";
+            this.menuOthers.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuOthers.Size = new System.Drawing.Size(227, 22);
+            this.menuOthers.Tag = "scripts\\*";
+            this.menuOthers.Text = "Others...";
+            this.menuOthers.ToolTipText = "Edit other files available next to your scripts ";
+            this.menuOthers.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -2213,8 +2225,6 @@ namespace BeatificaBytes.Synology.Mods
         #endregion
         private System.Windows.Forms.ToolTip toolTip4Mods;
         private System.Windows.Forms.OpenFileDialog openFileDialog4Mods;
-        //private Ionic.Utils.FolderBrowserDialogEx folderBrowserDialog4Mods;
-        //private Ionic.Utils.FolderBrowserDialogEx webpageBrowserDialog4Mods;
         private OpenFolderDialog SpkRepoBrowserDialog4Mods = new OpenFolderDialog();
         private OpenFolderDialog folderBrowserDialog4Mods = new OpenFolderDialog();
         private OpenFolderDialog webpageBrowserDialog4Mods = new OpenFolderDialog();
@@ -2383,5 +2393,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuPreReplace;
         private System.Windows.Forms.ToolStripMenuItem menuPostReplace;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menuOthers;
     }
 }
