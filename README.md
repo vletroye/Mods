@@ -1,12 +1,12 @@
 ![](http://i.imgur.com/AMGwFll.png) **MODS - My Own DSM Shortcuts Packager for Synology**
 
-This project has been created as a workaround for the lack of “Custom Shortcut on Synology Desktop”.
+This project has been created as a workaround for the lack of “Custom Shortcut on Synology Desktop” (MODS basicaly means "My Own DSM Shortcut").
 
 It was first aimed at opening URL’s in new Tabs. It has next been extended to run Shell Scripts and to open web pages (php or html) in floating popup windows on DSM’s desktop.
 
-Finally, it has been completed with support to create actual packages for Synology (.spk), embedding web applications and custom installation wizards and scripts.
+Finally, it has been completed with support to create actual packages for Synology (.spk), embedding web applications and custom installation wizards and scripts. MODS can create packages for either DSM 7.x or for DSM 6.x and older.
 
-Mods is a Windows Application.
+Mods is a Windows Application created in C# with Visual Studio.
 
 ![](https://i.imgur.com/MZsNOSV.png)
 
