@@ -4067,7 +4067,15 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var content = File.ReadAllText(scriptPath);
                 var script = new ScriptInfo(content, title, new Uri("https://help.synology.com/developer-guide/synology_package/scripts.html"), "Details about script files");
-                DialogResult result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
+                DialogResult result;
+                if (Path.HasExtension(scriptPath) && Path.GetExtension(scriptPath).Equals(".php", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    result = Helper.ScriptEditor(null, script, GetAllWizardVariables());
+                }
+                else
+                {
+                    result = Helper.ScriptEditor(script, null, GetAllWizardVariables());
+                }
                 if (result == DialogResult.OK)
                 {
                     if (string.IsNullOrEmpty(script.Code))
@@ -5371,7 +5379,7 @@ namespace BeatificaBytes.Synology.Mods
 
             var content = File.ReadAllText(file);
             var routercgi = new ScriptInfo(content, "Default Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
-            DialogResult result = Helper.ScriptEditor(null, routercgi, null);
+            DialogResult result = Helper.ScriptEditor(routercgi,null,  null);
             if (result == DialogResult.OK)
             {
                 Helper.WriteAnsiFile(file, routercgi.Code);
@@ -5418,7 +5426,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         var content = File.ReadAllText(file);
                         var routercgi = new ScriptInfo(content, "Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
-                        DialogResult result = Helper.ScriptEditor(null, routercgi, null);
+                        DialogResult result = Helper.ScriptEditor(routercgi, null, null);
                         if (result == DialogResult.OK)
                         {
                             Helper.WriteAnsiFile(file, routercgi.Code);

@@ -503,7 +503,7 @@ namespace BeatificaBytes.Synology.Mods
                     break;
                 case "TabScript2":
                     SetHelpToolTip(scriptTab2.Help);
-                    buttonSpellCheck.Enabled = true;
+                    buttonSpellCheck.Enabled = false;
                     break;
                 case "TabScript1":
                     SetHelpToolTip(scriptTab1.Help);
