@@ -85,7 +85,7 @@ namespace BeatificaBytes.Synology.Mods
                 var defaults = privilege.SelectToken("defaults");
                 var runAs = defaults.SelectToken("run-as");
                 if (runAs == null)
-                    comboBoxRunAs.SelectedItem = "system";
+                    comboBoxRunAs.SelectedItem = "package";
                 else
                     comboBoxRunAs.SelectedItem = runAs.ToString();
 

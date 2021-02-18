@@ -2343,7 +2343,7 @@ namespace BeatificaBytes.Synology.Mods
                 actualUrl = string.Format("/webman/3rdparty/{0}/mods.php", info["package"]);
             else
                 actualUrl = string.Format("/webman/3rdparty/{0}/{1}/mods.php", info["package"], cleanedScript);
-            if (url != actualUrl)
+            if (url != actualUrl && url != actualUrl.Replace(".php", ".cgi"))
             {
                 url = actualUrl;
             }
@@ -4308,6 +4308,8 @@ namespace BeatificaBytes.Synology.Mods
         private void buttonAdvanced_Click(object sender, EventArgs e)
         {
             SavePackageInfo(CurrentPackageFolder);
+            SaveItemsConfig();
+
             var infoName = Path.Combine(CurrentPackageFolder, "INFO");
             string content = File.ReadAllText(infoName);
             var script = new ScriptInfo(content, "INFO Editor", new Uri("https://help.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
