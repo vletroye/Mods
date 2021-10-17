@@ -56,6 +56,12 @@ namespace BeatificaBytes.Synology.Mods
 
             textboxLinkerPath.AutoCompleteCustomSource = new AutoCompleteStringCollection();
 
+            if (Directory.Exists(Path.Combine(targetPath, "bin")))
+            {
+                //structure "old style" with app, bin, etc, lib in the target director.
+                ui = "";
+            }
+
             var dir = string.IsNullOrEmpty(ui) ? new DirectoryInfo(targetPath) : new DirectoryInfo(Path.Combine(targetPath, ui));
             textboxLinkerPath.AutoCompleteCustomSource.Clear();
             var excludes = new string[] { "images", "config", "dsm.cgi.conf", "router.cgi" };

@@ -43,6 +43,14 @@ namespace BeatificaBytes.Synology.Mods
                 SetHelpToolTip(this.scriptTab1.Help);
             }
 
+            if (this.scriptTab1 !=null &&  this.scriptTab1.Code != null && this.scriptTab1.Code.Contains("\r") && this.scriptTab1.Title != "INFO Editor")
+            {
+                if (MessageBox.Show("WARNING: your script contains 'Carriage Returns' (\\r) which are not supported on Linux. Do you want to clean them up ?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                {
+                    this.scriptTab1.Code = this.scriptTab1.Code.Replace("\r", "");
+                }
+            }
+
 
             this.scriptTab2 = script2;
             if (this.scriptTab2 != null)

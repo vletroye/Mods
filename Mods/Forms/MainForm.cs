@@ -692,14 +692,22 @@ namespace BeatificaBytes.Synology.Mods
                     var lineText = line.Trim();
                     if (!string.IsNullOrEmpty(lineText))
                     {
-                        var key = lineText.Substring(0, lineText.IndexOf('='));
-                        var value = lineText.Substring(lineText.IndexOf('=') + 1);
-                        value = value.Trim(new char[] { '"' });
-                        value = value.Replace("<br>", "\r\n");
-                        if (info.ContainsKey(key))
-                            info.Remove(key);
-                        if (key != "checksum")
-                            info.Add(key, value);
+                        if (lineText.StartsWith("#"))
+                        {
+                            //Comments will be lost as not supported by MODS
+                        }
+                        else if (lineText.Contains('='))
+                        {
+
+                            var key = lineText.Substring(0, lineText.IndexOf('='));
+                            var value = lineText.Substring(lineText.IndexOf('=') + 1);
+                            value = value.Trim(new char[] { '"' });
+                            value = value.Replace("<br>", "\r\n");
+                            if (info.ContainsKey(key))
+                                info.Remove(key);
+                            if (key != "checksum")
+                                info.Add(key, value);
+                        }
                     }
                 }
 
@@ -709,6 +717,8 @@ namespace BeatificaBytes.Synology.Mods
                     info["distributor"] = Environment.UserName;
 
                 groupBoxPackage.Enabled = false;
+
+                //lastBuild.Text = "";
 
                 SavePackageSettings(path);
                 CreateRecentsMenu();
@@ -754,12 +764,19 @@ namespace BeatificaBytes.Synology.Mods
                     var lineText = line.Trim();
                     if (!string.IsNullOrEmpty(lineText))
                     {
-                        var key = lineText.Substring(0, lineText.IndexOf('='));
-                        if (key == "dsmuidir")
+                        if (lineText.StartsWith("#"))
                         {
-                            value = lineText.Substring(lineText.IndexOf('=') + 1);
-                            value = value.Trim(new char[] { '"' });
-                            break;
+                            //Comments will be lost as not supported by MODS
+                        }
+                        else if (lineText.Contains('='))
+                        {
+                            var key = lineText.Substring(0, lineText.IndexOf('='));
+                            if (key == "dsmuidir")
+                            {
+                                value = lineText.Substring(lineText.IndexOf('=') + 1);
+                                value = value.Trim(new char[] { '"' });
+                                break;
+                            }
                         }
                     }
                 }
@@ -1709,21 +1726,24 @@ namespace BeatificaBytes.Synology.Mods
         {
             string inputScript = null;
             string inputRunner = null;
-            if (File.Exists(scriptPath))
+            if (currentScript == null && File.Exists(scriptPath))
                 inputScript = File.ReadAllText(scriptPath);
             else
             {
                 //When creating a new script, the script can be edited several times but is not yet saved in a file.
-                if (state == State.Add)
-                {
-                    inputScript = currentScript;
-                }
+                inputScript = currentScript;
             }
 
-            if (File.Exists(runnerPath))
+            if (currentRunner == null && File.Exists(runnerPath))
                 inputRunner = File.ReadAllText(runnerPath);
-            else
+            else if (currentRunner == null)
+            {
                 inputRunner = File.ReadAllText(Path.Combine(Helper.ResourcesDirectory, "default.runner"));
+            }
+            else
+            {
+                inputRunner = currentRunner;
+            }
 
             var script = new ScriptInfo(inputScript, "Script Editor", new Uri("https://www.shellscript.sh/"), "Shell Scripting Tutorial");
             var runner = new ScriptInfo(inputRunner, "Runner Editor", new Uri("https://stackoverflow.com/questions/20107147/php-reading-shell-exec-live-output"), "Reading shell_exec live output in PHP");
@@ -1939,26 +1959,19 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (Directory.Exists(target))
                 {
-                    var ex = Helper.DeleteDirectory(target);
-                    if (ex != null)
-                    {
-                        MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", target, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                        succeed = false;
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(cleanedCurrent)) Directory.CreateDirectory(target);
-                    }
+                    if (File.Exists(targetRunner))
+                        Helper.DeleteFile(targetRunner);
+                    if (File.Exists(targetScript))
+                        Helper.DeleteFile(targetScript);
                 }
-
-                if (succeed)
+                else
                 {
                     Directory.CreateDirectory(target);
-
-                    // Create sh script (ANSI) to be executed by the php runner script
-                    Helper.WriteAnsiFile(targetScript, script);
-                    Helper.WriteAnsiFile(targetRunner, runner);
                 }
+
+                // Create sh script (ANSI) to be executed by the php runner script
+                Helper.WriteAnsiFile(targetScript, script);
+                Helper.WriteAnsiFile(targetRunner, runner);
             }
 
             return succeed; //TODO: handle this return value
@@ -1990,15 +2003,18 @@ namespace BeatificaBytes.Synology.Mods
                 Properties.Settings.Default.Packages = json;
                 Properties.Settings.Default.Save();
 
-                var config = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
-                if (Directory.Exists(Path.GetDirectoryName(config)))
+                if (info.ContainsKey("dsmuidir"))
                 {
-                    // Save Config as Ansi
-                    Helper.WriteAnsiFile(config, json);
-                }
-                else
-                {
-                    MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    var config = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                    if (Directory.Exists(Path.GetDirectoryName(config)))
+                    {
+                        // Save Config as Ansi
+                        Helper.WriteAnsiFile(config, json);
+                    }
+                    else
+                    {
+                        MessageBoxEx.Show(this, "For some reason, required resource files are missing. You will have to reconfigure your destination path", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                    }
                 }
             }
         }
@@ -2168,7 +2184,8 @@ namespace BeatificaBytes.Synology.Mods
 
                 // Enable the detail and package zone depending on the current state (view, new, edit or none)
                 enabling = (state != State.View && state != State.None);
-                packaging = listViewItems.Items.Count > 0 && !enabling;
+                //packaging = listViewItems.Items.Count > 0 && !enabling;
+                packaging = true; //A package can be published even without any item
 
                 EnableItemFieldDetails(!enabling && list != null, enabling);
                 switch (state)
@@ -3439,6 +3456,7 @@ namespace BeatificaBytes.Synology.Mods
                     try
                     {
                         File.Move(tmpName, packName);
+                        //lastBuild.Text = string.Format("Build on {0:dd/MM/yyyy HH:mm:ss}", DateTime.Now);
                     }
                     catch (Exception ex)
                     {
@@ -3456,10 +3474,12 @@ namespace BeatificaBytes.Synology.Mods
         private void PublishPackage(string PackagePath, string PackageRepo)
         {
             var packName = info["package"];
+            var archname = info["arch"];
 
             try
             {
-                publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + ".spk"));
+                var flavour = archname.Equals("noarch", StringComparison.InvariantCultureIgnoreCase) ? "" : "[" + archname.Replace(" ", "-") + "]";
+                publishFile(Path.Combine(PackagePath, packName + ".spk"), Path.Combine(PackageRepo, packName + flavour + ".spk"));
                 MessageBoxEx.Show(this, "The package has been successfuly published.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
             catch (Exception ex)
@@ -3556,8 +3576,11 @@ namespace BeatificaBytes.Synology.Mods
                         {
                             if (file.Contains("*"))
                             {
-                                var files = Directory.GetFiles(CurrentPackageFolder, file, SearchOption.TopDirectoryOnly);
-                                if (files.Length > 0) file = files[0]; else file = null;
+                                if (Directory.Exists(Path.Combine(CurrentPackageFolder, file)))
+                                {
+                                    var files = Directory.GetFiles(CurrentPackageFolder, file, SearchOption.TopDirectoryOnly);
+                                    if (files.Length > 0) file = files[0]; else file = null;
+                                }
                             }
                             else
                             {
@@ -5381,7 +5404,7 @@ namespace BeatificaBytes.Synology.Mods
 
             var content = File.ReadAllText(file);
             var routercgi = new ScriptInfo(content, "Default Router Script", new Uri("https://github.com/vletroye/SynoPackages/wiki/MODS-Advanced-Test-CGI"), "CGI Router handling calls to php");
-            DialogResult result = Helper.ScriptEditor(routercgi,null,  null);
+            DialogResult result = Helper.ScriptEditor(routercgi, null, null);
             if (result == DialogResult.OK)
             {
                 Helper.WriteAnsiFile(file, routercgi.Code);

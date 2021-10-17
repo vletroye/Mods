@@ -73,7 +73,7 @@ namespace BeatificaBytes.Synology.Mods
         private void SetPrivilege(JToken privilege)
         {
             origPrivilege = privilege;
-            Specification = privilege == null ? JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""system""}}") : privilege.DeepClone();
+            Specification = privilege == null ? JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""package""}}") : privilege.DeepClone();
 
             DisplayPrivilege();
         }

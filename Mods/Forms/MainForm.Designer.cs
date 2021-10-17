@@ -172,6 +172,7 @@ namespace BeatificaBytes.Synology.Mods
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.menuInstallerScript = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStartScriptShell = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuOthers = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuWizardInstallUI = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizardUpgradeUI = new System.Windows.Forms.ToolStripMenuItem();
@@ -199,7 +200,6 @@ namespace BeatificaBytes.Synology.Mods
             this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.menuOthers = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -1929,6 +1929,16 @@ namespace BeatificaBytes.Synology.Mods
             this.menuStartScriptShell.ToolTipText = "Edit a Start-Stop shell script if used within your Scripts";
             this.menuStartScriptShell.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
+            // menuOthers
+            // 
+            this.menuOthers.Name = "menuOthers";
+            this.menuOthers.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.menuOthers.Size = new System.Drawing.Size(227, 22);
+            this.menuOthers.Tag = "scripts\\*";
+            this.menuOthers.Text = "Others...";
+            this.menuOthers.ToolTipText = "Edit other files available next to your scripts ";
+            this.menuOthers.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -2166,16 +2176,6 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(970, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
-            // 
-            // menuOthers
-            // 
-            this.menuOthers.Name = "menuOthers";
-            this.menuOthers.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.menuOthers.Size = new System.Drawing.Size(227, 22);
-            this.menuOthers.Tag = "scripts\\*";
-            this.menuOthers.Text = "Others...";
-            this.menuOthers.ToolTipText = "Edit other files available next to your scripts ";
-            this.menuOthers.Click += new System.EventHandler(this.scriptEditMenuItem_Click);
             // 
             // MainForm
             // 
