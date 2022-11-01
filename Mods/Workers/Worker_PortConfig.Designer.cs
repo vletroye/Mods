@@ -480,6 +480,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Config Editor";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.PortConfigWorker_HelpButtonClicked);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PortConfigWorker_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PortConfig_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPortConfig)).EndInit();
             this.panelPortConfig.ResumeLayout(false);

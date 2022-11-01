@@ -68,6 +68,11 @@ namespace BeatificaBytes.Synology.Mods
                 if (!File.Exists(defaultDSMReleases))
                     Helper.WriteAnsiFile(defaultDSMReleases, Properties.Settings.Default.dsm_releases);
 
+                // Load the default php Extension list or create one if it does not exist
+                var defaultPhpExtensions= Path.Combine(Helper.ResourcesDirectory, "php_Extensions");
+                if (!File.Exists(defaultPhpExtensions))
+                    Helper.WriteAnsiFile(defaultPhpExtensions, Properties.Settings.Default.php_extensions);
+
                 // Extract the WizardUI background image if it does not exist
                 var backWizard = Path.Combine(Helper.ResourcesDirectory, "backwizard.png");
                 if (!File.Exists(backWizard))

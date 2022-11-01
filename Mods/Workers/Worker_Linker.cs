@@ -26,7 +26,7 @@ namespace BeatificaBytes.Synology.Mods
     ///   }
     /// }
     /// </summary>
-    public partial class Linker : Form
+    public partial class Worker_Linker : Form
     {
         private JToken origlinker;
         private JToken linker;
@@ -47,7 +47,7 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        public Linker(JToken linker, string targetPath, string ui)
+        public Worker_Linker(JToken linker, string targetPath, string ui)
         {
             this.ui = ui;
 
@@ -102,7 +102,7 @@ namespace BeatificaBytes.Synology.Mods
             catch (Exception ex)
             {
                 MessageBoxEx.Show(this, "The list of linkers can't be parsed.", "Error", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
-                this.Close();
+                SafeClose();
             }
 
             DisplayLinkerDetails(null, null);
@@ -255,7 +255,7 @@ namespace BeatificaBytes.Synology.Mods
                     ((JArray)node).Add(path);
             }
 
-            CloseScript(DialogResult.OK);
+            if (CloseScript(DialogResult.OK)) SafeClose();
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -265,16 +265,13 @@ namespace BeatificaBytes.Synology.Mods
             {
                 linker = null;
                 this.DialogResult = DialogResult.OK;
-                this.Close();
+                SafeClose();
             }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            if (!PendingChanges())
-                DialogResult = DialogResult.Cancel;
-            else
-                CloseScript(DialogResult.Cancel);
+            Close();
         }
 
         public bool PendingChanges()
@@ -289,8 +286,9 @@ namespace BeatificaBytes.Synology.Mods
             return pendingChanges;
         }
 
-        private void CloseScript(DialogResult exitMode)
+        private bool CloseScript(DialogResult exitMode)
         {
+
             DialogResult = exitMode;
             if (DialogResult == DialogResult.None)
             {
@@ -335,9 +333,9 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         break;
                 }
-
-                if (DialogResult != DialogResult.None) Close();
             }
+
+            return (DialogResult != DialogResult.None);
         }
 
         private void Linker_HelpButtonClicked(object sender, CancelEventArgs e)
@@ -354,5 +352,17 @@ namespace BeatificaBytes.Synology.Mods
             if ((stateLinker == State.None || stateLinker == State.View) && e.KeyCode == Keys.Insert)
                 buttonAddLinker_Click(null, null);
         }
+
+        private void Worker_Linker_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = !CloseScript(DialogResult.Cancel);
+        }
+
+        private void SafeClose()
+        {
+            this.FormClosing -= new System.Windows.Forms.FormClosingEventHandler(this.Worker_Linker_FormClosing);
+            Close();
+        }
+
     }
 }

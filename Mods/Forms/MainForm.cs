@@ -1,4 +1,5 @@
-﻿using IniParser;
+﻿using BeatificaBytes.Synology.Mods.Forms;
+using IniParser;
 using IniParser.Model;
 using IniParser.Model.Configuration;
 using IniParser.Parser;
@@ -128,7 +129,17 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
             {
-                OpenExistingPackage(path, prepared);
+                try
+                {
+                    OpenExistingPackage(path, prepared);
+                }
+                catch
+                {
+                    Properties.Settings.Default.LastPackage = null;
+                    Properties.Settings.Default.Save();
+                    throw;
+                }
+
             }
 
             ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
@@ -971,12 +982,7 @@ namespace BeatificaBytes.Synology.Mods
                         pictureBoxWarning.BackgroundImage = null;
                 }
                 watch.Stop();
-                pictureBoxWarning.BackgroundImage = image;
-                while (warnings.Count > 0)
-                {
-                    await Task.Delay(500);
-                }
-                pictureBoxWarning.Visible = false;
+                pictureBoxWarning.BackgroundImage = image;                
             }
         }
 
@@ -2732,12 +2738,6 @@ namespace BeatificaBytes.Synology.Mods
                     if (!string.IsNullOrEmpty(textBoxDsmAppName.Text))
                         textBoxDsmAppName.Text = textBoxDsmAppName.Text.Replace(oldName, newName);
 
-                    //foreach (string oldSnapshot in Directory.GetFiles(PackageRootPath, "*_screen_*.png"))
-                    //{
-                    //    var newSnapshot = oldSnapshot.Replace(oldName, newName);
-                    //    File.Move(oldSnapshot, newSnapshot);
-                    //}
-
                     oldName = string.Format("/webman/3rdparty/{0}/", oldName);
                     newName = string.Format("/webman/3rdparty/{0}/", newName);
 
@@ -2792,19 +2792,6 @@ namespace BeatificaBytes.Synology.Mods
         {
             errorProvider.SetError(textBoxMaintainer, "");
         }
-
-        //private void textBoxPublisher_Validated(object sender, EventArgs e)
-        //{
-        //    errorProvider.SetError(textBoxPublisher, "");
-        //}
-
-        //private void textBoxPublisher_Validating(object sender, CancelEventArgs e)
-        //{
-        //    if (!CheckEmpty(textBoxPublisher, ref e))
-        //    {
-        //        CheckDoubleQuotes(textBoxPublisher, ref e);
-        //    }
-        //}
 
         private void textBoxDescription_Validating(object sender, CancelEventArgs e)
         {
@@ -2985,6 +2972,7 @@ namespace BeatificaBytes.Synology.Mods
                 errorProvider.SetError(textBox, "You may not use CRLF in this textbox.");
             }
         }
+
         private void CheckUrl(TextBox textBox, ref CancelEventArgs e)
         {
             if (!string.IsNullOrEmpty(textBox.Text) && !textBox.Text.StartsWith("/") && !Helper.IsValidUrl(textBox.Text))
@@ -3540,6 +3528,10 @@ namespace BeatificaBytes.Synology.Mods
             menuReviewPendingChanges.Image = null;
         }
 
+        /// <summary>
+        /// Show an icon on the menu for which settings already exists
+        /// </summary>
+        /// <param name="menu"></param>
         private void ShowIconOnScriptMenu(ToolStripItem menu)
         {
             var file = menu.Tag != null ? menu.Tag.ToString().Split(';')[0] : "";
@@ -3547,10 +3539,18 @@ namespace BeatificaBytes.Synology.Mods
             {
                 switch (file)
                 {
+                    case "!webservice":
+                        var webservice = resource == null ? null : resource.SelectToken(file.Substring(1));
+                        if (webservice != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                            file = Path.Combine(CurrentPackageFolder, "INFO"); //Provide a file that exits to trigger the icon on this menu
+                        else
+                            file = null;
+                        break;
+
                     case "!usr-local-linker":
-                        var item = resource == null ? null : resource.SelectToken(file.Substring(1));
-                        if (item != null && !string.IsNullOrEmpty(CurrentPackageFolder))
-                            file = Path.Combine(CurrentPackageFolder, "INFO");
+                        var usrLocaLinker = resource == null ? null : resource.SelectToken(file.Substring(1));
+                        if (usrLocaLinker != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                            file = Path.Combine(CurrentPackageFolder, "INFO"); //Provide a file that exits to trigger the icon on this menu
                         else
                             file = null;
                         break;
@@ -4703,22 +4703,26 @@ namespace BeatificaBytes.Synology.Mods
         private bool TransformIntoSingleApp()
         {
             bool succeed = true;
-            if (list.items.Count == 1)
+            if (list != null)
             {
-                var item = list.items.First();
-                if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", item.Value.title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                if (list.items.Count == 1)
                 {
-                    succeed = TransformIntoSingleApp(item);
+                    var item = list.items.First();
+                    if (MessageBoxEx.Show(this, string.Format("Do you want to tansform '{0}' into a single app?", item.Value.title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+                    {
+                        succeed = TransformIntoSingleApp(item);
+                    }
+                    else
+                    {
+                        succeed = false;
+                    }
                 }
-                else
+                else if (list.items.Count > 1)
                 {
                     succeed = false;
                 }
             }
-            else if (list.items.Count > 1)
-            {
-                succeed = false;
-            }
+
 
             return succeed;
         }
@@ -5107,37 +5111,6 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Helper.ValidateFirmware(textBox, e, errorProvider);
             }
-
-            //if (errorProvider.Tag == null)
-            //{
-            //    if (textBoxLatestFirmware.Text != "")
-            //    {
-            //        if (Helper.getOldFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-            //        {
-            //            var parts = textBoxLatestFirmware.Text.Split('.');
-            //            textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-            //        }
-            //        if (Helper.getShortFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-            //        {
-            //            var parts = textBoxLatestFirmware.Text.Split('.');
-            //            textBoxLatestFirmware.Text = string.Format("{0}.{1}-0000", parts[0], parts[1]);
-            //        }
-            //        if (!Helper.getFirmwareVersion.IsMatch(textBoxLatestFirmware.Text))
-            //        {
-            //            e.Cancel = true;
-            //            textBoxLatestFirmware.Select(0, textBoxLatestFirmware.Text.Length);
-            //            errorProvider.SetError(textBoxLatestFirmware, "The format of a firmware must be like 0.0-0000");
-            //        }
-            //        else
-            //        {
-            //            var parts = textBoxLatestFirmware.Text.Split(new char[] { '.', '-' });
-            //            if (int.Parse(parts[2]) == 0)
-            //                textBoxLatestFirmware.Text = string.Format("{0}.{1}", parts[0], parts[1]);
-            //            else
-            //                textBoxLatestFirmware.Text = string.Format("{0}.{1}-{2:D4}", parts[0], parts[1], int.Parse(parts[2]));
-            //        }
-            //    }
-            //}
         }
 
         private void checkBoxAdminUrl_CheckedChanged(object sender, EventArgs e)
@@ -5169,7 +5142,7 @@ namespace BeatificaBytes.Synology.Mods
             var snapshotManager = new SnapshotManager(CurrentPackageFolder);
             snapshotManager.ShowDialog(this);
         }
-
+        
         private void toolStripMenuItemChangeLog_Click(object sender, EventArgs e)
         {
             var changelog = textBoxChangeBox.Text;
@@ -5228,6 +5201,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
             warnings.Clear();
+            pictureBoxWarning.Visible = false;
             MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
         }
 
@@ -5666,7 +5640,7 @@ namespace BeatificaBytes.Synology.Mods
                 var linkerConfig = resource == null ? null : resource.SelectToken("usr-local-linker");
 
                 var ui = info.ContainsKey("dsmuidir") ? info["dsmuidir"] : "";
-                var worker = new Linker(linkerConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
+                var worker = new Worker_Linker(linkerConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
                 if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
                 {
                     linkerConfig = worker.Specification;
@@ -5813,7 +5787,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
 
-                var privilegeEditor = new Privilege(privilege, info);
+                var privilegeEditor = new Worker_Privilege(privilege, info);
                 if (privilegeEditor.ShowDialog(this) == DialogResult.OK)
                 {
                     privilege = privilegeEditor.Specification as JObject;
@@ -5827,6 +5801,44 @@ namespace BeatificaBytes.Synology.Mods
                 }
 
                 ResetEditScriptMenuIcons();
+            }
+        }
+
+        private void webServiceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePackageInfo();
+
+            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
+            {
+                MessageBoxEx.Show(this, "Web Service worker is only supported by firmware >= 7.0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+            }
+            else
+            {
+                var WebServiceConfig = resource == null ? null : resource.SelectToken("webservice");
+
+                //var test = "{ \"webservice\": { \"services\": [{ \"service\": \"myapplication\", \"display_name\": \"MyApplication\", \"support_alias\": true, \"support_server\": true, \"type\": \"nginx_php\", \"root\": \"myapplication\", \"icon\": \"ui/MyIcon_{0}.png\", \"intercept_errors\": false, \"php\": { \"profile_name\": \"MyApplication Profile\", \"profile_desc\": \"PHP Profile for MyApplication\", \"backend\": 8, \"open_basedir\": \"/var/services/web_packages/myapplication:/tmp:/var/services/tmp\", \"extensions\": [ \"curl\", \"dom\", \"exif\", \"fileinfo\", \"gd\", \"hash\", \"iconv\", \"imagick\", \"json\", \"mbstring\", \"mysql\", \"mysqli\", \"openssl\", \"pcre\", \"pdo_mysql\", \"xml\", \"zlib\", \"zip\" ], \"php_settings\": { \"mysql.default_socket\": \"/run/mysqld/mysqld10.sock\", \"mysqli.default_socket\": \"/run/mysqld/mysqld10.sock\", \"pdo_mysql.default_socket\": \"/run/mysqld/mysqld10.sock\" }, \"user\": \"MyApplication\", \"group\": \"http\" }, \"connect_timeout\": 60, \"read_timeout\": 3600, \"send_timeout\": 60 }], \"portals\": [{ \"service\": \"myapplication\", \"type\": \"alias\", \"name\": \"myapplication1\", \"display_name\": \"My Application 1\", \"alias\": \"myapplication1\", \"app\": \"com.mycompany.app\" }], \"pkg_dir_prepare\": [{ \"source\": \"/var/packages/MODS_DemoUiSpk7/target/src\", \"target\": \"myapplication\", \"mode\": \"0755\", \"group\": \"http\", \"user\": \"MyApplication\" }] }, \"usr-local-linker\": { \"bin\": [\"bin/demouispk7-cli\"] }}";
+
+                var ui = info.ContainsKey("dsmuidir") ? info["dsmuidir"] : "";
+                var worker = new Worker_WebService(WebServiceConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
+                if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
+                {
+                    WebServiceConfig = worker.Specification;
+
+                    if (WebServiceConfig != null && WebServiceConfig.HasValues)
+                    {
+                        //Update the Resource file
+                        if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
+                        resource["webservice"] = WebServiceConfig;
+                    }
+                    else
+                    {
+                        if (resource != null)
+                            resource.Remove("webservice");
+                    }
+
+                    //Save the Resource file
+                    SaveResourceConfig(CurrentPackageFolder);
+                }
             }
         }
     }

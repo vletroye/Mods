@@ -1,6 +1,6 @@
 ﻿namespace BeatificaBytes.Synology.Mods
 {
-    partial class Linker
+    partial class Worker_Linker
     {
         /// <summary>
         /// Required designer variable.
@@ -131,6 +131,7 @@
             this.columnHeader2});
             this.listViewLinker.FullRowSelect = true;
             this.listViewLinker.GridLines = true;
+            this.listViewLinker.HideSelection = false;
             this.listViewLinker.Location = new System.Drawing.Point(12, 23);
             this.listViewLinker.Name = "listViewLinker";
             this.listViewLinker.Size = new System.Drawing.Size(534, 120);
@@ -203,7 +204,7 @@
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
-            // Linker
+            // Worker_Linker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -223,12 +224,13 @@
             this.HelpButton = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Linker";
+            this.Name = "Worker_Linker";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Linker Editor";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.Linker_HelpButtonClicked);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Worker_Linker_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

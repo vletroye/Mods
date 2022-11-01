@@ -12,7 +12,7 @@ namespace BeatificaBytes.Synology.Mods.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -291,48 +291,6 @@ ln -s $SYNOPKG_PKGDEST/ui/dsm.cgi.conf /usr/syno/share/nginx/conf.d/dsm.$SYNOPKG
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\r\n          7.0-40000\r\n          6.2-23739-2\r\n          6.2-23739-1\r\n          6." +
-            "2-23739\r\n          6.2.1-23824-1\r\n          6.2.1-23824\r\n          6.1-15047-2\r\n" +
-            "          6.1-15047-1\r\n          6.1-15047\r\n          6.1.7-15284-2\r\n          6" +
-            ".1.7-15284-1\r\n          6.1.7-15284\r\n          6.1.6-15266-1\r\n          6.1.6-15" +
-            "266\r\n          6.1.5-15254-1\r\n          6.1.5-15254\r\n          6.1.4-15217-5\r\n  " +
-            "        6.1.4-15217-4\r\n          6.1.4-15217-3\r\n          6.1.4-15217-2\r\n       " +
-            "   6.1.4-15217-1\r\n          6.1.4-15217\r\n          6.1.3-15152-8\r\n          6.1." +
-            "3-15152-7\r\n          6.1.3-15152-6\r\n          6.1.3-15152-5\r\n          6.1.3-151" +
-            "52-4\r\n          6.1.3-15152-3\r\n          6.1.3-15152-2\r\n          6.1.3-15152-1\r" +
-            "\n          6.1.3-15152\r\n          6.1.2-15132-1\r\n          6.1.2-15132\r\n        " +
-            "  6.1.1-15101-4\r\n          6.1.1-15101-3\r\n          6.1.1-15101-2\r\n          6.1" +
-            ".1-15101-1\r\n          6.1.1-15101\r\n          6.0-7321-7\r\n          6.0-7321-6\r\n " +
-            "         6.0-7321-5\r\n          6.0-7321-3\r\n          6.0-7321-2\r\n          6.0-7" +
-            "321-1\r\n          6.0-7321\r\n          6.0.3-8754-8\r\n          6.0.3-8754-7\r\n     " +
-            "     6.0.3-8754-6\r\n          6.0.3-8754-5\r\n          6.0.3-8754-4\r\n          6.0" +
-            ".3-8754-3\r\n          6.0.3-8754-2\r\n          6.0.3-8754-1\r\n          6.0.3-8754\r" +
-            "\n          6.0.2-8451-9\r\n          6.0.2-8451-8\r\n          6.0.2-8451-7\r\n       " +
-            "   6.0.2-8451-6\r\n          6.0.2-8451-5\r\n          6.0.2-8451-4\r\n          6.0.2" +
-            "-8451-3\r\n          6.0.2-8451-2\r\n          6.0.2-8451-11\r\n          6.0.2-8451-1" +
-            "0\r\n          6.0.2-8451-1\r\n          6.0.2-8451\r\n          6.0.1-7393-2\r\n       " +
-            "   6.0.1-7393-1\r\n          6.0.1-7393\r\n          5.2-5967-8\r\n          5.2-5967-" +
-            "7\r\n          5.2-5967-6\r\n          5.2-5967-5\r\n          5.2-5967-4\r\n          5" +
-            ".2-5967-3\r\n          5.2-5967-2\r\n          5.2-5967-1\r\n          5.2-5967\r\n     " +
-            "     5.2-5644-8\r\n          5.2-5644-5\r\n          5.2-5644-3\r\n          5.2-5644-" +
-            "2\r\n          5.2-5644-1\r\n          5.2-5644\r\n          5.2-5592-4\r\n          5.2" +
-            "-5592-3\r\n          5.2-5592-2\r\n          5.2-5592-1\r\n          5.2-5592\r\n       " +
-            "   5.2-5565-2\r\n          5.2-5565-1\r\n          5.2-5565\r\n          5.1-5055\r\n   " +
-            "       5.1-5022-5\r\n          5.1-5022-4\r\n          5.1-5022-3\r\n          5.1-502" +
-            "2-2\r\n          5.1-5022-1\r\n          5.1-5022\r\n          5.1-5021-2\r\n          5" +
-            ".1-5021\r\n          5.1-5004-2\r\n          5.1-5004\r\n          5.0-4528-2\r\n       " +
-            "   5.0-4528-1\r\n          5.0-4528\r\n        ")]
-        public string dsm_releases {
-            get {
-                return ((string)(this["dsm_releases"]));
-            }
-            set {
-                this["dsm_releases"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PromptExplorer {
             get {
@@ -385,6 +343,116 @@ exit 0")]
             }
             set {
                 this["CopyPackagePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\n         7.1.1-42962-2\r\n         7.1.1-42962-1\r\n         7.1.1-42962\r\n         " +
+            "7.1-42661-4\r\n         7.1-42661-3\r\n         7.1-42661-2\r\n         7.1-42661-1\r\n " +
+            "        7.1-42661\r\n         7.0.1-42218-5\r\n         7.0.1-42218-4\r\n         7.0." +
+            "1-42218-3\r\n         7.0.1-42218-2\r\n         7.0.1-42218-1\r\n         7.0.1-42218\r" +
+            "\n         7.0-41890\r\n         6.2.4-25556-6\r\n         6.2.4-25556-5\r\n         6." +
+            "2.4-25556-4\r\n         6.2.4-25556-3\r\n         6.2.4-25556-2\r\n         6.2.4-2555" +
+            "6-1\r\n         6.2.4-25556\r\n         6.2.3-25426-3\r\n         6.2.3-25426-2\r\n     " +
+            "    6.2.3-25426-1\r\n         6.2.3-25426\r\n         6.2.2-25044-1\r\n         6.2.2-" +
+            "25044\r\n         6.2.2-24922-6\r\n         6.2.2-24922-5\r\n         6.2.2-24922-4\r\n " +
+            "        6.2.2-24922-3\r\n         6.2.2-24922-2\r\n         6.2.2-24922-1\r\n         " +
+            "6.2.2-24922\r\n         6.2.1-23824-6\r\n         6.2.1-23824-5\r\n         6.2.1-2382" +
+            "4-4\r\n         6.2.1-23824-3\r\n         6.2.1-23824-2\r\n         6.2.1-23824-1\r\n   " +
+            "      6.2.1-23824\r\n         6.2-23739-2\r\n         6.2-23739-1\r\n         6.2-2373" +
+            "9\r\n         6.1.7-15284-3\r\n         6.1.7-15284-2\r\n         6.1.7-15284-1\r\n     " +
+            "    6.1.7-15284\r\n         6.1.6-15266-1\r\n         6.1.6-15266\r\n         6.1.5-15" +
+            "254-1\r\n         6.1.5-15254\r\n         6.1.4-15217-5\r\n         6.1.4-15217-4\r\n   " +
+            "      6.1.4-15217-3\r\n         6.1.4-15217-2\r\n         6.1.4-15217-1\r\n         6." +
+            "1.4-15217\r\n         6.1.3-15152-8\r\n         6.1.3-15152-7\r\n         6.1.3-15152-" +
+            "6\r\n         6.1.3-15152-5\r\n         6.1.3-15152-4\r\n         6.1.3-15152-3\r\n     " +
+            "    6.1.3-15152-2\r\n         6.1.3-15152-1\r\n         6.1.3-15152\r\n         6.1.2-" +
+            "15132-1\r\n         6.1.2-15132\r\n         6.1.1-15101-4\r\n         6.1.1-15101-3\r\n " +
+            "        6.1.1-15101-2\r\n         6.1.1-15101-1\r\n         6.1.1-15101\r\n         6." +
+            "1.1-15095\r\n         6.1-15047-2\r\n         6.1-15047-1\r\n         6.1-15047\r\n     " +
+            "    6.1-15022-1\r\n         6.0.3-8754-8\r\n         6.0.3-8754-7\r\n         6.0.3-87" +
+            "54-6\r\n         6.0.3-8754-5\r\n         6.0.3-8754-4\r\n         6.0.3-8754-3\r\n     " +
+            "    6.0.3-8754-2\r\n         6.0.3-8754-1\r\n         6.0.3-8754\r\n         6.0.2-857" +
+            "5-5\r\n         6.0.2-8575-4\r\n         6.0.2-8575-3\r\n         6.0.2-8575-2\r\n      " +
+            "   6.0.2-8575-1\r\n         6.0.2-8575\r\n         6.0.2-8451-11\r\n         6.0.2-845" +
+            "1-10\r\n         6.0.2-8451-9\r\n         6.0.2-8451-8\r\n         6.0.2-8451-7\r\n     " +
+            "    6.0.2-8451-6\r\n         6.0.2-8451-5\r\n         6.0.2-8451-4\r\n         6.0.2-8" +
+            "451-3\r\n         6.0.2-8451-2\r\n         6.0.2-8451-1\r\n         6.0.2-8451\r\n      " +
+            "   6.0.1-7393-2\r\n         6.0.1-7393-1\r\n         6.0.1-7393\r\n         6.0-7321-7" +
+            "\r\n         6.0-7321-6\r\n         6.0-7321-5\r\n         6.0-7321-4\r\n         6.0-73" +
+            "21-3\r\n         6.0-7321-2\r\n         6.0-7321-1\r\n         6.0-7321\r\n         5.2-" +
+            "5967-9\r\n         5.2-5967-8\r\n         5.2-5967-7\r\n         5.2-5967-6\r\n         " +
+            "5.2-5967-5\r\n         5.2-5967-4\r\n         5.2-5967-3\r\n         5.2-5967-2\r\n     " +
+            "    5.2-5967-1\r\n         5.2-5967\r\n         5.2-5644-8\r\n         5.2-5644-6\r\n   " +
+            "      5.2-5644-5\r\n         5.2-5644-4\r\n         5.2-5644-3\r\n         5.2-5644-2\r" +
+            "\n         5.2-5644-1\r\n         5.2-5644\r\n         5.2-5620-1\r\n         5.2-5620\r" +
+            "\n         5.2-5592-4\r\n         5.2-5592-3\r\n         5.2-5592-2\r\n         5.2-559" +
+            "2-1\r\n         5.2-5592\r\n         5.2-5565-2\r\n         5.2-5565-1\r\n         5.2-5" +
+            "565\r\n         5.2-5532-1\r\n         5.1-5358\r\n         5.1-5055\r\n         5.1-502" +
+            "2-5\r\n         5.1-5022-4\r\n         5.1-5022-3\r\n         5.1-5022-2\r\n         5.1" +
+            "-5022-1\r\n         5.1-5022\r\n         5.1-5021-2\r\n         5.1-5021-1\r\n         5" +
+            ".1-5021\r\n         5.1-5010\r\n         5.1-5004-2\r\n         5.1-5004\r\n         5.1" +
+            "-4977-1\r\n         5.0-4627-2\r\n         5.0-4627-1\r\n         5.0-4627\r\n         5" +
+            ".0-4622\r\n         5.0-4528-2\r\n         5.0-4528-1\r\n         5.0-4528\r\n         5" +
+            ".0-4519-1\r\n         5.0-4519\r\n         5.0-4493-7\r\n         5.0-4493-6\r\n        " +
+            " 5.0-4493-5\r\n         5.0-4493-4\r\n         5.0-4493-3\r\n         5.0-4493-2\r\n    " +
+            "     5.0-4493-1\r\n         5.0-4493\r\n         5.0-4482\r\n         5.0-4458-2\r\n    " +
+            "     5.0-4458-1\r\n         5.0-4458\r\n        ")]
+        public string dsm_releases {
+            get {
+                return ((string)(this["dsm_releases"]));
+            }
+            set {
+                this["dsm_releases"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"
+bcmath
+        bz2
+        Core
+        ctype
+        curl
+        date
+        dom
+        filter
+        hash
+        iconv
+        json
+        ldap
+        libxml
+        mbstring
+        openssl
+        pcntl
+        pcre
+        PDO
+        pdo_sqlite
+        Phar
+        posix
+        readline
+        Reflection
+        session
+        shmop
+        SimpleXML
+        sockets
+        SPL
+        sqlite3
+        standard
+        xml
+        xmlreader
+        xmlwriter
+        zip
+        zlib
+")]
+        public string php_extensions {
+            get {
+                return ((string)(this["php_extensions"]));
+            }
+            set {
+                this["php_extensions"] = value;
             }
         }
     }

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BeatificaBytes.Synology.Mods</RootNamespace>
     <AssemblyName>Mods</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -133,12 +133,30 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="XmlDiffPatch, Version=1.0.8.28, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\XMLDiffPatch.1.0.8.28\lib\net\XmlDiffPatch.dll</HintPath>
+    </Reference>
+    <Reference Include="XmlDiffPatch.View, Version=1.0.1493.40755, Culture=neutral">
+      <HintPath>..\packages\XMLDiffPatch.1.0.8.28\lib\net\XmlDiffPatch.View.dll</HintPath>
+    </Reference>
     <Reference Include="YamlDotNet, Version=4.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.4.2.3\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\EditListView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EditListView.Designer.cs">
+      <DependentUpon>EditListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\UserControlPermission.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\UserControlPermission.Designer.cs">
+      <DependentUpon>UserControlPermission.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\VarInfo.cs" />
     <Compile Include="Forms\FindReplace.cs">
       <SubType>Form</SubType>
@@ -146,17 +164,24 @@
     <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
-    <Compile Include="Workers\Linker.cs">
+    <Compile Include="Workers\Worker_WebService.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Workers\Linker.Designer.cs">
-      <DependentUpon>Linker.cs</DependentUpon>
+    <Compile Include="Workers\Worker_WebService.Designer.cs">
+      <DependentUpon>Worker_WebService.cs</DependentUpon>
     </Compile>
-    <Compile Include="Workers\Privilege.cs">
+    <Compile Include="Helpers\JSonResource.cs" />
+    <Compile Include="Workers\Worker_Linker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Workers\Privilege.Designer.cs">
-      <DependentUpon>Privilege.cs</DependentUpon>
+    <Compile Include="Workers\Worker_Linker.Designer.cs">
+      <DependentUpon>Worker_Linker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Workers\Worker_Privilege.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Workers\Worker_Privilege.Designer.cs">
+      <DependentUpon>Worker_Privilege.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Synology.cs" />
     <Compile Include="Workers\PKG_Conf.cs">
@@ -165,12 +190,18 @@
     <Compile Include="Workers\PKG_Conf.Designer.cs">
       <DependentUpon>PKG_Conf.cs</DependentUpon>
     </Compile>
-    <Compile Include="Workers\PortConfig.cs">
+    <Compile Include="Workers\Worker_PortConfig.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Workers\PortConfig.Designer.cs">
-      <DependentUpon>PortConfig.cs</DependentUpon>
+    <Compile Include="Workers\Worker_PortConfig.Designer.cs">
+      <DependentUpon>Worker_PortConfig.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Controls\EditListView.resx">
+      <DependentUpon>EditListView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\UserControlPermission.resx">
+      <DependentUpon>UserControlPermission.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FindReplace.resx">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </EmbeddedResource>
@@ -245,17 +276,20 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Workers\Linker.resx">
-      <DependentUpon>Linker.cs</DependentUpon>
+    <EmbeddedResource Include="Workers\Worker_WebService.resx">
+      <DependentUpon>Worker_WebService.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Workers\Privilege.resx">
-      <DependentUpon>Privilege.cs</DependentUpon>
+    <EmbeddedResource Include="Workers\Worker_Linker.resx">
+      <DependentUpon>Worker_Linker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Workers\Worker_Privilege.resx">
+      <DependentUpon>Worker_Privilege.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Workers\PKG_Conf.resx">
       <DependentUpon>PKG_Conf.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Workers\PortConfig.resx">
-      <DependentUpon>PortConfig.cs</DependentUpon>
+    <EmbeddedResource Include="Workers\Worker_PortConfig.resx">
+      <DependentUpon>Worker_PortConfig.cs</DependentUpon>
     </EmbeddedResource>
     <Content Include="Resources\shellcheck.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

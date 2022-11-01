@@ -36,7 +36,6 @@
             this.tabPageScript2 = new System.Windows.Forms.TabPage();
             this.tabPageVariables = new System.Windows.Forms.TabPage();
             this.listBoxVariables = new System.Windows.Forms.ListBox();
-            this.linkLabelHelp = new System.Windows.Forms.LinkLabel();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonSpellCheck = new System.Windows.Forms.Button();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
@@ -134,18 +133,6 @@
             this.toolTip.SetToolTip(this.listBoxVariables, "Double click a Variable to copy it into the Clipboard.");
             this.listBoxVariables.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxVariables_MouseDoubleClick);
             // 
-            // linkLabelHelp
-            // 
-            this.linkLabelHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.linkLabelHelp.AutoSize = true;
-            this.linkLabelHelp.Location = new System.Drawing.Point(977, 3);
-            this.linkLabelHelp.Name = "linkLabelHelp";
-            this.linkLabelHelp.Size = new System.Drawing.Size(29, 13);
-            this.linkLabelHelp.TabIndex = 5;
-            this.linkLabelHelp.TabStop = true;
-            this.linkLabelHelp.Text = "Help";
-            this.linkLabelHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel_LinkClicked);
-            // 
             // buttonSpellCheck
             // 
             this.buttonSpellCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -175,16 +162,16 @@
             // 
             // ScriptForm
             // 
+            this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(1009, 729);
-            this.ControlBox = false;
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.buttonSpellCheck);
-            this.Controls.Add(this.linkLabelHelp);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
+            this.HelpButton = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(614, 648);
@@ -193,6 +180,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Advanced Editor - Powered by ScintillaNet";
+            this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.ScriptForm_HelpButtonClicked);
             this.Activated += new System.EventHandler(this.ScriptForm_Activated);
             this.Load += new System.EventHandler(this.ScriptForm_Load);
             this.tabControl.ResumeLayout(false);
@@ -201,7 +189,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -213,7 +200,6 @@
         private System.Windows.Forms.TabPage tabPageScript2;
         private System.Windows.Forms.TabPage tabPageVariables;
         private System.Windows.Forms.ListBox listBoxVariables;
-        private System.Windows.Forms.LinkLabel linkLabelHelp;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Button buttonSpellCheck;
         private System.Windows.Forms.SplitContainer splitContainer;

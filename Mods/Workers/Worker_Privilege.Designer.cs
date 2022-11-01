@@ -1,6 +1,6 @@
 ﻿namespace BeatificaBytes.Synology.Mods
 {
-    partial class Privilege
+    partial class Worker_Privilege
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Privilege));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Worker_Privilege));
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.groupBoxDefaults = new System.Windows.Forms.GroupBox();
@@ -299,6 +299,7 @@
             this.columnHeader2});
             this.listViewCtrlScript.FullRowSelect = true;
             this.listViewCtrlScript.GridLines = true;
+            this.listViewCtrlScript.HideSelection = false;
             this.listViewCtrlScript.Location = new System.Drawing.Point(6, 6);
             this.listViewCtrlScript.Name = "listViewCtrlScript";
             this.listViewCtrlScript.Size = new System.Drawing.Size(474, 184);
@@ -427,6 +428,7 @@
             this.columnHeader4});
             this.listViewExecutable.FullRowSelect = true;
             this.listViewExecutable.GridLines = true;
+            this.listViewExecutable.HideSelection = false;
             this.listViewExecutable.Location = new System.Drawing.Point(6, 6);
             this.listViewExecutable.Name = "listViewExecutable";
             this.listViewExecutable.Size = new System.Drawing.Size(474, 184);
@@ -472,7 +474,7 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
-            // Privilege
+            // Worker_Privilege
             // 
             this.AcceptButton = this.buttonOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -487,12 +489,13 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Privilege";
+            this.Name = "Worker_Privilege";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Privilege Editor";
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.Privilege_HelpButtonClicked);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Worker_Privilege_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Privilege_KeyDown);
             this.groupBoxDefaults.ResumeLayout(false);
             this.groupBoxDefaults.PerformLayout();

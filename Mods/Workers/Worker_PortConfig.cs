@@ -30,6 +30,7 @@ namespace BeatificaBytes.Synology.Mods
         private Dictionary<string, string> current;
         private State state = State.None;
 
+
         public JToken PortConfig
         {
             get
@@ -118,23 +119,20 @@ namespace BeatificaBytes.Synology.Mods
             }
             else
             {
-                CloseScript(DialogResult.OK);
+                if (CloseScript(DialogResult.OK)) SafeClose();
             }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            if (!PendingChanges())
-                DialogResult = DialogResult.Cancel;
-            else
-                CloseScript(DialogResult.Cancel);
+            Close();
         }
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
         }
 
-        private void CloseScript(DialogResult exitMode)
+        private bool CloseScript(DialogResult exitMode)
         {
             DialogResult = exitMode;
             if (DialogResult == DialogResult.None)
@@ -180,9 +178,9 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         break;
                 }
-
-                if (DialogResult != DialogResult.None) Close();
             }
+
+            return (DialogResult != DialogResult.None);
         }
 
         private void DisplayPortConfig()
@@ -743,6 +741,16 @@ namespace BeatificaBytes.Synology.Mods
             var info = new ProcessStartInfo(help.Url.AbsoluteUri);
             info.UseShellExecute = true;
             Process.Start(info);
+        }
+
+        private void PortConfigWorker_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = !CloseScript(DialogResult.Cancel);
+        }
+        private void SafeClose()
+        {
+            this.FormClosing -= new System.Windows.Forms.FormClosingEventHandler(this.PortConfigWorker_FormClosing);
+            Close();
         }
     }
 }

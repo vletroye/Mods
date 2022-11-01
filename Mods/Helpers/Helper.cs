@@ -8,8 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
+using System.Xml;
 using ImageMagick;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
@@ -18,6 +17,14 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using Microsoft.VisualBasic.FileIO;
 using static System.Environment;
+using Microsoft.XmlDiffPatch;
+using Formatting = Newtonsoft.Json.Formatting;
+using ScintillaNET;
+using static ScintillaNET.Style;
+using YamlDotNet.Core.Tokens;
+using Newtonsoft.Json.Linq;
+using BeatificaBytes.Synology.Mods.Json.SpkResource;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -522,11 +529,11 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!string.IsNullOrEmpty(text))
             {
-                var icon = cleanChar.Replace(text, "_");
-                while (text != icon)
+                var clean = cleanChar.Replace(text.Trim(), "_");
+                while (text != clean)
                 {
-                    text = icon.Trim(new[] { '_' });
-                    icon = text.Replace("__", "_");
+                    text = clean.Trim(new[] { '_' });
+                    clean = text.Replace("__", "_");
                 }
             }
 
@@ -1078,6 +1085,21 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        public static void LoadPhpExtensions(TextBox box)
+        {
+            var phpExtensions = Path.Combine(Helper.ResourcesDirectory, "php_extensions");
+            var content = File.ReadAllText(phpExtensions);
+            var extensions = Regex.Split(content, "\r\n|\r|\n");
+
+            box.AutoCompleteCustomSource = new AutoCompleteStringCollection();
+            foreach (var extension in extensions)
+            {
+                var phpExt = extension.Trim();
+                if (!box.AutoCompleteCustomSource.Contains(phpExt))
+                    box.AutoCompleteCustomSource.Add(phpExt);
+            }
+        }
+
         public static Stream GetStreamFromString(string s)
         {
             var stream = new MemoryStream();
@@ -1181,6 +1203,107 @@ namespace BeatificaBytes.Synology.Mods
                 if (text.EndsWith("\"")) text = text.Substring(0, text.Length - 1);
             }
             return text;
+        }
+
+
+        // Return the ListBox's contents in a List of List<String>
+        public static List<List<String>> GetListViewData(this ListView lvw)
+        {
+            // Get the number of rows and columns.
+            int num_rows = lvw.Items.Count;
+            int num_cols = 0;
+            for (int i = 0; i < num_rows; i++)
+            {
+                if (num_cols < lvw.Items[i].SubItems.Count)
+                    num_cols = lvw.Items[i].SubItems.Count;
+            }
+
+            // Make the list
+            List<List<String>> results = new List<List<string>>();
+
+            // Populate the list.
+            // Note that SubItems includes the items, too.
+            for (int r = 0; r < num_rows; r++)
+            {
+                var list = new List<String>();
+                for (int c = 0; c < num_cols; c++)
+                    list.Add(lvw.Items[r].SubItems[c].Text);
+
+                results.Add(list);
+            }
+
+            // Return the result.
+            return results;
+        }
+
+        public static bool CheckEmpty(this TextBox textBox, ErrorProvider errorProvider, ref CancelEventArgs e, string defaultValue)
+        {
+            if (textBox.Enabled && string.IsNullOrEmpty(textBox.Text))
+            {
+                textBox.Text = defaultValue;
+                e.Cancel = true;
+                textBox.Select(0, textBox.Text.Length);
+                errorProvider.SetError(textBox, "This field may not be empty.");
+            }
+
+            return e.Cancel;
+        }
+
+        public static string CompareJson(string expected, string actual)
+        {
+            var expectedDoc = JsonConvert.DeserializeXmlNode(expected, "root");
+            var actualDoc = JsonConvert.DeserializeXmlNode(actual, "root");
+            var diff = new XmlDiff(XmlDiffOptions.IgnoreWhitespace |
+                                   XmlDiffOptions.IgnoreChildOrder);
+            using (var ms = new MemoryStream())
+            using (var writer = new XmlTextWriter(ms, Encoding.UTF8))
+            {
+                var result = diff.Compare(expectedDoc, actualDoc, writer);
+                if (!result)
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                }
+                return new StreamReader(ms).ReadToEnd();
+            }
+        }
+
+        public static void getAllKeysFromJson(HashSet<string> keys, JToken token, string path)
+        {
+            var property = token as JProperty;
+            path = token.Path;
+            if (!keys.Contains(path))
+                keys.Add(path);
+
+            foreach (var child in token.Children())
+            {
+                var subpath = path;     
+                if (child.HasValues)
+                {                    
+                    foreach (var value in child.Values())
+                    {
+                        getAllKeysFromJson(keys, value, subpath);
+                    }
+                }
+            }
+        }
+
+        public static HashSet<string> GetLostNode(JToken original, JToken modified)
+        {
+            var lost = new HashSet<string>();
+
+            var originalKeys = new HashSet<string>();
+            var modifiedKeys = new HashSet<string>();
+
+            getAllKeysFromJson(originalKeys, original, "");
+            getAllKeysFromJson(modifiedKeys, original, "");
+
+            foreach(var key in originalKeys)
+            {
+                if (!modifiedKeys.Contains(key))
+                    lost.Add(key);
+            }
+
+            return lost;
         }
     }
 }

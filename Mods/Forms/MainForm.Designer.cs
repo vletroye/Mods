@@ -86,6 +86,7 @@ namespace BeatificaBytes.Synology.Mods
             this.textBoxAdminUrl = new System.Windows.Forms.TextBox();
             this.checkBoxAdminUrl = new System.Windows.Forms.CheckBox();
             this.labelAddResources = new System.Windows.Forms.Label();
+            this.checkBoxCheckPort = new System.Windows.Forms.CheckBox();
             this.pictureBox_256 = new System.Windows.Forms.PictureBox();
             this.pictureBox_128 = new System.Windows.Forms.PictureBox();
             this.pictureBox_96 = new System.Windows.Forms.PictureBox();
@@ -98,7 +99,6 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxWarning = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_72 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPkg_256 = new System.Windows.Forms.PictureBox();
-            this.checkBoxCheckPort = new System.Windows.Forms.CheckBox();
             this.openFileDialog4Mods = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.labelDescription = new System.Windows.Forms.Label();
@@ -188,6 +188,7 @@ namespace BeatificaBytes.Synology.Mods
             this.PhpIniToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.portConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.syslogConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.webServiceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.privilegeConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
@@ -943,6 +944,21 @@ namespace BeatificaBytes.Synology.Mods
             this.labelAddResources.DragDrop += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragDrop);
             this.labelAddResources.DragEnter += new System.Windows.Forms.DragEventHandler(this.labelAddResources_DragEnter);
             // 
+            // checkBoxCheckPort
+            // 
+            this.checkBoxCheckPort.AutoSize = true;
+            this.checkBoxCheckPort.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBoxCheckPort.Location = new System.Drawing.Point(491, 266);
+            this.checkBoxCheckPort.Name = "checkBoxCheckPort";
+            this.checkBoxCheckPort.Size = new System.Drawing.Size(79, 17);
+            this.checkBoxCheckPort.TabIndex = 82;
+            this.checkBoxCheckPort.Tag = "PKGcheckport";
+            this.checkBoxCheckPort.Text = "Check Port";
+            this.toolTip4Mods.SetToolTip(this.checkBoxCheckPort, "Check if there is any conflict between the adminport and the ports which are rese" +
+        "rved or are listening on DSM except web-service ports (e.g. 80, 443) and DSM por" +
+        "ts (e.g. 5000, 5001).");
+            this.checkBoxCheckPort.UseVisualStyleBackColor = true;
+            // 
             // pictureBox_256
             // 
             this.pictureBox_256.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -1127,21 +1143,6 @@ namespace BeatificaBytes.Synology.Mods
             this.pictureBoxPkg_256.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragDrop);
             this.pictureBoxPkg_256.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxPkg_DragEnter);
             this.pictureBoxPkg_256.DoubleClick += new System.EventHandler(this.pictureBoxPkg_DoubleClick);
-            // 
-            // checkBoxCheckPort
-            // 
-            this.checkBoxCheckPort.AutoSize = true;
-            this.checkBoxCheckPort.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.checkBoxCheckPort.Location = new System.Drawing.Point(491, 266);
-            this.checkBoxCheckPort.Name = "checkBoxCheckPort";
-            this.checkBoxCheckPort.Size = new System.Drawing.Size(79, 17);
-            this.checkBoxCheckPort.TabIndex = 82;
-            this.checkBoxCheckPort.Tag = "PKGcheckport";
-            this.checkBoxCheckPort.Text = "Check Port";
-            this.toolTip4Mods.SetToolTip(this.checkBoxCheckPort, "Check if there is any conflict between the adminport and the ports which are rese" +
-        "rved or are listening on DSM except web-service ports (e.g. 80, 443) and DSM por" +
-        "ts (e.g. 5000, 5001).");
-            this.checkBoxCheckPort.UseVisualStyleBackColor = true;
             // 
             // openFileDialog4Mods
             // 
@@ -1392,6 +1393,7 @@ namespace BeatificaBytes.Synology.Mods
             this.columnHeader2});
             this.listViewItems.FullRowSelect = true;
             this.listViewItems.GridLines = true;
+            this.listViewItems.HideSelection = false;
             this.listViewItems.Location = new System.Drawing.Point(6, 19);
             this.listViewItems.Name = "listViewItems";
             this.listViewItems.Size = new System.Drawing.Size(979, 98);
@@ -1999,6 +2001,7 @@ namespace BeatificaBytes.Synology.Mods
             this.PhpIniToolStripMenuItem,
             this.portConfigToolStripMenuItem,
             this.syslogConfigToolStripMenuItem,
+            this.webServiceToolStripMenuItem,
             this.privilegeConfigToolStripMenuItem,
             this.toolStripMenuItem1,
             this.toolStripMenuItem3,
@@ -2073,10 +2076,19 @@ namespace BeatificaBytes.Synology.Mods
             this.syslogConfigToolStripMenuItem.Text = "Syslog Config";
             this.syslogConfigToolStripMenuItem.Click += new System.EventHandler(this.syslogConfigToolStripMenuItem_Click);
             // 
+            // webServiceToolStripMenuItem
+            // 
+            this.webServiceToolStripMenuItem.Name = "webServiceToolStripMenuItem";
+            this.webServiceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F9)));
+            this.webServiceToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
+            this.webServiceToolStripMenuItem.Tag = "!webservice";
+            this.webServiceToolStripMenuItem.Text = "Web Service";
+            this.webServiceToolStripMenuItem.Click += new System.EventHandler(this.webServiceToolStripMenuItem_Click);
+            // 
             // privilegeConfigToolStripMenuItem
             // 
             this.privilegeConfigToolStripMenuItem.Name = "privilegeConfigToolStripMenuItem";
-            this.privilegeConfigToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F9)));
+            this.privilegeConfigToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F10)));
             this.privilegeConfigToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
             this.privilegeConfigToolStripMenuItem.Tag = "conf\\privilege";
             this.privilegeConfigToolStripMenuItem.Text = "Privilege";
@@ -2394,5 +2406,6 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripMenuItem menuPostReplace;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem menuOthers;
+        private System.Windows.Forms.ToolStripMenuItem webServiceToolStripMenuItem;
     }
 }

@@ -34,7 +34,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.checkBoxDefaultPackageRepo = new System.Windows.Forms.CheckBox();
             this.labelToolTip = new System.Windows.Forms.Label();
-            this.panelToolTip = new System.Windows.Forms.Panel();
             this.toolTipProperties = new System.Windows.Forms.ToolTip(this.components);
             this.labelDefaultPublishFolder = new System.Windows.Forms.Label();
             this.checkBoxOpenWith = new System.Windows.Forms.CheckBox();
@@ -42,6 +41,7 @@
             this.checkBoxDefaultPackageRoot = new System.Windows.Forms.CheckBox();
             this.buttonEditDSMReleases = new System.Windows.Forms.Button();
             this.checkBoxPromptExplorer = new System.Windows.Forms.CheckBox();
+            this.checkBoxCopyPackagePath = new System.Windows.Forms.CheckBox();
             this.buttonDefaultPackageRepo = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,7 +49,9 @@
             this.buttonReset = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.checkBoxCopyPackagePath = new System.Windows.Forms.CheckBox();
+            this.buttonPhpExtensions = new System.Windows.Forms.Button();
+            this.groupBoxTips = new System.Windows.Forms.GroupBox();
+            this.groupBoxTips.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonOk
@@ -91,20 +93,10 @@
             // 
             this.labelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelToolTip.Location = new System.Drawing.Point(17, 292);
+            this.labelToolTip.Location = new System.Drawing.Point(6, 16);
             this.labelToolTip.Name = "labelToolTip";
-            this.labelToolTip.Size = new System.Drawing.Size(496, 82);
+            this.labelToolTip.Size = new System.Drawing.Size(493, 66);
             this.labelToolTip.TabIndex = 22;
-            // 
-            // panelToolTip
-            // 
-            this.panelToolTip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelToolTip.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelToolTip.Location = new System.Drawing.Point(12, 290);
-            this.panelToolTip.Name = "panelToolTip";
-            this.panelToolTip.Size = new System.Drawing.Size(506, 86);
-            this.panelToolTip.TabIndex = 23;
             // 
             // labelDefaultPublishFolder
             // 
@@ -186,6 +178,19 @@
             this.checkBoxPromptExplorer.UseVisualStyleBackColor = true;
             this.checkBoxPromptExplorer.CheckedChanged += new System.EventHandler(this.checkBoxPromptExplorer_CheckedChanged);
             // 
+            // checkBoxCopyPackagePath
+            // 
+            this.checkBoxCopyPackagePath.AutoSize = true;
+            this.checkBoxCopyPackagePath.Location = new System.Drawing.Point(12, 137);
+            this.checkBoxCopyPackagePath.Name = "checkBoxCopyPackagePath";
+            this.checkBoxCopyPackagePath.Size = new System.Drawing.Size(236, 17);
+            this.checkBoxCopyPackagePath.TabIndex = 38;
+            this.checkBoxCopyPackagePath.Text = "Copy Package Folder in Clipboard after Build";
+            this.toolTipProperties.SetToolTip(this.checkBoxCopyPackagePath, "If you select this option, you will be able to open SPK files with Mods Packager " +
+        "from Windows Explorer");
+            this.checkBoxCopyPackagePath.UseVisualStyleBackColor = true;
+            this.checkBoxCopyPackagePath.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // buttonDefaultPackageRepo
             // 
             this.buttonDefaultPackageRepo.Location = new System.Drawing.Point(12, 35);
@@ -260,18 +265,29 @@
             this.label4.Size = new System.Drawing.Size(504, 2);
             this.label4.TabIndex = 35;
             // 
-            // checkBoxCopyPackagePath
+            // buttonPhpExtensions
             // 
-            this.checkBoxCopyPackagePath.AutoSize = true;
-            this.checkBoxCopyPackagePath.Location = new System.Drawing.Point(12, 137);
-            this.checkBoxCopyPackagePath.Name = "checkBoxCopyPackagePath";
-            this.checkBoxCopyPackagePath.Size = new System.Drawing.Size(236, 17);
-            this.checkBoxCopyPackagePath.TabIndex = 38;
-            this.checkBoxCopyPackagePath.Text = "Copy Package Folder in Clipboard after Build";
-            this.toolTipProperties.SetToolTip(this.checkBoxCopyPackagePath, "If you select this option, you will be able to open SPK files with Mods Packager " +
-        "from Windows Explorer");
-            this.checkBoxCopyPackagePath.UseVisualStyleBackColor = true;
-            this.checkBoxCopyPackagePath.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.buttonPhpExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonPhpExtensions.Location = new System.Drawing.Point(13, 229);
+            this.buttonPhpExtensions.Name = "buttonPhpExtensions";
+            this.buttonPhpExtensions.Size = new System.Drawing.Size(112, 23);
+            this.buttonPhpExtensions.TabIndex = 39;
+            this.buttonPhpExtensions.Text = "Edit Php Extensions";
+            this.toolTipProperties.SetToolTip(this.buttonPhpExtensions, "Edit the list of php Extensions.");
+            this.buttonPhpExtensions.UseVisualStyleBackColor = true;
+            this.buttonPhpExtensions.Click += new System.EventHandler(this.buttonPhpExtensions_Click);
+            // 
+            // groupBoxTips
+            // 
+            this.groupBoxTips.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxTips.Controls.Add(this.labelToolTip);
+            this.groupBoxTips.Location = new System.Drawing.Point(12, 291);
+            this.groupBoxTips.Name = "groupBoxTips";
+            this.groupBoxTips.Size = new System.Drawing.Size(505, 85);
+            this.groupBoxTips.TabIndex = 40;
+            this.groupBoxTips.TabStop = false;
+            this.groupBoxTips.Text = "TIPS";
             // 
             // Parameters
             // 
@@ -281,6 +297,8 @@
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(530, 388);
             this.ControlBox = false;
+            this.Controls.Add(this.groupBoxTips);
+            this.Controls.Add(this.buttonPhpExtensions);
             this.Controls.Add(this.checkBoxCopyPackagePath);
             this.Controls.Add(this.checkBoxPromptExplorer);
             this.Controls.Add(this.buttonEditDSMReleases);
@@ -295,8 +313,6 @@
             this.Controls.Add(this.checkBoxOpenWith);
             this.Controls.Add(this.buttonDefaultPackageRepo);
             this.Controls.Add(this.labelDefaultPublishFolder);
-            this.Controls.Add(this.labelToolTip);
-            this.Controls.Add(this.panelToolTip);
             this.Controls.Add(this.checkBoxDefaultPackageRepo);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
@@ -305,6 +321,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Properties";
+            this.groupBoxTips.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -316,7 +333,6 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.CheckBox checkBoxDefaultPackageRepo;
         private System.Windows.Forms.Label labelToolTip;
-        private System.Windows.Forms.Panel panelToolTip;
         private System.Windows.Forms.ToolTip toolTipProperties;
         private System.Windows.Forms.Label labelDefaultPublishFolder;
         private System.Windows.Forms.Button buttonDefaultPackageRepo;
@@ -332,5 +348,7 @@
         private System.Windows.Forms.Button buttonEditDSMReleases;
         private System.Windows.Forms.CheckBox checkBoxPromptExplorer;
         private System.Windows.Forms.CheckBox checkBoxCopyPackagePath;
+        private System.Windows.Forms.Button buttonPhpExtensions;
+        private System.Windows.Forms.GroupBox groupBoxTips;
     }
 }

@@ -272,7 +272,7 @@ namespace BeatificaBytes.Synology.Mods
             var dsmReleases = Path.Combine(Helper.ResourcesDirectory, "dsm_releases");
 
             var content = File.ReadAllText(dsmReleases);
-            var dsmRelease = new ScriptInfo(content, "DSM Releases", new Uri("https://archive.synology.com/download/DSM/release/"), "List of valid DSM releases");
+            var dsmRelease = new ScriptInfo(content, "DSM Releases", new Uri("https://archive.synology.com/download/Os/DSM"), "List of valid DSM releases");
             DialogResult result = Helper.ScriptEditor(null, dsmRelease, null);
             if (result == DialogResult.OK)
             {
@@ -284,6 +284,19 @@ namespace BeatificaBytes.Synology.Mods
         {
             Properties.Settings.Default.CopyPackagePath = checkBoxCopyPackagePath.Checked;
             ShowParameters();
+        }
+
+        private void buttonPhpExtensions_Click(object sender, EventArgs e)
+        {
+            var phpExtensions = Path.Combine(Helper.ResourcesDirectory, "php_extensions");
+
+            var content = File.ReadAllText(phpExtensions);
+            var phpExtension = new ScriptInfo(content, "Php Extensions", new Uri("https://en.wikipedia.org/wiki/List_of_PHP_extensions"), "List of Php Extensions");
+            DialogResult result = Helper.ScriptEditor(null, phpExtension, null);
+            if (result == DialogResult.OK)
+            {
+                Helper.WriteAnsiFile(phpExtensions, phpExtension.Code);
+            }
         }
     }
 }

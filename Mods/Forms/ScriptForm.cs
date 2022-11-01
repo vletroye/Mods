@@ -43,7 +43,7 @@ namespace BeatificaBytes.Synology.Mods
                 SetHelpToolTip(this.scriptTab1.Help);
             }
 
-            if (this.scriptTab1 !=null &&  this.scriptTab1.Code != null && this.scriptTab1.Code.Contains("\r") && this.scriptTab1.Title != "INFO Editor")
+            if (this.scriptTab1 != null && this.scriptTab1.Code != null && this.scriptTab1.Code.Contains("\r") && this.scriptTab1.Title != "INFO Editor")
             {
                 if (MessageBox.Show("WARNING: your script contains 'Carriage Returns' (\\r) which are not supported on Linux. Do you want to clean them up ?", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                 {
@@ -67,11 +67,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SetHelpToolTip(HelpInfo help)
         {
-            this.help = help;
-            if (help != null)
-                toolTip.SetToolTip(linkLabelHelp, help.Label);
-            else
-                linkLabelHelp.Visible = false;
+            this.help = help;        
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -174,7 +170,7 @@ namespace BeatificaBytes.Synology.Mods
             splitContainer.Panel2Collapsed = true;
             this.splitContainer.Panel2.Controls.Add(scintillaShellCheck);
             InitScriptEditor(scintillaShellCheck, Lexer.Batch);
-            splitter = splitContainer.Width * 3/7;
+            splitter = splitContainer.Width * 3 / 7;
 
             if (variables == null)
             {
@@ -591,6 +587,13 @@ namespace BeatificaBytes.Synology.Mods
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
         {
             splitter = splitContainer.SplitterDistance;
+        }
+
+        private void ScriptForm_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var info = new ProcessStartInfo(help.Url.AbsoluteUri);
+            info.UseShellExecute = true;
+            Process.Start(info);
         }
     }
 }
