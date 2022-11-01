@@ -411,7 +411,7 @@ exit 0")]
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"
-bcmath
+        bcmath
         bz2
         Core
         ctype

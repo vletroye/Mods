@@ -398,7 +398,7 @@ exit 0</Value>
     </Setting>
     <Setting Name="php_extensions" Type="System.String" Scope="User">
       <Value Profile="(Default)">
-bcmath
+        bcmath
         bz2
         Core
         ctype
