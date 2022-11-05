@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BeatificaBytes.Synology.Mods.Controls
@@ -21,18 +17,48 @@ namespace BeatificaBytes.Synology.Mods.Controls
         private int subItemSelected = 0;
         private TextBox textBoxEditor = new TextBox();
         private ComboBox comboBoxEditor = new ComboBox();
+        private int _editingLine = -1;
+        private int _editingcolumn = -1;
+
+        private EventHandler field_Validated;
+        private CancelEventHandler field_Validating;
+
+        public event EventHandler Field_Validated
+        {
+            add
+            {
+                field_Validated += value;
+            }
+            remove
+            {
+                field_Validated -= value;
+            }
+        }
+        public event CancelEventHandler Field_Validating
+        {
+            add
+            {
+                field_Validating += value;
+            }
+            remove
+            {
+                field_Validating -= value;
+            }
+        }
 
         public EditListView()
         {
             InitializeComponent();
 
             //Prepare the ComboBox for Editing
-            comboBoxEditor.Size = new System.Drawing.Size(0, 0);
-            comboBoxEditor.Location = new System.Drawing.Point(0, 0);
-            listView.Controls.AddRange(new System.Windows.Forms.Control[] { this.comboBoxEditor });
-            comboBoxEditor.SelectedIndexChanged += new System.EventHandler(this.CmbSelected);
-            comboBoxEditor.LostFocus += new System.EventHandler(this.CmbFocusOver);
-            comboBoxEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.CmbKeyPress);
+            comboBoxEditor.Size = new Size(0, 0);
+            comboBoxEditor.Location = new Point(0, 0);
+            listView.Controls.AddRange(new Control[] { this.comboBoxEditor });
+            comboBoxEditor.SelectedIndexChanged += new EventHandler(this.CmbSelected);
+            comboBoxEditor.LostFocus += new EventHandler(this.CmbFocusOver);
+            comboBoxEditor.KeyPress += new KeyPressEventHandler(this.CmbKeyPress);
+            comboBoxEditor.Validated += new EventHandler(this.OnField_Validated);
+            comboBoxEditor.Validating += new CancelEventHandler(this.OnField_Validating);
             //comboBoxEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
             comboBoxEditor.BackColor = Color.SkyBlue;
             comboBoxEditor.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -40,22 +66,25 @@ namespace BeatificaBytes.Synology.Mods.Controls
             //Add values dynamically in the Combo cmbBox.Items.Add ...
 
             //Prepare the TextBox for Editing
-            textBoxEditor.Size = new System.Drawing.Size(0, 0);
-            textBoxEditor.Location = new System.Drawing.Point(0, 0);
-            listView.Controls.AddRange(new System.Windows.Forms.Control[] { this.textBoxEditor });
-            textBoxEditor.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EditOver);
-            textBoxEditor.LostFocus += new System.EventHandler(this.FocusOver);
+            textBoxEditor.Size = new Size(0, 0);
+            textBoxEditor.Location = new Point(0, 0);
+            listView.Controls.AddRange(new Control[] { this.textBoxEditor });
+            textBoxEditor.KeyPress += new KeyPressEventHandler(this.EditOver);
+            textBoxEditor.LostFocus += new EventHandler(this.FocusOver);
+            textBoxEditor.Validated += new EventHandler(this.OnField_Validated);
+            textBoxEditor.Validating += new CancelEventHandler(this.OnField_Validating);
+
             //textBoxEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
             textBoxEditor.BackColor = Color.LightYellow;
             textBoxEditor.BorderStyle = BorderStyle.Fixed3D;
             textBoxEditor.Hide();
             textBoxEditor.Text = "";
 
-            listView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EditListView_MouseDown);
-            listView.DoubleClick += new System.EventHandler(this.EditListView_DoubleClick);
+            listView.MouseDown += new MouseEventHandler(this.EditListView_MouseDown);
+            listView.DoubleClick += new EventHandler(this.EditListView_DoubleClick);
         }
 
-        private void CmbKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void CmbKeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == 13 || e.KeyChar == 27)
             {
@@ -63,7 +92,7 @@ namespace BeatificaBytes.Synology.Mods.Controls
             }
         }
 
-        private void CmbSelected(object sender, System.EventArgs e)
+        private void CmbSelected(object sender, EventArgs e)
         {
             int sel = comboBoxEditor.SelectedIndex;
             if (sel >= 0)
@@ -73,12 +102,12 @@ namespace BeatificaBytes.Synology.Mods.Controls
             }
         }
 
-        private void CmbFocusOver(object sender, System.EventArgs e)
+        private void CmbFocusOver(object sender, EventArgs e)
         {
             comboBoxEditor.Hide();
         }
 
-        private void EditOver(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void EditOver(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == 13)
             {
@@ -88,6 +117,16 @@ namespace BeatificaBytes.Synology.Mods.Controls
 
             if (e.KeyChar == 27)
                 textBoxEditor.Hide();
+        }
+
+        private void OnField_Validated(object sender, EventArgs e)
+        {
+            field_Validated?.Invoke(sender, e);
+        }
+
+        private void OnField_Validating(object sender, CancelEventArgs e)
+        {
+            field_Validating?.Invoke(sender, e);
         }
 
         private void FocusOver(object sender, System.EventArgs e)
@@ -115,6 +154,8 @@ namespace BeatificaBytes.Synology.Mods.Controls
             }
 
             subItemText = li.SubItems[subItemSelected].Text;
+            _editingLine = li.Index;
+            _editingcolumn = subItemSelected;
 
             var colTag = listView.Columns[subItemSelected].Tag;
             if (colTag is List<String>)
@@ -231,5 +272,15 @@ namespace BeatificaBytes.Synology.Mods.Controls
             // Clear the resizing flag
             Resizing = false;
         }
+
+        public int EditingLine
+        {
+            get { return _editingLine; }
+        }
+        public int EditingColumn
+        {
+            get { return _editingcolumn; }
+        }
+
     }
 }

@@ -1117,7 +1117,28 @@ namespace BeatificaBytes.Synology.Mods
 
             return (major > minMajor || (major == minMajor && minor > minMinor) || (major == minMajor && minor == minMinor && build >= minBuild));
         }
+        public static bool CheckDSMVersionMin(string firmware, int minMajor, int minMinor, int minBuild)
+        {
+            int major, minor, build;
+            GetFirmwareMajorMinor(firmware, out major, out minor, out build);
 
+            return (major > minMajor || (major == minMajor && minor > minMinor) || (major == minMajor && minor == minMinor && build >= minBuild));
+        }
+
+        public static bool CheckDSMVersionMax(SortedDictionary<string, string> info, int maxMajor, int maxMinor, int maxBuild)
+        {
+            int major, minor, build;
+            GetFirmwareMajorMinor(info, out major, out minor, out build);
+
+            return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
+        }
+        public static bool CheckDSMVersionMax(string firmware, int maxMajor, int maxMinor, int maxBuild)
+        {
+            int major, minor, build;
+            GetFirmwareMajorMinor(firmware, out major, out minor, out build);
+
+            return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
+        }
         public static void GetFirmwareMajorMinor(SortedDictionary<string, string> info, out int major, out int minor, out int build)
         {
             string firmware = "2.0";
@@ -1129,19 +1150,17 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!getFirmwareVersion.IsMatch(firmware))
                 firmware = "2.0";
+
+            GetFirmwareMajorMinor(firmware, out major, out minor, out build);
+        }
+
+        public static void GetFirmwareMajorMinor(string firmware, out int major, out int minor, out int build)
+        {
             var match = getFirmwareVersion.Match(firmware);
 
             major = int.Parse(match.Groups[1].Value);
             minor = int.Parse(match.Groups[2].Value);
             int.TryParse(match.Groups[5].Value, out build);
-        }
-
-        public static bool CheckDSMVersionMax(SortedDictionary<string, string> info, int maxMajor, int maxMinor, int maxBuild)
-        {
-            int major, minor, build;
-            GetFirmwareMajorMinor(info, out major, out minor, out build);
-
-            return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
         }
 
         public static void ValidateFirmware(TextBox sender, CancelEventArgs e, ErrorProvider errorProvider)

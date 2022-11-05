@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Forms;
+//using static System.Net.WebRequestMethods;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -73,6 +74,7 @@ namespace BeatificaBytes.Synology.Mods
         bool dirtyPic72 = false;
         bool dirtyPic256 = false;
         bool wizardExist = false;
+        bool isDSM7x = false;
 
         string previousReportUrl;
         string imageDragDropPath;
@@ -80,6 +82,7 @@ namespace BeatificaBytes.Synology.Mods
         protected string validPackage4DragDrop = null;
         string[] filesDragDropPath;
         protected bool validFiles4DragDrop;
+        private List<string> candidate_preloads;
 
         protected List<String> warnings = new List<string>();
 
@@ -755,6 +758,9 @@ namespace BeatificaBytes.Synology.Mods
                 }
             }
 
+            // Check if DSM Min is 7.0-40000
+            isDSM7x = Helper.CheckDSMVersionMin(info, 7, 0, 40000);
+
             CurrentPackageFolder = path;
             Properties.Settings.Default.LastPackage = CurrentPackageFolder;
             Properties.Settings.Default.Save();
@@ -798,6 +804,11 @@ namespace BeatificaBytes.Synology.Mods
             }
 
             return value;
+        }
+
+        public string GetStringsPath(string path)
+        {
+            return Path.Combine(GetUIDir(path), "texts", "enu", "strings");
         }
 
         private void FillInfoScreen()
@@ -982,7 +993,7 @@ namespace BeatificaBytes.Synology.Mods
                         pictureBoxWarning.BackgroundImage = null;
                 }
                 watch.Stop();
-                pictureBoxWarning.BackgroundImage = image;                
+                pictureBoxWarning.BackgroundImage = image;
             }
         }
 
@@ -1001,6 +1012,28 @@ namespace BeatificaBytes.Synology.Mods
                 if (unzip.StartInfo.RedirectStandardOutput) Console.WriteLine(unzip.StandardOutput.ReadToEnd());
 
                 CopyPackagingBinaries(path);
+
+                var answer = MessageBoxEx.Show(this, "Do you target DSM 7.x (YES) or an previous version (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                LoadPackageInfo(path);
+                if (answer == DialogResult.Yes)
+                {
+                    info["os_min_ver"] = "7.0-40000";
+                    info.Remove("firmware");
+                    info["install_dep_packages"] = "";
+                    info["startstop_restart_services"] = "nginx.service";
+
+                    this.privilege = JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""package""}}");
+                    SavePrivilegeConfig(CurrentPackageFolder);
+                }
+                else
+                {
+                    info["os_min_ver"] = "6.1-14715";
+                    info["install_dep_packages"] = "Init_3rdparty>=1.5";
+                    info["startstop_restart_services"] = "apache-sys apache-web";
+                }
+                SavePackageInfo(path, false);
+                CurrentPackageFolder = "";
+                info = null;
             }
         }
         #endregion --------------------------------------------------------------------------------------------------------------------------------
@@ -1055,11 +1088,16 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SavePackageInfo(string path)
         {
+            SavePackageInfo(path, true);
+        }
+
+        private void SavePackageInfo(string path, bool refreshFromFields)
+        {
             using (new CWaitCursor())
             {
                 if (info != null)
                 {
-                    UpdatePackageInfo();
+                    if (refreshFromFields) UpdatePackageInfo();
 
                     // Delete existing INFO file (try to send it to the RecycleBin
                     var infoName = Path.Combine(path, "INFO");
@@ -1249,6 +1287,7 @@ namespace BeatificaBytes.Synology.Mods
 
             currentScript = null;
             currentRunner = null;
+            candidate_preloads = null;
             ResetValidateChildren(this); // Reset Error Validation on all controls
 
             DisplayItem(current);
@@ -1333,7 +1372,7 @@ namespace BeatificaBytes.Synology.Mods
             switch (comboBoxItemType.SelectedIndex)
             {
                 case (int)UrlType.Url: // Url                    
-                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM. if not hosted on Synology, it must start with 'http://' or 'https://'. If hosted on Synology, it must start with a '/'.");
+                    this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM. If not hosted on Synology, it must start with 'http://' or 'https://'. If hosted on Synology, it must start with a '/'.");
                     break;
                 case (int)UrlType.Script: // Script
                     this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type the Script to be executed when clicking the icon on DSM. DoubleClick to edit.");
@@ -2221,9 +2260,9 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         menuRouterScript.Enabled = File.Exists(file.Replace("config", "router.cgi"));
                         menuRouterConfig.Enabled = File.Exists(file.Replace("config", "dsm.cgi.conf"));
+                        menuRouterConfig.Enabled = File.Exists(file.Replace("config", @"texts\enu\strings"));
                     }
                 }
-
 
                 if (wizardExist)
                     menuAddWizard.Text = "Remove Wizard";
@@ -2279,6 +2318,7 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxAdvanceGrantPrivilege.Enabled = bItemDetails;
             checkBoxConfigPrivilege.Enabled = bItemDetails;
             labelAddResources.Enabled = bItemDetails;
+            buttonPreloadTexts.Enabled = bItemDetails;
         }
 
         private void EnableItemButtonDetails(bool bButtonAdd, bool bButtonEdit, bool bButtonSave, bool bButtonCancel, bool bButtonDelete, bool bbuttonPublish)
@@ -2305,10 +2345,12 @@ namespace BeatificaBytes.Synology.Mods
             string grantPrivilege = ComboBoxGrantPrivilege.SelectedItem == null ? "" : ComboBoxGrantPrivilege.SelectedItem.ToString();
             bool advanceGrantPrivilege = checkBoxAdvanceGrantPrivilege.Checked;
             bool configablePrivilege = checkBoxConfigPrivilege.Checked;
+            var preloadTexts = candidate_preloads;
+            candidate_preloads = null;
 
             var url = textBoxUrl.Text.Trim();
             var key = string.Format("{0}.{1}", textBoxDsmAppName.Text, Helper.CleanUpText(title));
-            if (!multiInstance) key = textBoxDsmAppName.Text; // This is recommended otherwise the Task Manager does not find the icon of the service
+            //if (!multiInstance) key = textBoxDsmAppName.Text; // This is recommended otherwise the Task Manager does not find the icon of the service
 
             var urlType = comboBoxItemType.SelectedIndex;
             switch (urlType)
@@ -2341,7 +2383,8 @@ namespace BeatificaBytes.Synology.Mods
                 allowMultiInstance = multiInstance,
                 grantPrivilege = grantPrivilege,
                 advanceGrantPrivilege = advanceGrantPrivilege,
-                configablePrivilege = configablePrivilege
+                configablePrivilege = configablePrivilege,
+                preloadTexts = preloadTexts
             };
             if (legacy)
             {
@@ -3360,7 +3403,7 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
                     {
-                        // Use a temporary folder in the default Package Root Folder (don't use a GUID to avoid the warning message used for spk imported in a temp folder)
+                        // Use a temporary folder in the "default Package Root Folder" defined within MODS' properties (don't use a GUID as name. This is used only for spk "imported", and trigger a "warning message")
                         path = Path.Combine(Properties.Settings.Default.PackageRoot, "NEW-" + Guid.NewGuid().ToString());
                         ready = DialogResult.No;
                     }
@@ -3847,7 +3890,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (content.Contains(conf))
                     {
                         content.Remove(conf);
-                        PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers are not supported. Privileges are partially supported.");
+                        //PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers are not supported. Privileges are partially supported.");
                     }
 
                     if (content.Count > 0)
@@ -4422,6 +4465,7 @@ namespace BeatificaBytes.Synology.Mods
         private DialogResult CloseCurrentPackage(bool trySavingPendingChange = true, bool forceSavingPendingChange = false)
         {
             warnings.Clear();
+            pictureBoxWarning.Visible=false;
 
             DialogResult closed = DialogResult.No;
             if (info != null && Directory.Exists(CurrentPackageFolder)) try
@@ -5110,6 +5154,26 @@ namespace BeatificaBytes.Synology.Mods
             if (textBox != null)
             {
                 Helper.ValidateFirmware(textBox, e, errorProvider);
+
+                if (isDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && !Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
+                {
+                    if (MessageBoxEx.Show(this, "Downgrading a package from DSM 7.x is not supported (but it could work if you do manually all the required changes). Do you really want to continue ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        textBox.Text = info["os_min_ver"];
+                        isDSM7x = false;
+                    }
+                }
+                if (!isDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
+                {
+                    if (MessageBoxEx.Show(this, "Upgrading a package to DSM 7.x is not supported (but it could work if you do manually all the required changes). Do you really want to continue ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
+                    {
+                        e.Cancel = true;
+                        textBox.Text = info["os_min_ver"];
+                        isDSM7x = true;
+                    }
+                }
+
             }
         }
 
@@ -5142,7 +5206,7 @@ namespace BeatificaBytes.Synology.Mods
             var snapshotManager = new SnapshotManager(CurrentPackageFolder);
             snapshotManager.ShowDialog(this);
         }
-        
+
         private void toolStripMenuItemChangeLog_Click(object sender, EventArgs e)
         {
             var changelog = textBoxChangeBox.Text;
@@ -5782,7 +5846,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 6, 0, 7145))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Privilege-Config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5838,6 +5902,57 @@ namespace BeatificaBytes.Synology.Mods
 
                     //Save the Resource file
                     SaveResourceConfig(CurrentPackageFolder);
+                }
+            }
+        }
+
+        private void buttonPreloadTexts_Click(object sender, EventArgs e)
+        {
+            var file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+            file = file.Replace("config", @"texts\enu\strings");
+
+            if (File.Exists(file))
+            {
+                var preloadTexts = new PreloadTexts(file, current.Value.preloadTexts);
+                if (preloadTexts.ShowDialog() == DialogResult.OK)
+                {
+                    var strings = preloadTexts.strings;
+                    candidate_preloads = new List<string>();
+                    foreach (var elements in strings)
+                    {
+                        candidate_preloads.Add(elements[0] + ":" + elements[1]);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show(this, "You must first define Strings for this package.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void toolStripMenuItemStrings_Click(object sender, EventArgs e)
+        {
+            string file = null;
+            if (info != null && info.ContainsKey("dsmuidir"))
+            {
+                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                if (File.Exists(file))
+                {
+                    file = file.Replace("config", @"texts\enu\strings");
+
+                    string content = "";
+                    if (File.Exists(file))
+                    {
+                        content = File.ReadAllText(file);
+                    }
+
+                    var strings = new ScriptInfo(content, "Strings", new Uri("https://help.synology.com/developer-guide/integrate_dsm/i18n.html"), "Strings (i18n) referenced by config, help, etc...");
+                    DialogResult result = Helper.ScriptEditor(strings, null, null);
+                    if (result == DialogResult.OK)
+                    {
+                        Helper.WriteAnsiFile(file, strings.Code);
+                        toolStripMenuItemStrings.Image = new Bitmap(Properties.Resources.EditedScript);
+                    }
                 }
             }
         }

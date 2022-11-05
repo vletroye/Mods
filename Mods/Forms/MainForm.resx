@@ -175,7 +175,7 @@ Note: adminprotocol, adminport and adminurl are combined into adminprotocol://ip
   <data name="pictureBoxWarning.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wAAADsABataJCQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xOdTWsmQAAAz+SURBVHhe7Z19
+        vQAADr0BR/uQrQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xOdTWsmQAAAz+SURBVHhe7Z19
         lBdVGcdhRV6kN1AKDoYgkYDLO4qAorzubC8qZmWKL2SlFZaRdQopccEFzcRMUFODLIIiBKxNQGQTXLTs
         lCdOnWOn9tQ51c5vZvYv/6I/ut1ndn/L7Mz39/vNy70zz+zOH5+jPL+5M/c+37szd+48z70DhBB9mg7D
         aJLsMhsaWzoaGk90GI1vmkZju9lg2JLT3dhko9/oGPdYWYbKonP2JaAxj5iG8aAUsVWK+B/5X6GD7nO3

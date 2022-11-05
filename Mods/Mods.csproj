@@ -164,6 +164,14 @@
     <Compile Include="Forms\FindReplace.Designer.cs">
       <DependentUpon>FindReplace.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\PreloadTexts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PreloadTexts.Designer.cs">
+      <DependentUpon>PreloadTexts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\IniParser.cs" />
+    <Compile Include="Helpers\JSonConfig.cs" />
     <Compile Include="Workers\Worker_WebService.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -276,6 +284,9 @@
     <Compile Include="Forms\SearchAndReplace.Designer.cs">
       <DependentUpon>SearchAndReplace.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\PreloadTexts.resx">
+      <DependentUpon>PreloadTexts.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Workers\Worker_WebService.resx">
       <DependentUpon>Worker_WebService.cs</DependentUpon>
     </EmbeddedResource>

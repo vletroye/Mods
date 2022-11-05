@@ -201,6 +201,9 @@ namespace BeatificaBytes.Synology.Mods
             this.menuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
+            this.buttonPreloadTexts = new System.Windows.Forms.Button();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItemStrings = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_256)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_128)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_96)).BeginInit();
@@ -612,9 +615,8 @@ namespace BeatificaBytes.Synology.Mods
             this.comboBoxItemType.Name = "comboBoxItemType";
             this.comboBoxItemType.Size = new System.Drawing.Size(72, 21);
             this.comboBoxItemType.TabIndex = 4;
-            this.toolTip4Mods.SetToolTip(this.comboBoxItemType, "Select here the type of item to be added in the Package: a simple URL to open a w" +
-        "ebsite in a new tab, a script to execute be executed by a shell, or a web app to" +
-        " open windowed within DSM.");
+            this.toolTip4Mods.SetToolTip(this.comboBoxItemType, "Select here the type of item to be added in the Package: a simple website URL, a " +
+        "shell script, or a web app.");
             this.comboBoxItemType.SelectedIndexChanged += new System.EventHandler(this.comboBoxItemType_SelectedIndexChanged);
             // 
             // textBoxSupportUrl
@@ -1439,6 +1441,7 @@ namespace BeatificaBytes.Synology.Mods
             this.groupBoxItem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxItem.Controls.Add(this.buttonPreloadTexts);
             this.groupBoxItem.Controls.Add(this.labelAddResources);
             this.groupBoxItem.Controls.Add(this.labelGrantPrivilege);
             this.groupBoxItem.Controls.Add(this.textBoxPort);
@@ -1771,6 +1774,8 @@ namespace BeatificaBytes.Synology.Mods
             this.menuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuRouterConfig,
             this.menuRouterScript,
+            this.toolStripSeparator8,
+            this.toolStripMenuItemStrings,
             this.toolStripMenuItem2,
             this.menuPreInstall,
             this.menuPostInstall,
@@ -2133,7 +2138,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuDocumentation
             // 
             this.menuDocumentation.Name = "menuDocumentation";
-            this.menuDocumentation.Size = new System.Drawing.Size(177, 22);
+            this.menuDocumentation.Size = new System.Drawing.Size(180, 22);
             this.menuDocumentation.Text = "&Wiki";
             this.menuDocumentation.ToolTipText = "Open Mods Packager\'s Wiki page in a browser.";
             this.menuDocumentation.Click += new System.EventHandler(this.menuDocumentation_Click);
@@ -2141,7 +2146,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuSupport
             // 
             this.menuSupport.Name = "menuSupport";
-            this.menuSupport.Size = new System.Drawing.Size(177, 22);
+            this.menuSupport.Size = new System.Drawing.Size(180, 22);
             this.menuSupport.Text = "&Support";
             this.menuSupport.ToolTipText = "Open Mods Packager\'s Support page in a browser.";
             this.menuSupport.Click += new System.EventHandler(this.menuSupport_Click);
@@ -2149,7 +2154,7 @@ namespace BeatificaBytes.Synology.Mods
             // menuDevGuide
             // 
             this.menuDevGuide.Name = "menuDevGuide";
-            this.menuDevGuide.Size = new System.Drawing.Size(177, 22);
+            this.menuDevGuide.Size = new System.Drawing.Size(180, 22);
             this.menuDevGuide.Text = "Synology Dev&Guide";
             this.menuDevGuide.ToolTipText = "Open Synology\'s SPK developper guide in a browser.";
             this.menuDevGuide.Click += new System.EventHandler(this.menuDevGuide_Click);
@@ -2157,12 +2162,12 @@ namespace BeatificaBytes.Synology.Mods
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // menuAbout
             // 
             this.menuAbout.Name = "menuAbout";
-            this.menuAbout.Size = new System.Drawing.Size(177, 22);
+            this.menuAbout.Size = new System.Drawing.Size(180, 22);
             this.menuAbout.Text = "&About";
             this.menuAbout.ToolTipText = "Display information about Mods Packager.";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
@@ -2188,6 +2193,34 @@ namespace BeatificaBytes.Synology.Mods
             this.labelToolTip.Size = new System.Drawing.Size(970, 31);
             this.labelToolTip.TabIndex = 24;
             this.labelToolTip.UseMnemonic = false;
+            // 
+            // buttonPreloadTexts
+            // 
+            this.buttonPreloadTexts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonPreloadTexts.Location = new System.Drawing.Point(6, 159);
+            this.buttonPreloadTexts.Name = "buttonPreloadTexts";
+            this.buttonPreloadTexts.Size = new System.Drawing.Size(72, 23);
+            this.buttonPreloadTexts.TabIndex = 31;
+            this.buttonPreloadTexts.Text = "PreloadTexts";
+            this.toolTip4Mods.SetToolTip(this.buttonPreloadTexts, "Edit i18n Text (section:key strings) going to be loaded even when application ui " +
+        "is not opened. This is necessary when corresponding strings are used to send des" +
+        "ktop notifications.");
+            this.buttonPreloadTexts.UseVisualStyleBackColor = true;
+            this.buttonPreloadTexts.Click += new System.EventHandler(this.buttonPreloadTexts_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(224, 6);
+            // 
+            // toolStripMenuItemStrings
+            // 
+            this.toolStripMenuItemStrings.Name = "toolStripMenuItemStrings";
+            this.toolStripMenuItemStrings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F3)));
+            this.toolStripMenuItemStrings.Size = new System.Drawing.Size(227, 22);
+            this.toolStripMenuItemStrings.Tag = "package\\{0}\\texts\\enu\\strings";
+            this.toolStripMenuItemStrings.Text = "Strings";
+            this.toolStripMenuItemStrings.Click += new System.EventHandler(this.toolStripMenuItemStrings_Click);
             // 
             // MainForm
             // 
@@ -2407,5 +2440,8 @@ namespace BeatificaBytes.Synology.Mods
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem menuOthers;
         private System.Windows.Forms.ToolStripMenuItem webServiceToolStripMenuItem;
+        private System.Windows.Forms.Button buttonPreloadTexts;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemStrings;
     }
 }

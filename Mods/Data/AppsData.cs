@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -99,7 +100,7 @@ namespace BeatificaBytes.Synology.Mods
         public string title { get; set; }
         public string desc { get; set; }
         public string icon { get; set; }
-        public string appWindow { get; set; }        
+        public string appWindow { get; set; }
         public string protocol { get; set; }
         public string url { get; set; }
         public int port { get; set; }
@@ -109,5 +110,6 @@ namespace BeatificaBytes.Synology.Mods
         public string grantPrivilege { get; set; }
         public int width { get; set; }
         public int height { get; set; }
+        public List<string> preloadTexts { get; set; }
     }
 }
