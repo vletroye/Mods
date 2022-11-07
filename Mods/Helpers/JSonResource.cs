@@ -25,22 +25,25 @@ namespace BeatificaBytes.Synology.Mods.Json.SpkResource
     {
         public string service { get; set; }
         public string display_name { get; set; }
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)] 
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
         public bool support_alias { get; set; }
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)] 
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
         public bool support_server { get; set; }
         public string type { get; set; }
         public string root { get; set; }
-        [DefaultValue("")]
-        public string index { get; set; }
+        [DefaultValue(null)]
+        public string[] index { get; set; }
         [DefaultValue("")]
         public string icon { get; set; }
         public int backend { get; set; }
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)] 
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
         public bool intercept_errors { get; set; }
         public Php php { get; set; }
+        [DefaultValue(0)]
         public int connect_timeout { get; set; }
+        [DefaultValue(0)]
         public int read_timeout { get; set; }
+        [DefaultValue(0)]
         public int send_timeout { get; set; }
     }
 
@@ -80,10 +83,10 @@ namespace BeatificaBytes.Synology.Mods.Json.SpkResource
         public string alias { get; set; }
         [DefaultValue("")]
         public string app { get; set; }
-        [DefaultValue("")]
-        public string http_port { get; set; }
-        [DefaultValue("")]
-        public string https_port { get; set; }
+        [DefaultValue(null)]
+        public int[] http_port { get; set; }
+        [DefaultValue(null)]
+        public int[] https_port { get; set; }
         [DefaultValue("")]
         public string host { get; set; }
     }

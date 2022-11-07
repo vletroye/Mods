@@ -67,6 +67,8 @@
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.buttonRemove = new System.Windows.Forms.Button();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.textBoxJoinGroupname = new System.Windows.Forms.TextBox();
+            this.labelJoinGroupname = new System.Windows.Forms.Label();
             this.groupBoxDefaults.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPageCtrlScript.SuspendLayout();
@@ -101,6 +103,8 @@
             // 
             this.groupBoxDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxDefaults.Controls.Add(this.textBoxJoinGroupname);
+            this.groupBoxDefaults.Controls.Add(this.labelJoinGroupname);
             this.groupBoxDefaults.Controls.Add(this.linkLabelHelp);
             this.groupBoxDefaults.Controls.Add(this.textBoxGroupname);
             this.groupBoxDefaults.Controls.Add(this.textBoxUsername);
@@ -128,6 +132,7 @@
             this.textBoxGroupname.Name = "textBoxGroupname";
             this.textBoxGroupname.Size = new System.Drawing.Size(100, 20);
             this.textBoxGroupname.TabIndex = 5;
+            this.textBoxGroupname.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxGroupname_Validating);
             // 
             // textBoxUsername
             // 
@@ -474,6 +479,24 @@
             // 
             this.errorProvider.ContainerControl = this;
             // 
+            // textBoxJoinGroupname
+            // 
+            this.textBoxJoinGroupname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxJoinGroupname.Location = new System.Drawing.Point(384, 82);
+            this.textBoxJoinGroupname.Name = "textBoxJoinGroupname";
+            this.textBoxJoinGroupname.Size = new System.Drawing.Size(100, 20);
+            this.textBoxJoinGroupname.TabIndex = 7;
+            // 
+            // labelJoinGroupname
+            // 
+            this.labelJoinGroupname.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelJoinGroupname.AutoSize = true;
+            this.labelJoinGroupname.Location = new System.Drawing.Point(291, 85);
+            this.labelJoinGroupname.Name = "labelJoinGroupname";
+            this.labelJoinGroupname.Size = new System.Drawing.Size(87, 13);
+            this.labelJoinGroupname.TabIndex = 6;
+            this.labelJoinGroupname.Text = "Join Groupname:";
+            // 
             // Worker_Privilege
             // 
             this.AcceptButton = this.buttonOk;
@@ -547,5 +570,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.TextBox textBoxExecutablePath;
         private System.Windows.Forms.LinkLabel linkLabelHelp;
+        private System.Windows.Forms.TextBox textBoxJoinGroupname;
+        private System.Windows.Forms.Label labelJoinGroupname;
     }
 }

@@ -33,9 +33,8 @@
             this.tabControlWebService = new System.Windows.Forms.TabControl();
             this.tabPageServices = new System.Windows.Forms.TabPage();
             this.groupBoxPhpSettings = new System.Windows.Forms.GroupBox();
+            this.buttonDelete = new System.Windows.Forms.Button();
             this.textBoxPhpSettings = new System.Windows.Forms.TextBox();
-            this.editListViewPhpSettings = new BeatificaBytes.Synology.Mods.Controls.EditListView();
-            this.buttonDel = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.checkedListBoxPhpExtensions = new System.Windows.Forms.CheckedListBox();
             this.textBoxPhpGroup = new System.Windows.Forms.TextBox();
@@ -51,6 +50,7 @@
             this.textBoxPhpProfileName = new System.Windows.Forms.TextBox();
             this.labelPhpProfileName = new System.Windows.Forms.Label();
             this.groupBoxService = new System.Windows.Forms.GroupBox();
+            this.checkBoxApacheInterceptErrors = new System.Windows.Forms.CheckBox();
             this.labelApacheVersion = new System.Windows.Forms.Label();
             this.comboBoxApacheVersion = new System.Windows.Forms.ComboBox();
             this.textBoxSendTimeOut = new System.Windows.Forms.TextBox();
@@ -74,7 +74,7 @@
             this.textBoxServiceDisplayName = new System.Windows.Forms.TextBox();
             this.textBoxServiceRoot = new System.Windows.Forms.TextBox();
             this.tabPagePortals = new System.Windows.Forms.TabPage();
-            this.checkBoxForce = new System.Windows.Forms.CheckBox();
+            this.checkBoxForcePortals = new System.Windows.Forms.CheckBox();
             this.checkBoxServer = new System.Windows.Forms.CheckBox();
             this.checkBoxAlias = new System.Windows.Forms.CheckBox();
             this.groupBoxServerPortal = new System.Windows.Forms.GroupBox();
@@ -106,6 +106,7 @@
             this.labelAliasName = new System.Windows.Forms.Label();
             this.labelAliasService = new System.Windows.Forms.Label();
             this.tabPageDirectory = new System.Windows.Forms.TabPage();
+            this.checkBoxForceDirectory = new System.Windows.Forms.CheckBox();
             this.textBoxUser = new System.Windows.Forms.TextBox();
             this.textBoxGroup = new System.Windows.Forms.TextBox();
             this.textBoxTarget = new System.Windows.Forms.TextBox();
@@ -115,7 +116,6 @@
             this.labelGroup = new System.Windows.Forms.Label();
             this.labelTarget = new System.Windows.Forms.Label();
             this.labelSource = new System.Windows.Forms.Label();
-            this.userControlPermissions = new BeatificaBytes.Synology.Mods.Controls.UserControlPermission();
             this.groupBoxTip = new System.Windows.Forms.GroupBox();
             this.labelToolTip = new System.Windows.Forms.Label();
             this.toolTip4WebService = new System.Windows.Forms.ToolTip(this.components);
@@ -125,7 +125,8 @@
             this.columnHeaderPhpSettings = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderPhpValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonRemove = new System.Windows.Forms.Button();
-            this.checkBoxApacheInterceptErrors = new System.Windows.Forms.CheckBox();
+            this.editListViewPhpSettings = new BeatificaBytes.Synology.Mods.Controls.EditListView();
+            this.userControlPermissions = new BeatificaBytes.Synology.Mods.Controls.UserControlPermission();
             this.tabControlWebService.SuspendLayout();
             this.tabPageServices.SuspendLayout();
             this.groupBoxPhpSettings.SuspendLayout();
@@ -170,9 +171,9 @@
             this.groupBoxPhpSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxPhpSettings.Controls.Add(this.buttonDelete);
             this.groupBoxPhpSettings.Controls.Add(this.textBoxPhpSettings);
             this.groupBoxPhpSettings.Controls.Add(this.editListViewPhpSettings);
-            this.groupBoxPhpSettings.Controls.Add(this.buttonDel);
             this.groupBoxPhpSettings.Controls.Add(this.buttonAdd);
             this.groupBoxPhpSettings.Controls.Add(this.checkedListBoxPhpExtensions);
             this.groupBoxPhpSettings.Controls.Add(this.textBoxPhpGroup);
@@ -194,6 +195,18 @@
             this.groupBoxPhpSettings.TabStop = false;
             this.groupBoxPhpSettings.Text = "Php Settings";
             // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDelete.Location = new System.Drawing.Point(364, 341);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(42, 23);
+            this.buttonDelete.TabIndex = 65;
+            this.buttonDelete.Text = "Del";
+            this.toolTip4WebService.SetToolTip(this.buttonDelete, "Add a new Key value pair in the Php Settings list.");
+            this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            // 
             // textBoxPhpSettings
             // 
             this.textBoxPhpSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -209,35 +222,10 @@
             this.textBoxPhpSettings.TextChanged += new System.EventHandler(this.textBoxPhpSettings_TextChanged);
             this.textBoxPhpSettings.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPhpSettings_KeyDown);
             // 
-            // editListViewPhpSettings
-            // 
-            this.editListViewPhpSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.editListViewPhpSettings.Lines = ((System.Collections.Generic.List<System.Collections.Generic.List<string>>)(resources.GetObject("editListViewPhpSettings.Lines")));
-            this.editListViewPhpSettings.Location = new System.Drawing.Point(114, 180);
-            this.editListViewPhpSettings.Name = "editListViewPhpSettings";
-            this.editListViewPhpSettings.Size = new System.Drawing.Size(292, 154);
-            this.editListViewPhpSettings.TabIndex = 8;
-            this.toolTip4WebService.SetToolTip(this.editListViewPhpSettings, "Key value pairs, define php ini setting, user may modify this field.");
-            // 
-            // buttonDel
-            // 
-            this.buttonDel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonDel.Location = new System.Drawing.Point(368, 340);
-            this.buttonDel.Name = "buttonDel";
-            this.buttonDel.Size = new System.Drawing.Size(38, 23);
-            this.buttonDel.TabIndex = 10;
-            this.buttonDel.Text = "Del";
-            this.toolTip4WebService.SetToolTip(this.buttonDel, "Dete the Key value pair selected in the Php Settings list.");
-            this.buttonDel.UseVisualStyleBackColor = true;
-            this.buttonDel.Click += new System.EventHandler(this.buttonDel_Click);
-            // 
             // buttonAdd
             // 
             this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonAdd.Location = new System.Drawing.Point(320, 340);
+            this.buttonAdd.Location = new System.Drawing.Point(316, 341);
             this.buttonAdd.Name = "buttonAdd";
             this.buttonAdd.Size = new System.Drawing.Size(42, 23);
             this.buttonAdd.TabIndex = 9;
@@ -267,6 +255,7 @@
             this.textBoxPhpGroup.TabIndex = 5;
             this.textBoxPhpGroup.Tag = "display_name";
             this.toolTip4WebService.SetToolTip(this.textBoxPhpGroup, "Name of group with privilege while php-fpm accessing your website.");
+            this.textBoxPhpGroup.TextChanged += new System.EventHandler(this.textBoxPhpGroup_TextChanged);
             // 
             // labelPhpGroup
             // 
@@ -303,6 +292,7 @@
             this.textBoxPhpUser.TabIndex = 4;
             this.textBoxPhpUser.Tag = "display_name";
             this.toolTip4WebService.SetToolTip(this.textBoxPhpUser, "Name of user with privilege while php-fpm accessing your website.");
+            this.textBoxPhpUser.TextChanged += new System.EventHandler(this.textBoxPhpUser_TextChanged);
             // 
             // labelPhpUser
             // 
@@ -400,6 +390,18 @@
             this.groupBoxService.TabIndex = 67;
             this.groupBoxService.TabStop = false;
             this.groupBoxService.Text = "Service Settings";
+            // 
+            // checkBoxApacheInterceptErrors
+            // 
+            this.checkBoxApacheInterceptErrors.AutoSize = true;
+            this.checkBoxApacheInterceptErrors.Location = new System.Drawing.Point(83, 327);
+            this.checkBoxApacheInterceptErrors.Name = "checkBoxApacheInterceptErrors";
+            this.checkBoxApacheInterceptErrors.Size = new System.Drawing.Size(98, 17);
+            this.checkBoxApacheInterceptErrors.TabIndex = 67;
+            this.checkBoxApacheInterceptErrors.Text = "Intercept Errors";
+            this.checkBoxApacheInterceptErrors.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.toolTip4WebService.SetToolTip(this.checkBoxApacheInterceptErrors, "Whether Apache errors must be intercepted or not");
+            this.checkBoxApacheInterceptErrors.UseVisualStyleBackColor = true;
             // 
             // labelApacheVersion
             // 
@@ -620,12 +622,13 @@
             this.textBoxServiceRoot.Tag = "";
             this.toolTip4WebService.SetToolTip(this.textBoxServiceRoot, "Service working directory, will be treated as absolute path if start with /, othe" +
         "rwise, relative path to /var/services/web_packages");
+            this.textBoxServiceRoot.TextChanged += new System.EventHandler(this.textBoxServiceRoot_TextChanged);
             this.textBoxServiceRoot.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxRoot_Validating);
             this.textBoxServiceRoot.Validated += new System.EventHandler(this.textBoxRoot_Validated);
             // 
             // tabPagePortals
             // 
-            this.tabPagePortals.Controls.Add(this.checkBoxForce);
+            this.tabPagePortals.Controls.Add(this.checkBoxForcePortals);
             this.tabPagePortals.Controls.Add(this.checkBoxServer);
             this.tabPagePortals.Controls.Add(this.checkBoxAlias);
             this.tabPagePortals.Controls.Add(this.groupBoxServerPortal);
@@ -638,18 +641,18 @@
             this.tabPagePortals.Text = "Portals";
             this.tabPagePortals.UseVisualStyleBackColor = true;
             // 
-            // checkBoxForce
+            // checkBoxForcePortals
             // 
-            this.checkBoxForce.AutoSize = true;
-            this.checkBoxForce.Location = new System.Drawing.Point(682, 6);
-            this.checkBoxForce.Name = "checkBoxForce";
-            this.checkBoxForce.Size = new System.Drawing.Size(88, 17);
-            this.checkBoxForce.TabIndex = 22;
-            this.checkBoxForce.Text = "Force Editing";
-            this.toolTip4WebService.SetToolTip(this.checkBoxForce, "When this is checked, you are able to edit the Service Name and Label independent" +
+            this.checkBoxForcePortals.AutoSize = true;
+            this.checkBoxForcePortals.Location = new System.Drawing.Point(674, 6);
+            this.checkBoxForcePortals.Name = "checkBoxForcePortals";
+            this.checkBoxForcePortals.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxForcePortals.TabIndex = 22;
+            this.checkBoxForcePortals.Text = "Force Editing";
+            this.toolTip4WebService.SetToolTip(this.checkBoxForcePortals, "When this is checked, you are able to edit the Service Name and Label independent" +
         "ly from the settings in the Service  tab.");
-            this.checkBoxForce.UseVisualStyleBackColor = true;
-            this.checkBoxForce.CheckedChanged += new System.EventHandler(this.checkBoxForce_CheckedChanged);
+            this.checkBoxForcePortals.UseVisualStyleBackColor = true;
+            this.checkBoxForcePortals.CheckedChanged += new System.EventHandler(this.checkBoxForce_CheckedChanged);
             // 
             // checkBoxServer
             // 
@@ -889,6 +892,7 @@
             this.textBoxAlias.Size = new System.Drawing.Size(288, 20);
             this.textBoxAlias.TabIndex = 19;
             this.textBoxAlias.Tag = "alias";
+            this.textBoxAlias.Validating += new System.ComponentModel.CancelEventHandler(this.textBoxAlias_Validating);
             // 
             // textBoxAliasType
             // 
@@ -980,6 +984,7 @@
             // 
             // tabPageDirectory
             // 
+            this.tabPageDirectory.Controls.Add(this.checkBoxForceDirectory);
             this.tabPageDirectory.Controls.Add(this.textBoxUser);
             this.tabPageDirectory.Controls.Add(this.textBoxGroup);
             this.tabPageDirectory.Controls.Add(this.textBoxTarget);
@@ -998,10 +1003,24 @@
             this.tabPageDirectory.Text = "Directory";
             this.tabPageDirectory.UseVisualStyleBackColor = true;
             // 
+            // checkBoxForceDirectory
+            // 
+            this.checkBoxForceDirectory.AutoSize = true;
+            this.checkBoxForceDirectory.Location = new System.Drawing.Point(674, 5);
+            this.checkBoxForceDirectory.Name = "checkBoxForceDirectory";
+            this.checkBoxForceDirectory.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxForceDirectory.TabIndex = 23;
+            this.checkBoxForceDirectory.Text = "Force Editing";
+            this.toolTip4WebService.SetToolTip(this.checkBoxForceDirectory, "When this is checked, you are able to edit the Service Name and Label independent" +
+        "ly from the settings in the Service  tab.");
+            this.checkBoxForceDirectory.UseVisualStyleBackColor = true;
+            this.checkBoxForceDirectory.CheckedChanged += new System.EventHandler(this.checkBoxForceDirectory_CheckedChanged);
+            // 
             // textBoxUser
             // 
-            this.textBoxUser.Location = new System.Drawing.Point(58, 86);
+            this.textBoxUser.Location = new System.Drawing.Point(58, 56);
             this.textBoxUser.Name = "textBoxUser";
+            this.textBoxUser.ReadOnly = true;
             this.textBoxUser.Size = new System.Drawing.Size(147, 20);
             this.textBoxUser.TabIndex = 9;
             this.textBoxUser.Tag = "user";
@@ -1009,8 +1028,9 @@
             // 
             // textBoxGroup
             // 
-            this.textBoxGroup.Location = new System.Drawing.Point(58, 60);
+            this.textBoxGroup.Location = new System.Drawing.Point(58, 82);
             this.textBoxGroup.Name = "textBoxGroup";
+            this.textBoxGroup.ReadOnly = true;
             this.textBoxGroup.Size = new System.Drawing.Size(147, 20);
             this.textBoxGroup.TabIndex = 8;
             this.textBoxGroup.Tag = "group";
@@ -1020,6 +1040,7 @@
             // 
             this.textBoxTarget.Location = new System.Drawing.Point(58, 30);
             this.textBoxTarget.Name = "textBoxTarget";
+            this.textBoxTarget.ReadOnly = true;
             this.textBoxTarget.Size = new System.Drawing.Size(338, 20);
             this.textBoxTarget.TabIndex = 7;
             this.textBoxTarget.Tag = "target";
@@ -1046,7 +1067,7 @@
             // labelUser
             // 
             this.labelUser.AutoSize = true;
-            this.labelUser.Location = new System.Drawing.Point(5, 89);
+            this.labelUser.Location = new System.Drawing.Point(5, 59);
             this.labelUser.Name = "labelUser";
             this.labelUser.Size = new System.Drawing.Size(32, 13);
             this.labelUser.TabIndex = 4;
@@ -1055,7 +1076,7 @@
             // labelGroup
             // 
             this.labelGroup.AutoSize = true;
-            this.labelGroup.Location = new System.Drawing.Point(5, 63);
+            this.labelGroup.Location = new System.Drawing.Point(5, 85);
             this.labelGroup.Name = "labelGroup";
             this.labelGroup.Size = new System.Drawing.Size(39, 13);
             this.labelGroup.TabIndex = 3;
@@ -1078,15 +1099,6 @@
             this.labelSource.Size = new System.Drawing.Size(44, 13);
             this.labelSource.TabIndex = 1;
             this.labelSource.Text = "Source:";
-            // 
-            // userControlPermissions
-            // 
-            this.userControlPermissions.Location = new System.Drawing.Point(58, 117);
-            this.userControlPermissions.Name = "userControlPermissions";
-            this.userControlPermissions.Permissions = 0;
-            this.userControlPermissions.Size = new System.Drawing.Size(339, 80);
-            this.userControlPermissions.TabIndex = 0;
-            this.userControlPermissions.Tag = "mode";
             // 
             // groupBoxTip
             // 
@@ -1158,17 +1170,26 @@
             this.buttonRemove.UseVisualStyleBackColor = true;
             this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
             // 
-            // checkBoxApacheInterceptErrors
+            // editListViewPhpSettings
             // 
-            this.checkBoxApacheInterceptErrors.AutoSize = true;
-            this.checkBoxApacheInterceptErrors.Location = new System.Drawing.Point(83, 327);
-            this.checkBoxApacheInterceptErrors.Name = "checkBoxApacheInterceptErrors";
-            this.checkBoxApacheInterceptErrors.Size = new System.Drawing.Size(98, 17);
-            this.checkBoxApacheInterceptErrors.TabIndex = 67;
-            this.checkBoxApacheInterceptErrors.Text = "Intercept Errors";
-            this.checkBoxApacheInterceptErrors.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.toolTip4WebService.SetToolTip(this.checkBoxApacheInterceptErrors, "Whether Apache errors must be intercepted or not");
-            this.checkBoxApacheInterceptErrors.UseVisualStyleBackColor = true;
+            this.editListViewPhpSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.editListViewPhpSettings.Lines = ((System.Collections.Generic.List<System.Collections.Generic.List<string>>)(resources.GetObject("editListViewPhpSettings.Lines")));
+            this.editListViewPhpSettings.Location = new System.Drawing.Point(114, 180);
+            this.editListViewPhpSettings.Name = "editListViewPhpSettings";
+            this.editListViewPhpSettings.Size = new System.Drawing.Size(292, 154);
+            this.editListViewPhpSettings.TabIndex = 8;
+            this.toolTip4WebService.SetToolTip(this.editListViewPhpSettings, "Key value pairs, define php ini setting, user may modify this field.");
+            // 
+            // userControlPermissions
+            // 
+            this.userControlPermissions.Location = new System.Drawing.Point(58, 117);
+            this.userControlPermissions.Name = "userControlPermissions";
+            this.userControlPermissions.Permissions = 0;
+            this.userControlPermissions.Size = new System.Drawing.Size(339, 80);
+            this.userControlPermissions.TabIndex = 0;
+            this.userControlPermissions.Tag = "mode";
             // 
             // Worker_WebService
             // 
@@ -1291,7 +1312,6 @@
         private System.Windows.Forms.Label labelDisplayName;
         private System.Windows.Forms.TextBox textBoxServiceName;
         private System.Windows.Forms.Label labelService;
-        private System.Windows.Forms.Button buttonDel;
         private System.Windows.Forms.Button buttonAdd;
         private Controls.EditListView editListViewPhpSettings;
         private System.Windows.Forms.ColumnHeader columnHeaderPhpSettings;
@@ -1304,10 +1324,12 @@
         private System.Windows.Forms.ComboBox comboBoxApacheVersion;
         private System.Windows.Forms.GroupBox groupBoxService;
         private System.Windows.Forms.ErrorProvider errorProviderWebService;
-        private System.Windows.Forms.CheckBox checkBoxForce;
+        private System.Windows.Forms.CheckBox checkBoxForcePortals;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonRemove;
         private System.Windows.Forms.CheckBox checkBoxApacheInterceptErrors;
+        private System.Windows.Forms.CheckBox checkBoxForceDirectory;
+        private System.Windows.Forms.Button buttonDelete;
     }
 }

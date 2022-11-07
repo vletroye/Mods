@@ -21,8 +21,9 @@ namespace BeatificaBytes.Synology.Mods
     //  "defaults":{
     //    "run-as": "<run-as>"
     //  },
-    //  "username": "<username>",
+    //  "username": "<username>",?
     //  "groupname": "<groupname>",
+    //  "join-groupname": "<existing groupname>", => use "join-groupname" if it already exist as mentionned (but not explained) in this PDF: https://global.download.synology.com/download/Document/Software/DeveloperGuide/Os/DSM/All/enu/DSM_Developer_Guide_7_enu.pdf
     //  "ctrl-script":[{
     //    "action": "<action>",
     //    "run-as": "<run-as>"
@@ -95,6 +96,9 @@ namespace BeatificaBytes.Synology.Mods
                 var groupname = privilege.SelectToken("groupname");
                 if (groupname != null) textBoxGroupname.Text = groupname.ToString();
 
+                var joingroupname = privilege.SelectToken("join-groupname");
+                if (joingroupname != null) textBoxJoinGroupname.Text = joingroupname.ToString();
+
                 var ctrlScript = privilege.SelectToken("ctrl-script");
                 if (ctrlScript != null)
                     foreach (var ctrl in ctrlScript)
@@ -130,10 +134,12 @@ namespace BeatificaBytes.Synology.Mods
             var defaults = JObject.Parse(string.Format("{{\"run-as\": \"{0}\"}}", comboBoxRunAs.SelectedItem));
             var username = textBoxUsername.Text;
             var groupname = textBoxGroupname.Text;
+            var joingroupname = textBoxJoinGroupname.Text;
             var package = info["package"];
 
             if (string.IsNullOrEmpty(username) || username == package) username = null;
             if (string.IsNullOrEmpty(groupname) || groupname == package) groupname = null;
+            if (string.IsNullOrEmpty(joingroupname) || joingroupname == package) joingroupname = null;
 
             //Update the Resource file
             privilege["defaults"] = defaults;
@@ -146,6 +152,10 @@ namespace BeatificaBytes.Synology.Mods
             if (privilege.SelectToken("groupname") != null) ((JObject)privilege).Remove("groupname");
             if (groupname != null)
                 privilege["groupname"] = groupname;
+
+            if (privilege.SelectToken("join-groupname") != null) ((JObject)privilege).Remove("join-groupname");
+            if (joingroupname != null)
+                privilege["join-groupname"] = joingroupname;
 
             if (privilege.SelectToken("ctrl-script") != null) ((JObject)privilege).Remove("ctrl-script");
             var ctrlScript = new List<string>();
@@ -696,6 +706,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             this.FormClosing -= new System.Windows.Forms.FormClosingEventHandler(this.Worker_Privilege_FormClosing);
             Close();
+        }
+
+        private void textBoxGroupname_Validating(object sender, CancelEventArgs e)
+        {
+            if (textBoxGroupname.Text == "http" || textBoxGroupname.Text == "service")
+            {
+                textBoxJoinGroupname.Text = textBoxGroupname.Text;
+                textBoxGroupname.Text = "";                
+            }
         }
     }
 }

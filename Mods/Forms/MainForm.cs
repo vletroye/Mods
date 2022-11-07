@@ -450,6 +450,8 @@ namespace BeatificaBytes.Synology.Mods
                 if (addKey)
                     info.Add("support_conf_folder", "yes");
             }
+
+            ResetEditScriptMenuIcons();
         }
 
         private void LoadPrivilegeConfig(string path)
@@ -4465,7 +4467,7 @@ namespace BeatificaBytes.Synology.Mods
         private DialogResult CloseCurrentPackage(bool trySavingPendingChange = true, bool forceSavingPendingChange = false)
         {
             warnings.Clear();
-            pictureBoxWarning.Visible=false;
+            pictureBoxWarning.Visible = false;
 
             DialogResult closed = DialogResult.No;
             if (info != null && Directory.Exists(CurrentPackageFolder)) try
@@ -4763,6 +4765,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else if (list.items.Count > 1)
                 {
+                    MessageBoxEx.Show(this, string.Format("You cannot tansform this package into a single app as it has already {0} items.", list.items.Count), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     succeed = false;
                 }
             }
@@ -5161,6 +5164,9 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         e.Cancel = true;
                         textBox.Text = info["os_min_ver"];
+                    }
+                    else
+                    {
                         isDSM7x = false;
                     }
                 }
@@ -5170,6 +5176,9 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         e.Cancel = true;
                         textBox.Text = info["os_min_ver"];
+                    }
+                    else
+                    {
                         isDSM7x = true;
                     }
                 }
@@ -5613,7 +5622,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 6, 0, 7145))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Syslog config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5627,7 +5636,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Php INI worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5641,7 +5650,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 5, 5, 0062))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 5.5.47-0062", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Maria DB worker is only supported by firmware >= 5.5.47-0062", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5655,7 +5664,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 6, 0, 5924))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-5924", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "index DB worker is only supported by firmware >= 6.0-5924", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5669,7 +5678,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Data Share worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5683,7 +5692,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Apache worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
@@ -5697,7 +5706,7 @@ namespace BeatificaBytes.Synology.Mods
 
             if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
             {
-                MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "Linker worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {

@@ -76,20 +76,29 @@ namespace BeatificaBytes.Synology.Mods.Forms
         private void SetWebservice(JToken webservice)
         {
             _origwebservice = webservice;
-            _resource = webservice.ToObject<Webservice>();
-
-            // keep all default values for comparison
-            //_webservice = JToken.Parse(JsonConvert.SerializeObject(_resource, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
-            _webservice = JToken.Parse(JsonConvert.SerializeObject(_resource));
-
-            var keys = Helper.GetLostNode(_origwebservice, _webservice);
-            if (keys.Count > 0)
+            if (webservice != null)
             {
-                var list = String.Join(",", keys);
-                if (MessageBox.Show(this, string.Format("Some settings from the original webservice are not supported: {0}." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to continue ?", list), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
+                _resource = webservice.ToObject<Webservice>();
+
+                // keep all default values for comparison
+                //_webservice = JToken.Parse(JsonConvert.SerializeObject(_resource, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
+                _webservice = JToken.Parse(JsonConvert.SerializeObject(_resource));
+
+                var keys = Helper.GetLostNode(_origwebservice, _webservice);
+                if (keys.Count > 0)
                 {
-                    if (CloseScript(DialogResult.Abort)) SafeClose();
+                    var list = String.Join(",", keys);
+                    if (MessageBox.Show(this, string.Format("Some settings from the original webservice are not supported: {0}." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to continue ?", list), "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
+                    {
+                        if (CloseScript(DialogResult.Abort)) SafeClose();
+                    }
                 }
+            }
+            else
+            {
+                _resource = new Webservice();
+                _resource.services.Add(new Service());
+                _resource.services[0].php = new Php();
             }
         }
 
@@ -138,7 +147,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
                 resource.services = new List<Service>();
                 resource.services.Add(new Service());
             }
-            if (resource.pkg_dir_prepare.Count > 1)
+            if (resource.pkg_dir_prepare != null && resource.pkg_dir_prepare.Count > 1)
             {
                 MessageBox.Show(this, String.Format("There are {0} directory configured as resource for this package. Only one is supported by MODS.", resource.pkg_dir_prepare.Count), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -152,7 +161,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             comboBoxServiceType.SelectedItem = service.type;
 
             textBoxServiceRoot.Text = service.root;
-            textBoxServiceIndex.Text = service.index;
+            if (service.index != null) textBoxServiceIndex.Text = string.Join(",", service.index);
 
 
             switch (service.type)
@@ -160,40 +169,47 @@ namespace BeatificaBytes.Synology.Mods.Forms
                 case "static":
                     break;
                 case "nginx_php":
-                    textBoxConnectionTimeOut.Text = service.connect_timeout.ToString();
-                    textBoxReadTimeOut.Text = service.read_timeout.ToString();
-                    textBoxSendTimeOut.Text = service.send_timeout.ToString();
+                    if (service.connect_timeout != 0) textBoxConnectionTimeOut.Text = service.connect_timeout.ToString();
+                    if (service.read_timeout != 0) textBoxReadTimeOut.Text = service.read_timeout.ToString();
+                    if (service.send_timeout != 0) textBoxSendTimeOut.Text = service.send_timeout.ToString();
                     break;
                 case "apache_php ":
-                    textBoxConnectionTimeOut.Text = service.connect_timeout.ToString();
-                    textBoxReadTimeOut.Text = service.read_timeout.ToString();
-                    textBoxSendTimeOut.Text = service.send_timeout.ToString();
+                    if (service.connect_timeout != 0) textBoxConnectionTimeOut.Text = service.connect_timeout.ToString();
+                    if (service.read_timeout != 0) textBoxReadTimeOut.Text = service.read_timeout.ToString();
+                    if (service.send_timeout != 0) textBoxSendTimeOut.Text = service.send_timeout.ToString();
                     checkBoxApacheInterceptErrors.Checked = service.intercept_errors;
                     break;
             }
 
-            textBoxPhpProfileName.Text = service.php.profile_name;
-            textBoxPhpProfileDescription.Text = service.php.profile_desc;
-            comboBoxPhpVersion.SelectedValue = service.php.backend;
-            textBoxPhpOpenBasedir.Text = service.php.open_basedir;
-            textBoxPhpUser.Text = service.php.user;
-            textBoxPhpGroup.Text = service.php.group;
-
-            foreach (var item in service.php.extensions)
+            if (service.php != null)
             {
-                var itemIndex = checkedListBoxPhpExtensions.Items.IndexOf(item);
-                if (itemIndex >= 0)
+                textBoxPhpProfileName.Text = service.php.profile_name;
+                textBoxPhpProfileDescription.Text = service.php.profile_desc;
+                comboBoxPhpVersion.SelectedValue = service.php.backend;
+                textBoxPhpOpenBasedir.Text = service.php.open_basedir;
+                textBoxPhpUser.Text = service.php.user;
+                textBoxPhpGroup.Text = service.php.group;
+
+                if (service.php.extensions != null)
+                foreach (var item in service.php.extensions)
                 {
-                    checkedListBoxPhpExtensions.SetItemChecked(itemIndex, true);
+                    var itemIndex = checkedListBoxPhpExtensions.Items.IndexOf(item);
+                    if (itemIndex >= 0)
+                    {
+                        checkedListBoxPhpExtensions.SetItemChecked(itemIndex, true);
+                    }
+                }
+
+                if (service.php.php_settings != null)
+                {
+                    List<List<String>> lines = new List<List<string>>();
+                    foreach (var item in service.php.php_settings)
+                    {
+                        lines.Add(new List<String>() { item.Key, item.Value });
+                    }
+                    editListViewPhpSettings.Lines = lines;
                 }
             }
-
-            List<List<String>> lines = new List<List<string>>();
-            foreach (var item in service.php.php_settings)
-            {
-                lines.Add(new List<String>() { item.Key, item.Value });
-            }
-            editListViewPhpSettings.Lines = lines;
         }
         private void SetDirectory(Webservice resource)
         {
@@ -212,7 +228,11 @@ namespace BeatificaBytes.Synology.Mods.Forms
             textBoxSource.Text = pkg_dir_prepare.source;
             textBoxTarget.Text = pkg_dir_prepare.target;
             textBoxUser.Text = pkg_dir_prepare.user;
-            userControlPermissions.Permissions = int.Parse(pkg_dir_prepare.mode);
+            int mode = 0;
+            int.TryParse(pkg_dir_prepare.mode, out mode);
+            userControlPermissions.Permissions = mode;
+
+            checkBoxForceDirectory.Checked = textBoxPhpUser.Text != textBoxUser.Text || textBoxPhpGroup.Text != textBoxGroup.Text || textBoxServiceRoot.Text != textBoxTarget.Text;
         }
 
         private void SetPortals(Webservice resource)
@@ -265,8 +285,10 @@ namespace BeatificaBytes.Synology.Mods.Forms
             groupBoxServerPortal.Visible = checkBoxServer.Checked;
             if (server != null)
             {
-                textBoxServerHttp.Text = server.http_port;
-                textBoxServerHttps.Text = server.https_port;
+                if (server.http_port != null && server.http_port.Length > 0)
+                    textBoxServerHttp.Text = server.http_port[0].ToString();
+                if (server.https_port != null && server.https_port.Length > 0)
+                    textBoxServerHttps.Text = server.https_port[0].ToString();
                 textBoxServerApp.Text = server.app;
                 textBoxServerName.Text = server.name;
                 textBoxServerDisplayName.Text = server.display_name;
@@ -281,7 +303,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             var serverText = textBoxServerService.Text + "|" + textBoxServerName.Text + "|" + textBoxServerDisplayName.Text;
             if (!checkBoxServer.Checked || serverText == "||") serverText = serverServiceText;
 
-            checkBoxForce.Checked = aliasServiceText != aliasText || serverServiceText != serverText;
+            checkBoxForcePortals.Checked = aliasServiceText != aliasText || serverServiceText != serverText;
         }
 
         private void GetServices(Webservice resource)
@@ -305,21 +327,24 @@ namespace BeatificaBytes.Synology.Mods.Forms
             service.php.group = textBoxPhpGroup.Text;
 
             service.root = textBoxServiceRoot.Text;
-            service.index = textBoxServiceIndex.Text;
+            if (!string.IsNullOrWhiteSpace(textBoxServiceIndex.Text))
+                service.index = textBoxServiceIndex.Text.Split(',');
+            else
+                service.index = null;
 
             switch (service.type)
             {
                 case "static":
                     break;
                 case "nginx_php":
-                    if (!string.IsNullOrEmpty(textBoxConnectionTimeOut.Text)) service.connect_timeout = int.Parse(textBoxConnectionTimeOut.Text);
-                    if (!string.IsNullOrEmpty(textBoxReadTimeOut.Text)) service.read_timeout = int.Parse(textBoxReadTimeOut.Text);
-                    if (!string.IsNullOrEmpty(textBoxSendTimeOut.Text)) service.send_timeout = int.Parse(textBoxSendTimeOut.Text);
+                    if (!string.IsNullOrEmpty(textBoxConnectionTimeOut.Text)) service.connect_timeout = int.Parse(textBoxConnectionTimeOut.Text); else service.connect_timeout = 0; ;
+                    if (!string.IsNullOrEmpty(textBoxReadTimeOut.Text)) service.read_timeout = int.Parse(textBoxReadTimeOut.Text); else service.read_timeout = 0;
+                    if (!string.IsNullOrEmpty(textBoxSendTimeOut.Text)) service.send_timeout = int.Parse(textBoxSendTimeOut.Text); else service.send_timeout = 0;
                     break;
                 case "apache_php":
-                    if (!string.IsNullOrEmpty(textBoxConnectionTimeOut.Text)) service.connect_timeout = int.Parse(textBoxConnectionTimeOut.Text);
-                    if (!string.IsNullOrEmpty(textBoxReadTimeOut.Text)) service.read_timeout = int.Parse(textBoxReadTimeOut.Text);
-                    if (!string.IsNullOrEmpty(textBoxSendTimeOut.Text)) service.send_timeout = int.Parse(textBoxSendTimeOut.Text);
+                    if (!string.IsNullOrEmpty(textBoxConnectionTimeOut.Text)) service.connect_timeout = int.Parse(textBoxConnectionTimeOut.Text); else service.connect_timeout = 0; ;
+                    if (!string.IsNullOrEmpty(textBoxReadTimeOut.Text)) service.read_timeout = int.Parse(textBoxReadTimeOut.Text); else service.read_timeout = 0;
+                    if (!string.IsNullOrEmpty(textBoxSendTimeOut.Text)) service.send_timeout = int.Parse(textBoxSendTimeOut.Text); else service.send_timeout = 0;
                     backend = 1;
                     int.TryParse(comboBoxApacheVersion.SelectedValue.ToString(), out backend);
                     service.backend = backend;
@@ -337,12 +362,14 @@ namespace BeatificaBytes.Synology.Mods.Forms
                     service.php.extensions.Add(item.ToString());
                 }
             }
+            if (service.php.extensions.Count == 0) service.php.extensions = null;
 
             service.php.php_settings = new Dictionary<string, string>();
             foreach (var item in editListViewPhpSettings.Lines)
             {
                 service.php.php_settings.Add(item[0], item[1]);
             }
+            if (service.php.php_settings.Count == 0) service.php.php_settings = null;
         }
         private void GetDirectory(Webservice resource)
         {
@@ -370,9 +397,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
                     app = textBoxAliasApp.Text,
                     type = "alias",
                     alias = textBoxAlias.Text,
-                    host = "",
-                    http_port = "",
-                    https_port = ""
+                    host = ""
                 };
                 resource.portals.Add(alias);
             }
@@ -388,10 +413,18 @@ namespace BeatificaBytes.Synology.Mods.Forms
                     type = "server",
                     alias = "",
                     host = "",
-                    http_port = textBoxServerHttp.Text,
-                    https_port = textBoxServerHttps.Text
                 };
+                int http = 0;
+                int https = 0;
+                int.TryParse(textBoxServerHttp.Text, out http);
+                int.TryParse(textBoxServerHttps.Text, out https);
+                if (http > 0)
+                    server.http_port = new int[1] { http };
 
+                if (https > 0)
+                    server.https_port = new int[1] { https };
+
+                resource.portals.Add(server);
             }
         }
         private void checkBoxAlias_CheckedChanged(object sender, EventArgs e)
@@ -632,7 +665,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
 
         private void textBoxService_TextChanged(object sender, EventArgs e)
         {
-            if (!checkBoxForce.Checked)
+            if (!checkBoxForcePortals.Checked)
             {
                 textBoxAliasService.Text = textBoxServiceName.Text;
                 textBoxServerService.Text = textBoxServiceName.Text;
@@ -643,7 +676,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
 
         private void textBoxDisplayName_TextChanged(object sender, EventArgs e)
         {
-            if (!checkBoxForce.Checked)
+            if (!checkBoxForcePortals.Checked)
             {
                 textBoxAliasDisplayName.Text = getAliasDisplayName();
                 textBoxServerDisplayName.Text = getServerDisplayName();
@@ -652,16 +685,16 @@ namespace BeatificaBytes.Synology.Mods.Forms
 
         private void checkBoxForce_CheckedChanged(object sender, EventArgs e)
         {
-            textBoxAliasService.ReadOnly = !checkBoxForce.Checked;
-            textBoxAliasName.ReadOnly = !checkBoxForce.Checked;
-            textBoxAliasDisplayName.ReadOnly = !checkBoxForce.Checked;
-            textBoxAliasApp.ReadOnly = !checkBoxForce.Checked;
-            textBoxServerService.ReadOnly = !checkBoxForce.Checked;
-            textBoxServerName.ReadOnly = !checkBoxForce.Checked;
-            textBoxServerDisplayName.ReadOnly = !checkBoxForce.Checked;
-            textBoxServerApp.ReadOnly = !checkBoxForce.Checked;
+            textBoxAliasService.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxAliasName.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxAliasDisplayName.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxAliasApp.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxServerService.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxServerName.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxServerDisplayName.ReadOnly = !checkBoxForcePortals.Checked;
+            textBoxServerApp.ReadOnly = !checkBoxForcePortals.Checked;
 
-            if (!checkBoxForce.Checked)
+            if (!checkBoxForcePortals.Checked)
             {
                 textBoxAliasService.Text = textBoxServiceName.Text;
                 textBoxServerService.Text = textBoxServiceName.Text;
@@ -678,7 +711,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
         }
         private string getAliasDisplayName()
         {
-            return textBoxAliasService.Text + " Alias";
+            return textBoxServiceDisplayName.Text + " Alias";
         }
         private string getServerName()
         {
@@ -686,17 +719,12 @@ namespace BeatificaBytes.Synology.Mods.Forms
         }
         private string getServerDisplayName()
         {
-            return textBoxServerService.Text + " Server";
+            return textBoxServiceDisplayName.Text + " Server";
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void buttonDel_Click(object sender, EventArgs e)
-        {
-            editListViewPhpSettings.DeleteSelectedItem();
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -722,6 +750,8 @@ namespace BeatificaBytes.Synology.Mods.Forms
         private void textBoxRoot_Validated(object sender, EventArgs e)
         {
             errorProviderWebService.SetError(textBoxServiceRoot, "");
+            textBoxPhpOpenBasedir.Text = textBoxPhpOpenBasedir.Text.Replace(_resource.services[0].root, textBoxServiceRoot.Text);
+            _resource.services[0].root = textBoxServiceRoot.Text;
         }
 
         private void WebService_KeyDown(object sender, KeyEventArgs e)
@@ -918,6 +948,55 @@ namespace BeatificaBytes.Synology.Mods.Forms
         {
             this.FormClosing -= new System.Windows.Forms.FormClosingEventHandler(this.Worker_WebService_FormClosing);
             Close();
+        }
+
+        private void textBoxPhpUser_TextChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxForceDirectory.Checked)
+            {
+                textBoxUser.Text = textBoxPhpUser.Text;
+            }
+        }
+
+        private void textBoxPhpGroup_TextChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxForceDirectory.Checked)
+            {
+                textBoxGroup.Text = textBoxPhpGroup.Text;
+            }
+        }
+
+        private void checkBoxForceDirectory_CheckedChanged(object sender, EventArgs e)
+        {
+
+            textBoxUser.ReadOnly = !checkBoxForceDirectory.Checked;
+            textBoxGroup.ReadOnly = !checkBoxForceDirectory.Checked;
+            textBoxTarget.ReadOnly = !checkBoxForceDirectory.Checked;
+
+            if (!checkBoxForceDirectory.Checked)
+            {
+                textBoxUser.Text = textBoxPhpUser.Text;
+                textBoxGroup.Text = textBoxPhpGroup.Text;
+                textBoxTarget.Text = textBoxServiceRoot.Text;
+            }
+        }
+
+        private void textBoxAlias_Validating(object sender, CancelEventArgs e)
+        {
+            textBoxAlias.Text = Helper.CleanUpText(textBoxAlias.Text).Replace('.', '-');
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            editListViewPhpSettings.DeleteSelectedItem();
+        }
+
+        private void textBoxServiceRoot_TextChanged(object sender, EventArgs e)
+        {
+            if (!checkBoxForceDirectory.Checked)
+            {
+                textBoxTarget.Text = textBoxServiceRoot.Text;
+            }
         }
     }
 }
