@@ -1,29 +1,27 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BeatificaBytes.Synology.Mods
 {
-    public class Package
+    public enum AppDataType
     {
-        public Package()
-        {
-            items = new Dictionary<string, AppsData>();
-        }
-
-        [JsonProperty(PropertyName = ".url")]
-        public Dictionary<string, AppsData> items { get; set; }
+        Undefined = -1,
+        Url = 0,
+        Script = 1,
+        WebApp = 2
     }
 
-    public class AppsData
+    public class AppData
     {
-        public AppsData()
+        public AppData()
         {
             type = "url";
             icon = "images/default_{0}.png";
             guid = Guid.NewGuid();
-            itemType = -1;
+            itemType = AppDataType.Undefined;
         }
 
 
@@ -33,7 +31,7 @@ namespace BeatificaBytes.Synology.Mods
         //0: url
         //1: script
         //2: webapp
-        public int itemType { get; set; }
+        public AppDataType itemType { get; set; }
 
         // Synology url's parameters
 
@@ -111,5 +109,6 @@ namespace BeatificaBytes.Synology.Mods
         public int width { get; set; }
         public int height { get; set; }
         public List<string> preloadTexts { get; set; }
+
     }
 }

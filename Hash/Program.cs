@@ -37,8 +37,10 @@ namespace Hash
 
             if (File.Exists(info))
             {
+                //var lines = File.ReadAllLines(info, Encoding.Default);
+                //using (StreamWriter outputFile = new StreamWriter(info, false, Encoding.GetEncoding(1252)))
                 var lines = File.ReadAllLines(info);
-                using (StreamWriter outputFile = new StreamWriter(info))
+                using (StreamWriter outputFile = new StreamWriter(info, false))
                 {
                     foreach (var line in lines)
                     {

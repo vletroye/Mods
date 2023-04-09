@@ -40,6 +40,8 @@ namespace BeatificaBytes.Synology.Mods
     {
         public CWaitCursor() : base(Cursors.WaitCursor, null, null) { }
 
+        public CWaitCursor(string message) : base(Cursors.WaitCursor, null, message) { }
+
         public CWaitCursor(Label display, string message) : base(Cursors.WaitCursor, display, message) { }
 
     }

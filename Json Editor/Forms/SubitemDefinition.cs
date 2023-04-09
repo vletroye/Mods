@@ -135,7 +135,7 @@ namespace ZTn.Json.Editor.Forms
 
             this.Text = Helper.GetSubItemType(subitemType) + " definition";
 
-            List<string[]> rows = File.ReadAllLines(helpPath).Select(x => x.Replace("#", Environment.NewLine).Split('|')).ToList();
+            List<string[]> rows = File.ReadAllLines(helpPath, Encoding.Default).Select(x => x.Replace("#", Environment.NewLine).Split('|')).ToList();
             DataTable dt = new DataTable();
             dt.Columns.Add("Property");
             dt.Columns.Add("Supported");

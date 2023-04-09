@@ -153,7 +153,7 @@ ldap: this app can be selected only for LDAP users .
 All: this app can be selected for all users.</value>
   </data>
   <data name="checkBoxLegacy.ToolTip" xml:space="preserve">
-    <value>When you select this option, urls will be opened in a DSM window instead of being opened in a new tab. However, this only works if you have disabled DSM's security option 'Improve security with HTTP Content Security Policy (CSP) header'</value>
+    <value>When you select this option, the target will be opened in a DSM window instead of being opened in a new tab. For external URL's, this only works if you have disabled DSM's security option 'Improve security with HTTP Content Security Policy (CSP) header'. And it won't work for url without a specific hostname.</value>
   </data>
   <data name="checkBoxSupportCenter.ToolTip" xml:space="preserve">
     <value>Check this option to let Package Center displays a link to make the end user launch Synology Support Center Application when your package is installed.
@@ -175,7 +175,7 @@ Note: adminprotocol, adminport and adminurl are combined into adminprotocol://ip
   <data name="pictureBoxWarning.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xOdTWsmQAAAz+SURBVHhe7Z19
+        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xOdTWsmQAAAz+SURBVHhe7Z19
         lBdVGcdhRV6kN1AKDoYgkYDLO4qAorzubC8qZmWKL2SlFZaRdQopccEFzcRMUFODLIIiBKxNQGQTXLTs
         lCdOnWOn9tQ51c5vZvYv/6I/ut1ndn/L7Mz39/vNy70zz+zOH5+jPL+5M/c+37szd+48z70DhBB9mg7D
         aJLsMhsaWzoaGk90GI1vmkZju9lg2JLT3dhko9/oGPdYWYbKonP2JaAxj5iG8aAUsVWK+B/5X6GD7nO3

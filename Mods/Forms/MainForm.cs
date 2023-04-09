@@ -1,4 +1,5 @@
 ﻿using BeatificaBytes.Synology.Mods.Forms;
+using BeatificaBytes.Synology.Mods.Helpers;
 using IniParser;
 using IniParser.Model;
 using IniParser.Model.Configuration;
@@ -15,15 +16,12 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Reflection;
-using System.Security.AccessControl;
-using System.Security.Principal;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ZTn.Json.Editor.Forms;
-//using static System.Net.WebRequestMethods;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -37,20 +35,12 @@ namespace BeatificaBytes.Synology.Mods
             Edit,
             Add
         }
-
-        public enum UrlType
-        {
-            Url = 0,
-            Script = 1,
-            WebApp = 2
-        }
         #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
         #region Declarations -----------------------------------------------------------------------------------------------------------------------
         const string CONFIGFILE = @"package\{0}\config";
 
-        string CurrentPackageRepository = Properties.Settings.Default.PackageRepo;
-        string CurrentPackageFolder = null;
+        string SSPKRepository = Properties.Settings.Default.PackageRepo;
 
         //4 next vars are a Dirty Hack - move these 4 vars into a class. Replace AppsData with that class, ...
         string webAppFolder = null;
@@ -58,23 +48,13 @@ namespace BeatificaBytes.Synology.Mods
         string currentScript = null;
         string currentRunner = null;
 
+        MainHelper mainHelper = null;
         Dictionary<string, PictureBox> pictureBoxes;
-        SortedDictionary<string, string> info;
-
-        Image picturePkg_72 = null;
-        Image picturePkg_120 = null;
-        Image picturePkg_256 = null;
-
-        KeyValuePair<string, AppsData> current;
-        State state;
-        Package list;
-        JObject resource;
-        JObject privilege;
-        bool dirty = false;
-        bool dirtyPic72 = false;
+        KeyValuePair<string, AppData> current;
         bool dirtyPic256 = false;
-        bool wizardExist = false;
-        bool isDSM7x = false;
+        bool dirtyPic72 = false;
+        //PackageConfig list;
+        State state;
 
         string previousReportUrl;
         string imageDragDropPath;
@@ -83,8 +63,6 @@ namespace BeatificaBytes.Synology.Mods
         string[] filesDragDropPath;
         protected bool validFiles4DragDrop;
         private List<string> candidate_preloads;
-
-        protected List<String> warnings = new List<string>();
 
         public string CurrentScript
         {
@@ -101,56 +79,101 @@ namespace BeatificaBytes.Synology.Mods
         #endregion  --------------------------------------------------------------------------------------------------------------------------------
 
         #region Initialize -------------------------------------------------------------------------------------------------------------------------
-        public MainForm(string package)
+        public MainForm(string packageFolder)
         {
             InitializeComponent();
 
-            groupBoxItem.Enabled = false;
-            groupBoxPackage.Enabled = false;
-            comboBoxTransparency.SelectedIndex = 0;
+            // Initialise the MainFrom Helper Intended to manage the Package
+            mainHelper = new MainHelper(this);
+
+            // Subscribe on Notification for messages published via Helper.PulishWarning()
+            HelperNew.Notify += this.OnNotification;
 
             // Prepare the PictureBox for drag&drop, etc...
-            PrepareItemPictureBoxes();
+            PreparePictureBoxesEvents();
 
             // Prepare Events
-            AttachEventsToFields();
+            PrepareFieldsEvents();
 
             // Load AutoComplete for Firmware
             Helper.LoadDSMReleases(textBoxMinFirmware);
             Helper.LoadDSMReleases(textBoxMaxFirmware);
 
-            // Prepare to reopen the last package
-            string path = Properties.Settings.Default.LastPackage;
-            bool? prepared = false;
+            // Reset the UI (enabling/disabling Fields, etc...)
+            Reset_UI();
 
-            if (!string.IsNullOrEmpty(package))
+            // If Mods Packager is not called with a Package as input parameters use the last package;
+            if (string.IsNullOrWhiteSpace(packageFolder))
+                packageFolder = Properties.Settings.Default.LastPackage;
+
+            // Open the required packaged if any
+            try
             {
-                // Mods Packager called with a Package as input parameters => override the path of the last package;
-                path = PreparePackageFolder(package);
-                prepared = null; // To skip Folder Validation
+                if (!string.IsNullOrWhiteSpace(packageFolder))
+                    mainHelper.OpenExistingPackage(packageFolder);
             }
-
-            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+            catch
             {
-                try
-                {
-                    OpenExistingPackage(path, prepared);
-                }
-                catch
-                {
-                    Properties.Settings.Default.LastPackage = null;
-                    Properties.Settings.Default.Save();
-                    throw;
-                }
-
+                Properties.Settings.Default.LastPackage = null;
+                Properties.Settings.Default.Save();
+                throw;
             }
-
-            ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
-            CreateRecentsMenu();
-            textBoxDisplay.Focus();
         }
 
-        private void AttachEventsToFields()
+        #region Encapsulated Properties
+        internal Package CurrentPackage { get { return mainHelper != null ? mainHelper.Package : null; } }
+        internal OpenFolderDialog SpkRepoBrowserDialog4Mods { get { return spkRepoBrowserDialog4Mods; } }
+        internal OpenFolderDialog FolderBrowserDialog4Mods { get { return folderBrowserDialog4Mods; } }
+        internal OpenFolderDialog WebpageBrowserDialog4Mods { get { return webpageBrowserDialog4Mods; } }
+        internal Label ToolTip { get { return labelToolTip; } }
+        #endregion
+
+        /// <summary>
+        /// EvenHandler to process messages sent via Helper.PublishWarnings
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void OnNotification(object sender, MessageEventArgs args)
+        {
+            PublishWarning(args.Message);
+        }
+
+        #region Mods UI Management
+        /// <summary>
+        /// Initialise the PictureBox Controls to react on user interaction (Support Drag&Drop or doubble click to change their content).
+        /// Used to change their current Icon.
+        /// </summary>
+        private void PreparePictureBoxesEvents()
+        {
+            pictureBoxes = new Dictionary<string, PictureBox>();
+
+            foreach (var control in groupBoxItem.Controls)
+            {
+                var pictureBoxItem = control as PictureBox;
+                if (pictureBoxItem != null && pictureBoxItem.Tag != null && pictureBoxItem.Tag.ToString().StartsWith("ITEM"))
+                {
+                    pictureBoxItem.AllowDrop = true;
+
+                    pictureBoxItem.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragDrop);
+                    pictureBoxItem.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
+                    pictureBoxItem.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragEnter);
+
+                    if (!pictureBoxItem.Tag.ToString().EndsWith("MAX"))
+                        pictureBoxItem.Enabled = !checkBoxSize.Checked;
+
+                    pictureBoxes.Add(pictureBoxItem.Tag.ToString().Split(';')[1], pictureBoxItem);
+                }
+            }
+
+            pictureBoxPkg_72.AllowDrop = true;
+            pictureBoxPkg_256.AllowDrop = true;
+        }
+
+        /// <summary>
+        /// Initialise the Controls to react on user interaction (Support MouseEnter, MouseLeave, Enter and TextChanged).
+        /// Used to display the tooltips in the Tooltip Bar and to validate the Fields.
+        /// </summary>
+        private void PrepareFieldsEvents()
         {
             foreach (var control in groupBoxItem.Controls)
             {
@@ -192,48 +215,7 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        /// <summary>
-        /// Prepare a Package Folder to be used. 
-        /// If a spk file is provided, make sure it's deflated. 
-        /// If a folder is provided, make sure it contains a valid package.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private string PreparePackageFolder(string path)
-        {
-            string packageFolder = null;
-            if (!string.IsNullOrEmpty(path))
-            {
-                if (File.Exists(path))
-                {
-                    packageFolder = Path.GetDirectoryName(path);
-
-                    var valid = IsPackageFolderValid(packageFolder, true);
-                    if (valid == DialogResult.Abort && Path.GetExtension(path).Equals(".SPK", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        // The SPK must be deflated in a temporary folder
-                        warnings.Clear(); // remove the warning created by IsPackageFolderValid
-                        packageFolder = ExpandSpkInTempFolder(path);
-                    }
-                    else if (valid != DialogResult.Yes)
-                    {
-                        packageFolder = null;
-                    }
-                }
-                else if (Directory.Exists(path))
-                {
-                    var getPackage = IsPackageFolderValid(path);
-                    if (getPackage != DialogResult.Abort && getPackage != DialogResult.Cancel)
-                    {
-                        packageFolder = path;
-                    }
-                }
-            }
-
-            return packageFolder;
-        }
-
-        private void CreateRecentsMenu()
+        internal void PrepareRecentsMenu()
         {
             menuOpenRecentPackage.DropDownItems.Clear();
             if (Properties.Settings.Default.Recents != null)
@@ -262,76 +244,23 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         exist = false;
                     }
-                    if (!exist) RemoveRecentPath(path);
+                    if (!exist) mainHelper.RemoveRecentPathFromSettings(path);
                 }
                 menuOpenRecentPackage.DropDownItems.AddRange(items.ToArray());
             }
+            menuOpenRecentPackage.Enabled = menuOpenRecentPackage.DropDownItems.Count > 0;
         }
 
-        private void OnTextChanged(object sender, EventArgs e)
-        {
-            errorProvider.SetError(sender as Control, "");
-        }
-
-        private void OnMouseEnter(object sender, EventArgs e)
-        {
-            var zone = sender as Control;
-            if (zone != null)
-            {
-                var text = toolTip4Mods.GetToolTip(zone);
-                labelToolTip.Text = text;
-            }
-            var menu = sender as ToolStripItem;
-            if (menu != null)
-            {
-                var text = menu.ToolTipText;
-                labelToolTip.Text = text;
-            }
-        }
-
-        private void OnMouseLeave(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(CurrentPackageFolder) && Directory.Exists(CurrentPackageFolder))
-                labelToolTip.Text = string.Format("Package loaded from {0}", CurrentPackageFolder);
-            else
-                labelToolTip.Text = "";
-        }
-
-        private void PrepareItemPictureBoxes()
-        {
-            pictureBoxes = new Dictionary<string, PictureBox>();
-
-            foreach (var control in groupBoxItem.Controls)
-            {
-                var pictureBoxItem = control as PictureBox;
-                if (pictureBoxItem != null && pictureBoxItem.Tag != null && pictureBoxItem.Tag.ToString().StartsWith("ITEM"))
-                {
-                    pictureBoxItem.AllowDrop = true;
-
-                    pictureBoxItem.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragDrop);
-                    pictureBoxItem.DoubleClick += new System.EventHandler(this.pictureBox_DoubleClick);
-                    pictureBoxItem.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBoxItem_DragEnter);
-
-                    if (!pictureBoxItem.Tag.ToString().EndsWith("MAX"))
-                        pictureBoxItem.Enabled = !checkBoxSize.Checked;
-
-                    pictureBoxes.Add(pictureBoxItem.Tag.ToString().Split(';')[1], pictureBoxItem);
-                }
-            }
-
-            pictureBoxPkg_72.AllowDrop = true;
-            pictureBoxPkg_256.AllowDrop = true;
-        }
-
-        private void BindData(Package list, string selection)
+        private void PrepareDataBinding(string selection)
         {
             listViewItems.Items.Clear();
+            PackageConfig list = CurrentPackage == null ? null : CurrentPackage.Config;
             if (list != null)
             {
                 foreach (var item in list.items)
                 {
                     var uri = item.Value.url;
-                    if (uri.StartsWith("/"))
+                    if (uri != null && uri.StartsWith("/"))
                     {
                         if (item.Value.port != 0)
                             uri = string.Format(":{0}{1}", item.Value.port, uri);
@@ -368,456 +297,221 @@ namespace BeatificaBytes.Synology.Mods
             {
                 var lvi = new ListViewItem("No Items");
                 lvi.SubItems.Add("This package only contains scripts");
-                lvi.Tag = new KeyValuePair<string, AppsData>(null, null);
+                lvi.Tag = new KeyValuePair<string, AppData>(null, null);
 
                 // Add the list items to the ListView
                 listViewItems.Items.Add(lvi);
             }
         }
+        #endregion
 
-        private void LoadResourceConfig(string path)
+        private void OnTextChanged(object sender, EventArgs e)
         {
-            this.resource = null;
-            var resourceDir = Path.Combine(path, "conf");
-            if (Directory.Exists(resourceDir))
+            errorProvider.SetError(sender as Control, "");
+        }
+
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            var zone = sender as Control;
+            if (zone != null)
             {
-                var resourceFile = Path.Combine(resourceDir, "resource");
-
-                if (File.Exists(resourceFile))
-                {
-                    var json = File.ReadAllText(resourceFile);
-                    try
-                    {
-                        this.resource = JsonConvert.DeserializeObject<JObject>(json);
-                    }
-                    catch (Exception ex)
-                    {
-                        PublishWarning(string.Format("The resource file '{0}' is corrupted...", resourceFile));
-                    }
-
-                    if (this.resource != null && this.resource.Count == 0)
-                    {
-                        this.resource = null;
-                    }
-                }
+                var text = toolTip4Mods.GetToolTip(zone);
+                labelToolTip.Text = text;
+            }
+            var menu = sender as ToolStripItem;
+            if (menu != null)
+            {
+                var text = menu.ToolTipText;
+                labelToolTip.Text = text;
             }
         }
-        private void SaveResourceConfig(string path)
+
+        private void OnMouseLeave(object sender, EventArgs e)
         {
-            var resourceDir = Path.Combine(path, "conf");
+            if (CurrentPackage != null)
+                labelToolTip.Text = string.Format("Package loaded from {0}", CurrentPackage.Folder_Root);
+            else
+                labelToolTip.Text = "";
+        }
 
-            if (this.resource != null)
-            {
-                if (!Directory.Exists(resourceDir))
-                    Directory.CreateDirectory(resourceDir);
+        //private void LoadResourceConfig(string path)
+        //{
+        //    this.resource = null;
+        //    var resourceDir = Path.Combine(path, "conf");
+        //    if (Directory.Exists(resourceDir))
+        //    {
+        //        var resourceFile = Path.Combine(resourceDir, "resource");
 
-                var resourceFile = Path.Combine(resourceDir, "resource");
-                try
-                {
-                    if (File.Exists(resourceFile))
-                    {
-                        File.Delete(resourceFile);
-                    }
+        //        if (File.Exists(resourceFile))
+        //        {
+        //            var json = File.ReadAllText(resourceFile);
+        //            try
+        //            {
+        //                this.resource = JsonConvert.DeserializeObject<JObject>(json);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                PublishWarning(string.Format("The resource file '{0}' is corrupted...", resourceFile));
+        //            }
 
-                    if (this.resource.Count > 0)
-                    {
-                        var json = JsonConvert.SerializeObject(this.resource, Formatting.Indented);
+        //            if (this.resource != null && this.resource.Count == 0)
+        //            {
+        //                this.resource = null;
+        //            }
+        //        }
+        //    }
+        //}
+        private void SaveResourceConfig()
+        {
+            //    var resourceDir = Path.Combine(path, "conf");
 
-                        Helper.WriteAnsiFile(resourceFile, json);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PublishWarning(string.Format("The resource file '{0}' can't be updated.", resourceFile));
-                }
-            }
+            //    if (this.resource != null)
+            //    {
+            //        if (!Directory.Exists(resourceDir))
+            //            Directory.CreateDirectory(resourceDir);
 
-            if (Directory.EnumerateFileSystemEntries(resourceDir).Count() == 0)
-                Directory.Delete(resourceDir);
+            //        var resourceFile = Path.Combine(resourceDir, "resource");
+            //        try
+            //        {
+            //            if (File.Exists(resourceFile))
+            //            {
+            //                File.Delete(resourceFile);
+            //            }
 
-            // Required for DSM 4.2 ~ DSM 5.2
-            if (info.ContainsKey("support_conf_folder"))
-                info.Remove("support_conf_folder");
-            if (Directory.Exists(resourceDir))
-            {
-                var addKey = true;
-                if (info.ContainsKey("os_min_ver"))
-                {
-                    var major = 0;
-                    int.TryParse(info["os_min_ver"].Substring(0, 1), out major);
-                    addKey = major < 6;
-                }
-                if (addKey)
-                    info.Add("support_conf_folder", "yes");
-            }
+            //            if (this.resource.Count > 0)
+            //            {
+            //                var json = JsonConvert.SerializeObject(this.resource, Formatting.Indented);
 
+            //                Helper.WriteAnsiFile(resourceFile, json);
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            PublishWarning(string.Format("The resource file '{0}' can't be updated.", resourceFile));
+            //        }
+            //    }
+
+            //    if (Directory.EnumerateFileSystemEntries(resourceDir).Count() == 0)
+            //        Directory.Delete(resourceDir);
+
+            //    // Required for DSM 4.2 ~ DSM 5.2
+            //    if (info.ContainsKey("support_conf_folder"))
+            //        info.Remove("support_conf_folder");
+            //    if (Directory.Exists(resourceDir))
+            //    {
+            //        var addKey = true;
+            //        if (info.ContainsKey("os_min_ver"))
+            //        {
+            //            var major = 0;
+            //            int.TryParse(info["os_min_ver"].Substring(0, 1), out major);
+            //            addKey = major < 6;
+            //        }
+            //        if (addKey)
+            //            info.Add("support_conf_folder", "yes");
+            //    }
+
+            CurrentPackage.Save();
             ResetEditScriptMenuIcons();
         }
 
-        private void LoadPrivilegeConfig(string path)
+        //private void LoadPrivilegeConfig(string path)
+        //{
+        //    this.privilege = null;
+        //    var privilegeDir = Path.Combine(path, "conf");
+        //    if (Directory.Exists(privilegeDir))
+        //    {
+        //        var privilegeFile = Path.Combine(privilegeDir, "privilege");
+
+        //        if (File.Exists(privilegeFile))
+        //        {
+        //            var json = File.ReadAllText(privilegeFile);
+        //            try
+        //            {
+        //                this.privilege = JsonConvert.DeserializeObject<JObject>(json);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                PublishWarning(string.Format("The privilege file '{0}' is corrupted...", privilegeFile));
+        //            }
+
+        //            if (this.privilege != null && this.privilege.Count == 0)
+        //            {
+        //                this.privilege = null;
+        //            }
+        //        }
+        //    }
+        //}
+        private void SavePrivilegeConfig()
         {
-            this.privilege = null;
-            var privilegeDir = Path.Combine(path, "conf");
-            if (Directory.Exists(privilegeDir))
-            {
-                var privilegeFile = Path.Combine(privilegeDir, "privilege");
+            //var privilegeDir = Path.Combine(path, "conf");
+            //var privilegeFile = Path.Combine(privilegeDir, "privilege");
+            //if (File.Exists(privilegeFile))
+            //{
+            //    File.Delete(privilegeFile);
+            //}
 
-                if (File.Exists(privilegeFile))
-                {
-                    var json = File.ReadAllText(privilegeFile);
-                    try
-                    {
-                        this.privilege = JsonConvert.DeserializeObject<JObject>(json);
-                    }
-                    catch (Exception ex)
-                    {
-                        PublishWarning(string.Format("The privilege file '{0}' is corrupted...", privilegeFile));
-                    }
+            //if (this.privilege != null)
+            //{
+            //    if (!Directory.Exists(privilegeDir))
+            //        Directory.CreateDirectory(privilegeDir);
 
-                    if (this.privilege != null && this.privilege.Count == 0)
-                    {
-                        this.privilege = null;
-                    }
-                }
-            }
-        }
-        private void SavePrivilegeConfig(string path)
-        {
-            var privilegeDir = Path.Combine(path, "conf");
-            var privilegeFile = Path.Combine(privilegeDir, "privilege");
-            if (File.Exists(privilegeFile))
-            {
-                File.Delete(privilegeFile);
-            }
+            //    try
+            //    {
 
-            if (this.privilege != null)
-            {
-                if (!Directory.Exists(privilegeDir))
-                    Directory.CreateDirectory(privilegeDir);
+            //        if (this.privilege.Count > 0)
+            //        {
+            //            var json = JsonConvert.SerializeObject(this.privilege, Formatting.Indented);
 
-                try
-                {
+            //            Helper.WriteAnsiFile(privilegeFile, json);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        PublishWarning(string.Format("The privilege file '{0}' can't be updated.", privilegeFile));
+            //    }
+            //}
 
-                    if (this.privilege.Count > 0)
-                    {
-                        var json = JsonConvert.SerializeObject(this.privilege, Formatting.Indented);
+            //if (Directory.EnumerateFileSystemEntries(privilegeDir).Count() == 0)
+            //    Directory.Delete(privilegeDir);
 
-                        Helper.WriteAnsiFile(privilegeFile, json);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    PublishWarning(string.Format("The privilege file '{0}' can't be updated.", privilegeFile));
-                }
-            }
+            //// Required for DSM 4.2 ~ DSM 5.2
+            //if (info.ContainsKey("support_conf_folder"))
+            //    info.Remove("support_conf_folder");
+            //if (Directory.Exists(privilegeDir))
+            //{
+            //    var addKey = true;
+            //    if (info.ContainsKey("os_min_ver"))
+            //    {
+            //        var major = 0;
+            //        int.TryParse(info["os_min_ver"].Substring(0, 1), out major);
+            //        addKey = major < 6;
+            //    }
+            //    if (addKey)
+            //        info.Add("support_conf_folder", "yes");
+            //}
 
-            if (Directory.EnumerateFileSystemEntries(privilegeDir).Count() == 0)
-                Directory.Delete(privilegeDir);
-
-            // Required for DSM 4.2 ~ DSM 5.2
-            if (info.ContainsKey("support_conf_folder"))
-                info.Remove("support_conf_folder");
-            if (Directory.Exists(privilegeDir))
-            {
-                var addKey = true;
-                if (info.ContainsKey("os_min_ver"))
-                {
-                    var major = 0;
-                    int.TryParse(info["os_min_ver"].Substring(0, 1), out major);
-                    addKey = major < 6;
-                }
-                if (addKey)
-                    info.Add("support_conf_folder", "yes");
-            }
-        }
-
-        private void LoadPackageConfig(string path)
-        {
-            string ui = null;
-            if (info.ContainsKey("dsmuidir"))
-                ui = info["dsmuidir"];
-            else
-            {
-                var fileList = new DirectoryInfo(Path.Combine(path, "package")).GetFiles("config", System.IO.SearchOption.AllDirectories);
-                if (fileList.Length > 0)
-                {
-                    ui = fileList[0].FullName.Replace(Path.Combine(path, "package"), "").Replace("config", "").Trim(new char[] { '\\' });
-                    info.Add("dsmuidir", ui);
-                }
-                else
-                    ui = null;
-
-            }
-
-            if (ui != null)
-            {
-                var config = Path.Combine(path, string.Format(CONFIGFILE, ui));
-                if (File.Exists(config))
-                {
-                    var json = File.ReadAllText(config);
-                    try
-                    {
-                        list = JsonConvert.DeserializeObject<Package>(json, new KeyValuePairConverter());
-                    }
-                    catch (Exception ex)
-                    {
-                        PublishWarning(string.Format("The config file '{0}' is corrupted...", config));
-                    }
-
-                    if (list == null || list.items.Count == 0)
-                    {
-                        list = new Package();
-                    }
-                }
-                else
-                {
-                    list = new Package();
-                }
-
-                foreach (var item in list.items)
-                {
-                    if (item.Value.itemType == -1)
-                        if (item.Value.type == "legacy") item.Value.itemType = (int)UrlType.WebApp;
-                    if (item.Value.url == null)
-                    {
-                        //if (!string.IsNullOrEmpty(item.Value.port))
-                        item.Value.url = "/";
-                    }
-                    var webapp = item.Value.url;
-                    if (webapp.StartsWith("/webman/3rdparty/"))
-                    {
-                        //item.Value.itemType = (int)UrlType.WebApp;
-                        webapp = webapp.Replace("/webman/3rdparty/", "");
-                        if (!webapp.StartsWith(info["package"]))
-                            PublishWarning(string.Format("Menu item '{0}' is not referencing an element of your package...", item.Value.title));
-                        else
-                        {
-                            if (webapp.StartsWith(info["package"]))
-                            {
-                                if (webapp.Length > info["package"].Length)
-                                    webapp = webapp.Remove(0, info["package"].Length + 1);
-                                webapp = Path.Combine(Path.GetDirectoryName(config), webapp);
-                            }
-                            if (!File.Exists(webapp))
-                                PublishWarning(string.Format("Menu item '{0}' is not located in the right subfolder. Check your package...", item.Value.title));
-                        }
-                    }
-                }
-
-                config = config.Replace("config", "index.conf");
-                if (File.Exists(config))
-                {
-                    PublishWarning("This package contains a file 'index.conf' whose creation and edition are not yet supported by Mods Packager.");
-                }
-
-            }
-            if (!info.ContainsKey("singleApp"))
-            {
-                if (list != null && list.items.Count == 1)
-                {
-                    var title = list.items.First().Value.title;
-                    title = Helper.CleanUpText(title);
-
-                    if (list.items.First().Value.url.Contains(string.Format("/{0}/", title)))
-                    {
-                        info.Add("singleApp", "no");
-                    }
-                    else
-                    {
-                        info.Add("singleApp", "yes");
-                    }
-                }
-                else
-                {
-                    info.Add("singleApp", "no");
-                }
-            }
-
-            var pkg72 = new FileInfo(Path.Combine(path, "PACKAGE_ICON.PNG"));
-            if (pkg72.Exists)
-            {
-                picturePkg_72 = Helper.LoadImageFromFile(pkg72.FullName);
-            }
-            else
-            {
-                if (info.ContainsKey("package_icon"))
-                {
-                    picturePkg_72 = Helper.LoadImageFromBase64(info["package_icon"]);
-                }
-                else
-                {
-                    picturePkg_72 = null;
-                }
-            }
-            var pkg120 = new FileInfo(Path.Combine(path, "PACKAGE_ICON_120.PNG"));
-            if (pkg120.Exists)
-            {
-                picturePkg_120 = Helper.LoadImageFromFile(pkg120.FullName);
-            }
-            else
-            {
-                if (info.ContainsKey("package_icon_120"))
-                {
-                    picturePkg_120 = Helper.LoadImageFromBase64(info["package_icon_120"]);
-                }
-                else if (info.ContainsKey("package_icon120"))
-                {
-                    picturePkg_120 = Helper.LoadImageFromBase64(info["package_icon120"]);
-                }
-                else
-                {
-                    picturePkg_120 = null;
-                }
-            }
-            var pkg256 = new FileInfo(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
-            if (pkg256.Exists)
-            {
-                picturePkg_256 = Helper.LoadImageFromFile(pkg256.FullName);
-            }
-            else
-            {
-                if (info.ContainsKey("package_icon_256"))
-                {
-                    picturePkg_256 = Helper.LoadImageFromBase64(info["package_icon_256"]);
-                }
-                else if (info.ContainsKey("package_icon256"))
-                {
-                    picturePkg_256 = Helper.LoadImageFromBase64(info["package_icon256"]);
-                }
-                else
-                {
-                    picturePkg_256 = null;
-                }
-            }
-
-            groupBoxItem.Enabled = false;
+            CurrentPackage.Save();
+            ResetEditScriptMenuIcons();
         }
 
-        private void LoadPackageInfo(string path)
+        private void ProcessCurrentPackage()
         {
-            info = new SortedDictionary<string, string>();
             state = State.None;
 
-            var file = Path.Combine(path, "INFO");
-
-            if (File.Exists(file))
+            if (CurrentPackage != null)
             {
-                var lines = File.ReadAllLines(file);
-                foreach (var line in lines)
-                {
-                    var lineText = line.Trim();
-                    if (!string.IsNullOrEmpty(lineText))
-                    {
-                        if (lineText.StartsWith("#"))
-                        {
-                            //Comments will be lost as not supported by MODS
-                        }
-                        else if (lineText.Contains('='))
-                        {
-
-                            var key = lineText.Substring(0, lineText.IndexOf('='));
-                            var value = lineText.Substring(lineText.IndexOf('=') + 1);
-                            value = value.Trim(new char[] { '"' });
-                            value = value.Replace("<br>", "\r\n");
-                            if (info.ContainsKey(key))
-                                info.Remove(key);
-                            if (key != "checksum")
-                                info.Add(key, value);
-                        }
-                    }
-                }
-
-                if (info.ContainsKey("maintainer") && info["maintainer"] == "...")
-                    info["maintainer"] = Environment.UserName;
-                if (info.ContainsKey("distributor") && info["distributor"] == "...")
-                    info["distributor"] = Environment.UserName;
-
-                groupBoxPackage.Enabled = false;
-
-                //lastBuild.Text = "";
-
-                SavePackageSettings(path);
-                CreateRecentsMenu();
-
-                var wizard = Path.Combine(path, "WIZARD_UIFILES");
-                wizardExist = Directory.Exists(wizard);
+                mainHelper.ProcessPackageInfo();
+                mainHelper.ProcessPackageConfig();
             }
-            else
-            {
-                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-            }
-
-            LoadPackageConfig(path);
-
-            if (info.Keys.Contains("displayname"))
-            {
-                var folder = Path.GetFileName(path);
-                var package = GetPackageFolderName();
-
-                if (!package.Equals(folder, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    PublishWarning(string.Format("The working folder '{0}' is not named like your package '{1}'. It will be renamed onced your close the package!", folder, package));
-                }
-            }
-
-            // Check if DSM Min is 7.0-40000
-            isDSM7x = Helper.CheckDSMVersionMin(info, 7, 0, 40000);
-
-            CurrentPackageFolder = path;
-            Properties.Settings.Default.LastPackage = CurrentPackageFolder;
-            Properties.Settings.Default.Save();
 
             FillInfoScreen();
         }
 
-        private string GetUIDir(string path)
-        {
-            string value = null;
-
-            var file = Path.Combine(path, "INFO");
-            if (File.Exists(file))
-            {
-                var lines = File.ReadAllLines(file);
-                foreach (var line in lines)
-                {
-                    var lineText = line.Trim();
-                    if (!string.IsNullOrEmpty(lineText))
-                    {
-                        if (lineText.StartsWith("#"))
-                        {
-                            //Comments will be lost as not supported by MODS
-                        }
-                        else if (lineText.Contains('='))
-                        {
-                            var key = lineText.Substring(0, lineText.IndexOf('='));
-                            if (key == "dsmuidir")
-                            {
-                                value = lineText.Substring(lineText.IndexOf('=') + 1);
-                                value = value.Trim(new char[] { '"' });
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                MessageBoxEx.Show(this, "The working folder doesn't contain a Package.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-            }
-
-            return value;
-        }
-
-        public string GetStringsPath(string path)
-        {
-            return Path.Combine(GetUIDir(path), "texts", "enu", "strings");
-        }
-
         private void FillInfoScreen()
         {
-            if (info != null)
+            if (CurrentPackage != null)
             {
-                var parent = Path.GetFileName(CurrentPackageFolder);
+                var parent = Path.GetFileName(CurrentPackage.Folder_Root);
                 Guid tmp;
                 bool isTempFolder = Guid.TryParse(parent, out tmp);
                 if (isTempFolder)
@@ -825,7 +519,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (groupBoxPackage.BackColor != Color.Salmon)
                     {
                         groupBoxPackage.BackColor = Color.Salmon;
-                        PublishWarning("This package has has been opened from a temporary folder. Possibly move it into a traget folder using the menu Package > Move.");
+                        HelperNew.PublishWarning("This package has has been opened from a temporary folder. Possibly move it into a target folder using the menu Package > Move.");
                     }
                 }
                 else
@@ -834,7 +528,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
 
                 string subkey;
-                var unused = new List<string>(info.Keys);
+                var unused = new List<string>(CurrentPackage.INFO.Keys);
                 foreach (var control in groupBoxPackage.Controls)
                 {
                     var textBox = control as TextBox;
@@ -847,10 +541,10 @@ namespace BeatificaBytes.Synology.Mods
                             if (key.StartsWith("PKG"))
                             {
                                 subkey = key.Substring(3);
-                                if (info.Keys.Contains(subkey))
+                                if (CurrentPackage.INFO.Keys.Contains(subkey))
                                 {
                                     if (string.IsNullOrEmpty(textBox.Text))
-                                        textBox.Text = info[subkey];
+                                        textBox.Text = CurrentPackage.INFO[subkey];
                                     unused.Remove(subkey);
                                 }
                             }
@@ -866,12 +560,12 @@ namespace BeatificaBytes.Synology.Mods
                             if (key.StartsWith("PKG"))
                             {
                                 subkey = key.Substring(3);
-                                if (info.Keys.Contains(subkey))
+                                if (CurrentPackage.INFO.Keys.Contains(subkey))
                                 {
                                     //if (string.IsNullOrEmpty(comboBox.Text))
-                                    comboBox.SelectedIndex = comboBox.FindStringExact(info[subkey]);
+                                    comboBox.SelectedIndex = comboBox.FindStringExact(CurrentPackage.INFO[subkey]);
                                     if (string.IsNullOrEmpty(comboBox.Text))
-                                        comboBox.Text = info[subkey];
+                                        comboBox.Text = CurrentPackage.INFO[subkey];
                                     unused.Remove(subkey);
                                 }
                             }
@@ -887,10 +581,10 @@ namespace BeatificaBytes.Synology.Mods
                             subkey = key.Substring(3);
                             if (key.StartsWith("PKG"))
                             {
-                                if (info.Keys.Contains(subkey))
+                                if (CurrentPackage.INFO.Keys.Contains(subkey))
                                 {
                                     unused.Remove(subkey);
-                                    tick = (info[subkey] == "yes");
+                                    tick = (CurrentPackage.INFO[subkey] == "yes");
                                 }
                             }
                             if (key.StartsWith("DEF"))
@@ -935,7 +629,7 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (unused.Count > 0)
                 {
-                    PublishWarning("There are a few unsupported info in this package. You can edit those via the 'Advanced' button." + Environment.NewLine + Environment.NewLine + unused.Aggregate((i, j) => i + Environment.NewLine + j + ": " + info[j]));
+                    HelperNew.PublishWarning("There are a few unsupported info in this package. You can edit those via the 'Advanced' button." + Environment.NewLine + Environment.NewLine + unused.Aggregate((i, j) => i + Environment.NewLine + j + ": " + CurrentPackage.INFO[j]));
                 }
             }
             else
@@ -965,19 +659,24 @@ namespace BeatificaBytes.Synology.Mods
                 checkBoxAdminUrl.Checked = false;
             }
 
-            if (picturePkg_256 == null && picturePkg_120 != null)
+            if (mainHelper.PicturePkg_256 == null && mainHelper.PicturePkg_120 != null)
             {
-                picturePkg_256 = picturePkg_120;
+                mainHelper.PicturePkg_256 = mainHelper.PicturePkg_120;
             }
 
-            LoadPictureBox(pictureBoxPkg_256, picturePkg_256);
+            LoadPictureBox(pictureBoxPkg_256, mainHelper.PicturePkg_256);
             dirtyPic256 = false;
-            LoadPictureBox(pictureBoxPkg_72, picturePkg_72);
+            LoadPictureBox(pictureBoxPkg_72, mainHelper.PicturePkg_72);
             dirtyPic72 = false;
         }
+        /// <summary>
+        /// Publish a Warnings and activate the related blinking icon
+        /// </summary>
+        /// <param name="message"></param>
+        /// <remarks>use Helper.PublishWarning("...") to publish !</remarks>
         private async void PublishWarning(string message)
         {
-            if (!warnings.Contains(message)) warnings.Add(message);
+            if (!mainHelper.Warnings.Contains(message)) mainHelper.Warnings.Add(message);
 
             if (!pictureBoxWarning.Visible)
             {
@@ -985,7 +684,7 @@ namespace BeatificaBytes.Synology.Mods
                 pictureBoxWarning.Visible = true;
                 var image = pictureBoxWarning.BackgroundImage;
                 watch.Start();
-                while (warnings.Count > 0 && watch.ElapsedMilliseconds < 6000)
+                while (mainHelper != null && mainHelper.Warnings.Count > 0 && watch.ElapsedMilliseconds < 6000)
                 {
                     await Task.Delay(500);
                     pictureBoxWarning.Enabled = true;
@@ -999,45 +698,7 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void InitialConfiguration(string path)
-        {
-            using (new CWaitCursor())
-            {
-                Process unzip = new Process();
-                unzip.StartInfo.FileName = Path.Combine(Helper.ResourcesDirectory, "7z.exe");
-                unzip.StartInfo.Arguments = string.Format("x \"{0}\" -o\"{1}\"", Path.Combine(Helper.ResourcesDirectory, "Package.zip"), path);
-                unzip.StartInfo.UseShellExecute = false;
-                unzip.StartInfo.RedirectStandardOutput = true;
-                unzip.StartInfo.CreateNoWindow = true;
-                unzip.Start();
-                unzip.WaitForExit(10000);
-                if (unzip.StartInfo.RedirectStandardOutput) Console.WriteLine(unzip.StandardOutput.ReadToEnd());
 
-                CopyPackagingBinaries(path);
-
-                var answer = MessageBoxEx.Show(this, "Do you target DSM 7.x (YES) or an previous version (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                LoadPackageInfo(path);
-                if (answer == DialogResult.Yes)
-                {
-                    info["os_min_ver"] = "7.0-40000";
-                    info.Remove("firmware");
-                    info["install_dep_packages"] = "";
-                    info["startstop_restart_services"] = "nginx.service";
-
-                    this.privilege = JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""package""}}");
-                    SavePrivilegeConfig(CurrentPackageFolder);
-                }
-                else
-                {
-                    info["os_min_ver"] = "6.1-14715";
-                    info["install_dep_packages"] = "Init_3rdparty>=1.5";
-                    info["startstop_restart_services"] = "apache-sys apache-web";
-                }
-                SavePackageInfo(path, false);
-                CurrentPackageFolder = "";
-                info = null;
-            }
-        }
         #endregion --------------------------------------------------------------------------------------------------------------------------------
 
         #region Manage Package --------------------------------------------------------------------------------------------------------------------
@@ -1054,156 +715,121 @@ namespace BeatificaBytes.Synology.Mods
             PublishPackage();
         }
 
+        //TODO: move this method to the MainHelper
         private void PublishPackage()
         {
-            warnings.Clear();
+            mainHelper.Warnings.Clear();
 
             if (ValidateChildren())
             {
-                BuildPackage(CurrentPackageFolder);
+                BuildPackage();
 
                 var PackageRepo = Properties.Settings.Default.PackageRepo;
                 var DefaultPackageRepo = Properties.Settings.Default.DefaultPackageRepo;
                 if (string.IsNullOrEmpty(PackageRepo) || !Directory.Exists(PackageRepo) || !DefaultPackageRepo)
                 {
 
-                    SpkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
-                    if (!string.IsNullOrEmpty(CurrentPackageRepository))
-                        SpkRepoBrowserDialog4Mods.InitialDirectory = CurrentPackageRepository;
+                    spkRepoBrowserDialog4Mods.Title = "Pick a folder to publish the Package.";
+                    if (!string.IsNullOrEmpty(SSPKRepository))
+                        spkRepoBrowserDialog4Mods.InitialDirectory = SSPKRepository;
                     else if (string.IsNullOrEmpty(PackageRepo) || !Directory.Exists(PackageRepo))
-                        SpkRepoBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                        spkRepoBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     else
-                        SpkRepoBrowserDialog4Mods.InitialDirectory = PackageRepo;
+                        spkRepoBrowserDialog4Mods.InitialDirectory = PackageRepo;
 
-                    if (SpkRepoBrowserDialog4Mods.ShowDialog())
-                        CurrentPackageRepository = SpkRepoBrowserDialog4Mods.FileName;
+                    if (spkRepoBrowserDialog4Mods.ShowDialog())
+                        SSPKRepository = spkRepoBrowserDialog4Mods.FileName;
                     else
-                        CurrentPackageRepository = null;
+                        SSPKRepository = null;
                 }
                 else
-                    CurrentPackageRepository = PackageRepo;
+                    SSPKRepository = PackageRepo;
 
-                if (!string.IsNullOrEmpty(CurrentPackageRepository))
-                    PublishPackage(CurrentPackageFolder, CurrentPackageRepository);
+                if (!string.IsNullOrEmpty(SSPKRepository))
+                    PublishPackage(CurrentPackage.Folder_Root, SSPKRepository);
             }
         }
 
-        private void SavePackageInfo(string path)
-        {
-            SavePackageInfo(path, true);
-        }
-
-        private void SavePackageInfo(string path, bool refreshFromFields)
+        internal void SavePackageInfo()
         {
             using (new CWaitCursor())
             {
-                if (info != null)
+                UpdatePackageInfo();
+
+                CurrentPackage.Save();
+
+                // Save Package's icons
+                if (dirtyPic72)
                 {
-                    if (refreshFromFields) UpdatePackageInfo();
-
-                    // Delete existing INFO file (try to send it to the RecycleBin
-                    var infoName = Path.Combine(path, "INFO");
-                    if (File.Exists(infoName))
-                        Helper.DeleteFile(infoName);
-
-                    // Write the new INFO file
-                    using (StreamWriter outputFile = new StreamWriter(infoName, false, Encoding.GetEncoding(1252)))
-                    {
-                        foreach (var element in info)
-                        {
-                            if (!string.IsNullOrEmpty(element.Value) && element.Value != "path")
-                            {
-                                var value = element.Value.Replace("\r\n", "<br>").Replace("\n", "<br>");
-                                outputFile.WriteLine("{0}=\"{1}\"", element.Key, value);
-                            }
-                        }
-                    }
-
-                    // Save Package's icons
-                    if (dirtyPic72)
-                    {
-                        var imageName = Path.Combine(path, "PACKAGE_ICON.PNG");
-                        SavePkgImage(pictureBoxPkg_72, imageName);
-                        dirtyPic72 = false;
-                    }
-                    if (dirtyPic256)
-                    {
-                        var imageName = Path.Combine(path, "PACKAGE_ICON_256.PNG");
-                        SavePkgImage(pictureBoxPkg_256, imageName);
-                        dirtyPic256 = false;
-                    }
+                    var imageName = Path.Combine(CurrentPackage.Folder_Root, "PACKAGE_ICON.PNG");
+                    SavePkgImage(pictureBoxPkg_72, imageName);
+                    dirtyPic72 = false;
+                }
+                if (dirtyPic256)
+                {
+                    var imageName = Path.Combine(CurrentPackage.Folder_Root, "PACKAGE_ICON_256.PNG");
+                    SavePkgImage(pictureBoxPkg_256, imageName);
+                    dirtyPic256 = false;
                 }
 
-                dirty = false;
+                mainHelper.Dirty = false;
                 ResetEditScriptMenuIcons();
             }
         }
 
         private void UpdatePackageInfo()
         {
-            if (info != null)
+            // Collect Package Info from controls tagged like PKG...
+            foreach (var control in groupBoxPackage.Controls)
             {
-                // Collect Package Info from controls tagged like PKG...
-                foreach (var control in groupBoxPackage.Controls)
+                var textBox = control as TextBox;
+                if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
                 {
-                    var textBox = control as TextBox;
-                    if (textBox != null && textBox.Tag != null && textBox.Tag.ToString().StartsWith("PKG"))
+                    var keys = textBox.Tag.ToString().Split(';');
+                    foreach (var key in keys)
                     {
-                        var keys = textBox.Tag.ToString().Split(';');
-                        foreach (var key in keys)
+                        if (key.StartsWith("PKG"))
                         {
-                            if (key.StartsWith("PKG"))
-                            {
-                                var keyId = key.Substring(3);
-                                if (info.Keys.Contains(keyId))
-                                    info[keyId] = textBox.Text.Trim();
-                                else
-                                    info.Add(keyId, textBox.Text.Trim());
-                            }
-                        }
-                    }
-                    var checkBox = control as CheckBox;
-                    if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
-                    {
-                        var keys = checkBox.Tag.ToString().Split(';');
-                        foreach (var key in keys)
-                        {
-                            if (key.StartsWith("PKG"))
-                            {
-                                var keyId = key.Substring(3);
-                                var value = checkBox.Checked ? "yes" : "no";
-                                if (info.Keys.Contains(keyId))
-                                    info[keyId] = value;
-                                else
-                                    info.Add(keyId, value);
-                            }
-                        }
-                    }
-                    var comboBox = control as ComboBox;
-                    if (comboBox != null && comboBox.Tag != null && comboBox.Tag.ToString().StartsWith("PKG"))
-                    {
-                        var keys = comboBox.Tag.ToString().Split(';');
-                        foreach (var key in keys)
-                        {
-                            if (key.StartsWith("PKG"))
-                            {
-                                var keyId = key.Substring(3);
-                                if (info.Keys.Contains(keyId))
-                                    info[keyId] = comboBox.Text.Trim();
-                                else
-                                    info.Add(keyId, comboBox.Text.Trim());
-                            }
+                            var keyId = key.Substring(3);
+                            CurrentPackage.INFO[keyId] = textBox.Text.Trim();
                         }
                     }
                 }
+                var checkBox = control as CheckBox;
+                if (checkBox != null && checkBox.Tag != null && checkBox.Tag.ToString().StartsWith("PKG"))
+                {
+                    var keys = checkBox.Tag.ToString().Split(';');
+                    foreach (var key in keys)
+                    {
+                        if (key.StartsWith("PKG"))
+                        {
+                            var keyId = key.Substring(3);
+                            var value = checkBox.Checked ? "yes" : "no";
+                            CurrentPackage.INFO[keyId] = value;
+                        }
+                    }
+                }
+                var comboBox = control as ComboBox;
+                if (comboBox != null && comboBox.Tag != null && comboBox.Tag.ToString().StartsWith("PKG"))
+                {
+                    var keys = comboBox.Tag.ToString().Split(';');
+                    foreach (var key in keys)
+                    {
+                        if (key.StartsWith("PKG"))
+                        {
+                            var keyId = key.Substring(3);
+                            CurrentPackage.INFO[keyId] = comboBox.Text.Trim();
+                        }
+                    }
+                }
+            }
 
-                if (!checkBoxAdminUrl.Checked)
-                {
-                    if (info.ContainsKey("adminport")) info.Remove("adminport");
-                    if (info.ContainsKey("adminprotocol")) info.Remove("adminprotocol");
-                    if (info.ContainsKey("adminurl")) info.Remove("adminurl");
-                    if (info.ContainsKey("checkport")) info.Remove("checkport");
-                }
+            if (!checkBoxAdminUrl.Checked)
+            {
+                CurrentPackage.INFO.AdminPort = null;
+                CurrentPackage.INFO.AdminProtocol = null;
+                CurrentPackage.INFO.AdminUrl = null;
+                CurrentPackage.INFO.CheckPort = null;
             }
         }
 
@@ -1223,7 +849,7 @@ namespace BeatificaBytes.Synology.Mods
         #region Manage List of items --------------------------------------------------------------------------------------------------------------
         private void listViewItems_DoubleClick(object sender, EventArgs e)
         {
-            if (list != null && listViewItems.SelectedItems.Count == 1)
+            if (CurrentPackage.Config != null && listViewItems.SelectedItems.Count == 1)
             {
                 buttonEditItem_Click(sender, e);
             }
@@ -1233,15 +859,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (state != State.Edit)
             {
-                if (list != null && listViewItems.SelectedItems.Count > 0)
+                if (CurrentPackage.Config != null && listViewItems.SelectedItems.Count > 0)
                 {
                     state = State.View;
-                    DisplayDetails((KeyValuePair<string, AppsData>)listViewItems.SelectedItems[0].Tag);
+                    DisplayDetails((KeyValuePair<string, AppData>)listViewItems.SelectedItems[0].Tag);
                 }
                 else
                 {
                     state = State.None;
-                    DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
+                    DisplayDetails(new KeyValuePair<string, AppData>(null, null));
                 }
             }
         }
@@ -1251,19 +877,26 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (ValidateChildren())
             {
-                var saved = SavePackage(CurrentPackageFolder, true); // Need to save to get the latest value in info["package"]
-                if (saved == DialogResult.Yes || saved == DialogResult.No)
+                //TODO: do not save anymore the INFO file but only update the CurrentPackage.INFO !
+                //var saved = mainHelper.SaveCurrentPackage(true); // Need to save to get the latest value in _package.INFO.Package
+                UpdatePackageInfo();
+
+                var prompt = new NewService();
+                var response = prompt.ShowDialog(this);
+                if (response != DialogResult.Cancel)
                 {
+
                     state = State.Add;
                     currentScript = null;
                     currentRunner = null;
-                    var data = new AppsData();
-                    if (info["singleApp"] == "yes")
+
+                    var data = new AppData();
+                    if (CurrentPackage.INFO.SingleApp == "yes")
                     {
-                        data.title = info["displayname"];
-                        data.desc = info["description"];
+                        data.title = CurrentPackage.INFO.Displayname;
+                        data.desc = CurrentPackage.INFO.Description;
                     }
-                    DisplayDetails(new KeyValuePair<string, AppsData>(Guid.NewGuid().ToString(), data));
+                    DisplayDetails(new KeyValuePair<string, AppData>(Guid.NewGuid().ToString(), data));
                     textBoxTitle.Focus();
                 }
             }
@@ -1285,7 +918,7 @@ namespace BeatificaBytes.Synology.Mods
         private void buttonCancelItem_Click(object sender, EventArgs e)
         {
             if (state == State.Add)
-                current = new KeyValuePair<string, AppsData>(null, null);
+                current = new KeyValuePair<string, AppData>(null, null);
 
             currentScript = null;
             currentRunner = null;
@@ -1344,20 +977,20 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (current.Key != null)
             {
-                var answer = MessageBoxEx.Show(this, string.Format("Do you really want to delete the {0} '{1}' and related icons?", GetItemType(current.Value.itemType), current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+                var answer = MessageBoxEx.Show(this, string.Format("Do you really want to delete the {0} '{1}' and related icons?", GetTypeName(current.Value.itemType), current.Value.title), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
                 if (answer == DialogResult.Yes)
                 {
-                    list.items.Remove(current.Key);
-                    BindData(list, null);
+                    CurrentPackage.Config.items.Remove(current.Key);
+                    PrepareDataBinding(null);
                     DeleteItemPictures(current.Value.icon);
 
                     var cleanedCurrent = Helper.CleanUpText(current.Value.title);
                     switch (current.Value.itemType)
                     {
-                        case (int)UrlType.WebApp:
+                        case AppDataType.WebApp:
                             DeleteWebApp(cleanedCurrent);
                             break;
-                        case (int)UrlType.Script:
+                        case AppDataType.Script:
                             DeleteScript(cleanedCurrent);
                             break;
                     }
@@ -1373,13 +1006,13 @@ namespace BeatificaBytes.Synology.Mods
         {
             switch (comboBoxItemType.SelectedIndex)
             {
-                case (int)UrlType.Url: // Url                    
+                case (int)AppDataType.Url: // Url                    
                     this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type here the URL to be opened when clicking the icon on DSM. If not hosted on Synology, it must start with 'http://' or 'https://'. If hosted on Synology, it must start with a '/'.");
                     break;
-                case (int)UrlType.Script: // Script
+                case (int)AppDataType.Script: // Script
                     this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Type the Script to be executed when clicking the icon on DSM. DoubleClick to edit.");
                     break;
-                case (int)UrlType.WebApp: // WebApp
+                case (int)AppDataType.WebApp: // WebApp
                     this.toolTip4Mods.SetToolTip(this.textBoxUrl, "Here is the url of your own page to be opened when clicking the icon on DMS. DoubleClick to edit.");
                     break;
             }
@@ -1407,14 +1040,14 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 // Close the current Package. This is going to prompt the user to save changes if any. 
-                var saved = CloseCurrentPackage(true);
+                var saved = mainHelper.CloseCurrentPackage(true);
 
                 // Do not close the application if saving failed or was cancelled
                 e.Cancel = !(saved == DialogResult.Yes || saved == DialogResult.No);
             }
         }
 
-        private bool RenamePreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        private bool RenamePreviousItem(KeyValuePair<string, AppData> current, KeyValuePair<string, AppData> candidate)
         {
             bool succeed = true;
 
@@ -1424,13 +1057,13 @@ namespace BeatificaBytes.Synology.Mods
             if (cleanedCurrent != null)
             {
                 //Rename a Script
-                if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType == (int)UrlType.Script && cleanedCurrent != cleanedCandidate)
+                if (current.Value.itemType == AppDataType.Script && candidate.Value.itemType == AppDataType.Script && cleanedCurrent != cleanedCandidate)
                 {
                     succeed = RenameScript(candidate.Value.title, cleanedCurrent, cleanedCandidate);
                 }
 
                 //Rename a WebApp 
-                if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType == (int)UrlType.WebApp && cleanedCurrent != cleanedCandidate)
+                if (current.Value.itemType == AppDataType.WebApp && candidate.Value.itemType == AppDataType.WebApp && cleanedCurrent != cleanedCandidate)
                 {
                     succeed = RenameWebApp(candidate.Value.title, cleanedCurrent, cleanedCandidate);
                 }
@@ -1444,7 +1077,7 @@ namespace BeatificaBytes.Synology.Mods
             bool succeed = false;
             var answer = DialogResult.Yes;
 
-            if (info["singleApp"] != "yes")
+            if (CurrentPackage.INFO.SingleApp != "yes")
             {
                 var existingWebAppFolder = getItemPath(cleanedCurrent);
                 if (Directory.Exists(existingWebAppFolder))
@@ -1452,7 +1085,7 @@ namespace BeatificaBytes.Synology.Mods
                     var targetWebAppFolder = getItemPath(cleanedCandidate);
                     if (Directory.Exists(targetWebAppFolder))
                     {
-                        answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", CurrentPackage.INFO.Package, candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (answer == DialogResult.Yes)
                         {
                             var ex = Helper.DeleteDirectory(targetWebAppFolder);
@@ -1498,7 +1131,7 @@ namespace BeatificaBytes.Synology.Mods
             return succeed;
         }
 
-        private bool CleanupPreviousItem(KeyValuePair<string, AppsData> current, KeyValuePair<string, AppsData> candidate)
+        private bool CleanupPreviousItem(KeyValuePair<string, AppData> current, KeyValuePair<string, AppData> candidate)
         {
             bool succeed = true;
 
@@ -1506,45 +1139,45 @@ namespace BeatificaBytes.Synology.Mods
             var cleanedCandidate = Helper.CleanUpText(candidate.Value.title);
 
             //Clean Up a WebApp previously defined if replaced by another type
-            if (current.Value.itemType == (int)UrlType.WebApp && candidate.Value.itemType != (int)UrlType.WebApp)
+            if (current.Value.itemType == AppDataType.WebApp && candidate.Value.itemType != AppDataType.WebApp)
             {
                 succeed = DeleteWebApp(cleanedCurrent);
             }
 
             //Clean Up a Script previously defined if replaced by another type
-            if (current.Value.itemType == (int)UrlType.Script && candidate.Value.itemType != (int)UrlType.Script)
+            if (current.Value.itemType == AppDataType.Script && candidate.Value.itemType != AppDataType.Script)
             {
                 succeed = DeleteScript(cleanedCurrent);
             }
 
             if (succeed && current.Key != null)
             {
-                list.items.Remove(current.Key);
-                BindData(list, null);
+                CurrentPackage.Config.items.Remove(current.Key);
+                PrepareDataBinding(null);
                 DeleteItemPictures(current.Value.icon);
             }
 
             return succeed;
         }
 
-        private void SaveItemDetails(KeyValuePair<string, AppsData> candidate)
+        private void SaveItemDetails(KeyValuePair<string, AppData> candidate)
         {
             SaveItemPictures(candidate);
 
             switch (candidate.Value.itemType)
             {
-                case (int)UrlType.Url:
+                case AppDataType.Url:
                     break;
-                case (int)UrlType.WebApp:
+                case AppDataType.WebApp:
                     CreateWebApp(candidate);
                     break;
-                case (int)UrlType.Script:
+                case AppDataType.Script:
                     CreateScript(candidate, currentScript, currentRunner);
                     break;
             }
 
-            list.items.Add(candidate.Key, candidate.Value);
-            BindData(list, candidate.Value.title);
+            CurrentPackage.Config.items.Add(candidate.Key, candidate.Value);
+            PrepareDataBinding(candidate.Value.title);
 
             DisplayItem(candidate);
         }
@@ -1554,7 +1187,7 @@ namespace BeatificaBytes.Synology.Mods
             bool succeed = false;
             var answer = DialogResult.Yes;
 
-            if (info["singleApp"] != "yes")
+            if (CurrentPackage.INFO.SingleApp != "yes")
             {
                 var current = getItemPath(cleanedCurrent);
                 if (Directory.Exists(current))
@@ -1562,7 +1195,7 @@ namespace BeatificaBytes.Synology.Mods
                     var target = getItemPath(cleanedCandidate);
                     if (Directory.Exists(target))
                     {
-                        answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", info["package"], candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a script named {1}.\nDo you confirm that you want to replace it?\nIf you answer No, the existing one will be used. Otherwise, it will be replaced.", CurrentPackage.INFO.Package, candidate), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (answer == DialogResult.Yes)
                         {
                             var ex = Helper.DeleteDirectory(target);
@@ -1612,7 +1245,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             bool succeed = false;
 
-            if (info["singleApp"] == "yes")
+            if (CurrentPackage.INFO.SingleApp == "yes")
                 cleanedCurrent = "";
 
             var targetScript = getItemPath(cleanedCurrent);
@@ -1640,7 +1273,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             bool succeed = false;
 
-            if (info["singleApp"] == "yes")
+            if (CurrentPackage.INFO.SingleApp == "yes")
                 cleanedCurrent = "";
 
             var targetWebApp = getItemPath(cleanedCurrent);
@@ -1670,17 +1303,17 @@ namespace BeatificaBytes.Synology.Mods
             var answer = DialogResult.Yes;
             if (current.Value != null)
             {
-                if (current.Value.itemType != -1 && current.Value.itemType != (int)UrlType.Url && current.Value.itemType != selectedIndex)
+                if (current.Value.itemType != AppDataType.Undefined && current.Value.itemType != (int)AppDataType.Url && (int)current.Value.itemType != selectedIndex)
                 {
-                    var from = GetItemType(current.Value.itemType);
-                    var to = GetItemType(selectedIndex);
-                    answer = MessageBoxEx.Show(this, string.Format("Your item '{0}' is currently a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", info["package"], from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    var from = GetTypeName(current.Value.itemType);
+                    var to = GetTypeName(selectedIndex);
+                    answer = MessageBoxEx.Show(this, string.Format("Your item '{0}' is currently a {1}.\nDo you confirm that you want to replace it by a new {2}?\nIf you answer Yes, your existing {1} will be deleted when you save your changes.", CurrentPackage.INFO.Package, from, to), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 }
 
                 if (answer == DialogResult.No)
                 {
                     textBoxTitle.Focus();
-                    comboBoxItemType.SelectedIndex = current.Value.itemType;
+                    comboBoxItemType.SelectedIndex = (int)current.Value.itemType;
                     checkBoxLegacy.Checked = (current.Value.type == "legacy");
                 }
                 else
@@ -1689,18 +1322,18 @@ namespace BeatificaBytes.Synology.Mods
                     //current.Value.itemType = selectedIndex;
                     switch (selectedIndex)
                     {
-                        case (int)UrlType.Url:
+                        case (int)AppDataType.Url:
                             textBoxUrl.Enabled = true;
                             textBoxUrl.ReadOnly = false;
-                            if (current.Value.itemType != selectedIndex)
+                            if ((int)current.Value.itemType != selectedIndex)
                             {
                                 textBoxUrl.Text = "";
                             }
                             //textBoxUrl.Focus();
-                            current.Value.itemType = selectedIndex;
+                            current.Value.itemType = GetType(selectedIndex);
                             break;
 
-                        case (int)UrlType.Script:
+                        case (int)AppDataType.Script:
                             var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
                             var targetScriptPath = getItemPath(cleanedScriptName, "mods.sh");
                             var targetRunnerPath = getItemPath(cleanedScriptName, "mods.php");
@@ -1711,7 +1344,7 @@ namespace BeatificaBytes.Synology.Mods
                             EditScript(targetScriptPath, targetRunnerPath);
                             if (string.IsNullOrEmpty(currentScript))
                             {
-                                selectedIndex = current.Value.itemType;
+                                selectedIndex = (int)current.Value.itemType;
                                 comboBoxItemType.SelectedIndex = selectedIndex;
                                 checkBoxLegacy.Checked = (current.Value.type == "legacy");
                             }
@@ -1719,29 +1352,29 @@ namespace BeatificaBytes.Synology.Mods
                             {
                                 var url = "";
                                 GetDetailsScript(cleanedScriptName, ref url);
-                                current.Value.itemType = selectedIndex;
+                                current.Value.itemType = GetType(selectedIndex);
                                 textBoxUrl.Text = url;
                             }
                             break;
 
-                        case (int)UrlType.WebApp:
+                        case (int)AppDataType.WebApp:
                             var cleanedWebApp = Helper.CleanUpText(textBoxTitle.Text);
                             var targetWebAppFolder = getItemPath(cleanedWebApp);
                             if (Directory.Exists(targetWebAppFolder) && Directory.EnumerateFiles(targetWebAppFolder).Count() > 0)
                             {
-                                answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", info["package"], textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' already contains a WebApp named {1}.\nDo you want to replace it?", CurrentPackage.INFO.Package, textBoxTitle.Text), "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                             }
                             if (answer == DialogResult.Yes)
                             {
                                 if (!EditWebApp())
                                 {
-                                    selectedIndex = current.Value.itemType;
+                                    selectedIndex = (int)current.Value.itemType;
                                     comboBoxItemType.SelectedIndex = selectedIndex;
                                     checkBoxLegacy.Checked = (current.Value.type == "legacy");
                                 }
                                 else
                                 {
-                                    current.Value.itemType = selectedIndex;
+                                    current.Value.itemType = GetType(selectedIndex);
                                 }
                             }
                             break;
@@ -1756,7 +1389,7 @@ namespace BeatificaBytes.Synology.Mods
                     {
                         comboBoxProtocol.Visible = false;
                         textBoxPort.Visible = false;
-                        labelAddResources.Visible = (current.Value.itemType == 1);
+                        labelAddResources.Visible = (current.Value.itemType == AppDataType.Script);
                     }
 
                     //if (current.Value.itemType != selectedIndex)
@@ -1810,7 +1443,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private List<Tuple<string, string>> GetAllWizardVariables()
         {
-            return Helpers.Synology.GetAllWizardVariables(CurrentPackageFolder);
+            return Helpers.Synology.GetAllWizardVariables(CurrentPackage.Folder_Root);
         }
 
         private bool EditWebApp()
@@ -1841,7 +1474,7 @@ namespace BeatificaBytes.Synology.Mods
                         MessageBoxEx.Show(this, "This file is not in the directory selected previously. Please select a file under that folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                         webAppFolder = null;
                         webAppIndex = null;
-                        comboBoxItemType.SelectedIndex = (int)UrlType.Url;
+                        comboBoxItemType.SelectedIndex = (int)AppDataType.Url;
                     }
                     else
                     {
@@ -1853,7 +1486,7 @@ namespace BeatificaBytes.Synology.Mods
             return result;
         }
 
-        private bool CreateWebApp(KeyValuePair<string, AppsData> current)
+        private bool CreateWebApp(KeyValuePair<string, AppData> current)
         {
             bool succeed = true;
             if (webAppIndex != null && webAppFolder != null)
@@ -1861,7 +1494,7 @@ namespace BeatificaBytes.Synology.Mods
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
 
                 // A Single App is stored in the root of the package app folder. So, the Single App may not have items conflicting with the package items "images" and "config"
-                if (info["singleApp"] == "yes")
+                if (CurrentPackage.INFO.SingleApp == "yes")
                 {
                     succeed = MayTransformIntoSingleApp(webAppFolder);
                     cleanedCurrent = "";
@@ -1871,7 +1504,7 @@ namespace BeatificaBytes.Synology.Mods
                     // Ask about using the Router CGI technic instead of depending on the ThirdParty package
                     DialogResult transformIntoSingleApp = DialogResult.No;
                     var router = MessageBoxEx.Show(this, "Do you want to use the Router CGI?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                    if (router == DialogResult.Yes && info["singleApp"] != "yes")
+                    if (router == DialogResult.Yes && CurrentPackage.INFO.SingleApp != "yes")
                     {
                         {
                             transformIntoSingleApp = MessageBoxEx.Show(this, "Using a Router CGI is only fully supported by MODS with Single App? Do you want to transform the WebApp into a Single App (YES) or are you going to manage yourself the scripts to support the Router CGI (NO)? You may also continue without using the Router CGI (CANCEL).", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
@@ -1909,7 +1542,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (succeed)
                     {
                         DialogResult copy = DialogResult.Yes;
-                        if (router == DialogResult.No && info["singleApp"] != "yes")
+                        if (router == DialogResult.No && CurrentPackage.INFO.SingleApp != "yes")
                             copy = MessageBoxEx.Show(this, "Do you want to copy the files of the webApp into the package Folder (YES) or create a Symbolic Link on the target folder instead (NO)?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
 
                         if (copy == DialogResult.Yes)
@@ -1936,7 +1569,7 @@ namespace BeatificaBytes.Synology.Mods
                                 if (editScript == DialogResult.OK)
                                 {
                                     var script = Properties.Settings.Default.router_inst;
-                                    if (info["singleApp"] != "yes" && transformIntoSingleApp != DialogResult.Yes)
+                                    if (CurrentPackage.INFO.SingleApp != "yes" && transformIntoSingleApp != DialogResult.Yes)
                                         script = script.Replace("/ui/dsm.cgi.conf", String.Format("/ui/{0}/dsm.cgi.conf", cleanedCurrent));
                                     Clipboard.SetText(script);
                                     if (EditInstallationScript("scripts/postinst", "Post-Install Script"))
@@ -1947,7 +1580,7 @@ namespace BeatificaBytes.Synology.Mods
                                     var editDependency = MessageBoxEx.Show(this, "Finally, you must add 'nginx' in the list of 'startstop_restart_services' and remove the dependency on 'Init_3rdparty>=1.5' if any.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                                     if (editDependency == DialogResult.OK)
                                     {
-                                        var edit = new Dependencies(info);
+                                        var edit = new Dependencies(CurrentPackage.INFO);
                                         edit.ShowDialog(this);
                                     }
                                 }
@@ -1990,14 +1623,14 @@ namespace BeatificaBytes.Synology.Mods
             return succeed;
         }
 
-        private bool CreateScript(KeyValuePair<string, AppsData> current, string script, string runner)
+        private bool CreateScript(KeyValuePair<string, AppData> current, string script, string runner)
         {
             bool succeed = true;
 
             if (script != null)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
-                if (info["singleApp"] == "yes")
+                if (CurrentPackage.INFO.SingleApp == "yes")
                     cleanedCurrent = "";
 
                 var target = getItemPath(cleanedCurrent);
@@ -2026,12 +1659,12 @@ namespace BeatificaBytes.Synology.Mods
 
         private void SaveItemsConfig()
         {
-            if (!string.IsNullOrEmpty(CurrentPackageFolder))
+            if (CurrentPackage != null)
             {
-                dirty = true;
+                mainHelper.Dirty = true;
                 Regex rgx;
 
-                var json = JsonConvert.SerializeObject(list, Formatting.Indented, new KeyValuePairConverter());
+                var json = JsonConvert.SerializeObject(CurrentPackage.Config, Formatting.Indented, new KeyValuePairConverter());
 
                 //remove default port
                 rgx = new Regex("\\s*\"port\": 0");
@@ -2050,9 +1683,9 @@ namespace BeatificaBytes.Synology.Mods
                 Properties.Settings.Default.Packages = json;
                 Properties.Settings.Default.Save();
 
-                if (info.ContainsKey("dsmuidir"))
+                if (!string.IsNullOrWhiteSpace(CurrentPackage.INFO.DsmUiDir))
                 {
-                    var config = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                    var config = CurrentPackage.Path_Config;
                     if (Directory.Exists(Path.GetDirectoryName(config)))
                     {
                         // Save Config as Ansi
@@ -2069,21 +1702,21 @@ namespace BeatificaBytes.Synology.Mods
         private void DisplayNone()
         {
             state = State.None;
-            DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
+            DisplayDetails(new KeyValuePair<string, AppData>(null, null));
         }
 
         private void DisplayItem()
         {
-            DisplayItem(new KeyValuePair<string, AppsData>());
+            DisplayItem(new KeyValuePair<string, AppData>());
         }
 
         // Display an item which becomes the current one. If no item is specified, the first one in the list is used, if any.
-        private void DisplayItem(KeyValuePair<string, AppsData> item)
+        private void DisplayItem(KeyValuePair<string, AppData> item)
         {
             // If no current Url, select the first one in the list
             if (item.Key == null && listViewItems.Items.Count > 0)
             {
-                item = (KeyValuePair<string, AppsData>)listViewItems.Items[0].Tag;
+                item = (KeyValuePair<string, AppData>)listViewItems.Items[0].Tag;
             }
 
             // If no Url in the list, display none
@@ -2100,7 +1733,7 @@ namespace BeatificaBytes.Synology.Mods
 
                 foreach (ListViewItem other in listViewItems.Items)
                 {
-                    KeyValuePair<string, AppsData> tag = (KeyValuePair<string, AppsData>)other.Tag;
+                    KeyValuePair<string, AppData> tag = (KeyValuePair<string, AppData>)other.Tag;
                     other.Selected = (tag.Value.guid == currentGuid);
                     if (other.Selected)
                         listViewItems.EnsureVisible(other.Index);
@@ -2108,7 +1741,7 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void DisplayDetails(KeyValuePair<string, AppsData> item)
+        private void DisplayDetails(KeyValuePair<string, AppData> item)
         {
             currentScript = null;
             currentRunner = null;
@@ -2153,7 +1786,7 @@ namespace BeatificaBytes.Synology.Mods
                 {
                     LoadPictureBox(pictureBox, null);
                 }
-                comboBoxItemType.SelectedIndex = (int)UrlType.Url;
+                comboBoxItemType.SelectedIndex = (int)AppDataType.Url;
             }
 
             textBoxDesc.Text = descText;
@@ -2175,7 +1808,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 comboBoxProtocol.Visible = false;
                 textBoxPort.Visible = false;
-                labelAddResources.Visible = (item.Value.itemType == 1);
+                labelAddResources.Visible = (item.Value.itemType == AppDataType.Script);
             }
 
             comboBoxProtocol.SelectedIndex = comboBoxProtocol.FindString(protocolText);
@@ -2190,18 +1823,18 @@ namespace BeatificaBytes.Synology.Mods
 
             if (show)
             {
-                if (item.Value.itemType != -1 && !Enum.IsDefined(typeof(UrlType), item.Value.itemType))
+                if (item.Value.itemType != AppDataType.Undefined && !Enum.IsDefined(typeof(AppDataType), item.Value.itemType))
                 {
                     MessageBoxEx.Show(this, "The type of this element is obsolete and must be edited to be fixed !!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                    item.Value.itemType = (int)UrlType.Script;
+                    item.Value.itemType = AppDataType.Script;
                 }
-                if (item.Value.itemType == -1)
+                if (item.Value.itemType == AppDataType.Undefined)
                     item.Value.itemType = 0;
-                comboBoxItemType.SelectedIndex = item.Value.itemType;
+                comboBoxItemType.SelectedIndex = (int)item.Value.itemType;
             }
             else
             {
-                comboBoxItemType.SelectedIndex = (int)UrlType.Url;
+                comboBoxItemType.SelectedIndex = (int)AppDataType.Url;
             }
 
             EnableItemDetails();
@@ -2214,12 +1847,13 @@ namespace BeatificaBytes.Synology.Mods
             bool enabling;
             bool packaging;
 
-            if (info == null)
+            if (CurrentPackage == null)
             {
                 // Disable the detail zone if not package defined
                 enabling = false;
                 packaging = false;
 
+                PackageConfig list = CurrentPackage == null ? null : CurrentPackage.Config;
                 EnableItemFieldDetails(!enabling && list != null, enabling);
                 EnableItemButtonDetails(enabling, enabling, enabling, enabling, enabling, packaging);
 
@@ -2234,16 +1868,16 @@ namespace BeatificaBytes.Synology.Mods
                 //packaging = listViewItems.Items.Count > 0 && !enabling;
                 packaging = true; //A package can be published even without any item
 
-                EnableItemFieldDetails(!enabling && list != null, enabling);
+                EnableItemFieldDetails(!enabling && CurrentPackage.Config != null, enabling);
                 switch (state)
                 {
                     case State.View:
-                        add = list != null && (info["singleApp"] == "no" || list.items.Count == 0);
+                        add = CurrentPackage.Config != null && (CurrentPackage.INFO.SingleApp == "no" || CurrentPackage.Config.items.Count == 0);
                         EnableItemButtonDetails(add, true, false, false, true, packaging);
                         EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true, true);
                         break;
                     case State.None:
-                        add = list != null && (info["singleApp"] == "no" || list.items.Count == 0);
+                        add = CurrentPackage.Config != null && (CurrentPackage.INFO.SingleApp == "no" || CurrentPackage.Config.items.Count == 0);
                         EnableItemButtonDetails(add, false, false, false, false, packaging);
                         EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true, true);
                         break;
@@ -2253,11 +1887,11 @@ namespace BeatificaBytes.Synology.Mods
                         EnableItemMenuDetails(!enabling, true, !enabling, !enabling, false, false, false, false, false);
                         break;
                 }
-                textBoxUrl.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)UrlType.Url);
+                textBoxUrl.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)AppDataType.Url);
 
-                if (info.ContainsKey("dsmuidir"))
+                if (!string.IsNullOrWhiteSpace(CurrentPackage.INFO.DsmUiDir))
                 {
-                    var file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                    var file = CurrentPackage.Folder_UI;
                     if (File.Exists(file))
                     {
                         menuRouterScript.Enabled = File.Exists(file.Replace("config", "router.cgi"));
@@ -2266,15 +1900,15 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
 
-                if (wizardExist)
+                if (mainHelper.WizardExist)
                     menuAddWizard.Text = "Remove Wizard";
                 else
                     menuAddWizard.Text = "Create Wizard";
 
 
-                menuWizardInstallUI.Enabled = wizardExist;
-                menuWizardUninstallUI.Enabled = wizardExist;
-                menuWizardUpgradeUI.Enabled = wizardExist;
+                menuWizardInstallUI.Enabled = mainHelper.WizardExist;
+                menuWizardUninstallUI.Enabled = mainHelper.WizardExist;
+                menuWizardUpgradeUI.Enabled = mainHelper.WizardExist;
             }
         }
 
@@ -2286,13 +1920,13 @@ namespace BeatificaBytes.Synology.Mods
             {
                 menu.Enabled = menuPackage;
             }
-            this.menuSavePackage.Enabled = menuSave;
-            this.menuNewPackage.Enabled = menuNew;
-            this.menuOpenPackageFolder.Enabled = true;
-            this.menuOpenPackage.Enabled = menuOpen;
+            menuSavePackage.Enabled = menuSave;
+            menuNewPackage.Enabled = menuNew;
+            //menuOpenPackageFolder.Enabled = true;
+            menuOpenPackage.Enabled = menuOpen;
             menuImportPackage.Enabled = menuOpen;
             menuOpenRecentPackage.Enabled = menuRecent;
-            this.menuClosePackage.Enabled = menuClose;
+            menuClosePackage.Enabled = menuClose;
             foreach (ToolStripItem menu in this.menuEdit.DropDownItems)
             {
                 menu.Enabled = menuEdit;
@@ -2314,8 +1948,8 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxMultiInstance.Enabled = bItemDetails;
             checkBoxLegacy.Enabled = bItemDetails;
             comboBoxItemType.Enabled = bItemDetails;
-            comboBoxProtocol.Enabled = bItemDetails;
-            textBoxPort.Enabled = bItemDetails;
+            comboBoxProtocol.Enabled = !checkBoxLegacy.Checked;
+            textBoxPort.Enabled = !checkBoxLegacy.Checked;
             ComboBoxGrantPrivilege.Enabled = bItemDetails;
             checkBoxAdvanceGrantPrivilege.Enabled = bItemDetails;
             checkBoxConfigPrivilege.Enabled = bItemDetails;
@@ -2334,7 +1968,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         // Parse the data of the details zone
-        private KeyValuePair<string, AppsData> GetItemDetails()
+        private KeyValuePair<string, AppData> GetItemDetails()
         {
             bool legacy = checkBoxLegacy.Checked;
             bool multiInstance = checkBoxMultiInstance.Checked;
@@ -2354,26 +1988,26 @@ namespace BeatificaBytes.Synology.Mods
             var key = string.Format("{0}.{1}", textBoxDsmAppName.Text, Helper.CleanUpText(title));
             //if (!multiInstance) key = textBoxDsmAppName.Text; // This is recommended otherwise the Task Manager does not find the icon of the service
 
-            var urlType = comboBoxItemType.SelectedIndex;
+            var urlType = GetType(comboBoxItemType.SelectedIndex);
             switch (urlType)
             {
-                case (int)UrlType.Url:
+                case AppDataType.Url:
                     //GetDetailsUrl(ref protocol, ref port, ref url);
                     if (url.StartsWith("/"))
                     {
                         int.TryParse(textBoxPort.Text, out port);
                         protocol = comboBoxProtocol.SelectedItem.ToString();
-                        if (protocol.Equals("default")) protocol = "";
+                        if (protocol.Equals("default", StringComparison.InvariantCultureIgnoreCase)) protocol = "";
                     }
                     break;
-                case (int)UrlType.WebApp:
+                case AppDataType.WebApp:
                     GetDetailsWebApp(title, ref url);
                     break;
-                case (int)UrlType.Script:
+                case AppDataType.Script:
                     GetDetailsScript(title, ref url);
                     break;
             }
-            var appsData = new AppsData()
+            var appsData = new AppData()
             {
                 allUsers = allUsers,
                 title = title,
@@ -2400,17 +2034,17 @@ namespace BeatificaBytes.Synology.Mods
 
             title = Helper.CleanUpText(title);
             appsData.icon = string.Format("images/{0}_{1}.png", title, "{0}");
-            return new KeyValuePair<string, AppsData>(key, appsData);
+            return new KeyValuePair<string, AppData>(key, appsData);
         }
 
         private void GetDetailsScript(string title, ref string url)
         {
             var cleanedScript = Helper.CleanUpText(title);
             string actualUrl = null;
-            if (info["singleApp"] == "yes")
-                actualUrl = string.Format("/webman/3rdparty/{0}/mods.php", info["package"]);
+            if (CurrentPackage.INFO.SingleApp == "yes")
+                actualUrl = string.Format("/webman/3rdparty/{0}/mods.php", CurrentPackage.INFO.Package);
             else
-                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/mods.php", info["package"], cleanedScript);
+                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/mods.php", CurrentPackage.INFO.Package, cleanedScript);
             if (url != actualUrl && url != actualUrl.Replace(".php", ".cgi"))
             {
                 url = actualUrl;
@@ -2421,10 +2055,10 @@ namespace BeatificaBytes.Synology.Mods
         {
             var cleanedWebApp = Helper.CleanUpText(title);
             string actualUrl = null;
-            if (info["singleApp"] == "yes")
-                actualUrl = string.Format("/webman/3rdparty/{0}/{1}", info["package"], url).Replace("//", "/");
+            if (CurrentPackage.INFO.SingleApp == "yes")
+                actualUrl = string.Format("/webman/3rdparty/{0}/{1}", CurrentPackage.INFO.Package, url).Replace("//", "/");
             else
-                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", info["package"], cleanedWebApp, url).Replace("//", "/");
+                actualUrl = string.Format("/webman/3rdparty/{0}/{1}/{2}", CurrentPackage.INFO.Package, cleanedWebApp, url).Replace("//", "/");
             if (webAppIndex != null && webAppFolder != null)
             {
                 url = actualUrl;
@@ -2494,7 +2128,7 @@ namespace BeatificaBytes.Synology.Mods
             if (validImage4DragDrop)
             {
                 var pictureBox = sender as PictureBox;
-                dirty = ChangePicturePkg(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
+                mainHelper.Dirty = ChangePicturePkg(imageDragDropPath, pictureBox.Tag.ToString().Split(';')[1]);
             }
         }
 
@@ -2640,7 +2274,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var icons = string.Format(item, size).Split('/');
             string picture = null;
-            if (info.ContainsKey("dsmuidir"))
+            if (!string.IsNullOrWhiteSpace(CurrentPackage.INFO.DsmUiDir))
                 if (icons.Length > 1)
                     picture = getItemPath(icons[0], icons[1]);
                 else
@@ -2693,7 +2327,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         // Save all the pictures of the current Item
-        private void SaveItemPictures(KeyValuePair<string, AppsData> current)
+        private void SaveItemPictures(KeyValuePair<string, AppData> current)
         {
             string iconName = current.Value.icon;
 
@@ -2766,14 +2400,15 @@ namespace BeatificaBytes.Synology.Mods
                     textBoxDisplay.Text = textBoxPackage.Text.Replace('_', ' ').Replace("-", "").Replace("__", "_");
 
                 var newName = textBoxPackage.Text;
-                var oldName = info.Count > 0 && info.ContainsKey("package") ? info["package"] : newName;
+                var oldName = !string.IsNullOrWhiteSpace(CurrentPackage.INFO.Package) ? CurrentPackage.INFO.Package : newName;
                 if (newName != oldName && !string.IsNullOrEmpty(oldName))
                 {
                     var focused = Helper.FindFocusedControl(this);
 
+                    var list = CurrentPackage.Config;
                     if (list != null)
                     {
-                        var copy = new Package();
+                        var copy = new PackageConfig();
                         foreach (var item in list.items)
                         {
                             copy.items.Add(item.Key.Replace(oldName, newName), item.Value);
@@ -2795,13 +2430,13 @@ namespace BeatificaBytes.Synology.Mods
                                 item.Value.url = item.Value.url.Replace(oldName, newName);
                             }
                         }
-                        BindData(list, null);
+                        PrepareDataBinding(null);
                     }
                     DisplayItem();
                     focused.Focus();
 
-                    info["package"] = textBoxPackage.Text;
-                    dirty = true;
+                    CurrentPackage.INFO.Package = textBoxPackage.Text;
+                    mainHelper.Dirty = true;
                 }
 
             }
@@ -2826,6 +2461,14 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (errorProvider.Tag == null)
             {
+                if (string.IsNullOrEmpty(textBoxMaintainer.Text))
+                {
+                    using (new CWaitCursor())
+                    {
+                        textBoxMaintainer.Text = mainHelper.user.DisplayName;
+                    }
+                }
+
                 if (!CheckEmpty(textBoxMaintainer, ref e, ""))
                 {
                     CheckDoubleQuotes(textBoxMaintainer, ref e);
@@ -2842,6 +2485,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (errorProvider.Tag == null)
             {
+
+                if (string.IsNullOrEmpty(textBoxDescription.Text) && !string.IsNullOrEmpty(textBoxDisplay.Text))
+                {
+                    using (new CWaitCursor())
+                    {
+                        textBoxDescription.Text = textBoxDisplay.Text;
+                    }
+                }
+
                 if (!CheckEmpty(textBoxDescription, ref e, ""))
                 {
                     CheckDoubleQuotes(textBoxDescription, ref e);
@@ -2935,8 +2587,8 @@ namespace BeatificaBytes.Synology.Mods
                     }
                     else
                     {
-                        if (list != null)
-                            foreach (var url in list.items.Values)
+                        if (CurrentPackage.Config != null)
+                            foreach (var url in CurrentPackage.Config.items.Values)
                             {
                                 var existingTitle = Helper.CleanUpText(url.title);
                                 var newTitle = Helper.CleanUpText(textBoxTitle.Text);
@@ -2962,8 +2614,8 @@ namespace BeatificaBytes.Synology.Mods
                 var newName = Helper.CleanUpText(textBoxTitle.Text);
                 if (newName != oldName)
                 {
-                    oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], oldName);
-                    newName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], newName);
+                    oldName = string.Format("/webman/3rdparty/{0}/{1}/", CurrentPackage.INFO.Package, oldName);
+                    newName = string.Format("/webman/3rdparty/{0}/{1}/", CurrentPackage.INFO.Package, newName);
 
                     textBoxUrl.Text = textBoxUrl.Text.Replace(oldName, newName);
                 }
@@ -2976,7 +2628,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (!CheckEmpty(textBoxUrl, ref e, ""))
                 {
-                    if (comboBoxItemType.SelectedIndex == (int)UrlType.Url)
+                    if (comboBoxItemType.SelectedIndex == (int)AppDataType.Url)
                     {
                         CheckUrl(textBoxUrl, ref e);
                     }
@@ -3028,8 +2680,8 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        // Reset errors possibly displayed on any Control
-        private void ResetValidateChildren(Control control)
+        // Reset errors possibly displayed on the Control and any children
+        internal void ResetValidateChildren(Control control)
         {
             errorProvider.SetError(control, "");
             foreach (Control ctrl in control.Controls)
@@ -3046,15 +2698,15 @@ namespace BeatificaBytes.Synology.Mods
         {
             switch (current.Value.itemType)
             {
-                case (int)UrlType.Url:
+                case AppDataType.Url:
                     break;
-                case (int)UrlType.WebApp:
+                case AppDataType.WebApp:
                     EditWebApp();
                     break;
-                case (int)UrlType.Script:
+                case AppDataType.Script:
                     var cleanedScriptName = Helper.CleanUpText(textBoxTitle.Text);
                     var oldCleanedScriptName = cleanedScriptName;
-                    if (info["singleApp"] == "yes")
+                    if (CurrentPackage.INFO.SingleApp == "yes")
                         cleanedScriptName = "";
 
                     var targetScript = getItemPath(cleanedScriptName, "mods.sh");
@@ -3081,23 +2733,61 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private string GetItemType(int type)
+        private string GetTypeName(AppDataType type)
         {
             string typeName = null;
             switch (type)
             {
-                case (int)UrlType.Url: // Url
+                case AppDataType.Url: // Url
                     typeName = "Url";
                     break;
-                case (int)UrlType.WebApp: // WebApp
+                case AppDataType.WebApp: // WebApp
                     typeName = "WebApp";
                     break;
-                case (int)UrlType.Script: // Script
+                case AppDataType.Script: // Script
                     typeName = "Script";
                     break;
             }
             return typeName;
         }
+
+        private string GetTypeName(int type)
+        {
+            string typeName = null;
+            switch (type)
+            {
+                case (int)AppDataType.Url: // Url
+                    typeName = "Url";
+                    break;
+                case (int)AppDataType.WebApp: // WebApp
+                    typeName = "WebApp";
+                    break;
+                case (int)AppDataType.Script: // Script
+                    typeName = "Script";
+                    break;
+            }
+            return typeName;
+        }
+
+        private AppDataType GetType(int type)
+        {
+            AppDataType appDataType = AppDataType.Undefined;
+            switch (type)
+            {
+                case (int)AppDataType.Url: // Url
+                    appDataType = AppDataType.Url;
+                    break;
+                case (int)AppDataType.WebApp: // WebApp
+                    appDataType = AppDataType.WebApp;
+                    break;
+                case (int)AppDataType.Script: // Script
+                    appDataType = AppDataType.Script;
+                    break;
+            }
+            return appDataType;
+        }
+
+
 
         private void checkBoxSize_CheckedChanged(object sender, EventArgs e)
         {
@@ -3111,125 +2801,20 @@ namespace BeatificaBytes.Synology.Mods
         private void menuNew_Click(object sender, EventArgs e)
         {
             // Close the current Package. This is going to prompt the user to save changes if any. 
-            var saved = CloseCurrentPackage();
+            var saved = mainHelper.CloseCurrentPackage();
 
             // Create a new Package if the user saved/discarded explicitly possible changes
             if (saved == DialogResult.Yes || saved == DialogResult.No)
             {
-                NewPackage();
+                mainHelper.OpenNewPackage();
             }
         }
 
-        /// <summary>
-        /// Prompt the user to save the Package if flagged as dirty or if there are any pending changes.
-        /// </summary>
-        /// <param name="path">Target save location.</param>
-        /// <param name="force">Pending changes are saved without prompting the user if this parameter is true.</param>
-        /// <returns>
-        /// Yes if the package is successfuly saved.
-        /// No if the user discarded the pending changes or if there was no pending changes.
-        /// Cancel if the user asked to cancel the operation.
-        /// Abort if something went wrong or if the user might not save the package due to invalid data.
-        /// </returns>
-        private DialogResult SavePackage(string path, bool force = false)
-        {
-            using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE SAVING YOUR PACKAGE..."))
-            {
-                DialogResult saved = DialogResult.Yes;
-                if (info == null)
-                {
-                    // No package to be saved
-                    saved = DialogResult.No;
-                }
-                else
-                {
-                    try
-                    {
-                        if (!ValidateChildren())
-                        {
-                            // User may not save changes with Invalid data
-                            saved = DialogResult.Abort;
-                        }
-                        else
-                        {
-                            if (dirty || CheckChanges(null))
-                            {
-                                // Prompt the user to save pending changes. He may answer Yes, No or Cancel
-                                if (!force) saved = MessageBoxEx.Show(this, "Do you want to save pending changes in your package?", "Question", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-
-                                if (saved == DialogResult.Yes)
-                                {
-                                    if (info.ContainsKey("checksum")) info.Remove("checksum");
-                                    SaveItemsConfig();
-                                    SavePackageInfo(path);
-                                    SavePackageSettings(path);
-                                    CreateRecentsMenu();
-                                    dirty = false;
-                                }
-                            }
-                            else
-                            {
-                                // Nothing needs to be saved
-                                saved = DialogResult.No;
-                            }
-                        }
-                    }
-                    catch (Exception ex) { saved = DialogResult.Abort; }
-                }
-                return saved;
-            }
-        }
-
-        private void SavePackageSettings(string path)
-        {
-            if (Properties.Settings.Default.Recents != null)
-            {
-                RemoveRecentPath(path);
-                if (Properties.Settings.Default.Recents.Count >= 10)
-                {
-                    Properties.Settings.Default.Recents.RemoveAt(0);
-                    Properties.Settings.Default.RecentsName.RemoveAt(0);
-                }
-            }
-            else
-            {
-                Properties.Settings.Default.Recents = new System.Collections.Specialized.StringCollection();
-                Properties.Settings.Default.RecentsName = new System.Collections.Specialized.StringCollection();
-            }
-
-            Properties.Settings.Default.Recents.Add(path);
-            if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
-                Properties.Settings.Default.RecentsName.Add(info["displayname"]);
-            else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
-                Properties.Settings.Default.RecentsName.Add(info["package"]);
-            else
-                Properties.Settings.Default.RecentsName.Add(Path.GetFileName(path));
-
-            Properties.Settings.Default.LastPackage = path;
-            Properties.Settings.Default.Save();
-
-            menuReviewPendingChanges.Image = null;
-        }
-
-        private void RemoveRecentPath(string path)
-        {
-            for (var item = 0; item < Properties.Settings.Default.Recents.Count; item++)
-            {
-                if (Properties.Settings.Default.Recents[item] == path)
-                {
-                    if (Properties.Settings.Default.Recents.Count > item)
-                        Properties.Settings.Default.Recents.RemoveAt(item);
-                    if (Properties.Settings.Default.RecentsName.Count > item)
-                        Properties.Settings.Default.RecentsName.RemoveAt(item);
-                }
-            }
-        }
-
-        private bool CheckChanges(List<Tuple<string, string, string>> changes)
+        internal bool CheckChanges(List<Tuple<string, string, string>> changes)
         {
             bool dirty = false;
 
-            if (info != null)
+            if (CurrentPackage != null)
             {
                 foreach (var control in groupBoxPackage.Controls)
                 {
@@ -3239,10 +2824,10 @@ namespace BeatificaBytes.Synology.Mods
                         var keys = textBox.Tag.ToString().Split(';');
                         var key = keys[0].Substring(3);
 
-                        if (info.ContainsKey(key))
+                        if (CurrentPackage.INFO.ContainsKey(key))
                         {
-                            dirty = textBox.Text.Trim() != info[key].Trim();
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], textBox.Text.Trim()));
+                            dirty = textBox.Text.Trim() != CurrentPackage.INFO[key].Trim();
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, CurrentPackage.INFO[key], textBox.Text.Trim()));
                         }
                         else
                         {
@@ -3261,10 +2846,10 @@ namespace BeatificaBytes.Synology.Mods
                         var keys = checkBox.Tag.ToString().Split(';');
                         var key = keys[0].Substring(3);
 
-                        if (info.ContainsKey(key))
+                        if (CurrentPackage.INFO.ContainsKey(key))
                         {
-                            dirty = checkBox.Checked != (info[key] == "yes");
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], checkBox.Checked ? "yes" : "no"));
+                            dirty = checkBox.Checked != (CurrentPackage.INFO[key] == "yes");
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, CurrentPackage.INFO[key], checkBox.Checked ? "yes" : "no"));
                         }
 
                         if (changes != null) dirty = false;
@@ -3278,10 +2863,10 @@ namespace BeatificaBytes.Synology.Mods
                         var keys = comboBox.Tag.ToString().Split(';');
                         var key = keys[0].Substring(3);
 
-                        if (info.ContainsKey(key))
+                        if (CurrentPackage.INFO.ContainsKey(key))
                         {
-                            dirty = comboBox.Text.Trim() != info[key];
-                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, info[key], comboBox.Text.Trim()));
+                            dirty = comboBox.Text.Trim() != CurrentPackage.INFO[key];
+                            if (dirty && changes != null) changes.Add(new Tuple<string, string, string>(key, CurrentPackage.INFO[key], comboBox.Text.Trim()));
                         }
                         else
                         {
@@ -3297,25 +2882,25 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 if (!checkBoxAdminUrl.Checked)
                 {
-                    if (info.ContainsKey("adminport"))
+                    if (CurrentPackage.INFO.ContainsKey("adminport"))
                     {
-                        dirty = !string.IsNullOrEmpty(info["adminport"]);
-                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminport", info["adminport"], ""));
+                        dirty = !string.IsNullOrEmpty(CurrentPackage.INFO["adminport"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminport", CurrentPackage.INFO["adminport"], ""));
                     }
-                    if (info.ContainsKey("adminurl"))
+                    if (CurrentPackage.INFO.ContainsKey("adminurl"))
                     {
-                        dirty = !string.IsNullOrEmpty(info["adminurl"]);
-                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminurl", info["adminurl"], ""));
+                        dirty = !string.IsNullOrEmpty(CurrentPackage.INFO["adminurl"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminurl", CurrentPackage.INFO["adminurl"], ""));
                     }
-                    if (info.ContainsKey("adminprotocol"))
+                    if (CurrentPackage.INFO.ContainsKey("adminprotocol"))
                     {
-                        dirty = !string.IsNullOrEmpty(info["adminprotocol"]);
-                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminprotocol", info["adminprotocol"], ""));
+                        dirty = !string.IsNullOrEmpty(CurrentPackage.INFO["adminprotocol"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("adminprotocol", CurrentPackage.INFO["adminprotocol"], ""));
                     }
-                    if (info.ContainsKey("checkport"))
+                    if (CurrentPackage.INFO.ContainsKey("checkport"))
                     {
-                        dirty = !string.IsNullOrEmpty(info["checkport"]);
-                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("checkport", info["checkport"], ""));
+                        dirty = !string.IsNullOrEmpty(CurrentPackage.INFO["checkport"]);
+                        if (dirty && changes != null) changes.Add(new Tuple<string, string, string>("checkport", CurrentPackage.INFO["checkport"], ""));
                     }
                 }
             }
@@ -3327,17 +2912,17 @@ namespace BeatificaBytes.Synology.Mods
         private bool ResetPackage()
         {
             bool succeed = true;
-            warnings.Clear();
+            mainHelper.Warnings.Clear();
 
-            if (info != null)
+            if (CurrentPackage != null)
             {
-                var resetPackage = CurrentPackageFolder;
+                var resetPackage = CurrentPackage.Folder_Root;
                 var answer = MessageBoxEx.Show(this, "Do you really want to reset the complete Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
                 if (answer == DialogResult.Yes)
                 {
                     string packageName = "";
-                    if (info.ContainsKey("package"))
-                        packageName = info["package"];
+                    if (CurrentPackage.INFO.ContainsKey("package"))
+                        packageName = CurrentPackage.INFO.Package;
                     try
                     {
                         if (string.IsNullOrEmpty(resetPackage))
@@ -3347,12 +2932,12 @@ namespace BeatificaBytes.Synology.Mods
                             if (Directory.Exists(resetPackage))
                             {
                                 // Close without trying to save any pending changes.
-                                CloseCurrentPackage(false);
+                                mainHelper.CloseCurrentPackage(false);
 
                                 var ex = Helper.DeleteDirectory(resetPackage);
                                 if (ex != null)
                                 {
-                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", CurrentPackageFolder, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                                    MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", CurrentPackage.Folder_Root, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                                     succeed = false;
                                 }
                             }
@@ -3360,7 +2945,7 @@ namespace BeatificaBytes.Synology.Mods
                             if (succeed)
                             {
                                 Directory.CreateDirectory(resetPackage);
-                                NewPackage(resetPackage);
+                                mainHelper.OpenNewPackage(resetPackage);
                                 textBoxPackage.Text = packageName;
                             }
                         }
@@ -3381,86 +2966,23 @@ namespace BeatificaBytes.Synology.Mods
             return succeed; //TODO: Handle this return value;
         }
 
-        /// <summary>
-        /// Create and open a new Package in the provided folder if this one is empty. 
-        /// If no folder is provided but a default Package Root folder is configured, a temporary folder is created there.
-        /// If no folder is provided and not default Package Root folder is configured, the user is prompted to pick a folder.
-        /// If the folder contains a package, the user is prompted to open this one.
-        /// If the folder contains a single spk file, this one is deflated and the user is prompter to open this one
-        /// </summary>
-        /// <param name="path"></param>
-        /// <remarks>Any previously opened package must be closed before creating/loading a new one</remarks>
-        private void NewPackage(string path = null)
+        private void BuildPackage()
         {
-            if (!string.IsNullOrEmpty(CurrentPackageFolder))
-            {
-                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before creating or opening a new one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-            }
-            else
-            {
-                DialogResult ready = DialogResult.Cancel;
-                warnings.Clear();
-
-                if (path == null)
-                {
-                    if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
-                    {
-                        // Use a temporary folder in the "default Package Root Folder" defined within MODS' properties (don't use a GUID as name. This is used only for spk "imported", and trigger a "warning message")
-                        path = Path.Combine(Properties.Settings.Default.PackageRoot, "NEW-" + Guid.NewGuid().ToString());
-                        ready = DialogResult.No;
-                    }
-                    else
-                    {
-                        // Prompt the user to pick a target Folder
-                        folderBrowserDialog4Mods.Title = "Pick a folder where your package can be created";
-                        if (string.IsNullOrEmpty(folderBrowserDialog4Mods.InitialDirectory))
-                            folderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-                        ready = PromptForPath(out path);
-                    }
-                }
-                else
-                {
-                    ready = IsPackageFolderReady(path, true);
-                }
-
-                if (ready == DialogResult.Yes)
-                {
-                    var answer = MessageBoxEx.Show(this, "This folder already contains a Package. Do you want to load it?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                    if (answer != DialogResult.Yes) answer = DialogResult.Cancel;
-                }
-                else if (ready == DialogResult.Abort)
-                {
-                    MessageBoxEx.Show(this, "This folder can't be used.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                }
-                if (ready == DialogResult.No)
-                {
-                    // folder is empty and needs to be initialize with a new empty package
-                    InitialConfiguration(path);
-                }
-
-                if ((ready == DialogResult.No || ready == DialogResult.Yes) && (!string.IsNullOrEmpty(path)))
-                    OpenExistingPackage(path);
-            }
-        }
-
-        private void BuildPackage(string path)
-        {
-            warnings.Clear();
+            mainHelper.Warnings.Clear();
 
             // This is required to insure that changes (mainly icons) are correctly applied when installing the package in DSM
             textBoxVersion.Text = Helper.IncrementVersion(textBoxVersion.Text);
 
             using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE GENERATING YOUR PACKAGE..."))
             {
-                SavePackageInfo(path);
+                SavePackageInfo();
 
                 // Create the SPK
-                var packCmd = Path.Combine(path, "Pack.cmd");
+                var packCmd = Path.Combine(CurrentPackage.Folder_Root, "Pack.cmd");
                 if (File.Exists(packCmd))
                 {
                     // Delete existing package if any
-                    var dir = new DirectoryInfo(path);
+                    var dir = new DirectoryInfo(CurrentPackage.Folder_Root);
                     foreach (var file in dir.EnumerateFiles("*.spk"))
                     {
                         Helper.DeleteFile(file.FullName);
@@ -3470,7 +2992,7 @@ namespace BeatificaBytes.Synology.Mods
                     Process pack = new Process();
                     pack.StartInfo.FileName = packCmd;
                     pack.StartInfo.Arguments = "";
-                    pack.StartInfo.WorkingDirectory = path;
+                    pack.StartInfo.WorkingDirectory = CurrentPackage.Folder_Root;
                     pack.StartInfo.UseShellExecute = false;
                     pack.StartInfo.RedirectStandardOutput = true;
                     pack.StartInfo.CreateNoWindow = true;
@@ -3479,8 +3001,8 @@ namespace BeatificaBytes.Synology.Mods
                     if (pack.StartInfo.RedirectStandardOutput) Console.WriteLine(pack.StandardOutput.ReadToEnd());
 
                     // Rename the new Package with its target name
-                    var packName = Path.Combine(path, info["package"] + ".spk");
-                    var tmpName = Path.Combine(path, "mods.spk");
+                    var packName = Path.Combine(CurrentPackage.Folder_Root, CurrentPackage.INFO.Package + ".spk");
+                    var tmpName = Path.Combine(CurrentPackage.Folder_Root, "mods.spk");
                     if (pack.ExitCode == 2 || !File.Exists(tmpName))
                     {
                         MessageBoxEx.Show(this, "Creation of the package has failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
@@ -3506,8 +3028,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void PublishPackage(string PackagePath, string PackageRepo)
         {
-            var packName = info["package"];
-            var archname = info["arch"];
+            var packName = CurrentPackage.INFO.Package;
+            var archname = CurrentPackage.INFO.Arch;
 
             try
             {
@@ -3522,7 +3044,7 @@ namespace BeatificaBytes.Synology.Mods
         }
         private void UnpublishPackage(string PackageRepo)
         {
-            var packName = info["package"];
+            var packName = CurrentPackage.INFO.Package;
 
             try
             {
@@ -3548,15 +3070,8 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void GrantAccess(string fullPath)
-        {
-            DirectoryInfo dInfo = new DirectoryInfo(fullPath);
-            DirectorySecurity dSecurity = dInfo.GetAccessControl();
-            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-            dInfo.SetAccessControl(dSecurity);
-        }
 
-        private void ResetEditScriptMenuIcons()
+        internal void ResetEditScriptMenuIcons()
         {
             foreach (ToolStripItem menu in menuEdit.DropDownItems)
             {
@@ -3585,52 +3100,52 @@ namespace BeatificaBytes.Synology.Mods
                 switch (file)
                 {
                     case "!webservice":
-                        var webservice = resource == null ? null : resource.SelectToken(file.Substring(1));
-                        if (webservice != null && !string.IsNullOrEmpty(CurrentPackageFolder))
-                            file = Path.Combine(CurrentPackageFolder, "INFO"); //Provide a file that exits to trigger the icon on this menu
+                        var webservice = CurrentPackage != null && CurrentPackage.IsLoaded && CurrentPackage.Resource != null ? CurrentPackage.Resource.WebService : null;
+                        if (webservice != null)
+                            file = CurrentPackage.Path_Info; //Provide a file that exits to trigger the icon on this menu
                         else
                             file = null;
                         break;
 
                     case "!usr-local-linker":
-                        var usrLocaLinker = resource == null ? null : resource.SelectToken(file.Substring(1));
-                        if (usrLocaLinker != null && !string.IsNullOrEmpty(CurrentPackageFolder))
-                            file = Path.Combine(CurrentPackageFolder, "INFO"); //Provide a file that exits to trigger the icon on this menu
+                        var usrLocaLinker = CurrentPackage != null && CurrentPackage.IsLoaded && CurrentPackage.Resource != null ? CurrentPackage.Resource.UsrLocalLinker : null;
+                        if (usrLocaLinker != null)
+                            file = CurrentPackage.Path_Info; //Provide a file that exits to trigger the icon on this menu
                         else
                             file = null;
                         break;
                     case "!port-config":
                         file = null;
-                        var portConfig = resource == null ? null : resource.SelectToken("port-config");
-                        if (portConfig != null && !string.IsNullOrEmpty(CurrentPackageFolder))
+                        var portConfig = CurrentPackage != null && CurrentPackage.IsLoaded && CurrentPackage.Resource != null ? CurrentPackage.Resource.PortConfig : null;
+                        if (portConfig != null)
                         {
-                            var protocolFile = portConfig.SelectToken("protocol-file");
+                            var protocolFile = CurrentPackage.Resource.PortConfig.ProtocolFile;
                             if (protocolFile == null) // Maybe the old style ?
                             {
-                                file = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                                file = Path.Combine(CurrentPackage.Folder_Root, portConfig.ToString().Replace("/", "\\"));
                             }
                             else
                             {
-                                file = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
+                                file = Path.Combine(CurrentPackage.Folder_Package, protocolFile.ToString().Replace("/", "\\"));
                             }
                         }
                         break;
                     default:
                         // {0} => dsmuidir
-                        if (!string.IsNullOrEmpty(CurrentPackageFolder))
+                        if (CurrentPackage != null && CurrentPackage.IsLoaded)
                         {
                             if (file.Contains("*"))
                             {
-                                if (Directory.Exists(Path.Combine(CurrentPackageFolder, file)))
+                                if (Directory.Exists(Path.Combine(CurrentPackage.Folder_Root, file)))
                                 {
-                                    var files = Directory.GetFiles(CurrentPackageFolder, file, SearchOption.TopDirectoryOnly);
+                                    var files = Directory.GetFiles(CurrentPackage.Folder_Root, file, SearchOption.TopDirectoryOnly);
                                     if (files.Length > 0) file = files[0]; else file = null;
                                 }
                             }
                             else
                             {
-                                var uidir = info.Keys.Contains("dsmuidir") ? info["dsmuidir"] : "";
-                                file = Path.Combine(CurrentPackageFolder, string.Format(file, uidir));
+                                var uidir = CurrentPackage.INFO.DsmUiDir;
+                                file = Path.Combine(CurrentPackage.Folder_Root, string.Format(file, uidir));
                             }
                         }
                         break;
@@ -3641,161 +3156,6 @@ namespace BeatificaBytes.Synology.Mods
                 menu.Image = new Bitmap(Properties.Resources.Script);
             else
                 menu.Image = null;
-        }
-
-        private void menuOpen_Click(object sender, EventArgs e)
-        {
-            // Close the current Package. This is going to prompt the user to save changes if any. 
-            var saved = CloseCurrentPackage();
-
-            // Open another Package if the user saved/discarded explicitly pending changes.
-            if (saved == DialogResult.Yes || saved == DialogResult.No)
-                OpenExistingPackage();
-        }
-
-        /// <summary>
-        /// Open an existing Package. If no Package Folder is provided, the user will be prompted to pick a folder containing a valid Package.
-        /// If the provided or selected Folder contains a spk file and nothing else, the user will be prompted to deflate that spk.
-        /// If the provided or selected folder is empty, an new package is created.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="import">Import the spk file found in the selected or provided folder, without prompting the user, if this parameter is true and there is no other files next to it.</param>
-        /// <returns>
-        /// True if a package has been opened successfuly
-        /// False otherwise
-        /// </returns>
-        /// <remarks>
-        /// Any previously opened package must be closed before creating/loading a new one
-        /// if import is null, does not check if the provided folder is valid. It is assumed to be prepared (via PreparePackageFolder)
-        /// </remarks>
-        private bool OpenExistingPackage(string path = null, bool? import = false)
-        {
-            bool succeed = true;
-
-            if (!string.IsNullOrEmpty(CurrentPackageFolder))
-            {
-                MessageBoxEx.Show(this, "A Package is currently opened. Close this one before opening another one.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-                succeed = false;
-            }
-            else
-            {
-                previousReportUrl = "";
-
-                DialogResult ready = DialogResult.Cancel;
-                if (path == null)
-                {
-                    folderBrowserDialog4Mods.Title = "Pick a folder containing an existing Package or a spk file to deflated.";
-                    if (Properties.Settings.Default.DefaultPackageRoot)
-                        folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
-                    else
-                        folderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-                    ready = PromptForPath(out path);
-                }
-                else
-                {
-                    ready = import.HasValue ? IsPackageFolderReady(path, import.Value) : DialogResult.Yes;
-                }
-
-                if (ready == DialogResult.Abort)
-                {
-                    if (warnings.Count > 0)
-                    {
-                        var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
-                        MessageBoxEx.Show(this, "The Folder does not contain a valid package.\r\n\r\n" + message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-                    }
-                    ready = DialogResult.Abort;
-                    succeed = false;
-                }
-
-                if (ready == DialogResult.Yes || ready == DialogResult.No)
-                {
-                    ResetValidateChildren(this); // Reset Error Validation on all controls
-
-                    // If the selected folder is empty, create a new package
-                    if (ready == DialogResult.No)
-                    {
-                        ready = MessageBoxEx.Show(this, "The Folder is empty. Do you want to create a new package?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                        if (ready == DialogResult.Yes)
-                            InitialConfiguration(path);
-                        else
-                            ready = DialogResult.Cancel;
-                    }
-
-                    if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
-                    {
-                        if (!path.StartsWith(Properties.Settings.Default.PackageRoot))
-                            PublishWarning(string.Format("This package is not stored in the default Package Root Folder defined in your Parameters...\r\n\r\n[{0}]", path));
-                    }
-
-                    if (ready == DialogResult.Yes)
-                    {
-                        LoadPackageInfo(path);
-                        LoadResourceConfig(path);
-                        LoadPrivilegeConfig(path);
-                        BindData(list, null);
-                        CopyPackagingBinaries(path);
-                        DisplayItem();
-                        textBoxDisplay.Focus();
-                        ResetEditScriptMenuIcons();
-                    }
-                }
-            }
-
-            return succeed;
-        }
-
-        private void CopyPackagingBinaries(string path)
-        {
-            if (File.Exists(Path.Combine(path, "7z.exe")))
-                File.Delete(Path.Combine(path, "7z.exe"));
-            File.Copy(Path.Combine(Helper.ResourcesDirectory, "7z.exe"), Path.Combine(path, "7z.exe"));
-            if (File.Exists(Path.Combine(path, "7z.dll")))
-                File.Delete(Path.Combine(path, "7z.dll"));
-            File.Copy(Path.Combine(Helper.ResourcesDirectory, "7z.dll"), Path.Combine(path, "7z.dll"));
-            if (File.Exists(Path.Combine(path, "Pack.cmd")))
-                File.Delete(Path.Combine(path, "Pack.cmd"));
-            File.Copy(Path.Combine(Helper.ResourcesDirectory, "Pack.cmd"), Path.Combine(path, "Pack.cmd"));
-            if (File.Exists(Path.Combine(path, "Unpack.cmd")))
-                File.Delete(Path.Combine(path, "Unpack.cmd"));
-            File.Copy(Path.Combine(Helper.ResourcesDirectory, "Unpack.cmd"), Path.Combine(path, "Unpack.cmd"));
-
-            var binFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            var hash = Path.Combine(binFolder, "Hash.exe");
-            if (File.Exists(hash))
-            {
-                if (File.Exists(Path.Combine(path, "Hash.exe")))
-                    File.Delete(Path.Combine(path, "Hash.exe"));
-                File.Copy(hash, Path.Combine(path, "Hash.exe"));
-            }
-        }
-
-        /// <summary>
-        /// Prompt the user to pick a folder.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns>
-        /// Yes if the selected folder contains a valid package.
-        /// No if the selected folder is empty.
-        /// Cancel if the user cancelled the request.
-        /// Abort is anytign went wrong.
-        ///</returns>
-        private DialogResult PromptForPath(out string path)
-        {
-            DialogResult getPackage = DialogResult.Abort;
-
-            if (!folderBrowserDialog4Mods.ShowDialog())
-            {
-                path = null;
-                getPackage = DialogResult.Cancel;
-            }
-            else
-            {
-                path = folderBrowserDialog4Mods.FileName;
-                getPackage = IsPackageFolderReady(path);
-            }
-
-            return getPackage;
         }
 
         /// <summary>
@@ -3809,32 +3169,32 @@ namespace BeatificaBytes.Synology.Mods
         /// Cancel if the user cancelled the request.
         /// Abort otherwise. Ex.: if the folder does not exist.
         /// </returns>
-        private DialogResult IsPackageFolderReady(string path, bool autoDeflate = false)
-        {
-            DialogResult result = DialogResult.Abort;
+        //private DialogResult IsPackageFolderReady(string path, bool autoDeflate = false)
+        //{
+        //    DialogResult result = DialogResult.Abort;
 
-            if (!Directory.Exists(path))
-            {
-                result = DialogResult.Abort;
-            }
-            else
-            {
-                var content = GetFolderContent(path);
-                if (content.Count == 0)
-                    // Use the provided folder which is empty
-                    result = DialogResult.No;
-                else
-                {
-                    // Check if the provided folder, which is not empty, contains a valid Package or an Spk to possibly be deflated
-                    result = IsPackageFolderValid(path, autoDeflate);
+        //    if (!Directory.Exists(path))
+        //    {
+        //        result = DialogResult.Abort;
+        //    }
+        //    else
+        //    {
+        //        var content = GetFolderContent(path);
+        //        if (content.Count == 0)
+        //            // Use the provided folder which is empty
+        //            result = DialogResult.No;
+        //        else
+        //        {
+        //            // Check if the provided folder, which is not empty, contains a valid Package or an Spk to possibly be deflated
+        //            result = IsPackageFolderValid(path, autoDeflate);
 
-                    // Accept folder with a valid package possibly next to some other files.
-                    if (result == DialogResult.No) result = DialogResult.Yes;
-                }
-            }
+        //            // Accept folder with a valid package possibly next to some other files.
+        //            if (result == DialogResult.No) result = DialogResult.Yes;
+        //        }
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// Check is a folder contains a valid deflated Package.
@@ -3848,245 +3208,111 @@ namespace BeatificaBytes.Synology.Mods
         /// Cancel if the user cancelled the request.
         /// Abort if the folder does not exist, does not contain a valid Package or anything went wrong.
         /// </returns>
-        private DialogResult IsPackageFolderValid(string path, bool autoDeflate = false, bool forceDeflate = false)
+        //private DialogResult IsPackageFolderValid(string path, bool autoDeflate = false, bool forceDeflate = false)
+        //{
+        //    DialogResult valid = DialogResult.Yes; //Folder does not contains a valid package
+        //    if (!Directory.Exists(path))
+        //    {
+        //        valid = DialogResult.Abort;
+        //    }
+        //    else
+        //    {
+        //        var spkList = Directory.GetFiles(path, "*.spk");
+        //        var content = GetFolderContent(path);
+        //        if (spkList.Length == 1 && (content.Count == 1 || forceDeflate))
+        //        // Folder containing only one spk => deflate
+        //        {
+        //            if (forceDeflate || autoDeflate || MessageBoxEx.Show(this, "This folder contains a SPK file. Do you want to deflate this package ?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
+        //            {
+        //                if (!DeflatePackage(path))
+        //                    valid = DialogResult.Abort;
+        //            }
+        //            else
+        //            {
+        //                valid = DialogResult.Cancel;
+        //            }
+        //        }
+        //        else if (spkList.Length > 1)
+        //        // Folder containing several spk => abort
+        //        {
+        //            PublishWarning("The package is in a folder with several SPK files.");
+        //            valid = DialogResult.Abort;
+        //        }
+
+        //        if (valid == DialogResult.Yes)
+        //        {
+        //            FileInfo info = new FileInfo(Path.Combine(path, "INFO"));
+
+        //        }
+        //    }
+        //    return valid;
+        //}
+
+        private void menuOpen_Click(object sender, EventArgs e)
         {
-            DialogResult valid = DialogResult.Yes; //Folder does not contains a valid package
-            if (!Directory.Exists(path))
-            {
-                valid = DialogResult.Abort;
-            }
-            else
-            {
-                var spkList = Directory.GetFiles(path, "*.spk");
-                var content = GetFolderContent(path);
-                if (spkList.Length == 1 && (content.Count == 1 || forceDeflate))
-                // Folder containing only one spk => deflate
-                {
-                    if (forceDeflate || autoDeflate || MessageBoxEx.Show(this, "This folder contains a SPK file. Do you want to deflate this package ?", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
-                    {
-                        if (!DeflatePackage(path))
-                            valid = DialogResult.Abort;
-                    }
-                    else
-                    {
-                        valid = DialogResult.Cancel;
-                    }
-                }
-                else if (spkList.Length > 1)
-                // Folder containing several spk => abort
-                {
-                    PublishWarning("The package is in a folder with several SPK files.");
-                    valid = DialogResult.Abort;
-                }
+            // Close the current Package. This is going to prompt the user to save changes if any. 
+            var saved = mainHelper.CloseCurrentPackage();
 
-                if (valid == DialogResult.Yes)
-                {
-                    FileInfo info = new FileInfo(Path.Combine(path, "INFO"));
-
-                    // Refresh content
-                    content = GetFolderContent(path);
-                    if (spkList.Length == 1) content.Remove(spkList[0]);
-                    IgnoreValidPackageFiles(info, content);
-
-                    var conf = Path.Combine(path, "conf");
-                    if (content.Contains(conf))
-                    {
-                        content.Remove(conf);
-                        //PublishWarning("This Package contains a 'conf' folder. So far, only the Port-Config worker, PKG_DEPS and PKG_CONX are fully supported. Other workers are not supported. Privileges are partially supported.");
-                    }
-
-                    if (content.Count > 0)
-                    {
-                        if (info.Exists)
-                        {
-                            // Folder contains an existing "extracted" Package (not a single spk file) with some unknown files
-                            PublishWarning("This Package contains unknown elements:" + Environment.NewLine + content.Aggregate((i, j) => i.Replace(path, "") + Environment.NewLine + j.Replace(path, "")));
-                            valid = DialogResult.No;
-                        }
-                        else
-                        {
-                            // Folder contains something else than a package
-                            valid = DialogResult.Abort;
-                        }
-                    }
-                    else
-                    {
-                        if (info.Exists)
-                        {
-                            // Folder contains an existing "extracted" Package (not a single spk file)
-                            valid = DialogResult.Yes;
-                        }
-                        else
-                        {
-                            if (!forceDeflate)
-                            {
-                                // Folder contains a Package but is missing the INFO file
-                                if (MessageBoxEx.Show(this, "This folder contains a SPK file but is missing the INFO file. Do you want to deflate this package ?\r\n\r\nWarning: this will override all existing files. This cannot be undone!", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-                                {
-                                    // Force SPk to be deflated
-                                    valid = IsPackageFolderValid(path, true, true);
-                                }
-                                else
-                                {
-                                    valid = DialogResult.Cancel;
-                                }
-                            }
-                            else
-                            {
-                                // Although forceDeflate is set and executed, the folder is still not contain a valid Package Folder.
-                                valid = DialogResult.Abort;
-                            }
-                        }
-                    }
-                }
-            }
-            return valid;
+            // Open another Package if the user saved/discarded explicitly pending changes.
+            if (saved == DialogResult.Yes || saved == DialogResult.No)
+                mainHelper.OpenExistingPackage();
         }
-
-        private static List<string> GetFolderContent(string path)
-        {
-            var content = Directory.GetDirectories(path).ToList();
-            content.AddRange(Directory.GetFiles(path));
-            return content;
-        }
-
-        private void IgnoreValidPackageFiles(FileInfo info, List<string> content)
-        {
-            var path = Path.GetDirectoryName(info.FullName);
-
-            if (info.Exists)
-            {
-                var uiDir = GetUIDir(path);
-                if (!string.IsNullOrEmpty(uiDir)) content.Remove(Path.Combine(path, uiDir));
-            }
-
-            content.Remove(Path.Combine(path, "Hash.exe"));
-
-            content.Remove(Path.Combine(path, "7z.dll"));
-            content.Remove(Path.Combine(path, "7z.exe"));
-            content.Remove(Path.Combine(path, "Pack.cmd"));
-            content.Remove(Path.Combine(path, "Unpack.cmd"));
-
-            content.Remove(Path.Combine(path, "INFO"));
-            content.Remove(Path.Combine(path, "PACKAGE_ICON.PNG"));
-            content.Remove(Path.Combine(path, "PACKAGE_ICON_120.PNG")); //?? Found in some packages
-            content.Remove(Path.Combine(path, "PACKAGE_ICON_256.PNG"));
-            content.Remove(Path.Combine(path, "package"));
-            content.Remove(Path.Combine(path, "scripts"));
-            content.Remove(Path.Combine(path, "WIZARD_UIFILES"));
-
-            content.Remove(Path.Combine(path, "LICENSE"));
-            content.Remove(Path.Combine(path, "CHANGELOG"));
-
-            // signature are ignored and deleted (invalid as soon as the package is modified)
-            string syno_signature = Path.Combine(path, "syno_signature.asc");
-            if (content.Remove(syno_signature))
-                File.Delete(syno_signature);
-
-            var remaining = content.ToList();
-            foreach (var other in remaining)
-            {
-                if (other.EndsWith(".png") && Path.GetFileNameWithoutExtension(other).StartsWith("screen_")) content.Remove(other);
-            }
-        }
-
-        private bool DeflatePackage(string path)
-        {
-            CopyPackagingBinaries(path);
-            bool result = true;
-
-            var unpackCmd = Path.Combine(path, "Unpack.cmd");
-            if (File.Exists(unpackCmd))
-            {
-                using (new CWaitCursor(labelToolTip, "PLEASE WAIT WHILE DEFLATING YOUR PACKAGE..."))
-                {
-                    // Execute the script to generate the SPK
-                    Process unpack = new Process();
-                    unpack.StartInfo.FileName = unpackCmd;
-                    unpack.StartInfo.Arguments = "";
-                    unpack.StartInfo.WorkingDirectory = path;
-                    unpack.StartInfo.UseShellExecute = true; // required to run as admin
-                    unpack.StartInfo.RedirectStandardOutput = false; // may not read from standard output when run as admin
-                    unpack.StartInfo.CreateNoWindow = true; // Does not work if UseShellExecute = true
-                    unpack.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    unpack.StartInfo.Verb = "runas"; //Required to run as admin as some packages have "symlink" resulting in "ERROR: Can not create symbolic link : Access is denied."
-                    unpack.Start();
-                    unpack.WaitForExit(30000);
-                    if (unpack.StartInfo.RedirectStandardOutput) Console.WriteLine(unpack.StandardOutput.ReadToEnd());
-                    if (unpack.ExitCode == 2)
-                    {
-                        result = false;
-                        MessageBoxEx.Show(this, "Extraction of the package has failed. Possibly try to run Unpack.cmd as Administrator in your package folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    }
-
-                    //As the package has been run as admin, Users don't have full control access
-                    GrantAccess(path);
-                }
-            }
-            else
-            {
-                MessageBoxEx.Show(this, "For some reason, required resource files are missing. Your package can't be extracted", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-                result = false;
-            }
-
-            return result;
-        }
-
         private void menuReset_Click(object sender, EventArgs e)
         {
             ResetPackage();
         }
-
         private void menuBuild_Click(object sender, EventArgs e)
         {
             if (ValidateChildren())
             {
-                BuildPackage(CurrentPackageFolder);
+                BuildPackage();
                 SystemSounds.Hand.Play();
                 if (Properties.Settings.Default.PromptExplorer)
                 {
-                    var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", info["package"], CurrentPackageFolder), "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+                    var answer = MessageBoxEx.Show(this, string.Format("Your Package '{0}' is ready in {1}.\nDo you want to open that folder now?", CurrentPackage.INFO.Package, CurrentPackage.Folder_Root), "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
                     if (answer == DialogResult.Yes)
                     {
-                        Process.Start(CurrentPackageFolder);
+                        Process.Start(CurrentPackage.Folder_Root);
                     }
                 }
                 if (Properties.Settings.Default.CopyPackagePath)
                 {
-                    Clipboard.SetText(CurrentPackageFolder);
+                    Clipboard.SetText(CurrentPackage.Folder_Root);
                 }
             }
         }
 
         private void menuSave_Click(object sender, EventArgs e)
         {
-            if (!dirty && !CheckChanges(null))
+            if (!mainHelper.Dirty && !CheckChanges(null))
                 MessageBoxEx.Show(this, "There is no pending change to be saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            else
+            {
+                // Do not prompt the user to save changes and just do it!
+                var saved = mainHelper.SaveCurrentPackage(true);
 
-            // Do not prompt the user to save changes and just do it! 
-            var saved = SavePackage(CurrentPackageFolder, true);
-
-            // Some Changes have been saved.
-            if (saved == DialogResult.Yes)
-                MessageBoxEx.Show(this, "Package saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                // Some Changes have been saved.
+                if (saved == DialogResult.Yes)
+                    MessageBoxEx.Show(this, "Package saved.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+            }
         }
 
         private void MenuItemOpenRecent_ClickHandler(object sender, EventArgs e)
         {
             // Close the current Package. This is going to prompt the user to save changes if any. 
-            var saved = CloseCurrentPackage();
+            var saved = mainHelper.CloseCurrentPackage();
 
             // Open the requested Package if the user saved/discarded explicitly pending changes.
             if (saved == DialogResult.Yes || saved == DialogResult.No)
             {
                 ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
                 String path = clickedItem.Tag.ToString();
-                if (!OpenExistingPackage(path))
+                if (!mainHelper.OpenExistingPackage(path))
                 {
                     // if the package cannot be opened, remove it from the menu 'Open Recent'
-                    RemoveRecentPath(path);
+                    mainHelper.RemoveRecentPathFromSettings(path);
                     Properties.Settings.Default.Save();
-                    CreateRecentsMenu();
+                    PrepareRecentsMenu();
                 }
             }
         }
@@ -4101,11 +3327,17 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="scriptName">"scripts/{scriptname}"</param>
+        /// <param name="title"></param>
+        /// <returns></returns>
         private bool EditInstallationScript(string scriptName, string title)
         {
             var done = false;
             var created = false;
-            var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
+            var scriptPath = Path.Combine(CurrentPackage.Folder_Root, scriptName);
 
             if (scriptName.EndsWith("*"))
             {
@@ -4193,18 +3425,18 @@ namespace BeatificaBytes.Synology.Mods
 
         private void menuAddWizard_Click(object sender, EventArgs e)
         {
-            var wizard = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES");
+            var wizard = CurrentPackage.Folder_WizardUI;
             if (Directory.Exists(wizard))
             {
                 var result = MessageBoxEx.Show(this, "Are you sure you want to delete your wizard?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3);
                 if (result == DialogResult.Yes)
                 {
-                    wizardExist = false;
+                    mainHelper.WizardExist = false;
                     var ex = Helper.DeleteDirectory(wizard);
                     if (ex != null)
                     {
                         MessageBoxEx.Show(this, string.Format("The operation cannot be completed because a fatal error occured while trying to delete {0}: {1}", wizard, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                        wizardExist = true;
+                        mainHelper.WizardExist = true;
                     }
                 }
             }
@@ -4212,7 +3444,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Directory.CreateDirectory(wizard);
                 MessageBoxEx.Show(this, "You can now Edit wizards to install/upgrade/uninstall this package.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-                wizardExist = true;
+                mainHelper.WizardExist = true;
             }
             EnableItemDetails();
         }
@@ -4222,10 +3454,10 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = DialogResult.Cancel;
             var menu = (ToolStripMenuItem)sender;
             var info = menu.Tag.ToString().Split(';');
-            var json = info[0]; // = "xxx_uifile with xxx = install, uninstall or upgrade"
+            var json = info[0]; // = "WIZARD_UIFILES\xxx_uifile with xxx = install, uninstall or upgrade"
             var file = info[1]; // = "install, uninstall or upgrade"
-            var jsonPath = Path.Combine(CurrentPackageFolder, json);
-            var filePath = Path.Combine(CurrentPackageFolder, "WIZARD_UIFILES", file);
+            var jsonPath = Path.Combine(CurrentPackage.Folder_Root, json);
+            var filePath = Path.Combine(CurrentPackage.Folder_WizardUI, file);
 
             if (!File.Exists(jsonPath))
             {
@@ -4240,7 +3472,7 @@ namespace BeatificaBytes.Synology.Mods
 
                 if (result == DialogResult.Yes)
                 {
-                    jsonPath = Path.Combine(CurrentPackageFolder, json + ".sh");
+                    jsonPath = Path.Combine(CurrentPackage.Folder_Root, json + ".sh");
                     if (!File.Exists(filePath) && MessageBoxEx.Show(this, "Do you want to create a json wizard for your script ?", "Type of Wizard", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                     {
                         Helper.WriteAnsiFile(jsonPath, Properties.Settings.Default.wizard.Replace("@MODS_WIZARD@", file));
@@ -4253,7 +3485,7 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else if (result == DialogResult.No)
                 {
-                    jsonPath = Path.Combine(CurrentPackageFolder, json);
+                    jsonPath = Path.Combine(CurrentPackage.Folder_Root, json);
                     Helper.WriteAnsiFile(jsonPath, string.Empty);
                 }
             }
@@ -4375,10 +3607,11 @@ namespace BeatificaBytes.Synology.Mods
 
         private void buttonAdvanced_Click(object sender, EventArgs e)
         {
-            SavePackageInfo(CurrentPackageFolder);
+            //TODO: only update package info and items
+            SavePackageInfo();
             SaveItemsConfig();
 
-            var infoName = Path.Combine(CurrentPackageFolder, "INFO");
+            var infoName = CurrentPackage.Path_Info;
             string content = File.ReadAllText(infoName);
             var script = new ScriptInfo(content, "INFO Editor", new Uri("https://help.synology.com/developer-guide/synology_package/INFO.html"), "Details about INFO settings");
 
@@ -4389,9 +3622,9 @@ namespace BeatificaBytes.Synology.Mods
             content = null;
             string configName = null;
             ScriptInfo config = null;
-            if (info.ContainsKey("dsmuidir"))
+            if (!string.IsNullOrWhiteSpace(CurrentPackage.INFO.DsmUiDir))
             {
-                configName = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                configName = CurrentPackage.Folder_UI;
                 if (File.Exists(configName))
                 {
                     content = File.ReadAllText(configName);
@@ -4405,46 +3638,51 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Helper.WriteAnsiFile(infoName, script.Code);
                 if (configName != null) Helper.WriteAnsiFile(configName, config.Code);
-                LoadPackageInfo(CurrentPackageFolder);
-                LoadResourceConfig(CurrentPackageFolder);
-                LoadPrivilegeConfig(CurrentPackageFolder);
-                BindData(list, null);
+
+                //TODO: this should not be required
+                ProcessCurrentPackage();
+                PrepareDataBinding(null);
                 DisplayItem();
             }
         }
 
-        private void menuOpenFolder_Click(object sender, EventArgs e)
+        private void menuOpenPackageFolder_Click(object sender, EventArgs e)
         {
-            if (!(string.IsNullOrEmpty(CurrentPackageFolder)) && Directory.Exists(CurrentPackageFolder))
+            if (CurrentPackage != null && CurrentPackage.IsLoaded)
             {
-                var path = CurrentPackageFolder;
+                var path = CurrentPackage.Folder_Root;
                 if (state == State.Add || state == State.Edit)
                 {
                     if (current.Value.title != null)
                     {
                         //In Add/Edit item mode, open its current folder instead of the package folder
                         var cleanedCurrent = Helper.CleanUpText(current.Value.title);
-                        if (info["singleApp"] == "yes")
+                        if (CurrentPackage.INFO.SingleApp == "yes")
                             cleanedCurrent = "";
                         path = getItemPath(cleanedCurrent);
                     }
                 }
                 Process.Start(path);
             }
+            else if (!(string.IsNullOrEmpty(Properties.Settings.Default.PackageRoot)) && Directory.Exists(Properties.Settings.Default.PackageRoot))
+            {
+                var path = Properties.Settings.Default.PackageRoot;
+                Process.Start(path);
+            }
         }
 
         private void menuDelete_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(CurrentPackageFolder) && Directory.Exists(CurrentPackageFolder) && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            if (CurrentPackage != null && CurrentPackage.IsLoaded && MessageBoxEx.Show(this, "Are you sure that ou want to delete this Package?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
             {
-                var path = CurrentPackageFolder;
+                var path = CurrentPackage.Folder_Root;
 
                 // Close the current Package without trying to save pending changes. 
-                CloseCurrentPackage(false);
+                mainHelper.CloseCurrentPackage(false);
 
-                RemoveRecentPath(path);
+                mainHelper.RemoveRecentPathFromSettings(path);
                 Properties.Settings.Default.Save();
-                CreateRecentsMenu();
+                PrepareRecentsMenu();
                 var ex = Helper.DeleteDirectory(path);
                 if (ex != null)
                 {
@@ -4453,156 +3691,10 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        /// <summary>
-        /// Prompt the user to save pending changes if any and close the current package.
-        /// </summary>
-        /// <param name="trySavingPendingChange">Do not try to save any pending changes if this parameter is false.</param>
-        /// <param name="forceSavingPendingChange">Pending changes are saved without prompting the user if this parameters is true.</param>
-        /// <returns>
-        /// Yes if the pending changes were succesfuly saved.
-        /// No if the user discarded the pending changes, if there was no pending changes or if the user was not prompted.
-        /// Cancel if the user cancelled the saving.
-        /// Abort if anything went wrong or if pending changes were not valid and couldn't be saved.
-        /// </returns>
-        private DialogResult CloseCurrentPackage(bool trySavingPendingChange = true, bool forceSavingPendingChange = false)
-        {
-            warnings.Clear();
-            pictureBoxWarning.Visible = false;
-
-            DialogResult closed = DialogResult.No;
-            if (info != null && Directory.Exists(CurrentPackageFolder)) try
-                {
-                    // Prompt the user to save changes if required
-                    if (trySavingPendingChange) closed = SavePackage(CurrentPackageFolder, forceSavingPendingChange);
-
-                    // Couldn't save some pending changes
-                    if (closed == DialogResult.Abort)
-                    {
-                        closed = MessageBoxEx.Show(this, "Pending changes couldn't be saved!\r\n(Check that all fields are valid)\r\n\r\nDo you want to close your package anyway?\r\nChanges will be lost!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button3);
-                        if (closed != DialogResult.Yes)
-                            // User doesn't want to close without saving remaining changes
-                            closed = DialogResult.Cancel;
-                        else
-                            // User discards remaining changes
-                            closed = DialogResult.No;
-                    }
-
-                    // No need to save or user saved/discarded explicitly possible changes
-                    if (closed == DialogResult.Yes || closed == DialogResult.No)
-                    {
-                        // Rename the parent folder with the package display name (or the package name) if other changes had to be done
-                        if (trySavingPendingChange) RenamePackageFolder();
-
-                        textBoxDisplay.Focus();
-                        ResetValidateChildren(this); // Reset Error Validation on all controls
-                        ResetEditScriptMenuIcons();
-                        CurrentPackageFolder = "";
-
-                        info = null;
-                        list = null;
-                        picturePkg_256 = null;
-                        picturePkg_120 = null;
-                        picturePkg_72 = null;
-                        FillInfoScreen();
-                        BindData(list, null);
-                        DisplayDetails(new KeyValuePair<string, AppsData>(null, null));
-                        labelToolTip.Text = "";
-
-                        textBoxDisplay.Focus();
-                        closed = DialogResult.Yes;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to close the current package: {0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                    closed = DialogResult.Abort;
-                }
-
-            return closed;
-        }
-
-        /// <summary>
-        /// Rename the Package folder into its display name or package name if it's not a temporary folder.
-        /// </summary>
-        /// <remarks>This doesn't rethow any exception if the renaming failed.</remarks>
-        private void RenamePackageFolder()
-        {
-            try
-            {
-                var parent = Path.GetFileName(CurrentPackageFolder);
-                Guid tmp;
-                var isTempFolder = Guid.TryParse(parent, out tmp);
-                if (!isTempFolder)
-                {
-                    var newName = GetPackageFolderName();
-                    if (!string.IsNullOrEmpty(newName) && !newName.Equals(parent, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var RenamedPackageRootPath = CurrentPackageFolder.Replace(parent, newName);
-                        var increment = 0;
-                        while (Directory.Exists(RenamedPackageRootPath))
-                        {
-                            increment++;
-                            RenamedPackageRootPath = string.Format("{0} ({1})", CurrentPackageFolder.Replace(parent, newName), increment);
-                        }
-                        RemoveRecentPath(CurrentPackageFolder);
-                        // Moving Package results in Windows Explorer locking them => copy into a new folder and delete the old one
-                        // Directory.Move(PackageRootPath, RenamedPackageRootPath);
-                        var oldPackageRootPath = CurrentPackageFolder;
-                        if (Helper.CopyDirectory(CurrentPackageFolder, RenamedPackageRootPath))
-                        {
-                            if (Directory.Exists(RenamedPackageRootPath) && RenamedPackageRootPath != oldPackageRootPath)
-                            {
-                                CurrentPackageFolder = RenamedPackageRootPath;
-                                Helper.DeleteDirectory(oldPackageRootPath);
-                            }
-                            else
-                            {
-                                // Something went wrong while copying the old folder into a renamed one ?! Reuse therefore the old one :(
-                                CurrentPackageFolder = oldPackageRootPath;
-                            }
-                        }
-                        else
-                        {
-                            // Something wrong happened while renaming. Delete the target folder and keep the original one
-                            if (Directory.Exists(RenamedPackageRootPath) && RenamedPackageRootPath != oldPackageRootPath)
-                            {
-                                CurrentPackageFolder = oldPackageRootPath;
-                                Helper.DeleteDirectory(RenamedPackageRootPath);
-                            }
-                        }
-                        SavePackageSettings(CurrentPackageFolder);
-                        CreateRecentsMenu();
-                    }
-                }
-            }
-            catch (Exception ex)
-            { }
-        }
-
-        private string GetPackageFolderName()
-        {
-            string name = "";
-
-            if (info.ContainsKey("displayname") && !string.IsNullOrEmpty(info["displayname"]))
-                name = (info["displayname"]);
-            else if (info.ContainsKey("package") && !string.IsNullOrEmpty(info["package"]))
-                name = info["package"];
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                foreach (char c in Path.GetInvalidFileNameChars())
-                {
-                    name = name.Replace(c, '_');
-                }
-            }
-
-            return name;
-        }
-
         private void menuClose_Click(object sender, EventArgs e)
         {
             // Close the current Package. This is going to prompt the user to save changes if any. 
-            CloseCurrentPackage(true);
+            mainHelper.CloseCurrentPackage(true);
         }
 
         private void menuDocumentation_Click(object sender, EventArgs e)
@@ -4670,21 +3762,21 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (checkBoxSingleApp.Checked)
             {
-                if (info["singleApp"] != "yes" && !TransformIntoSingleApp())
+                if (CurrentPackage.INFO.SingleApp != "yes" && !TransformIntoSingleApp())
                     checkBoxSingleApp.Checked = false;
             }
             else
             {
-                if (list != null && list.items.Count == 1)
+                if (CurrentPackage != null && CurrentPackage.Config != null && CurrentPackage.Config.items.Count == 1)
                 {
-                    var title = list.items.First().Value.title;
-                    var type = list.items.First().Value.itemType;
+                    var title = CurrentPackage.Config.items.First().Value.title;
+                    var type = CurrentPackage.Config.items.First().Value.itemType;
                     if (type != 0)
                     {
                         var cleanTitle = Helper.CleanUpText(title);
 
-                        if (!list.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
-                            if (info != null)
+                        if (!CurrentPackage.Config.items.First().Value.url.Contains(string.Format("/{0}/", cleanTitle)))
+                            if (CurrentPackage != null)
                             {
                                 if (MessageBoxEx.Show(this, string.Format("Do you want to tansform {0} into a side by side app?", title), "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Yes)
                                 {
@@ -4709,20 +3801,20 @@ namespace BeatificaBytes.Synology.Mods
 
                                         var focused = Helper.FindFocusedControl(this);
 
-                                        var oldName = string.Format("/webman/3rdparty/{0}/", info["package"]);
-                                        var newName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
+                                        var oldName = string.Format("/webman/3rdparty/{0}/", CurrentPackage.INFO.Package);
+                                        var newName = string.Format("/webman/3rdparty/{0}/{1}/", CurrentPackage.INFO.Package, cleanTitle);
 
-                                        list.items.First().Value.url = list.items.First().Value.url.Replace(oldName, newName);
-                                        dirty = true;
+                                        CurrentPackage.Config.items.First().Value.url = CurrentPackage.Config.items.First().Value.url.Replace(oldName, newName);
+                                        mainHelper.Dirty = true;
 
-                                        BindData(list, null);
+                                        PrepareDataBinding(null);
                                         DisplayItem();
                                         focused.Focus();
 
-                                        info["singleApp"] = "no";
+                                        CurrentPackage.INFO.SingleApp = "no";
 
                                         // Force saving changes without prompting the user. This is required has changes have been done in the config file.
-                                        SavePackage(CurrentPackageFolder, true);
+                                        mainHelper.SaveCurrentPackage(true);
                                     }
                                     catch (Exception ex)
                                     {
@@ -4731,7 +3823,7 @@ namespace BeatificaBytes.Synology.Mods
                                 }
                                 else
                                 {
-                                    info["singleApp"] = "no";
+                                    CurrentPackage.INFO.SingleApp = "no";
                                 }
                             }
                             else
@@ -4739,8 +3831,8 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
                 else
-                    if (info != null)
-                    info["singleApp"] = "no";
+                    if (CurrentPackage != null)
+                    CurrentPackage.INFO.SingleApp = "no";
             }
 
             EnableItemDetails();
@@ -4749,6 +3841,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool TransformIntoSingleApp()
         {
             bool succeed = true;
+            var list = CurrentPackage.Config;
             if (list != null)
             {
                 if (list.items.Count == 1)
@@ -4774,7 +3867,7 @@ namespace BeatificaBytes.Synology.Mods
             return succeed;
         }
 
-        private bool TransformIntoSingleApp(KeyValuePair<string, AppsData> item)
+        private bool TransformIntoSingleApp(KeyValuePair<string, AppData> item)
         {
             var succeed = true;
             var title = item.Value.title;
@@ -4804,20 +3897,20 @@ namespace BeatificaBytes.Synology.Mods
 
                             var focused = Helper.FindFocusedControl(this);
 
-                            var oldName = string.Format("/webman/3rdparty/{0}/{1}/", info["package"], cleanTitle);
-                            var newName = string.Format("/webman/3rdparty/{0}/", info["package"]);
+                            var oldName = string.Format("/webman/3rdparty/{0}/{1}/", CurrentPackage.INFO.Package, cleanTitle);
+                            var newName = string.Format("/webman/3rdparty/{0}/", CurrentPackage.INFO.Package);
 
                             item.Value.url = item.Value.url.Replace(oldName, newName);
-                            dirty = true;
+                            mainHelper.Dirty = true;
 
-                            BindData(list, null);
+                            PrepareDataBinding(null);
                             DisplayItem();
                             focused.Focus();
 
-                            info["singleApp"] = "yes";
+                            CurrentPackage.INFO.SingleApp = "yes";
 
                             // Force saving changes without prompting the user. This is required has changes have been done in the config file.
-                            SavePackage(CurrentPackageFolder, true);
+                            mainHelper.SaveCurrentPackage(true);
                         }
                         catch (Exception ex)
                         {
@@ -4826,8 +3919,8 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
                 }
-                else if (info != null)
-                    info["singleApp"] = "yes";
+                else if (CurrentPackage != null)
+                    CurrentPackage.INFO.SingleApp = "yes";
             }
             return succeed;
         }
@@ -4846,29 +3939,29 @@ namespace BeatificaBytes.Synology.Mods
             DialogResult result = openFileDialog4Mods.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                CurrentPackageFolder = ImportPackage(openFileDialog4Mods.FileName);
+                mainHelper.OpenExistingPackage(openFileDialog4Mods.FileName, true);
             }
         }
 
-        private string ImportPackage(string spk)
-        {
-            string path = ExpandSpkInTempFolder(spk);
-            OpenExistingPackage(path, true);
-            return path;
-        }
+        //private string ImportPackage(string spk)
+        //{
+        //    string path = ExpandSpkInTempFolder(spk);
+        //    OpenExistingPackage(path, true);
+        //    return path;
+        //}
 
-        private string ExpandSpkInTempFolder(string spk)
-        {
-            var spkInfo = new FileInfo(spk);
-            var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(path);
-            spkInfo.CopyTo(Path.Combine(path, spkInfo.Name));
+        //private string ExpandSpkInTempFolder(string spk)
+        //{
+        //    var spkInfo = new FileInfo(spk);
+        //    var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        //    Directory.CreateDirectory(path);
+        //    spkInfo.CopyTo(Path.Combine(path, spkInfo.Name));
 
-            if (!DeflatePackage(path))
-                path = null;
+        //    if (!DeflatePackage(path))
+        //        path = null;
 
-            return path;
-        }
+        //    return path;
+        //}
 
         private void menuMove_Click(object sender, EventArgs e)
         {
@@ -4878,7 +3971,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool PromptToMovePackage(string path = null)
         {
             bool succeed = true;
-            warnings.Clear();
+            mainHelper.Warnings.Clear();
 
             DialogResult result = DialogResult.Cancel;
             if (path == null)
@@ -4895,7 +3988,7 @@ namespace BeatificaBytes.Synology.Mods
                     path = folderBrowserDialog4Mods.FileName;
                     if (Directory.Exists(path))
                     {
-                        var name = info["displayname"];
+                        var name = CurrentPackage.INFO.Displayname;
                         var copies = Directory.GetDirectories(path, name + " (*)");
                         if (copies.Length > 0 || Directory.Exists(Path.Combine(path, name)))
                         {
@@ -4932,8 +4025,8 @@ namespace BeatificaBytes.Synology.Mods
             {
                 try
                 {
-                    var source = CurrentPackageFolder;
-                    if (CloseCurrentPackage(true) == DialogResult.Yes)
+                    var source = CurrentPackage.Folder_Root;
+                    if (mainHelper.CloseCurrentPackage(true) == DialogResult.Yes)
                     {
                         Helper.CopyDirectory(source, path);
                         if (Directory.Exists(path) && !path.Equals(source, StringComparison.InvariantCultureIgnoreCase))
@@ -4944,11 +4037,11 @@ namespace BeatificaBytes.Synology.Mods
                     else
                         succeed = false;
 
-                    if (succeed) succeed = OpenExistingPackage(path);
+                    if (succeed) succeed = mainHelper.OpenExistingPackage(path);
                 }
                 catch (Exception ex)
                 {
-                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", CurrentPackageFolder, path, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBoxEx.Show(this, string.Format("A Fatal error occured while trying to move {0} to {1} : {2}", CurrentPackage.Folder_Root, path, ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     succeed = false;
                 }
             }
@@ -4986,13 +4079,13 @@ namespace BeatificaBytes.Synology.Mods
 
         private void textBoxPort_TextChanged(object sender, EventArgs e)
         {
-            if ((!(string.IsNullOrEmpty(textBoxPort.Text) || textBoxPort.Text.Equals("default")) && comboBoxProtocol.SelectedIndex == 0))
+            if ((!(string.IsNullOrEmpty(textBoxPort.Text) || textBoxPort.Text.Equals("default", StringComparison.InvariantCultureIgnoreCase)) && comboBoxProtocol.SelectedIndex == 0))
                 comboBoxProtocol.SelectedIndex = 1;
         }
 
         private void comboBoxProtocol_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxProtocol.SelectedIndex == 0 && !string.IsNullOrEmpty(textBoxPort.Text) && !textBoxPort.Text.Equals("default"))
+            if (comboBoxProtocol.SelectedIndex == 0 && !string.IsNullOrEmpty(textBoxPort.Text) && !textBoxPort.Text.Equals("default", StringComparison.InvariantCultureIgnoreCase))
                 comboBoxProtocol.SelectedIndex = 1;
         }
 
@@ -5002,7 +4095,7 @@ namespace BeatificaBytes.Synology.Mods
             {
                 if (string.IsNullOrEmpty(textBoxPort.Text))
                     textBoxPort.Text = "default";
-                else if (!textBoxPort.Text.Equals("default"))
+                else if (!textBoxPort.Text.Equals("default", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if (!textBoxPort.Text.All(char.IsNumber))
                     {
@@ -5020,13 +4113,21 @@ namespace BeatificaBytes.Synology.Mods
 
         private void checkBoxLegacy_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBoxLegacy.Focused && comboBoxItemType.SelectedIndex == (int)UrlType.Url && checkBoxLegacy.Checked)
+            if (checkBoxLegacy.Focused && comboBoxItemType.SelectedIndex == (int)AppDataType.Url && checkBoxLegacy.Checked)
             {
                 if (MessageBoxEx.Show(this, "If you enable this option with an external URL, you will have to disable the option 'Improve security with HTTP Content Security Policy (CSP) header' in the Control Panel > Security !", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1) == DialogResult.Cancel)
                 {
                     checkBoxLegacy.Checked = false;
                 }
+                else
+                {
+                    comboBoxProtocol.SelectedIndex = 0;
+                    textBoxPort.Text = "default";
+                }
             }
+
+            comboBoxProtocol.Enabled = !checkBoxLegacy.Checked;
+            textBoxPort.Enabled = !checkBoxLegacy.Checked;
         }
 
         private void menuAdvancedEditor_Click(object sender, EventArgs e)
@@ -5074,7 +4175,7 @@ namespace BeatificaBytes.Synology.Mods
             textBoxAdminPort.Visible = advanced && checkBoxAdminUrl.Checked;
             textBoxAdminUrl.Visible = advanced && checkBoxAdminUrl.Checked;
             comboBoxAdminProtocol.Visible = advanced && checkBoxAdminUrl.Checked;
-            checkBoxCheckPort.Visible = advanced;
+            checkBoxCheckPort.Visible = advanced && checkBoxAdminUrl.Checked;
 
             buttonDependencies.Visible = advanced;
         }
@@ -5158,28 +4259,28 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Helper.ValidateFirmware(textBox, e, errorProvider);
 
-                if (isDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && !Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
+                if (mainHelper.IsDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && !Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
                 {
                     if (MessageBoxEx.Show(this, "Downgrading a package from DSM 7.x is not supported (but it could work if you do manually all the required changes). Do you really want to continue ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
                     {
                         e.Cancel = true;
-                        textBox.Text = info["os_min_ver"];
+                        textBox.Text = CurrentPackage.INFO.Os_min_ver;
                     }
                     else
                     {
-                        isDSM7x = false;
+                        mainHelper.IsDSM7x = false;
                     }
                 }
-                if (!isDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
+                if (!mainHelper.IsDSM7x && !string.IsNullOrWhiteSpace(textBox.Text) && Helper.CheckDSMVersionMin(textBox.Text, 7, 0, 40000))
                 {
                     if (MessageBoxEx.Show(this, "Upgrading a package to DSM 7.x is not supported (but it could work if you do manually all the required changes). Do you really want to continue ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
                     {
                         e.Cancel = true;
-                        textBox.Text = info["os_min_ver"];
+                        textBox.Text = CurrentPackage.INFO.Os_min_ver;
                     }
                     else
                     {
-                        isDSM7x = true;
+                        mainHelper.IsDSM7x = true;
                     }
                 }
 
@@ -5193,14 +4294,14 @@ namespace BeatificaBytes.Synology.Mods
             textBoxAdminUrl.Visible = checkBoxAdminUrl.Checked;
             checkBoxCheckPort.Visible = checkBoxAdminUrl.Checked;
 
-            if (checkBoxAdminUrl.Checked && info != null && !info.ContainsKey("checkport"))
+            if (checkBoxAdminUrl.Checked && CurrentPackage != null && CurrentPackage.INFO.CheckPort != null)
             {
-                info.Add("checkport", "yes");
+                CurrentPackage.INFO.CheckPort = "yes";
                 checkBoxCheckPort.Checked = true;
             }
-            if (!checkBoxAdminUrl.Checked && info != null && info.ContainsKey("checkport"))
+            if (!checkBoxAdminUrl.Checked && CurrentPackage != null && CurrentPackage.INFO.CheckPort != null)
             {
-                info.Remove("checkport");
+                CurrentPackage.INFO.CheckPort = null;
                 checkBoxCheckPort.Checked = false;
             }
         }
@@ -5212,7 +4313,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void menuManageScreenshots_Click(object sender, EventArgs e)
         {
-            var snapshotManager = new SnapshotManager(CurrentPackageFolder);
+            var snapshotManager = new SnapshotManager(CurrentPackage.Folder_Root);
             snapshotManager.ShowDialog(this);
         }
 
@@ -5236,15 +4337,15 @@ namespace BeatificaBytes.Synology.Mods
             foreach (var tag in tags)
             {
                 if (tag.StartsWith("PKG"))
-                    info[tag.Substring(3)] = control.Text;
+                    CurrentPackage.INFO[tag.Substring(3)] = control.Text;
             }
         }
 
         private void buttonDependencies_Click(object sender, EventArgs e)
         {
             SetInfoTag(textBoxMinFirmware);
-            var edit = new Dependencies(info);
-            if (edit.ShowDialog(this) == DialogResult.OK) dirty = true;
+            var edit = new Dependencies(CurrentPackage.INFO);
+            if (edit.ShowDialog(this) == DialogResult.OK) mainHelper.Dirty = true;
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -5263,7 +4364,7 @@ namespace BeatificaBytes.Synology.Mods
             var param = new Parameters();
             param.ShowDialog();
             if (Properties.Settings.Default.Recents != null && Properties.Settings.Default.Recents.Count == 0)
-                CreateRecentsMenu();
+                PrepareRecentsMenu();
 
             // ReLoad AutoComplete for Firmware
             Helper.LoadDSMReleases(textBoxMinFirmware);
@@ -5272,8 +4373,8 @@ namespace BeatificaBytes.Synology.Mods
 
         private void pictureBoxWarning_Click(object sender, EventArgs e)
         {
-            var message = warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
-            warnings.Clear();
+            var message = mainHelper.Warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
+            mainHelper.Warnings.Clear();
             pictureBoxWarning.Visible = false;
             MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
         }
@@ -5307,13 +4408,11 @@ namespace BeatificaBytes.Synology.Mods
             if (validPackage4DragDrop != null)
             {
                 // Close the current Package. This is going to prompt the user to save changes if any. 
-                var saved = CloseCurrentPackage();
+                var saved = mainHelper.CloseCurrentPackage();
 
                 if (saved == DialogResult.Yes || saved == DialogResult.No)
                 {
-                    var path = PreparePackageFolder(validPackage4DragDrop);
-                    if (path != null)
-                        OpenExistingPackage(path, null);
+                    mainHelper.OpenExistingPackage(validPackage4DragDrop, true);
                 }
 
                 validPackage4DragDrop = null;
@@ -5345,7 +4444,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             var menu = (ToolStripMenuItem)sender;
             var scriptName = menu.Tag.ToString();
-            var scriptPath = Path.Combine(CurrentPackageFolder, scriptName);
+            var scriptPath = Path.Combine(CurrentPackage.Folder_Root, scriptName);
             var license = "";
 
             if (File.Exists(scriptPath))
@@ -5371,7 +4470,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private string getItemPath(string itemName)
         {
-            return Path.Combine(CurrentPackageFolder, @"package", info["dsmuidir"], itemName);
+            return Path.Combine(CurrentPackage.Folder_UI, itemName);
         }
         private string getItemPath(string itemName, string scriptName)
         {
@@ -5402,7 +4501,7 @@ namespace BeatificaBytes.Synology.Mods
             if (validFiles4DragDrop)
             {
                 var cleanedCurrent = Helper.CleanUpText(current.Value.title);
-                if (info["singleApp"] == "yes")
+                if (CurrentPackage.INFO.SingleApp == "yes")
                     cleanedCurrent = "";
 
                 var target = getItemPath(cleanedCurrent);
@@ -5462,9 +4561,9 @@ namespace BeatificaBytes.Synology.Mods
         private void menuRouterConfig_Click(object sender, EventArgs e)
         {
             string file = null;
-            if (info != null && info.ContainsKey("dsmuidir"))
+            if (CurrentPackage != null && CurrentPackage.IsDmsUiDirDefined)
             {
-                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                file = CurrentPackage.Path_Config;
                 if (File.Exists(file))
                 {
                     file = file.Replace("config", "dsm.cgi.conf");
@@ -5487,9 +4586,9 @@ namespace BeatificaBytes.Synology.Mods
         private void menuRouterScript_Click(object sender, EventArgs e)
         {
             string file = null;
-            if (info != null && info.ContainsKey("dsmuidir"))
+            if (CurrentPackage != null && CurrentPackage.IsDmsUiDirDefined)
             {
-                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                file = CurrentPackage.Path_Config;
                 if (File.Exists(file))
                 {
                     file = file.Replace("config", "router.cgi");
@@ -5513,27 +4612,28 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5936))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 5936))
             {
                 MessageBoxEx.Show(this, "Port-Config worker is only supported by firmware >= 6.0-5936", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
-                string portConfigFile = null;
+                string protocolFilePath = null;
                 IniData portConfigData = null;
-                var portConfig = resource == null ? null : resource.SelectToken("port-config");
+                var portConfig = CurrentPackage.Resource.PortConfig;
                 if (portConfig != null)
                 {
-                    var protocolFile = portConfig.SelectToken("protocol-file");
+                    var protocolFile = CurrentPackage.Resource.PortConfig.ProtocolFile;
                     if (protocolFile == null) // Maybe the old style ?
                     {
-                        portConfigFile = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                        //TODO: review why this was coded in the old version ? Does it exist ?
+                        protocolFilePath = Path.Combine(CurrentPackage.Folder_Root, portConfig.ToString().Replace("/", "\\"));
                     }
                     else
                     {
-                        portConfigFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
+                        protocolFilePath = Path.Combine(CurrentPackage.Folder_Package, protocolFile.ToString().Replace("/", "\\"));
                     }
-                    if (File.Exists(portConfigFile))
+                    if (File.Exists(protocolFilePath))
                     {
                         //Read the INI protocol file (remove space before and after the '=')
                         IniParserConfiguration config = new IniParserConfiguration();
@@ -5542,7 +4642,7 @@ namespace BeatificaBytes.Synology.Mods
                         var fileParser = new FileIniDataParser(parser);
                         try
                         {
-                            portConfigData = fileParser.ReadFile(portConfigFile);
+                            portConfigData = fileParser.ReadFile(protocolFilePath);
                         }
                         catch
                         {
@@ -5551,26 +4651,28 @@ namespace BeatificaBytes.Synology.Mods
                     }
                 }
 
-                var worker = new PortConfigWorker(portConfig, portConfigData, GetAllWizardVariables(), info["package"]);
+                var worker = new PortConfigWorker(portConfig, portConfigData, GetAllWizardVariables(), CurrentPackage.INFO.Package);
                 if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
                 {
-                    portConfig = worker.PortConfig;
+                    var obj = JsonConvert.DeserializeObject<JObject>(worker.PortConfig.ToString());
+                    portConfig = obj.ToObject<PortConfig>();
                     portConfigData = worker.SynoConfig;
 
                     if (portConfig != null)
                     {
-                        var protocolFile = portConfig.SelectToken("protocol-file");
+                        var protocolFile = CurrentPackage.Resource.PortConfig.ProtocolFile;
                         if (protocolFile == null) // Maybe the old style ?
                         {
-                            portConfigFile = Path.Combine(CurrentPackageFolder, portConfig.ToString().Replace("/", "\\"));
+                            //TODO: review why this was coded in the old version ? Does it exist ?
+                            protocolFilePath = Path.Combine(CurrentPackage.Folder_Root, portConfig.ToString().Replace("/", "\\"));
                         }
                         else
                         {
-                            portConfigFile = Path.Combine(CurrentPackageFolder, "package", protocolFile.ToString().Replace("/", "\\"));
+                            protocolFilePath = Path.Combine(CurrentPackage.Folder_Package, protocolFile.ToString().Replace("/", "\\"));
                         }
-                        if (portConfigFile != null && portConfigFile.EndsWith(".sc"))
+                        if (protocolFilePath != null && protocolFilePath.EndsWith(".sc"))
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(portConfigFile));
+                            Directory.CreateDirectory(Path.GetDirectoryName(protocolFilePath));
 
                             //Read the INI protocol string and remove space before and after the '='
                             IniParserConfiguration config = new IniParserConfiguration();
@@ -5586,32 +4688,32 @@ namespace BeatificaBytes.Synology.Mods
                             }
 
                             //Save the INI protocol file
-                            Helper.WriteAnsiFile(portConfigFile, portConfigData.ToString());
+                            Helper.WriteAnsiFile(protocolFilePath, portConfigData.ToString());
                             //var fileParser = new FileIniDataParser(parser);
                             //fileParser.WriteFile(protocolFile, portConfigData, Encoding.GetEncoding(1252));
 
 
                             //Update the Resource file
-                            if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
-                            resource["port-config"] = portConfig;
+                            //if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
+                            CurrentPackage.Resource.PortConfig = portConfig;
                         }
                     }
                     else
                     {
                         //Update the Resource file (or delete it) and delete the INI Protocol file
-                        if (!string.IsNullOrEmpty(portConfigFile) && File.Exists(portConfigFile))
+                        if (!string.IsNullOrEmpty(protocolFilePath) && File.Exists(protocolFilePath))
                         {
-                            File.Delete(portConfigFile);
-                            var synoConfigDir = Path.GetDirectoryName(portConfigFile);
+                            File.Delete(protocolFilePath);
+                            var synoConfigDir = Path.GetDirectoryName(protocolFilePath);
                             if (Directory.EnumerateFileSystemEntries(synoConfigDir).Count() == 0)
                                 Directory.Delete(synoConfigDir);
                         }
-                        if (resource != null)
-                            resource.Remove("port-config");
+                        //Remove port Config
+                        CurrentPackage.Resource.PortConfig = null;
                     }
 
                     //Save the Resource file
-                    SaveResourceConfig(CurrentPackageFolder);
+                    SaveResourceConfig();
                 }
             }
         }
@@ -5620,7 +4722,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 7145))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 7145))
             {
                 MessageBoxEx.Show(this, "Syslog config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5634,7 +4736,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 4, 2, 3160))
             {
                 MessageBoxEx.Show(this, "Php INI worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5648,7 +4750,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 5, 5, 0062))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 5, 5, 0062))
             {
                 MessageBoxEx.Show(this, "Maria DB worker is only supported by firmware >= 5.5.47-0062", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5662,7 +4764,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5924))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 5924))
             {
                 MessageBoxEx.Show(this, "index DB worker is only supported by firmware >= 6.0-5924", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5676,7 +4778,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 5941))
             {
                 MessageBoxEx.Show(this, "Data Share worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5690,7 +4792,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 4, 2, 3160))
             {
                 MessageBoxEx.Show(this, "Apache worker is only supported by firmware >= 4.2-3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
@@ -5704,62 +4806,61 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 5941))
             {
                 MessageBoxEx.Show(this, "Linker worker is only supported by firmware >= 6.0-5941", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
-                var linkerConfig = resource == null ? null : resource.SelectToken("usr-local-linker");
-
-                var ui = info.ContainsKey("dsmuidir") ? info["dsmuidir"] : "";
-                var worker = new Worker_Linker(linkerConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
+                var ui = CurrentPackage.Folder_UI;
+                var worker = new Worker_Linker(CurrentPackage);
                 if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
                 {
-                    linkerConfig = worker.Specification;
+                    //TODO: Review the Edit and Save of Linker
 
-                    if (linkerConfig != null && linkerConfig.HasValues)
-                    {
-                        //Update the Resource file
-                        if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
-                        resource["usr-local-linker"] = linkerConfig;
-                    }
-                    else
-                    {
-                        if (resource != null)
-                            resource.Remove("usr-local-linker");
-                    }
+                    //linkerConfig = worker.Specification;
+
+                    //if (linkerConfig != null && linkerConfig.HasValues)
+                    //{
+                    //    //Update the Resource file
+                    //    if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
+                    //    resource["usr-local-linker"] = linkerConfig;
+                    //}
+                    //else
+                    //{
+                    //    if (resource != null)
+                    //        resource.Remove("usr-local-linker");
+                    //}
 
                     //Save the Resource file
-                    SaveResourceConfig(CurrentPackageFolder);
+                    SaveResourceConfig();
                 }
             }
         }
 
         private void pkgDependenciesToolStripMenu_Click(object sender, EventArgs e)
         {
-            EditPackageConfig("DEPS", "Define dependency between packages with restrictions of DSM version. Before your package is installed or upgraded, these packages must be installed first. Package Center controls the order of start or stop packages according to the dependency.");
+            EditPackageConfig(CurrentPackage.Path_Pkg_Deps, "Define dependency between packages with restrictions of DSM version. Before your package is installed or upgraded, these packages must be installed first. Package Center controls the order of start or stop packages according to the dependency.");
         }
 
 
         private void pkgConflictsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditPackageConfig("CONX", "Define conflicts between packages with restrictions of DSM version. Before your package is installed or upgraded, these conflicting packages cannot be installed.");
+            EditPackageConfig(CurrentPackage.Path_Pkg_Conx, "Define conflicts between packages with restrictions of DSM version. Before your package is installed or upgraded, these conflicting packages cannot be installed.");
         }
 
-        private void EditPackageConfig(string pkgType, string doc)
+        private void EditPackageConfig(string pkgFile, string doc)
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 4, 2, 3160))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 4, 2, 3160))
             {
-                MessageBoxEx.Show(this, "PKG " + pkgType + " is only supported by firmware >= 4.2.3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBoxEx.Show(this, "PKG_xxxx are only supported by firmware >= 4.2.3160", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
                 IniData pkgConfig = null;
-                var pkgConfigFile = Path.Combine(CurrentPackageFolder, "conf", "PKG_" + pkgType);
-                if (File.Exists(pkgConfigFile))
+                if (File.Exists(pkgFile))
                 {
                     //Read the INI PKG_DEPS file (remove space before and after the '=')
                     IniParserConfiguration config = new IniParserConfiguration();
@@ -5768,15 +4869,15 @@ namespace BeatificaBytes.Synology.Mods
                     var fileParser = new FileIniDataParser(parser);
                     try
                     {
-                        pkgConfig = fileParser.ReadFile(pkgConfigFile);
+                        pkgConfig = fileParser.ReadFile(pkgFile);
                     }
                     catch
                     {
-                        MessageBoxEx.Show(this, string.Format("PKG_" + pkgType + " file {0} can't be parsed.", pkgConfigFile), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        MessageBoxEx.Show(this, string.Format("PKG file {0} can't be parsed.", pkgFile), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                     }
                 }
 
-                var pkgConfigEditor = new PKG_Conf(pkgConfig, GetAllWizardVariables(), "PKG_" + pkgType, doc);
+                var pkgConfigEditor = new PKG_Conf(pkgConfig, GetAllWizardVariables(), Path.GetFileName(pkgFile), doc);
                 if (pkgConfigEditor.ShowDialog(this) == DialogResult.OK && pkgConfigEditor.PendingChanges())
                 {
                     pkgConfig = pkgConfigEditor.PkgConf;
@@ -5796,7 +4897,7 @@ namespace BeatificaBytes.Synology.Mods
                         }
                         pkgConfig = pkg_copy;
 
-                        Directory.CreateDirectory(Path.GetDirectoryName(pkgConfigFile));
+                        Directory.CreateDirectory(Path.GetDirectoryName(pkgFile));
 
                         //Read the INI PKG string and remove space before and after the '='
                         IniParserConfiguration config = new IniParserConfiguration();
@@ -5814,15 +4915,15 @@ namespace BeatificaBytes.Synology.Mods
                         //Save the INI protocol file
                         //var fileParser = new FileIniDataParser(parser);
                         //fileParser.WriteFile(pkgConfigFile, pkgConfig);
-                        Helper.WriteAnsiFile(pkgConfigFile, pkgConfig.ToString());
+                        Helper.WriteAnsiFile(pkgFile, pkgConfig.ToString());
                     }
                     else
                     {
                         //Update the Resource file (or delete it) and delete the INI PKG
-                        if (!string.IsNullOrEmpty(pkgConfigFile) && File.Exists(pkgConfigFile))
+                        if (!string.IsNullOrEmpty(pkgFile) && File.Exists(pkgFile))
                         {
-                            File.Delete(pkgConfigFile);
-                            var synoConfigDir = Path.GetDirectoryName(pkgConfigFile);
+                            File.Delete(pkgFile);
+                            var synoConfigDir = Path.GetDirectoryName(pkgFile);
                             if (Directory.EnumerateFileSystemEntries(synoConfigDir).Count() == 0)
                                 Directory.Delete(synoConfigDir);
                         }
@@ -5843,30 +4944,31 @@ namespace BeatificaBytes.Synology.Mods
                 menuReviewPendingChanges.Image = null;
         }
 
-        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        private void UnpublishToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(CurrentPackageRepository))
-                UnpublishPackage(CurrentPackageRepository);
+            if (!string.IsNullOrEmpty(SSPKRepository))
+                UnpublishPackage(SSPKRepository);
         }
 
         private void privilegeConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 7145))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 7145))
             {
                 MessageBoxEx.Show(this, "Privilege-Config worker is only supported by firmware >= 6.0-7145", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
 
-                var privilegeEditor = new Worker_Privilege(privilege, info);
+                var privilegeEditor = new Worker_Privilege(CurrentPackage.Privilege, CurrentPackage.INFO);
                 if (privilegeEditor.ShowDialog(this) == DialogResult.OK)
                 {
-                    privilege = privilegeEditor.Specification as JObject;
+                    //privilege = privilegeEditor.Specification as JObject;
+                    CurrentPackage.Privilege = PackagePrivilege.Load(CurrentPackage.Path_Privilege, privilegeEditor.GetPrivilege());
 
                     //Save the Resource file
-                    SavePrivilegeConfig(CurrentPackageFolder);
+                    SavePrivilegeConfig();
                 }
                 else
                 {
@@ -5881,89 +4983,135 @@ namespace BeatificaBytes.Synology.Mods
         {
             UpdatePackageInfo();
 
-            if (!Helper.CheckDSMVersionMin(info, 6, 0, 5941))
+            if (!Helper.CheckDSMVersionMin(CurrentPackage.INFO, 6, 0, 5941))
             {
                 MessageBoxEx.Show(this, "Web Service worker is only supported by firmware >= 7.0", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else
             {
-                var WebServiceConfig = resource == null ? null : resource.SelectToken("webservice");
+                //var WebServiceConfig = resource == null ? null : resource.SelectToken("webservice");
 
                 //var test = "{ \"webservice\": { \"services\": [{ \"service\": \"myapplication\", \"display_name\": \"MyApplication\", \"support_alias\": true, \"support_server\": true, \"type\": \"nginx_php\", \"root\": \"myapplication\", \"icon\": \"ui/MyIcon_{0}.png\", \"intercept_errors\": false, \"php\": { \"profile_name\": \"MyApplication Profile\", \"profile_desc\": \"PHP Profile for MyApplication\", \"backend\": 8, \"open_basedir\": \"/var/services/web_packages/myapplication:/tmp:/var/services/tmp\", \"extensions\": [ \"curl\", \"dom\", \"exif\", \"fileinfo\", \"gd\", \"hash\", \"iconv\", \"imagick\", \"json\", \"mbstring\", \"mysql\", \"mysqli\", \"openssl\", \"pcre\", \"pdo_mysql\", \"xml\", \"zlib\", \"zip\" ], \"php_settings\": { \"mysql.default_socket\": \"/run/mysqld/mysqld10.sock\", \"mysqli.default_socket\": \"/run/mysqld/mysqld10.sock\", \"pdo_mysql.default_socket\": \"/run/mysqld/mysqld10.sock\" }, \"user\": \"MyApplication\", \"group\": \"http\" }, \"connect_timeout\": 60, \"read_timeout\": 3600, \"send_timeout\": 60 }], \"portals\": [{ \"service\": \"myapplication\", \"type\": \"alias\", \"name\": \"myapplication1\", \"display_name\": \"My Application 1\", \"alias\": \"myapplication1\", \"app\": \"com.mycompany.app\" }], \"pkg_dir_prepare\": [{ \"source\": \"/var/packages/MODS_DemoUiSpk7/target/src\", \"target\": \"myapplication\", \"mode\": \"0755\", \"group\": \"http\", \"user\": \"MyApplication\" }] }, \"usr-local-linker\": { \"bin\": [\"bin/demouispk7-cli\"] }}";
 
-                var ui = info.ContainsKey("dsmuidir") ? info["dsmuidir"] : "";
-                var worker = new Worker_WebService(WebServiceConfig, Path.Combine(CurrentPackageFolder, "package"), ui);
+                var ui = CurrentPackage.Folder_UI;
+                var worker = new Worker_WebService(CurrentPackage.Resource);
                 if (worker.ShowDialog(this) == DialogResult.OK && worker.PendingChanges())
                 {
-                    WebServiceConfig = worker.Specification;
+                    //TODO: Review the edit and save of WebService
 
-                    if (WebServiceConfig != null && WebServiceConfig.HasValues)
-                    {
-                        //Update the Resource file
-                        if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
-                        resource["webservice"] = WebServiceConfig;
-                    }
-                    else
-                    {
-                        if (resource != null)
-                            resource.Remove("webservice");
-                    }
+                    //WebServiceConfig = worker.Specification;
+
+                    //if (WebServiceConfig != null && WebServiceConfig.HasValues)
+                    //{
+                    //    //Update the Resource file
+                    //    if (resource == null) resource = JsonConvert.DeserializeObject<JObject>("{}");
+                    //    resource["webservice"] = WebServiceConfig;
+                    //}
+                    //else
+                    //{
+                    //    if (resource != null)
+                    //        resource.Remove("webservice");
+                    //}
 
                     //Save the Resource file
-                    SaveResourceConfig(CurrentPackageFolder);
+                    SaveResourceConfig();
                 }
             }
         }
 
         private void buttonPreloadTexts_Click(object sender, EventArgs e)
         {
-            var file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
-            file = file.Replace("config", @"texts\enu\strings");
-
-            if (File.Exists(file))
+            if (CurrentPackage != null && CurrentPackage.IsDmsUiDirDefined)
             {
-                var preloadTexts = new PreloadTexts(file, current.Value.preloadTexts);
-                if (preloadTexts.ShowDialog() == DialogResult.OK)
+                var file = CurrentPackage.Path_Strings;
+                if (File.Exists(file))
                 {
-                    var strings = preloadTexts.strings;
-                    candidate_preloads = new List<string>();
-                    foreach (var elements in strings)
+                    var preloadTexts = new PreloadTexts(file, current.Value.preloadTexts);
+                    if (preloadTexts.ShowDialog() == DialogResult.OK)
                     {
-                        candidate_preloads.Add(elements[0] + ":" + elements[1]);
+                        var strings = preloadTexts.strings;
+                        candidate_preloads = new List<string>();
+                        foreach (var elements in strings)
+                        {
+                            candidate_preloads.Add(elements[0] + ":" + elements[1]);
+                        }
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show(this, "You must first define Strings for this package.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                {
+                    MessageBox.Show(this, "You must first define Strings for this package.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
 
         private void toolStripMenuItemStrings_Click(object sender, EventArgs e)
         {
-            string file = null;
-            if (info != null && info.ContainsKey("dsmuidir"))
+            if (CurrentPackage != null && CurrentPackage.IsDmsUiDirDefined)
             {
-                file = Path.Combine(CurrentPackageFolder, string.Format(CONFIGFILE, info["dsmuidir"]));
+                var file = CurrentPackage.Path_Strings;
+                string content = "";
                 if (File.Exists(file))
                 {
-                    file = file.Replace("config", @"texts\enu\strings");
+                    content = File.ReadAllText(file);
+                }
 
-                    string content = "";
-                    if (File.Exists(file))
-                    {
-                        content = File.ReadAllText(file);
-                    }
-
-                    var strings = new ScriptInfo(content, "Strings", new Uri("https://help.synology.com/developer-guide/integrate_dsm/i18n.html"), "Strings (i18n) referenced by config, help, etc...");
-                    DialogResult result = Helper.ScriptEditor(strings, null, null);
-                    if (result == DialogResult.OK)
-                    {
-                        Helper.WriteAnsiFile(file, strings.Code);
-                        toolStripMenuItemStrings.Image = new Bitmap(Properties.Resources.EditedScript);
-                    }
+                var strings = new ScriptInfo(content, "Strings", new Uri("https://help.synology.com/developer-guide/integrate_dsm/i18n.html"), "Strings (i18n) referenced by config, help, etc...");
+                DialogResult result = Helper.ScriptEditor(strings, null, null);
+                if (result == DialogResult.OK)
+                {
+                    Helper.WriteAnsiFile(file, strings.Code);
+                    toolStripMenuItemStrings.Image = new Bitmap(Properties.Resources.EditedScript);
                 }
             }
+        }
+
+        internal void Reset_UI()
+        {
+            // Reset Warnings and releated icon
+            // TODO: embed warinings and related feeatures in a class
+            mainHelper.Warnings.Clear();
+            pictureBoxWarning.Visible = false;
+
+            //Disable all items on the Screen
+            //groupBoxItem.Enabled = false;
+            //groupBoxPackage.Enabled = false;
+            comboBoxTransparency.SelectedIndex = 0;
+            mainHelper.PicturePkg_256 = null;
+            mainHelper.PicturePkg_120 = null;
+            mainHelper.PicturePkg_72 = null;
+
+            //Todo: check if this is usefull here (used to be done before refactoring)
+            //CurrentPackage.Config = null;
+
+            DisplayPackage();
+        }
+        internal void DisplayPackage()
+        {
+            ShowAdvancedEditor(Properties.Settings.Default.AdvancedEditor);
+
+            ResetValidateChildren(this); // Reset Error Validation on all controls
+            ResetEditScriptMenuIcons(); // Reset the icon showing that a script has been edited and must be saved
+            PrepareRecentsMenu(); // Reset the "Open Recent" menu
+            PrepareDataBinding(null);
+
+            ProcessCurrentPackage();
+
+            DisplayItem();
+            EnableItemDetails();
+
+            labelToolTip.Text = "";
+            textBoxDisplay.Focus();
+        }
+
+        internal void Reset_UI_menuReviewPendingChanges()
+        {
+            menuReviewPendingChanges.Image = null;
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (mainHelper != null) mainHelper.Close();
+            mainHelper = null;
         }
     }
 }

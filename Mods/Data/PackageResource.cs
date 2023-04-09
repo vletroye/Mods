@@ -1,20 +1,80 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 // Created using https://json2csharp.com/
-namespace BeatificaBytes.Synology.Mods.Json.SpkResource
+namespace BeatificaBytes.Synology.Mods
 {
-    // WebserviceRoot  myDeserializedClass = JsonConvert.DeserializeObject<WebserviceRoot>(myJsonResponse);
+    // PackageResource  myDeserializedClass = JsonConvert.DeserializeObject<PackageResource>(myJsonResponse);
 
-    public class Root
+    public class PackageResource
     {
-        public Webservice webservice { get; set; }
+        internal FileInfo FilePath { get; set; }
+        internal string Folder { get { return Path.GetDirectoryName(FilePath.FullName); } }
 
+        internal static PackageResource Load(JObject resource)
+        {
+            return resource.ToObject<PackageResource>();
+        }
+        public static PackageResource Load(string resourcePath)
+        {
+            PackageResource obj = null;
+            if (File.Exists(resourcePath))
+            {
+                var json = File.ReadAllText(resourcePath);
+                try
+                {
+                    var resource = JsonConvert.DeserializeObject<JObject>(json);
+                    obj = resource.ToObject<PackageResource>();
+                    obj.FilePath = new FileInfo(resourcePath);
+                }
+                catch (Exception ex)
+                {
+                    //PublishWarning(string.Format("The resource file '{0}' is corrupted...", resourceFile));
+                }
+            }
+            return obj;
+        }
+
+        internal void Save()
+        {
+            if (FilePath.Exists)
+                Helper.DeleteFile(FilePath.FullName);
+
+            if (!Directory.Exists(Folder))
+                Directory.CreateDirectory(Folder);
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                if (json.Count() > 0)
+                    Helper.WriteAnsiFile(FilePath.FullName, json);
+            }
+            catch (Exception ex)
+            {
+                //TODO: throw an exception
+                //PublishWarning(string.Format("The privilege file '{0}' can't be updated.", privilegeFile));
+            }
+
+            if (Directory.EnumerateFileSystemEntries(Folder).Count() == 0)
+                Directory.Delete(Folder);
+        }
+
+        [JsonProperty("webservice")]
+        public WebService WebService { get; set; }
         [JsonProperty("usr-local-linker")]
         public UsrLocalLinker UsrLocalLinker { get; set; }
+        [JsonProperty("port-config")]
+        public PortConfig PortConfig { get; set; }
+        [JsonProperty("syslog-config")]
+        public SyslogConfig SyslogConfig { get; set; }
     }
-    public class Webservice
+
+    public class WebService
     {
         public List<Service> services { get; set; }
         [DefaultValue(null)]
@@ -96,4 +156,18 @@ namespace BeatificaBytes.Synology.Mods.Json.SpkResource
         public List<string> bin { get; set; }
     }
 
+    public class SyslogConfig
+    {
+        [JsonProperty("patterndb-relpath")]
+        public string PatterndbRelpath { get; set; }
+
+        [JsonProperty("logrotate-relpath")]
+        public string LogrotateRelpath { get; set; }
+    }
+
+    public class PortConfig
+    {
+        [JsonProperty("protocol-file")]
+        public string ProtocolFile { get; set; }
+    }
 }

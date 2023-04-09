@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -32,7 +33,7 @@ namespace BeatificaBytes.Synology.Mods
         private JToken linker;
         private State stateLinker = State.None;
         private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/resource_acquisition/usrlocal_linker.html"), "Details about Linker");
-        private string ui;
+        private string ui = null;
 
         public JToken Specification
         {
@@ -47,27 +48,30 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        public Worker_Linker(JToken linker, string targetPath, string ui)
+        internal Worker_Linker(Package package)
         {
-            this.ui = ui;
-
             InitializeComponent();
-            SetLinker(linker);
+            SetLinker(package.Resource);
 
             textboxLinkerPath.AutoCompleteCustomSource = new AutoCompleteStringCollection();
 
-            if (Directory.Exists(Path.Combine(targetPath, "bin")))
+            var dir = new DirectoryInfo(package.Folder_UI);
+            if (Directory.Exists(Path.Combine(package.Folder_Package, "bin")))
             {
-                //structure "old style" with app, bin, etc, lib in the target director.
-                ui = "";
+                //structure "old style" with app, bin, etc, lib in the target directory.
+                dir = new DirectoryInfo(package.Folder_Package);
+            }
+            else
+            {
+                ui = package.INFO.DsmUiDir;
             }
 
-            var dir = string.IsNullOrEmpty(ui) ? new DirectoryInfo(targetPath) : new DirectoryInfo(Path.Combine(targetPath, ui));
+
             textboxLinkerPath.AutoCompleteCustomSource.Clear();
             var excludes = new string[] { "images", "config", "dsm.cgi.conf", "router.cgi" };
             foreach (var path in dir.EnumerateFiles("*.*", SearchOption.AllDirectories))
             {
-                var file = path.FullName.Remove(0, targetPath.Length + 1);
+                var file = path.FullName.Remove(0, package.Folder_Package.Length + 1);
                 if (!Array.Exists(excludes, element => file.StartsWith(element)))
                 {
                     textboxLinkerPath.AutoCompleteCustomSource.Add(file.Replace(@"\", @"/"));
@@ -75,10 +79,10 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void SetLinker(JToken linker)
+        private void SetLinker(PackageResource linker)
         {
-            origlinker = linker;
-            Specification = linker == null ? JsonConvert.DeserializeObject<JObject>(@"{}") : linker.DeepClone();
+            origlinker = JToken.Parse(JsonConvert.SerializeObject(linker.UsrLocalLinker));
+            Specification = linker == null ? JsonConvert.DeserializeObject<JObject>(@"{}") : JToken.Parse(JsonConvert.SerializeObject(linker.UsrLocalLinker));
 
             DisplayLinker();
         }

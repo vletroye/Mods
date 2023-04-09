@@ -105,7 +105,7 @@ namespace BeatificaBytes.Synology.Mods
             else
                 BrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-            if (BrowserDialog4Mods.ShowDialog())
+            if (BrowserDialog4Mods.ShowDialog(this.Handle))
             {
                 Properties.Settings.Default.PackageRepo = BrowserDialog4Mods.FileName;
             }
@@ -121,7 +121,7 @@ namespace BeatificaBytes.Synology.Mods
             else
                 BrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-            if (BrowserDialog4Mods.ShowDialog())
+            if (BrowserDialog4Mods.ShowDialog(this.Handle))
             {
                 Properties.Settings.Default.PackageRoot = BrowserDialog4Mods.FileName;
             }

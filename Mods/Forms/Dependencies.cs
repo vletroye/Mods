@@ -16,7 +16,7 @@ namespace BeatificaBytes.Synology.Mods
     public partial class Dependencies : Form
     {
         private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/synology_package/INFO_optional_fields.html"), "Details about Dependencies");
-        private SortedDictionary<string, string> info;
+        private PackageINFO info;
         private SortedDictionary<string, List<string>> services = new SortedDictionary<string, List<string>>();
         private StringBuilder init = new StringBuilder();
         private List<string> service1;
@@ -24,7 +24,7 @@ namespace BeatificaBytes.Synology.Mods
         private bool ongoingchange = false;
         private Keys keypressed = Keys.None;
 
-        public Dependencies(SortedDictionary<string, string> info)
+        public Dependencies(PackageINFO info)
         {
             InitializeComponent();
             this.info = info;

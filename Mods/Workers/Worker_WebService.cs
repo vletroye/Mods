@@ -3,15 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using BeatificaBytes.Synology.Mods.Json.SpkResource;
 using System.Diagnostics;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using static ScintillaNET.Style;
-using System.Xml;
-using Microsoft.XmlDiffPatch;
-using ImageMagick;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using BeatificaBytes.Synology.Mods.Properties;
 
 namespace BeatificaBytes.Synology.Mods.Forms
 {
@@ -20,15 +15,17 @@ namespace BeatificaBytes.Synology.Mods.Forms
 
         Dictionary<TabPage, HashSet<Control>> _tabControls = new Dictionary<TabPage, HashSet<Control>>();
         private HelpInfo help = new HelpInfo(new Uri("https://help.synology.com/developer-guide/resource_acquisition/web_service.html"), "Details about Web Service");
-        private Webservice _resource = null;
+        private WebService _resource = null;
 
         private JToken _origwebservice;
         private JToken _webservice;
-        private string ui;
 
-        public Worker_WebService(JToken webservice, string targetPath, string ui)
+        public Worker_WebService(PackageResource resource)
         {
-            this.ui = ui;
+            if (resource == null)
+                resource = new PackageResource();
+
+            var webservice = resource.WebService;
 
             InitializeComponent();
             SetWebservice(webservice);
@@ -73,12 +70,13 @@ namespace BeatificaBytes.Synology.Mods.Forms
             SetPortals(_resource);
         }
 
-        private void SetWebservice(JToken webservice)
+        private void SetWebservice(WebService webservice)
         {
-            _origwebservice = webservice;
+            _origwebservice = JToken.Parse(JsonConvert.SerializeObject(webservice));
+
             if (webservice != null)
             {
-                _resource = webservice.ToObject<Webservice>();
+                _resource = webservice; ;
 
                 // keep all default values for comparison
                 //_webservice = JToken.Parse(JsonConvert.SerializeObject(_resource, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
@@ -96,7 +94,8 @@ namespace BeatificaBytes.Synology.Mods.Forms
             }
             else
             {
-                _resource = new Webservice();
+                _resource = new WebService();
+                _resource.services = new List<Service>();
                 _resource.services.Add(new Service());
                 _resource.services[0].php = new Php();
             }
@@ -140,7 +139,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             }
         }
 
-        private void SetServices(Webservice resource)
+        private void SetServices(WebService resource)
         {
             if (resource.services == null || resource.services.Count == 0)
             {
@@ -191,14 +190,14 @@ namespace BeatificaBytes.Synology.Mods.Forms
                 textBoxPhpGroup.Text = service.php.group;
 
                 if (service.php.extensions != null)
-                foreach (var item in service.php.extensions)
-                {
-                    var itemIndex = checkedListBoxPhpExtensions.Items.IndexOf(item);
-                    if (itemIndex >= 0)
+                    foreach (var item in service.php.extensions)
                     {
-                        checkedListBoxPhpExtensions.SetItemChecked(itemIndex, true);
+                        var itemIndex = checkedListBoxPhpExtensions.Items.IndexOf(item);
+                        if (itemIndex >= 0)
+                        {
+                            checkedListBoxPhpExtensions.SetItemChecked(itemIndex, true);
+                        }
                     }
-                }
 
                 if (service.php.php_settings != null)
                 {
@@ -211,7 +210,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
                 }
             }
         }
-        private void SetDirectory(Webservice resource)
+        private void SetDirectory(WebService resource)
         {
             if (resource.pkg_dir_prepare == null || resource.pkg_dir_prepare.Count == 0)
             {
@@ -235,7 +234,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             checkBoxForceDirectory.Checked = textBoxPhpUser.Text != textBoxUser.Text || textBoxPhpGroup.Text != textBoxGroup.Text || textBoxServiceRoot.Text != textBoxTarget.Text;
         }
 
-        private void SetPortals(Webservice resource)
+        private void SetPortals(WebService resource)
         {
             Portal alias = null;
             Portal server = null;
@@ -306,7 +305,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             checkBoxForcePortals.Checked = aliasServiceText != aliasText || serverServiceText != serverText;
         }
 
-        private void GetServices(Webservice resource)
+        private void GetServices(WebService resource)
         {
             var service = resource.services[0];
 
@@ -371,7 +370,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             }
             if (service.php.php_settings.Count == 0) service.php.php_settings = null;
         }
-        private void GetDirectory(Webservice resource)
+        private void GetDirectory(WebService resource)
         {
             var pkg_dir_prepare = resource.pkg_dir_prepare[0];
 
@@ -382,7 +381,7 @@ namespace BeatificaBytes.Synology.Mods.Forms
             pkg_dir_prepare.mode = "0" + userControlPermissions.Permissions.ToString();
         }
 
-        private void GetPortals(Webservice resource)
+        private void GetPortals(WebService resource)
         {
             if (resource.portals.Count > 0)
                 resource.portals.Clear();
@@ -750,8 +749,11 @@ namespace BeatificaBytes.Synology.Mods.Forms
         private void textBoxRoot_Validated(object sender, EventArgs e)
         {
             errorProviderWebService.SetError(textBoxServiceRoot, "");
-            textBoxPhpOpenBasedir.Text = textBoxPhpOpenBasedir.Text.Replace(_resource.services[0].root, textBoxServiceRoot.Text);
-            _resource.services[0].root = textBoxServiceRoot.Text;
+            if (_resource.services[0].root != null)
+            {
+                textBoxPhpOpenBasedir.Text = textBoxPhpOpenBasedir.Text.Replace(_resource.services[0].root, textBoxServiceRoot.Text);
+                _resource.services[0].root = textBoxServiceRoot.Text;
+            }
         }
 
         private void WebService_KeyDown(object sender, KeyEventArgs e)

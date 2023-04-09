@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BeatificaBytes.Synology.Mods.Properties;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace BeatificaBytes.Synology.Mods
     /// </summary>
     public partial class Worker_Privilege : Form
     {
-        private SortedDictionary<string, string> info;
+        private PackageINFO info;
         private JToken origPrivilege;
         private JToken privilege;
         private State stateCtrlScript = State.None;
@@ -64,19 +65,24 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        public Worker_Privilege(JToken privilege, SortedDictionary<string, string> info)
+        public Worker_Privilege(PackagePrivilege privilege, PackageINFO info)
         {
             this.info = info;
             InitializeComponent();
             SetPrivilege(privilege);
         }
 
-        private void SetPrivilege(JToken privilege)
+        private void SetPrivilege(PackagePrivilege privilege)
         {
-            origPrivilege = privilege;
-            Specification = privilege == null ? JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""package""}}") : privilege.DeepClone();
-
+            origPrivilege = JToken.Parse(JsonConvert.SerializeObject(privilege));
+            Specification = privilege == null ? JsonConvert.DeserializeObject<JObject>(@"{""defaults"":{""run-as"":""package""}}") : JToken.Parse(JsonConvert.SerializeObject(privilege));
+            
             DisplayPrivilege();
+        }
+
+        internal string  GetPrivilege()
+        {
+            return JsonConvert.SerializeObject(privilege);
         }
 
         private void DisplayPrivilege()
@@ -135,7 +141,7 @@ namespace BeatificaBytes.Synology.Mods
             var username = textBoxUsername.Text;
             var groupname = textBoxGroupname.Text;
             var joingroupname = textBoxJoinGroupname.Text;
-            var package = info["package"];
+            var package = info.Package;
 
             if (string.IsNullOrEmpty(username) || username == package) username = null;
             if (string.IsNullOrEmpty(groupname) || groupname == package) groupname = null;

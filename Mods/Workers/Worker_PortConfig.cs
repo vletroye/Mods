@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using IniParser.Model.Configuration;
 using IniParser.Parser;
+using Newtonsoft.Json;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -66,7 +67,7 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         //public PortConfig(JObject resource, string packageFolder)
-        public PortConfigWorker(JToken portConfig, IniData synoConfig, List<Tuple<string, string>> variables, string packageName)
+        public PortConfigWorker(PortConfig portConfig, IniData synoConfig, List<Tuple<string, string>> variables, string packageName)
         {
             InitializeComponent();
 
@@ -78,7 +79,7 @@ namespace BeatificaBytes.Synology.Mods
             fields.Add("src.ports");
             fields.Add("dst.ports");
 
-            this.origPortConfig = portConfig;
+            this.origPortConfig = JToken.Parse(JsonConvert.SerializeObject(portConfig));
             this.origSynoConfig = synoConfig;
             this.packageName = packageName;
             this.variables = variables;
@@ -99,9 +100,9 @@ namespace BeatificaBytes.Synology.Mods
             }
         }
 
-        private void SetPortConfig(JToken portConfig, IniData synoConfig)
+        private void SetPortConfig(PortConfig portConfig, IniData synoConfig)
         {
-            PortConfig = portConfig == null ? null : portConfig.DeepClone();
+            PortConfig = portConfig == null ? null : JToken.Parse(JsonConvert.SerializeObject(portConfig));
             SynoConfig = synoConfig == null ? null : synoConfig.Clone() as IniData;
 
             checkBoxPortConfig.Checked = portConfig != null;
@@ -730,10 +731,18 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 else
                 {
-                    SetPortConfig(origPortConfig, origSynoConfig);
+                    var obj = JsonConvert.DeserializeObject<JObject>(origPortConfig.ToString());
+                    var portConfig = obj.ToObject<PortConfig>();
+
+                    SetPortConfig(portConfig, origSynoConfig);
                 }
                 checkBoxPortConfig.Checked = true;
             }
+        }
+
+        private void SetPortConfig(JObject jObject, object value)
+        {
+            throw new NotImplementedException();
         }
 
         private void PortConfigWorker_HelpButtonClicked(object sender, CancelEventArgs e)

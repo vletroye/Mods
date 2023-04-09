@@ -19,12 +19,9 @@ using Microsoft.VisualBasic.FileIO;
 using static System.Environment;
 using Microsoft.XmlDiffPatch;
 using Formatting = Newtonsoft.Json.Formatting;
-using ScintillaNET;
-using static ScintillaNET.Style;
-using YamlDotNet.Core.Tokens;
 using Newtonsoft.Json.Linq;
-using BeatificaBytes.Synology.Mods.Json.SpkResource;
-using Org.BouncyCastle.Asn1.Ocsp;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace BeatificaBytes.Synology.Mods
 {
@@ -1110,7 +1107,7 @@ namespace BeatificaBytes.Synology.Mods
             return stream;
         }
 
-        public static bool CheckDSMVersionMin(SortedDictionary<string, string> info, int minMajor, int minMinor, int minBuild)
+        public static bool CheckDSMVersionMin(PackageINFO info, int minMajor, int minMinor, int minBuild)
         {
             int major, minor, build;
             GetFirmwareMajorMinor(info, out major, out minor, out build);
@@ -1125,7 +1122,7 @@ namespace BeatificaBytes.Synology.Mods
             return (major > minMajor || (major == minMajor && minor > minMinor) || (major == minMajor && minor == minMinor && build >= minBuild));
         }
 
-        public static bool CheckDSMVersionMax(SortedDictionary<string, string> info, int maxMajor, int maxMinor, int maxBuild)
+        public static bool CheckDSMVersionMax(PackageINFO info, int maxMajor, int maxMinor, int maxBuild)
         {
             int major, minor, build;
             GetFirmwareMajorMinor(info, out major, out minor, out build);
@@ -1139,14 +1136,14 @@ namespace BeatificaBytes.Synology.Mods
 
             return (major < maxMajor || (major == maxMajor && minor < maxMinor) || (major == maxMajor && minor == maxMinor && build <= maxBuild));
         }
-        public static void GetFirmwareMajorMinor(SortedDictionary<string, string> info, out int major, out int minor, out int build)
+        public static void GetFirmwareMajorMinor(PackageINFO info, out int major, out int minor, out int build)
         {
             string firmware = "2.0";
-            if (info.ContainsKey("os_min_ver"))
-                firmware = info["os_min_ver"];
+            if (!string.IsNullOrWhiteSpace(info.Os_min_ver))
+                firmware = info.Os_min_ver;
             else
-            if (info.ContainsKey("firmware"))
-                firmware = info["firmware"];
+            if (!string.IsNullOrWhiteSpace(info.Firmware))
+                firmware = info.Firmware;
 
             if (!getFirmwareVersion.IsMatch(firmware))
                 firmware = "2.0";
@@ -1224,6 +1221,62 @@ namespace BeatificaBytes.Synology.Mods
             return text;
         }
 
+        public static bool IsExtension(this FileInfo file, string extension)
+        {
+            if (!extension.StartsWith(".")) extension = "." + extension;
+            return file.Extension.Equals(extension, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        public static List<string> GetContent(this DirectoryInfo path)
+        {
+            //var content = Directory.GetDirectories(path).ToList();
+            //content.AddRange(Directory.GetFiles(path));
+            //return content;
+
+            return Directory.GetFileSystemEntries(path.FullName).ToList();
+        }
+
+        /// <summary>
+        /// Fetch the UI Dir from the INFO file without loading the full data.
+        /// </summary>
+        /// <param name="file">Path of the INFO file to be parsed. It must exists.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if the INFO file to be parsed does not exist.</exception>
+        public static string GetUIDir(string file)
+        {
+            string value = null;
+            if (File.Exists(file))
+            {
+                var lines = File.ReadAllLines(file);//, Encoding.Default);
+                foreach (var line in lines)
+                {
+                    var lineText = line.Trim();
+                    if (!string.IsNullOrEmpty(lineText))
+                    {
+                        if (lineText.StartsWith("#"))
+                        {
+                            //Comments will be lost as not supported by MODS
+                        }
+                        else if (lineText.Contains('='))
+                        {
+                            var key = lineText.Substring(0, lineText.IndexOf('='));
+                            if (key == "dsmuidir")
+                            {
+                                value = lineText.Substring(lineText.IndexOf('=') + 1);
+                                value = value.Trim(new char[] { '"' });
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentException(string.Format("Application Error: the INFO file {0} does not exist.", file));
+            }
+
+            return value;
+        }
 
         // Return the ListBox's contents in a List of List<String>
         public static List<List<String>> GetListViewData(this ListView lvw)
@@ -1295,9 +1348,9 @@ namespace BeatificaBytes.Synology.Mods
 
             foreach (var child in token.Children())
             {
-                var subpath = path;     
+                var subpath = path;
                 if (child.HasValues)
-                {                    
+                {
                     foreach (var value in child.Values())
                     {
                         getAllKeysFromJson(keys, value, subpath);
@@ -1316,13 +1369,20 @@ namespace BeatificaBytes.Synology.Mods
             getAllKeysFromJson(originalKeys, original, "");
             getAllKeysFromJson(modifiedKeys, original, "");
 
-            foreach(var key in originalKeys)
+            foreach (var key in originalKeys)
             {
                 if (!modifiedKeys.Contains(key))
                     lost.Add(key);
             }
 
             return lost;
+        }
+        public static void GrantAccess(string fullPath)
+        {
+            DirectoryInfo dInfo = new DirectoryInfo(fullPath);
+            DirectorySecurity dSecurity = dInfo.GetAccessControl();
+            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+            dInfo.SetAccessControl(dSecurity);
         }
     }
 }

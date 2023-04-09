@@ -65,7 +65,7 @@ namespace BeatificaBytes.Synology.Mods
         #region Methods
 
         /// <summary>
-        /// Shows the dialog
+        /// Shows the dialog, non modal.
         /// </summary>
         /// <returns>True if the user presses OK else false</returns>
         public bool ShowDialog()
@@ -74,9 +74,9 @@ namespace BeatificaBytes.Synology.Mods
         }
 
         /// <summary>
-        /// Shows the dialog
+        /// Shows the dialog, modal for the parent.
         /// </summary>
-        /// <param name="hWndOwner">Handle of the control to be parent</param>
+        /// <param name="hWndOwner">Handle of the control to be parent (Ex.: this.Handle)</param>
         /// <returns>True if the user presses OK else false</returns>
         public bool ShowDialog(IntPtr hWndOwner)
         {
