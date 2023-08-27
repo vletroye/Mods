@@ -75,7 +75,7 @@ namespace BeatificaBytes.Synology.Mods
             return value;
         }
 
-        [PackageInfoProperty("noarch")]
+        [PackageInfoProperty("arch")]
         public string Arch
         {
             get { return GetMyValue(MethodBase.GetCurrentMethod()); }
@@ -338,7 +338,7 @@ namespace BeatificaBytes.Synology.Mods
             var loaded = false;
 
             if (FilePath.Exists)
-            {
+            {                
                 this.Clear();
                 var lines = File.ReadAllLines(FilePath.FullName);//, Encoding.Default);
                 foreach (var line in lines)
@@ -362,11 +362,18 @@ namespace BeatificaBytes.Synology.Mods
                         }
                     }
                 }
+                loaded = true;
 
                 if (Maintainer == "...")
                     Maintainer = Environment.UserName;
                 if (Distributor == "...")
                     Distributor = Environment.UserName;
+                if (DsmUiDir == null)
+                {
+                    DsmUiDir = "";
+                    HelperNew.PublishWarning("This Package has no UI. Adding/Editing Items will be disabled.");
+                }
+                    
             }
 
             return loaded;

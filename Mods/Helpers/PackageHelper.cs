@@ -10,7 +10,7 @@ namespace BeatificaBytes.Synology.Mods.Helpers
     internal abstract class BasePackage
     {
         #region Standard SPK files et folders
-        protected  const string file_INFO = "INFO";
+        protected const string file_INFO = "INFO";
         protected const string folder_Conf = "conf";
         protected const string folder_Package = "package";
         protected const string folder_WizardUI = "WIZARD_UIFILES";
@@ -70,7 +70,8 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                 if (String.IsNullOrWhiteSpace(Folder_Root))
                     throw new ArgumentNullException("Application error: Package folder is not set.");
 
-                if (string.IsNullOrWhiteSpace(DsmUiDir))
+                //It exists packages without dsmUiDir, used to deploy binaries only. In such case DsmUiDir = ""
+                if (DsmUiDir == null)
                     throw new ArgumentNullException("Application error: INFO file has not been loaded.");
 
                 return Path.Combine(Folder_Root, String.Format(file_Config, DsmUiDir));
@@ -133,7 +134,8 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                 if (String.IsNullOrWhiteSpace(Folder_Root))
                     throw new ArgumentNullException("Application error: Package folder is not set.");
 
-                if (String.IsNullOrWhiteSpace(DsmUiDir))
+                //It exists packages without dsmUiDir, used to deploy binaries only. In such case DsmUiDir = ""
+                if (DsmUiDir == null)
                     throw new ArgumentNullException("Application error: UI folder is not defined in INFO file.");
 
                 return Path.Combine(Folder_Root, folder_Package, DsmUiDir);

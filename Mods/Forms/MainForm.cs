@@ -678,6 +678,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             if (!mainHelper.Warnings.Contains(message)) mainHelper.Warnings.Add(message);
 
+            pictureBoxWarning.Enabled = true;
             if (!pictureBoxWarning.Visible)
             {
                 var watch = new Stopwatch();
@@ -687,7 +688,6 @@ namespace BeatificaBytes.Synology.Mods
                 while (mainHelper != null && mainHelper.Warnings.Count > 0 && watch.ElapsedMilliseconds < 6000)
                 {
                     await Task.Delay(500);
-                    pictureBoxWarning.Enabled = true;
                     if (pictureBoxWarning.BackgroundImage == null)
                         pictureBoxWarning.BackgroundImage = image;
                     else
@@ -696,8 +696,16 @@ namespace BeatificaBytes.Synology.Mods
                 watch.Stop();
                 pictureBoxWarning.BackgroundImage = image;
             }
+
         }
 
+        private void ShowWarnings()
+        {
+            var message = mainHelper.Warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
+            mainHelper.Warnings.Clear();
+            pictureBoxWarning.Visible = false;
+            MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+        }
 
         #endregion --------------------------------------------------------------------------------------------------------------------------------
 
@@ -1846,6 +1854,7 @@ namespace BeatificaBytes.Synology.Mods
         {
             bool enabling;
             bool packaging;
+            bool itemArea;
 
             if (CurrentPackage == null)
             {
@@ -1868,23 +1877,25 @@ namespace BeatificaBytes.Synology.Mods
                 //packaging = listViewItems.Items.Count > 0 && !enabling;
                 packaging = true; //A package can be published even without any item
 
+                itemArea = !string.IsNullOrWhiteSpace(CurrentPackage.DsmUiDir);
+
                 EnableItemFieldDetails(!enabling && CurrentPackage.Config != null, enabling);
                 switch (state)
                 {
                     case State.View:
                         add = CurrentPackage.Config != null && (CurrentPackage.INFO.SingleApp == "no" || CurrentPackage.Config.items.Count == 0);
                         EnableItemButtonDetails(add, true, false, false, true, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true, true);
+                        EnableItemMenuDetails(!enabling, itemArea, !enabling, !enabling, true, true, true, true, true);
                         break;
                     case State.None:
                         add = CurrentPackage.Config != null && (CurrentPackage.INFO.SingleApp == "no" || CurrentPackage.Config.items.Count == 0);
                         EnableItemButtonDetails(add, false, false, false, false, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, true, true, true, true, true);
+                        EnableItemMenuDetails(!enabling, itemArea, !enabling, !enabling, true, true, true, true, true);
                         break;
                     case State.Add:
                     case State.Edit:
                         EnableItemButtonDetails(false, false, true, true, false, packaging);
-                        EnableItemMenuDetails(!enabling, true, !enabling, !enabling, false, false, false, false, false);
+                        EnableItemMenuDetails(!enabling, itemArea, !enabling, !enabling, false, false, false, false, false);
                         break;
                 }
                 textBoxUrl.ReadOnly = !(comboBoxItemType.SelectedIndex == (int)AppDataType.Url);
@@ -3255,7 +3266,12 @@ namespace BeatificaBytes.Synology.Mods
 
             // Open another Package if the user saved/discarded explicitly pending changes.
             if (saved == DialogResult.Yes || saved == DialogResult.No)
-                mainHelper.OpenExistingPackage();
+                if (!mainHelper.OpenExistingPackage())
+                {
+                    //Main Screen Disabled
+                    if (pictureBoxWarning.Visible && !pictureBoxWarning.Enabled)
+                        ShowWarnings();
+                }
         }
         private void menuReset_Click(object sender, EventArgs e)
         {
@@ -4373,10 +4389,7 @@ namespace BeatificaBytes.Synology.Mods
 
         private void pictureBoxWarning_Click(object sender, EventArgs e)
         {
-            var message = mainHelper.Warnings.Aggregate((i, j) => i + "\r\n_____________________________________________________________\r\n\r\n" + j);
-            mainHelper.Warnings.Clear();
-            pictureBoxWarning.Visible = false;
-            MessageBoxEx.Show(this, message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+            ShowWarnings();
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)

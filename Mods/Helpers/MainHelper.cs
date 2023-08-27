@@ -256,6 +256,9 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                             PackageHelper.CopyPackagingBinaries(targetPackage);
                         }
                     }
+                } else if (ready == DialogResult.Cancel)
+                {
+                    succeed = false;
                 }
             }
 
