@@ -57,7 +57,7 @@ namespace BeatificaBytes.Synology.Mods.Data
         /// No if a Deflation was not done.
         /// If the spk is deflated into a temporary folder, this one is returned into targetFolder.
         /// </returns>
-        internal static DialogResult DeflatePackageIfRequired(bool forceDeflate, ref DirectoryInfo targetFolder, FileInfo spk)
+        internal static DialogResult DeflatePackageIfRequired(bool forceDeflate, ref DirectoryInfo targetFolder, ref FileInfo spk)
         {
             DialogResult answer = DialogResult.No;
             bool spkToBeDeflated = true;
@@ -80,7 +80,7 @@ namespace BeatificaBytes.Synology.Mods.Data
                 else if (!spk.Exists)
                     throw new ArgumentException(String.Format("Application Error: The SPK {0} does not exist.", spk.FullName));
 
-                // If not target folder to deflate, use the folder of the SPK
+                // If no target folder provided to deflate, use the folder of the SPK
                 if (targetFolder == null || !targetFolder.Exists)
                     if (SeemsDeflated(spk.Directory))
                     {
@@ -316,6 +316,7 @@ namespace BeatificaBytes.Synology.Mods.Data
 
         internal static void CopyPackagingBinaries(string path)
         {
+
             if (File.Exists(Path.Combine(path, "7z.exe")))
                 File.Delete(Path.Combine(path, "7z.exe"));
             File.Copy(Path.Combine(Helper.ResourcesDirectory, "7z.exe"), Path.Combine(path, "7z.exe"));

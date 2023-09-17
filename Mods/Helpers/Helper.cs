@@ -768,7 +768,7 @@ namespace BeatificaBytes.Synology.Mods
             editScript.StartPosition = FormStartPosition.CenterParent;
             var result = editScript.ShowDialog(Application.OpenForms[0]);
 
-            if ((script1 == null || (script1.Code == originalScript1)) && (script2 == null || (script2.Code == originalScript2)))
+            if ((script1 == null || (script1.Code == (originalScript1 ?? ""))) && (script2 == null || (script2.Code == (originalScript2 ?? ""))))
                 result = DialogResult.Cancel;
 
             return result;
@@ -1382,7 +1382,11 @@ namespace BeatificaBytes.Synology.Mods
             DirectoryInfo dInfo = new DirectoryInfo(fullPath);
             DirectorySecurity dSecurity = dInfo.GetAccessControl();
             dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-            dInfo.SetAccessControl(dSecurity);
+            try
+            {
+                dInfo.SetAccessControl(dSecurity);
+            }
+            catch (Exception e) { }
         }
     }
 }

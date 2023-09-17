@@ -5,7 +5,10 @@
     <Setting Name="Packages" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="PackageRoot" Type="System.String" Scope="User">
+    <Setting Name="PackageRootDSM6x" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="PackageRootDSM7x" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SourceImages" Type="System.String" Scope="User">

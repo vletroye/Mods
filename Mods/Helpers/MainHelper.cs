@@ -12,6 +12,7 @@ using System.Threading;
 using System.DirectoryServices.AccountManagement;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.ApplicationServices;
+using Org.BouncyCastle.Utilities.Zlib;
 
 namespace BeatificaBytes.Synology.Mods.Helpers
 {
@@ -86,10 +87,12 @@ namespace BeatificaBytes.Synology.Mods.Helpers
 
                 if (string.IsNullOrWhiteSpace(targetFolder))
                 {
-                    if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
+                    if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRootDSM6x) && Directory.Exists(Properties.Settings.Default.PackageRootDSM7x))
                     {
+                        // TODO: check here if creating a package DSM <= 6.x or >= 7.x
+
                         // Use a temporary folder in the "default Package Root Folder" defined within MODS' properties (don't use a GUID as name. This is used only for spk "imported", and trigger a "warning message")
-                        targetFolder = Path.Combine(Properties.Settings.Default.PackageRoot, "NEW-" + Guid.NewGuid().ToString());
+                        targetFolder = Path.Combine(Properties.Settings.Default.PackageRootDSM6x, "NEW-" + Guid.NewGuid().ToString());
                         ready = DialogResult.No;
                     }
                     else
@@ -181,7 +184,11 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                 {
                     FolderBrowserDialog4Mods.Title = "Pick a folder containing an existing Package or a spk file to deflated.";
                     if (Properties.Settings.Default.DefaultPackageRoot)
-                        FolderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
+                    {
+                        // TODO: check here if creating a package DSM <= 6.x or >= 7.x
+
+                        FolderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRootDSM6x;
+                    }
                     else
                         FolderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
@@ -207,7 +214,12 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                         {
                             // Check if the SPK is in its own folder (alone or deflated)
                             if (!PackageHelper.SeemsDeflated(new DirectoryInfo(targetPackage)))
+                            {
                                 targetPackage = null;
+                                //PackageHelper.DeflatePackageIfRequired(true, ref dirTargetPackage , spk);
+                                //targetPackage = dirTargetPackage.FullName;
+                                //ready = DialogResult.Yes;
+                            }
                         }
                     }
                     else
@@ -239,10 +251,10 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                     }
                     else
                     {
-                        // The selected folder contains an existing empty => open it
-                        if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRoot))
+                        // The selected folder contains an existing package => open it
+                        if (Properties.Settings.Default.DefaultPackageRoot && Directory.Exists(Properties.Settings.Default.PackageRootDSM6x) && Directory.Exists(Properties.Settings.Default.PackageRootDSM7x))
                         {
-                            if (!import && !targetPackage.StartsWith(Properties.Settings.Default.PackageRoot))
+                            if (!import && !targetPackage.StartsWith(Properties.Settings.Default.PackageRootDSM6x) && !targetPackage.StartsWith(Properties.Settings.Default.PackageRootDSM7x))
                                 HelperNew.PublishWarning(string.Format("This package is not stored in the default Package Root Folder defined in your Parameters...\r\n\r\n[{0}]", targetPackage));
                         }
 
@@ -252,8 +264,8 @@ namespace BeatificaBytes.Synology.Mods.Helpers
                             var package = new Package(targetPackage, targetSPK, true);
                             DisplayPackage(package);
 
-                            //Refresh the binairies
-                            PackageHelper.CopyPackagingBinaries(targetPackage);
+                            //Refresh the binaries
+                            PackageHelper.CopyPackagingBinaries(package.Folder);
                         }
                     }
                 } else if (ready == DialogResult.Cancel)

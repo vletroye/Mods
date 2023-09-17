@@ -40,7 +40,7 @@ namespace BeatificaBytes.Synology.Mods
         public string InitialDirectory
         {
             get { return ofd.InitialDirectory; }
-            set { ofd.InitialDirectory = value == null || value.Length == 0 ? Environment.CurrentDirectory : value; }
+            set { ofd.InitialDirectory = value == null || value.Length == 0 ? Environment.CurrentDirectory : value; FileName = ""; }
         }
 
         /// <summary>
@@ -58,6 +58,7 @@ namespace BeatificaBytes.Synology.Mods
         public string FileName
         {
             get { return ofd.FileName; }
+            set { ofd.FileName = value == null ? "" : value; }
         }
 
         #endregion

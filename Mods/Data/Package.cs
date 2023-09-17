@@ -34,7 +34,7 @@ namespace BeatificaBytes.Synology.Mods
             else
             {
                 //Check if a package is to be deflated
-                if (PackageHelper.DeflatePackageIfRequired(forceDeflate, ref dirInfo, fileInfo) == DialogResult.Cancel)
+                if (PackageHelper.DeflatePackageIfRequired(forceDeflate, ref dirInfo, ref fileInfo) == DialogResult.Cancel)
                     IsLoaded = false;
                 else
                 {
@@ -46,10 +46,15 @@ namespace BeatificaBytes.Synology.Mods
                         IsLoaded = false;
                     }
                 }
+                if (dirInfo != null) this.Folder = dirInfo.FullName;
+                if (fileInfo != null) this.SPK = fileInfo.FullName;
             }
         }
 
         public Package(string targetFolder, string spk) : this(targetFolder, spk, false) { }
+
+        public string Folder { get; set; }
+        public string SPK { get; set; }
 
         public bool IsLoaded { get; set; }
 

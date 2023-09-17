@@ -54,14 +54,17 @@ namespace BeatificaBytes.Synology.Mods
             checkBoxDefaultPackageRoot.Checked = Properties.Settings.Default.DefaultPackageRoot;
             checkBoxPromptExplorer.Checked = Properties.Settings.Default.PromptExplorer;
             checkBoxCopyPackagePath.Checked = Properties.Settings.Default.CopyPackagePath;
-            
+
             buttonDefaultPackageRepo.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Visible = checkBoxDefaultPackageRepo.Checked;
             labelDefaultPublishFolder.Text = Properties.Settings.Default.PackageRepo;
 
             buttonDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
-            labelDefaultPackageRoot.Visible = checkBoxDefaultPackageRoot.Checked;
-            labelDefaultPackageRoot.Text = Properties.Settings.Default.PackageRoot;
+            labelDefaultPackageRootDSM6x.Visible = checkBoxDefaultPackageRoot.Checked;
+            labelDefaultPackageRootDSM6x.Text = Properties.Settings.Default.PackageRootDSM6x;
+            labelDefaultPackageRootDSM7x.Visible = checkBoxDefaultPackageRoot.Checked;
+            labelDefaultPackageRootDSM7x.Text = Properties.Settings.Default.PackageRootDSM7x;
+
         }
 
         private void OnMouseEnter(object sender, EventArgs e)
@@ -114,16 +117,32 @@ namespace BeatificaBytes.Synology.Mods
 
         private void PickPackageRoot()
         {
-            var path = Properties.Settings.Default.PackageRoot;
-            BrowserDialog4Mods.Title = "Pick a folder to store all your Packages under creation.";
-            if (!string.IsNullOrEmpty(path))
-                BrowserDialog4Mods.InitialDirectory = path;
-            else
-                BrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var path = Properties.Settings.Default.PackageRootDSM6x;
+            BrowserDialog4Mods.Title = "Pick a folder to store all your Packages compatible with DSM <= 6.x";
+            if (string.IsNullOrEmpty(path))            
+                path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
+            BrowserDialog4Mods.InitialDirectory = path;
+            //BrowserDialog4Mods.FileName = "";
             if (BrowserDialog4Mods.ShowDialog(this.Handle))
             {
-                Properties.Settings.Default.PackageRoot = BrowserDialog4Mods.FileName;
+                Properties.Settings.Default.PackageRootDSM6x = BrowserDialog4Mods.FileName;
+            }
+
+            path = Properties.Settings.Default.PackageRootDSM7x;
+            BrowserDialog4Mods.Title = "Pick a folder to store all your Packages  compatible with DSM >= 7.x";
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Properties.Settings.Default.PackageRootDSM6x;
+                if (string.IsNullOrEmpty(path))
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+
+            BrowserDialog4Mods.InitialDirectory = path;
+            //BrowserDialog4Mods.FileName = "";
+            if (BrowserDialog4Mods.ShowDialog(this.Handle))
+            {
+                Properties.Settings.Default.PackageRootDSM7x = BrowserDialog4Mods.FileName;
             }
             ShowParameters();
         }
@@ -139,7 +158,10 @@ namespace BeatificaBytes.Synology.Mods
                 Properties.Settings.Default.PackageRepo = "";
 
             if (!Properties.Settings.Default.DefaultPackageRoot)
-                Properties.Settings.Default.PackageRoot = "";
+            {
+                Properties.Settings.Default.PackageRootDSM6x = "";
+                Properties.Settings.Default.PackageRootDSM7x = "";
+            }
 
             Properties.Settings.Default.Save();
             this.Hide();
@@ -225,7 +247,7 @@ namespace BeatificaBytes.Synology.Mods
             Properties.Settings.Default.DefaultPackageRoot = checkBoxDefaultPackageRoot.Checked;
             if (checkBoxDefaultPackageRoot.Checked)
             {
-                if (string.IsNullOrEmpty(Properties.Settings.Default.PackageRoot))
+                if (string.IsNullOrEmpty(Properties.Settings.Default.PackageRootDSM6x) || string.IsNullOrEmpty(Properties.Settings.Default.PackageRootDSM7x))
                     PickPackageRoot();
             }
             ShowParameters();
@@ -237,9 +259,18 @@ namespace BeatificaBytes.Synology.Mods
             ShowParameters();
         }
 
-        private void labelDefaultPackageRoot_Click(object sender, EventArgs e)
+        private void labelDefaultPackageRootDSM6x_Click(object sender, EventArgs e)
         {
-            var path = Properties.Settings.Default.PackageRoot;
+            var path = Properties.Settings.Default.PackageRootDSM6x;
+            if (Directory.Exists(path))
+                Process.Start(path);
+            else
+                MessageBoxEx.Show(this, "This folder does not exist anymore or cannot be accessed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        }
+        private void labelDefaultPackageRootDSM7x_Click(object sender, EventArgs e)
+        {
+            var path = Properties.Settings.Default.PackageRootDSM7x;
             if (Directory.Exists(path))
                 Process.Start(path);
             else
@@ -252,7 +283,8 @@ namespace BeatificaBytes.Synology.Mods
             if (MessageBoxEx.Show(this, "Are you sure that you want to reset all user settings?\r\n\r\nThis cannot be undone!", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button3) == DialogResult.Yes)
             {
                 Properties.Settings.Default.DefaultPackageRoot = false;
-                Properties.Settings.Default.PackageRoot = "";
+                Properties.Settings.Default.PackageRootDSM6x = "";
+                Properties.Settings.Default.PackageRootDSM7x = "";
                 Properties.Settings.Default.DefaultPackageRepo = false;
                 Properties.Settings.Default.PackageRepo = "";
                 Properties.Settings.Default.PromptExplorer = true;
@@ -297,6 +329,11 @@ namespace BeatificaBytes.Synology.Mods
             {
                 Helper.WriteAnsiFile(phpExtensions, phpExtension.Code);
             }
+        }
+
+        private void Parameters_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

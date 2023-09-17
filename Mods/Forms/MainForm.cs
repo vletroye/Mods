@@ -519,7 +519,7 @@ namespace BeatificaBytes.Synology.Mods
                     if (groupBoxPackage.BackColor != Color.Salmon)
                     {
                         groupBoxPackage.BackColor = Color.Salmon;
-                        HelperNew.PublishWarning("This package has has been opened from a temporary folder. Possibly move it into a target folder using the menu Package > Move.");
+                        HelperNew.PublishWarning("This package has been opened from a temporary folder. Possibly move it into a target folder using the menu Package > Move.");
                     }
                 }
                 else
@@ -3640,7 +3640,7 @@ namespace BeatificaBytes.Synology.Mods
             ScriptInfo config = null;
             if (!string.IsNullOrWhiteSpace(CurrentPackage.INFO.DsmUiDir))
             {
-                configName = CurrentPackage.Folder_UI;
+                configName = CurrentPackage.Path_Config;
                 if (File.Exists(configName))
                 {
                     content = File.ReadAllText(configName);
@@ -3680,10 +3680,15 @@ namespace BeatificaBytes.Synology.Mods
                 }
                 Process.Start(path);
             }
-            else if (!(string.IsNullOrEmpty(Properties.Settings.Default.PackageRoot)) && Directory.Exists(Properties.Settings.Default.PackageRoot))
+            else
             {
-                var path = Properties.Settings.Default.PackageRoot;
-                Process.Start(path);
+
+                // TODO: check here if creating a package DSM <= 6.x or >= 7.x
+                if (!(string.IsNullOrEmpty(Properties.Settings.Default.PackageRootDSM6x)) && Directory.Exists(Properties.Settings.Default.PackageRootDSM6x))
+                {
+                    var path = Properties.Settings.Default.PackageRootDSM6x;
+                    Process.Start(path);
+                }
             }
         }
 
@@ -3994,7 +3999,10 @@ namespace BeatificaBytes.Synology.Mods
             {
                 folderBrowserDialog4Mods.Title = "Pick a target Root folder to move the Package currently opened.";
                 if (Properties.Settings.Default.DefaultPackageRoot)
-                    folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRoot;
+                {
+                    // TODO: check here if creating a package DSM <= 6.x or >= 7.x
+                    folderBrowserDialog4Mods.InitialDirectory = Properties.Settings.Default.PackageRootDSM6x;
+                }
                 else
                     folderBrowserDialog4Mods.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
